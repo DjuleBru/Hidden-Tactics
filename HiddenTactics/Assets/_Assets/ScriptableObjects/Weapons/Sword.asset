@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94c32426953e7f345b46e5aba19af014, type: 3}
+  m_Name: Sword
+  m_EditorClassIdentifier: 
+  idleSprite: {fileID: 1649506152, guid: 22dab03cbb6355949bc6de2c57cb2d96, type: 3}
+  fireSprite: {fileID: 886984546, guid: a43667a0f0cbdfb479618a8c55e42920, type: 3}
+  iceSprite: {fileID: 1636652062, guid: a43667a0f0cbdfb479618a8c55e42920, type: 3}
+  fearSprite: {fileID: 2101853431, guid: a43667a0f0cbdfb479618a8c55e42920, type: 3}
+  bleedSprite: {fileID: -1524129322, guid: a43667a0f0cbdfb479618a8c55e42920, type: 3}
+  poisonSprite: {fileID: -862418174, guid: a43667a0f0cbdfb479618a8c55e42920, type: 3}
+  shockSprite: {fileID: 1466143631, guid: a43667a0f0cbdfb479618a8c55e42920, type: 3}
+  weaponAnimator: {fileID: 22100000, guid: 56c17f86eda5cff43a6cf2b758e4de11, type: 2}
