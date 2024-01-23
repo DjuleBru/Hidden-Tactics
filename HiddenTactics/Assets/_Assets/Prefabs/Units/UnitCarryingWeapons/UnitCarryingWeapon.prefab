@@ -90,6 +90,14 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 28983028, guid: 5a6b213a219e1434dae278c8ec17102e, type: 3}
+    - target: {fileID: 2806213410428916820, guid: ecaf4c1c39222ff458941abdb8115703, type: 3}
+      propertyPath: m_SortingLayer
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2806213410428916820, guid: ecaf4c1c39222ff458941abdb8115703, type: 3}
+      propertyPath: m_SortingLayerID
+      value: -428917639
+      objectReference: {fileID: 0}
     - target: {fileID: 3268602464715426115, guid: ecaf4c1c39222ff458941abdb8115703, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.09375
@@ -122,6 +130,14 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 4514339705271225164, guid: ecaf4c1c39222ff458941abdb8115703, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4514339705271225164, guid: ecaf4c1c39222ff458941abdb8115703, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.029999971
+      objectReference: {fileID: 0}
     - target: {fileID: 4815747763947093075, guid: ecaf4c1c39222ff458941abdb8115703, type: 3}
       propertyPath: rebuildShadowsBF_2_0_1_v
       value: 0
@@ -149,6 +165,22 @@ PrefabInstance:
     - target: {fileID: 5923283366198014383, guid: ecaf4c1c39222ff458941abdb8115703, type: 3}
       propertyPath: m_LocalPosition.y
       value: -0.014999986
+      objectReference: {fileID: 0}
+    - target: {fileID: 5923283366198014383, guid: ecaf4c1c39222ff458941abdb8115703, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.91453254
+      objectReference: {fileID: 0}
+    - target: {fileID: 5923283366198014383, guid: ecaf4c1c39222ff458941abdb8115703, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0.39008117
+      objectReference: {fileID: 0}
+    - target: {fileID: 5923283366198014383, guid: ecaf4c1c39222ff458941abdb8115703, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.04201312
+      objectReference: {fileID: 0}
+    - target: {fileID: 5923283366198014383, guid: ecaf4c1c39222ff458941abdb8115703, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.098498374
       objectReference: {fileID: 0}
     - target: {fileID: 6056495930699255125, guid: ecaf4c1c39222ff458941abdb8115703, type: 3}
       propertyPath: m_Name
@@ -222,6 +254,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77f0f7da6ee79734c87a04f9523663a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hasAttack: 0
+  hasSideAttack: 0
+  hasSpecial1: 0
+  hasSpecial2: 0
   isMountedUnit: 0
   upgradedIsMountedUnit: 0
   mountAttackAnimation: 0
@@ -266,18 +302,17 @@ MonoBehaviour:
   unit: {fileID: 1437879440930286512}
   bodySpriteRenderer: {fileID: 390265039669744821}
   upgradedBodyMaterial: {fileID: 0}
-  bodyAnimator: {fileID: 2562456056061221458}
+  upgradeReplacesBody: 0
+  upgradedBodyAnimator: {fileID: 0}
   weaponAnimator: {fileID: 3503327518094082783}
   weaponVisual: {fileID: 3953826815579895812}
   upgradeReplacesWeapon: 0
   upgradeReplacesSideWeapon: 0
-  upgradeReplacesBody: 0
   upgradeChangesWeaponScale: 0
   upgradeChangesWeaponShader: 0
   upgradeChangesMountShader: 0
   ugradedWeaponSO: {fileID: 0}
   ugradedSideWeaponSO: {fileID: 0}
-  upgradedBodyAnimator: {fileID: 0}
   upgradedWeaponScale: {x: 0, y: 0, z: 0}
   upgradedWeaponMaterial: {fileID: 0}
   mountSpriteRenderer: {fileID: 0}

@@ -14,6 +14,7 @@ public class Testing : MonoBehaviour
     Unit[] units;
 
     [SerializeField] float unitSpeed;
+    private float statSpeedToGameSpeed = 6.25f;
 
     [OnValueChanged("MyCallback"), Range(-1, 1)]
     [SerializeField] private float X;
@@ -51,7 +52,7 @@ public class Testing : MonoBehaviour
     private void Update() {
         if (walking) {
             foreach (var unit in units) {
-                unit.transform.position += new Vector3(unitSpeed,0,0) * unitSpeed * Time.deltaTime;
+                unit.transform.position += new Vector3(1,0,0) * unitSpeed/statSpeedToGameSpeed * Time.deltaTime;
             }
         }
     }
