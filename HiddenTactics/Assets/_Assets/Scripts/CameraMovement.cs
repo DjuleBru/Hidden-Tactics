@@ -54,7 +54,6 @@ public class CameraMovement : MonoBehaviour
         float scroll = GameInput.Instance.GetZoomVector().y;
 
         zoom -= scroll * cameraZoomSpeed * zoomMultiplier;
-        Debug.Log(zoom);
         zoom = Mathf.Clamp(zoom, minOrtho, maxOrtho);
         mainVirtualCamera.m_Lens.OrthographicSize = Mathf.SmoothDamp(mainVirtualCamera.m_Lens.OrthographicSize, zoom, ref velocity, smoothTime);
 
