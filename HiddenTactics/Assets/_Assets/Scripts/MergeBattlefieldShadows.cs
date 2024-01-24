@@ -34,11 +34,12 @@ public class MergeBattlefieldShadows : MonoBehaviour
         for (int i = 0; i < spriteRenderers.Length; i++) {
             var sr = spriteRenderers[i];
 
-            Debug.Log(sr);
+            if(sr.sprite == null) {
+                continue;
+            }
 
             var position = (Vector2)sr.transform.localPosition - sr.sprite.pivot;
 
-            Debug.Log(position);
             var p = new Vector2Int((int)position.x, (int)position.y);
             var sourceWidth = sr.sprite.texture.width;
             // if read/write is not enabled on texture (under Advanced) then this next line throws an error
