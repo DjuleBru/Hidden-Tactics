@@ -36,19 +36,19 @@ public class BattleFieldVisualGeneration : MonoBehaviour
     int tileSize = 9;
 
     private void Start() {
-        GenerateHumanBattleField();
         GenerateElfBattleField();
+        GenerateHumanBattleField();
         GenerateGreenSkinBattleField();
     }
 
     [Button]
-    private void GenerateHumanBattleField() {
+    private void GenerateElfBattleField() {
         GeneratePlayerBattlefield(elfBattleField, elfTileVisualPrefabArray, 2);
         GeneratePlayerVillage(elfBattleField, elfVillageTileVisualPrefab, elfVillageVisualPrefabArray, 2);
     }
 
     [Button]
-    private void GenerateElfBattleField() {
+    private void GenerateHumanBattleField() {
 
         GeneratePlayerBattlefield(humanBattleField, humanTileVisualPrefabArray, 1);
         GeneratePlayerVillage(humanBattleField, humanVillageTileVisualPrefab, humanVillageVisualPrefabArray, 1);

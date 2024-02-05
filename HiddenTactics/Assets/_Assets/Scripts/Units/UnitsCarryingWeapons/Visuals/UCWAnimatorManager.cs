@@ -26,8 +26,6 @@ public class UCWAnimatorManager : UnitAnimatorManager
         ucw.OnMagicStateChanged += Ucw_OnMagicStateChanged;
     }
 
-
-
     public override void SetAttackTrigger() {
         if(ucw.GetIsMountedUnit() & !ucw.GetMountAttackAnimation()) {
             return;

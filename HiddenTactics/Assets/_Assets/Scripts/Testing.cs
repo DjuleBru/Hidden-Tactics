@@ -31,6 +31,9 @@ public class Testing : MonoBehaviour
 
     bool walking;
 
+    BattlefieldAnimationManager battlefieldAnimationManager;
+    Battlefield battlefieldParent;
+
     private void Start() {
         ucws = GetComponentsInChildren<UCW>();
         weaponVisuals = GetComponentsInChildren<WeaponVisual>();
@@ -39,20 +42,26 @@ public class Testing : MonoBehaviour
         mages = GetComponentsInChildren<Mage>();
         units = GetComponentsInChildren<Unit>();
 
-        foreach (var weaponVisual in weaponVisuals) {
-            weaponVisual.SetXY(1f, -1f);
-        }
+        SetUnitWatchingDirection();
 
-        foreach (var UCWAnimatorManager in UCWAnimatorManagers) {
-            UCWAnimatorManager.SetXY(1f, -1f);
-        }
+        unitSpeed = units[0].GetUnitSO().unitMoveSpeed;
 
+        BattlefieldAnimationManager.Instance.OnBattlefieldSlammed += Instance_OnBattlefieldSlammed;
+        battlefieldParent = GetComponentInParent<Battlefield>();
+    }
+
+    private void Instance_OnBattlefieldSlammed(object sender, System.EventArgs e) {
+        Invoke("SetWalkingSpeed", 1.5f);
     }
 
     private void Update() {
         if (walking) {
             foreach (var unit in units) {
-                unit.transform.position += new Vector3(1,0,0) * unitSpeed/statSpeedToGameSpeed * Time.deltaTime;
+                if(battlefieldParent.playerNumber == 1) {
+                    unit.transform.position += new Vector3(1, 0, 0) * unitSpeed / statSpeedToGameSpeed * Time.deltaTime;
+                } else {
+                    unit.transform.position += new Vector3(-1, 0, 0) * unitSpeed / statSpeedToGameSpeed * Time.deltaTime;
+                }
             }
         }
     }
@@ -310,5 +319,10 @@ public class Testing : MonoBehaviour
         }
     }
 
+    protected void SetUnitWatchingDirection() {
+        X = 1;
+        Y = -1;
+        MyCallback();
+    }
 
 }

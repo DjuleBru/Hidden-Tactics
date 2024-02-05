@@ -12,6 +12,8 @@ public class Unit : MonoBehaviour
     [SerializeField] protected bool hasSpecial1;
     [SerializeField] protected bool hasSpecial2;
 
+    [SerializeField] protected UnitSO unitSO;
+
     public virtual void UpgradeUnit() {
         OnUnitUpgraded?.Invoke(this, EventArgs.Empty);
     }
@@ -34,5 +36,9 @@ public class Unit : MonoBehaviour
     public bool GetHasSideAttack()
     {
         return hasSideAttack;
+    }
+
+    public UnitSO GetUnitSO() {
+        return unitSO;
     }
 }

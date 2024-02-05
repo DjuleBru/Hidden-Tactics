@@ -53,7 +53,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 521205522010517257, guid: 064950c654ade8c4faee982465a9a6d8, type: 3}
       propertyPath: m_SortingLayer
-      value: 3
+      value: 9
       objectReference: {fileID: 0}
     - target: {fileID: 521205522010517257, guid: 064950c654ade8c4faee982465a9a6d8, type: 3}
       propertyPath: m_SortingLayerID
@@ -63,6 +63,14 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 4445348158654397743, guid: 064950c654ade8c4faee982465a9a6d8, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.95
+      objectReference: {fileID: 0}
+    - target: {fileID: 4445348158654397743, guid: 064950c654ade8c4faee982465a9a6d8, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.029249974
+      objectReference: {fileID: 0}
     - target: {fileID: 5846972235316479948, guid: 064950c654ade8c4faee982465a9a6d8, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.09375
@@ -71,6 +79,26 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5846972235316479948, guid: 064950c654ade8c4faee982465a9a6d8, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7729484
+      objectReference: {fileID: 0}
+    - target: {fileID: 5846972235316479948, guid: 064950c654ade8c4faee982465a9a6d8, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0.5909637
+      objectReference: {fileID: 0}
+    - target: {fileID: 5846972235316479948, guid: 064950c654ade8c4faee982465a9a6d8, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.1402403
+      objectReference: {fileID: 0}
+    - target: {fileID: 5846972235316479948, guid: 064950c654ade8c4faee982465a9a6d8, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.18342668
+      objectReference: {fileID: 0}
+    - target: {fileID: 6020170036870640397, guid: 064950c654ade8c4faee982465a9a6d8, type: 3}
+      propertyPath: unitSO
+      value: 
+      objectReference: {fileID: 11400000, guid: 8afec6c5abe48934e9e85dd64eba0906, type: 2}
     - target: {fileID: 8669700018651354845, guid: 064950c654ade8c4faee982465a9a6d8, type: 3}
       propertyPath: m_Name
       value: Human_FireMage

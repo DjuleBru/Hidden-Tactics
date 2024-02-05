@@ -30,6 +30,7 @@ public class UnitVisual : MonoBehaviour
 
     protected virtual void Start() {
         unit.OnUnitUpgraded += Unit_OnUnitUpgraded;
+       
     }
 
     protected virtual void Unit_OnUnitUpgraded(object sender, System.EventArgs e) {
@@ -41,4 +42,6 @@ public class UnitVisual : MonoBehaviour
             bodyAnimator.runtimeAnimatorController = upgradedBodyAnimator;
         }
     }
+
+   
 }
