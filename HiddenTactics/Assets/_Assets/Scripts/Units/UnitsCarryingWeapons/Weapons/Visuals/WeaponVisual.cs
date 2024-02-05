@@ -78,6 +78,9 @@ public class WeaponVisual : MonoBehaviour
     }
 
     private void UpdateWeaponVisual() {
+        if(activeWeaponAnimator.runtimeAnimatorController == null) {
+            return;
+        }
         if (activeWeaponAnimator.GetCurrentAnimatorStateInfo(0).IsName("Idle")) {
             HandleWeaponIdleVisual();
         }
@@ -291,6 +294,10 @@ public class WeaponVisual : MonoBehaviour
     public void SetXY(float xValue, float yValue) {
         X = xValue; 
         Y = yValue;
+
+        if(activeWeaponAnimator.runtimeAnimatorController == null) {
+            return;
+        }
 
         activeWeaponAnimator.SetFloat("X", xValue);
         activeWeaponAnimator.SetFloat("Y", yValue);
