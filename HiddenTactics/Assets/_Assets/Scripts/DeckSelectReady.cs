@@ -37,7 +37,13 @@ public class DeckSelectReady : NetworkBehaviour {
             }
         }
 
+        if (playerReadyDictionary.Count < 2) {
+            // There are not enough players to start the game
+            allClientsReady = false;
+        }
+
         if (allClientsReady) {
+            HiddenTacticsLobby.Instance.DeleteLobby();
             SceneLoader.LoadNetwork(SceneLoader.Scene.BattleScene);
         }
     }

@@ -29,9 +29,9 @@ public class BattleFieldVisualGeneration : MonoBehaviour
     int battleFieldSizeX = 5;
     int battleFieldSizeY = 5;
 
-    float villageSizeX = 3.75f;
-    float villageSizeY = 3.75f;
-    float pixelToUnitRatio = 1 / 32;
+    //float villageSizeX = 3.75f;
+    //float villageSizeY = 3.75f;
+    //float pixelToUnitRatio = 1 / 32;
 
     int tileSize = 9;
 

@@ -19,8 +19,8 @@ public class HiddenTacticsBattleManager : NetworkBehaviour
 
     private NetworkVariable<State> state = new NetworkVariable<State>(State.WaitingToStart);
 
-    [SerializeField] private Transform playerPrefab;
-    [SerializeField] private Transform playerSpawnTransform;
+    //[SerializeField] private Transform playerPrefab;
+    //[SerializeField] private Transform playerSpawnTransform;
 
 
     private void Awake() {
@@ -37,8 +37,8 @@ public class HiddenTacticsBattleManager : NetworkBehaviour
 
     private void SceneManager_OnLoadEventCompleted(string sceneName, UnityEngine.SceneManagement.LoadSceneMode loadSceneMode, List<ulong> clientsCompleted, List<ulong> clientsTimedOut) {
         foreach(ulong clientId in NetworkManager.Singleton.ConnectedClientsIds) {
-           Transform playerTransform = Instantiate(playerPrefab, playerSpawnTransform.position, Quaternion.identity);
-            playerTransform.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId, true);
+           //Transform playerTransform = Instantiate(playerPrefab, playerSpawnTransform.position, Quaternion.identity);
+            //playerTransform.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId, true);
         }
     }
 

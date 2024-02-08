@@ -12,6 +12,9 @@ public class MainMenuCleanup : MonoBehaviour
         if(HiddenTacticsLobby.Instance != null) {
             Destroy(HiddenTacticsLobby.Instance.gameObject);
         }
+        if(HiddenTacticsMultiplayer.Instance != null) {
+            Destroy(HiddenTacticsMultiplayer.Instance.gameObject);
+        }
 
     }
 }
