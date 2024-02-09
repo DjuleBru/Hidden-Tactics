@@ -14,9 +14,9 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
     [SerializeField] private List<Sprite> playerIconSpriteList;
 
     private string playerName;
+    private int playerIconSpriteId;
 
     public const int MAX_PLAYER_AMOUNT = 2;
-    private const string PLAYER_PREFS_PLAYER_NAME_MULTIPLAYER = "PlayerNameMultiplayer";
 
     public event EventHandler OnTryingToJoinGame;
     public event EventHandler OnFailedToJoinGame;
@@ -30,8 +30,9 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
         DontDestroyOnLoad(gameObject);
 
         playerDataNetworkList = new NetworkList<PlayerData>();
-        playerName = PlayerPrefs.GetString(PLAYER_PREFS_PLAYER_NAME_MULTIPLAYER, "Player#" + UnityEngine.Random.Range(0, 1000));
         playerDataNetworkList.OnListChanged += PlayerDataNetworkList_OnListChanged;
+
+        playerName = ES3.Load(PlayerSaveConstString.PLAYER_NAME_MULTIPLAYER, defaultValue: "Player#" + UnityEngine.Random.Range(0, 1000));
     }
 
     private void PlayerDataNetworkList_OnListChanged(NetworkListEvent<PlayerData> changeEvent) {
@@ -39,8 +40,8 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
     }
 
     public void StartHost() {
-        NetworkManager.Singleton.ConnectionApprovalCallback += NetworkManager_ConnectionApprovalCallback;
-        NetworkManager.Singleton.OnClientConnectedCallback += NetworkManager_OnClientConnectedCallback;
+        NetworkManager.Singleton.ConnectionApprovalCallback += NetworkManager_Server_ConnectionApprovalCallback;
+        NetworkManager.Singleton.OnClientConnectedCallback += NetworkManager_Server_OnClientConnectedCallback;
         NetworkManager.Singleton.OnClientDisconnectCallback += NetworkManager_Server_OnClientDisconnectCallback;
         NetworkManager.Singleton.StartHost();
     }
@@ -56,15 +57,16 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
         OnFailedToJoinGame?.Invoke(this, EventArgs.Empty);
     }
 
-    private void NetworkManager_OnClientConnectedCallback(ulong clientId) {
+    private void NetworkManager_Server_OnClientConnectedCallback(ulong clientId) {
         playerDataNetworkList.Add(new PlayerData {
             clientId = clientId,
         });
+
         SetPlayerNameServerRpc(GetPlayerName());
-        //SetPlayerIdServerRpc(AuthenticationService.Instance.PlayerId);
+        SetPlayerIdServerRpc(AuthenticationService.Instance.PlayerId);
     }
 
-    private void NetworkManager_ConnectionApprovalCallback(NetworkManager.ConnectionApprovalRequest connectionApprovalRequest, NetworkManager.ConnectionApprovalResponse connectionApprovalResponse) {
+    private void NetworkManager_Server_ConnectionApprovalCallback(NetworkManager.ConnectionApprovalRequest connectionApprovalRequest, NetworkManager.ConnectionApprovalResponse connectionApprovalResponse) {
         Debug.Log("Client tried to connect");
 
 
@@ -142,29 +144,28 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
     public void SetPlayerName(string playerName) {
         this.playerName = playerName;
 
-        PlayerPrefs.SetString(PLAYER_PREFS_PLAYER_NAME_MULTIPLAYER, playerName);
+        ES3.Save(PlayerSaveConstString.PLAYER_NAME_MULTIPLAYER, playerName);
     }
 
-    public Sprite GetPlayerSprite(int iconId) {
-        return playerIconSpriteList[iconId];
+    public Sprite GetPlayerSprite(int iconSpriteId) {
+        return playerIconSpriteList[iconSpriteId];
     }
 
     public void SetPlayerIconSprite(int iconSpriteId) {
+        playerIconSpriteId = iconSpriteId;
         SetPlayerIconSpriteServerRpc(iconSpriteId);
     }
 
     [ServerRpc(RequireOwnership = false)]
     private void SetPlayerIconSpriteServerRpc(int iconSpriteId, ServerRpcParams serverRpcParams = default) {
+        Debug.Log("SettingPlayerIconSprite to " + iconSpriteId);
         int playerDataIndex = GetPlayerDataIndexFromClientId(serverRpcParams.Receive.SenderClientId);
-        Debug.Log("PlayerDataIndex " +  playerDataIndex);
+
         PlayerData playerData = playerDataNetworkList[playerDataIndex];
 
         playerData.iconSpriteId = iconSpriteId;
 
         playerDataNetworkList[playerDataIndex] = playerData;
-
-        Debug.Log("received " + iconSpriteId);
-        Debug.Log("saved " + playerData.iconSpriteId);
     }
 
 

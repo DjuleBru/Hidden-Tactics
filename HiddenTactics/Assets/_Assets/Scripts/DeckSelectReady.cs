@@ -16,7 +16,14 @@ public class DeckSelectReady : NetworkBehaviour {
         Instance = this;
 
         playerReadyDictionary = new Dictionary<ulong, bool>();
+
     }
+
+    //TMP 
+    private void Start() {
+        SetPlayerReady();
+    }
+    //TMP
 
     public void SetPlayerReady() {
         SetPlayerReadyServerRpc();

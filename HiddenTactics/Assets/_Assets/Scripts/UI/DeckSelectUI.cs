@@ -27,8 +27,8 @@ public class DeckSelectUI : MonoBehaviour
     private void Start() {
         Lobby lobby = HiddenTacticsLobby.Instance.GetLobby();
 
-        lobbyNameText.text = "Lobby Name " + lobby.Name;
-        lobbyCodeText.text = "Lobby Code : " + lobby.LobbyCode;
+        //lobbyNameText.text = "Lobby Name " + lobby.Name;
+        //lobbyCodeText.text = "Lobby Code : " + lobby.LobbyCode;
     }
 
 

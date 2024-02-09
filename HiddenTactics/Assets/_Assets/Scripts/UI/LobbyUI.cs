@@ -12,18 +12,19 @@ public class LobbyUI : MonoBehaviour
     [SerializeField] private Button quickJoinButton;
     [SerializeField] private Button mainMenuButton;
     [SerializeField] private Button joinPrivateLobbyButton;
+    [SerializeField] private Button customizeButton;
     [SerializeField] private TMP_InputField joinCodeInputField;
-    [SerializeField] private TMP_InputField playerNameInputField;
+
+    [SerializeField] private TextMeshProUGUI playerNameText;
+
+    [SerializeField] private SpriteRenderer playerIconSpriteRenderer;
+
     [SerializeField] private LobbyCreateUI lobbyCreateUI;
     [SerializeField] private Transform lobbyContainer;
     [SerializeField] private Transform lobbyTemplate;
 
     private void Start() {
-        playerNameInputField.text = HiddenTacticsMultiplayer.Instance.GetPlayerName();
-        playerNameInputField.onValueChanged.AddListener((string newText) => {
-            HiddenTacticsMultiplayer.Instance.SetPlayerName(newText);
-        });
-
+        playerNameText.text = HiddenTacticsMultiplayer.Instance.GetPlayerName();
         HiddenTacticsLobby.Instance.OnLobbyListChanged += HiddenTacticsLobby_OnLobbyListChanged;
         UpdateLobbyList(new List<Lobby>());
     }
@@ -48,6 +49,9 @@ public class LobbyUI : MonoBehaviour
         });
         joinPrivateLobbyButton.onClick.AddListener(() => {
             HiddenTacticsLobby.Instance.JoinWithCode(joinCodeInputField.text);
+        });
+        customizeButton.onClick.AddListener(() => {
+            CustomizationUI.Instance.Show();
         });
     }
 

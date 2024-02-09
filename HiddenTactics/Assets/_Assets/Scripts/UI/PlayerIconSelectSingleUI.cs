@@ -9,6 +9,9 @@ public class PlayerIconSelectSingleUI : MonoBehaviour
     [SerializeField] private Image image;
     [SerializeField] private GameObject selectedGameObject;
 
+    private bool isSelected = false;
+    private CustomizationUI customizationUI;
+
     private void Awake() {
         GetComponent<Button>().onClick.AddListener(() => {
             HiddenTacticsMultiplayer.Instance.SetPlayerIconSprite(iconSpriteId);
@@ -17,15 +20,29 @@ public class PlayerIconSelectSingleUI : MonoBehaviour
     }
 
     private void Start() {
+        customizationUI = GetComponentInParent<CustomizationUI>();
+
         image.sprite = HiddenTacticsMultiplayer.Instance.GetPlayerSprite(iconSpriteId);
-        UpdateIsSelected();
+        selectedGameObject.SetActive(false);
     }
 
     private void UpdateIsSelected() {
-        if(HiddenTacticsMultiplayer.Instance.GetPlayerData().iconSpriteId == iconSpriteId) {
-            selectedGameObject.SetActive(true);
-        } else {
-            selectedGameObject.SetActive(false);
+
+        foreach(PlayerIconSelectSingleUI playerIconSelectSingleUI in customizationUI.GetPlayerIconsArray()) {
+            if(playerIconSelectSingleUI.GetIsSelected()) {
+                playerIconSelectSingleUI.SetIsSelected(false);
+            }
         }
+
+        isSelected = true;
+        selectedGameObject.SetActive(isSelected);
+    }
+
+    public bool GetIsSelected() {
+        return isSelected;
+    }
+    public void SetIsSelected(bool isSelected) {
+        this.isSelected = isSelected;
+        selectedGameObject.SetActive(isSelected);
     }
 }
