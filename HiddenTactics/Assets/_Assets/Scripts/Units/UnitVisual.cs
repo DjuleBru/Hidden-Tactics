@@ -8,6 +8,8 @@ public class UnitVisual : MonoBehaviour
     [SerializeField] protected Unit unit;
     [SerializeField] protected SpriteRenderer bodySpriteRenderer;
 
+    [SerializeField] protected Material cleanMaterial;
+    [SerializeField] protected Material placingUnitMaterial;
 
     [FoldoutGroup("Visual Components")]
     protected Animator bodyAnimator;
@@ -26,12 +28,15 @@ public class UnitVisual : MonoBehaviour
         unit = GetComponentInParent<Unit>();
         bodyAnimator = GetComponent<Animator>();
         activeBodyAnimator = bodyAnimator.runtimeAnimatorController;
+
+        bodySpriteRenderer.material = placingUnitMaterial;
     }
 
     protected virtual void Start() {
         unit.OnUnitUpgraded += Unit_OnUnitUpgraded;
-       
+        unit.GetParentTroop().OnTroopPlaced += ParentTroop_OnTroopPlaced;
     }
+
 
     protected virtual void Unit_OnUnitUpgraded(object sender, System.EventArgs e) {
         bodySpriteRenderer.material = upgradedBodyMaterial;
@@ -43,5 +48,10 @@ public class UnitVisual : MonoBehaviour
         }
     }
 
-   
+    private void ParentTroop_OnTroopPlaced(object sender, System.EventArgs e) {
+        Debug.Log("changing material");
+        bodySpriteRenderer.material = cleanMaterial;
+    }
+
+
 }

@@ -29,12 +29,8 @@ public class PreparationPhaseUI : MonoBehaviour
     }
 
     private void BattleManager_OnStateChanged(object sender, System.EventArgs e) {
-        if (BattleManager.Instance.IsPreparationPhase()) {
+        if (BattleManager.Instance.IsPreparationPhase()) {;
             Show();
-            return;
-        }
-        if(BattleManager.Instance.IsBattlePhase()) {
-            SetPlayerUnready();
             return;
         }
 

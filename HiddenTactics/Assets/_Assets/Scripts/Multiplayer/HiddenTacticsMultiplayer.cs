@@ -11,6 +11,8 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
 {
     public static HiddenTacticsMultiplayer Instance;
 
+    [SerializeField] private bool isMultiplayer;
+
     [SerializeField] private List<Sprite> playerIconSpriteList;
 
     private string playerName;
@@ -33,6 +35,12 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
         playerDataNetworkList.OnListChanged += PlayerDataNetworkList_OnListChanged;
 
         playerName = ES3.Load(PlayerSaveConstString.PLAYER_NAME_MULTIPLAYER, defaultValue: "Player#" + UnityEngine.Random.Range(0, 1000));
+    }
+
+    private void Start() {
+        if (!isMultiplayer) {
+            NetworkManager.Singleton.StartHost();
+        }
     }
 
     private void PlayerDataNetworkList_OnListChanged(NetworkListEvent<PlayerData> changeEvent) {
@@ -67,8 +75,6 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
     }
 
     private void NetworkManager_Server_ConnectionApprovalCallback(NetworkManager.ConnectionApprovalRequest connectionApprovalRequest, NetworkManager.ConnectionApprovalResponse connectionApprovalResponse) {
-        Debug.Log("Client tried to connect");
-
 
         if (SceneManager.GetActiveScene().name != SceneLoader.Scene.DeckSelectionScene.ToString()) {
             connectionApprovalResponse.Approved = false;
@@ -191,5 +197,7 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
         playerDataNetworkList[playerDataIndex] = playerData;
     }
 
-
+    public bool IsMultiplayer() {
+        return isMultiplayer;
+    }
 }

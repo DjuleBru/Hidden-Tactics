@@ -14,6 +14,8 @@ public class BattleManager : NetworkBehaviour
     [SerializeField] private float preparationPhaseMaxTime;
     [SerializeField] private float battlePhaseMaxTime;
 
+    [SerializeField] private Transform playerPrefab;
+
     private NetworkVariable<float> battlePhaseTimer = new NetworkVariable<float>(0f);
     private NetworkVariable<float> preparationPhaseTimer = new NetworkVariable<float>(0f);
 
@@ -37,7 +39,9 @@ public class BattleManager : NetworkBehaviour
         state.OnValueChanged += State_OnValueChanged;
         PlayerReadyManager.Instance.OnAllPlayersReady += PlayersReadyManager_OnAllPlayersReady;
 
-        NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += SceneManager_OnLoadEventCompleted;
+        if(IsServer) {
+            NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += SceneManager_OnLoadEventCompleted;
+        }
 
         battlePhaseTimer.Value = battlePhaseMaxTime;
         preparationPhaseTimer.Value = preparationPhaseMaxTime;
@@ -56,6 +60,11 @@ public class BattleManager : NetworkBehaviour
 
             case State.PreparationPhase:
                 battlePhaseTimer.Value = battlePhaseMaxTime;
+
+                if (!HiddenTacticsMultiplayer.Instance.IsMultiplayer()) {
+                    return;
+                }
+
                 preparationPhaseTimer.Value -= Time.deltaTime;
                 if(preparationPhaseTimer.Value < 0 ) {
                     state.Value = State.BattlePhase;
@@ -74,30 +83,19 @@ public class BattleManager : NetworkBehaviour
 
     private void PlayersReadyManager_OnAllPlayersReady(object sender, EventArgs e) {
         state.Value = State.BattlePhase;
-        OnStateChanged?.Invoke(this, EventArgs.Empty);
     }
 
     [ServerRpc(RequireOwnership =false)]
-    private void SetPlayersLoadedServerRpc(ServerRpcParams serverRpcParams = default) {
-        playersLoadedDictionary[serverRpcParams.Receive.SenderClientId] = true;
-
-        bool allClientsLoaded = true;
-        if (playersLoadedDictionary.Count < HiddenTacticsMultiplayer.MAX_PLAYER_AMOUNT) {
-            allClientsLoaded = false;
-        }
-
-        if (allClientsLoaded) {
-            state.Value = State.PreparationPhase;
-            SetPlayersLoadedClientRpc();
-        }
-    }
-
-    [ClientRpc]
-    private void SetPlayersLoadedClientRpc() {
-        OnAllPlayersLoaded?.Invoke(this, EventArgs.Empty);
+    private void SetPlayersLoadedServerRpc() {
+        state.Value = State.PreparationPhase;
     }
 
     private void SceneManager_OnLoadEventCompleted(string sceneName, UnityEngine.SceneManagement.LoadSceneMode loadSceneMode, List<ulong> clientsCompleted, List<ulong> clientsTimedOut) {
+        // All players have loaded the scene
+        foreach (ulong clientId in NetworkManager.Singleton.ConnectedClientsIds) {
+            Transform playerTransform = Instantiate(playerPrefab);
+            playerTransform.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId, true);
+        }
         SetPlayersLoadedServerRpc();
     }
 

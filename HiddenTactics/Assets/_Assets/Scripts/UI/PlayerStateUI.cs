@@ -20,7 +20,7 @@ public class PlayerStateUI : MonoBehaviour
     }
 
     private void Start() {
-        PlayerData localPlayerData = HiddenTacticsMultiplayer.Instance.GetPlayerData();
+        //PlayerData localPlayerData = HiddenTacticsMultiplayer.Instance.GetPlayerData();
 
         PlayerReadyManager.Instance.OnReadyChanged += PlayerReadyManager_OnReadyChanged;
     }

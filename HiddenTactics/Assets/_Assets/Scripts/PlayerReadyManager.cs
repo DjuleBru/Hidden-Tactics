@@ -19,16 +19,14 @@ public class PlayerReadyManager : NetworkBehaviour
 
         playerReadyDictionary = new Dictionary<ulong, bool>() { };
     }
-    public override void OnNetworkSpawn() {
-        BattleManager.Instance.OnAllPlayersLoaded += BattleManager_OnAllPlayersLoaded;
-    }
-
-    private void BattleManager_OnAllPlayersLoaded(object sender, EventArgs e) {
-        //InitializePlayerReadyDictionaryServerRpc();
-    }
 
     public void SetPlayerReady(bool ready) {
-        SetPlayerReadyServerRpc(ready);
+        Debug.Log(ready);
+        if(HiddenTacticsMultiplayer.Instance.IsMultiplayer()) {
+            SetPlayerReadyServerRpc(ready);
+        } else {
+            OnAllPlayersReady?.Invoke(this, EventArgs.Empty);
+        }
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -61,15 +59,7 @@ public class PlayerReadyManager : NetworkBehaviour
         OnReadyChanged?.Invoke(this, EventArgs.Empty);
     }
 
-
     public bool IsPlayerReady(ulong clientId) {
         return playerReadyDictionary.ContainsKey(clientId) && playerReadyDictionary[clientId];
-    }
-
-    [ServerRpc(RequireOwnership = false)]
-    private void InitializePlayerReadyDictionaryServerRpc() {
-        foreach (ulong clientId in NetworkManager.Singleton.ConnectedClientsIds) {
-            SetPlayerReadyClientRpc(clientId, false);
-        }
     }
 }

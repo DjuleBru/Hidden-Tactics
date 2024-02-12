@@ -6,6 +6,7 @@ using UnityEngine;
 public class Unit : MonoBehaviour
 {
     public event EventHandler OnUnitUpgraded;
+    public event EventHandler OnUnitSpawned;
 
     [SerializeField] protected bool hasAttack;
     [SerializeField] protected bool hasSideAttack;
@@ -13,9 +14,18 @@ public class Unit : MonoBehaviour
     [SerializeField] protected bool hasSpecial2;
 
     [SerializeField] protected UnitSO unitSO;
+    private Troop parentTroop;
+
+    private void Awake() {
+        parentTroop = GetComponentInParent<Troop>();
+    }
 
     public virtual void UpgradeUnit() {
         OnUnitUpgraded?.Invoke(this, EventArgs.Empty);
+    }
+
+    public void SpawnUnit() {
+        OnUnitSpawned?.Invoke(this, EventArgs.Empty);
     }
 
     public bool GetHasAttack()
@@ -40,5 +50,9 @@ public class Unit : MonoBehaviour
 
     public UnitSO GetUnitSO() {
         return unitSO;
+    }
+
+    public Troop GetParentTroop() {
+        return parentTroop;
     }
 }
