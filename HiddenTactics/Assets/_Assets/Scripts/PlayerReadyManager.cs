@@ -20,9 +20,8 @@ public class PlayerReadyManager : NetworkBehaviour
         playerReadyDictionary = new Dictionary<ulong, bool>() { };
     }
 
-    public void SetPlayerReady(bool ready) {
-        Debug.Log(ready);
-        if(HiddenTacticsMultiplayer.Instance.IsMultiplayer()) {
+    public void SetPlayerReadyOrUnready(bool ready) {
+        if (HiddenTacticsMultiplayer.Instance.IsMultiplayer()) {
             SetPlayerReadyServerRpc(ready);
         } else {
             OnAllPlayersReady?.Invoke(this, EventArgs.Empty);
@@ -45,11 +44,7 @@ public class PlayerReadyManager : NetworkBehaviour
         
         if (allClientsReady) {
             //Reset ready state
-
             OnAllPlayersReady?.Invoke(this, EventArgs.Empty);
-            foreach (ulong clientId in NetworkManager.Singleton.ConnectedClientsIds) {
-                SetPlayerReadyClientRpc(clientId, false);
-            }
         }
     }
 

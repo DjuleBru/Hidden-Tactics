@@ -49,8 +49,7 @@ public class UnitVisual : MonoBehaviour
     }
 
     private void ParentTroop_OnTroopPlaced(object sender, System.EventArgs e) {
-        Debug.Log("changing material");
-        bodySpriteRenderer.material = cleanMaterial;
+         bodySpriteRenderer.material = cleanMaterial;
     }
 
 

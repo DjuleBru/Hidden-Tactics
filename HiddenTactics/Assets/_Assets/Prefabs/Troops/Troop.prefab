@@ -104,7 +104,7 @@ GameObject:
   - component: {fileID: 7704603315532921428}
   - component: {fileID: 3629647732347835077}
   - component: {fileID: -7405699509265139040}
-  - component: {fileID: -1771785321427566240}
+  - component: {fileID: 2317737659917062303}
   m_Layer: 0
   m_Name: Troop
   m_TagString: Untagged
@@ -160,7 +160,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   troopCenterPoint: {fileID: 1200779722}
---- !u!114 &-1771785321427566240
+--- !u!114 &2317737659917062303
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -174,8 +174,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   GlobalObjectIdHash: 951099334
   AlwaysReplicateAsRoot: 0
-  SynchronizeTransform: 0
+  SynchronizeTransform: 1
   ActiveSceneSynchronization: 0
-  SceneMigrationSynchronization: 0
+  SceneMigrationSynchronization: 1
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1

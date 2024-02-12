@@ -9,12 +9,9 @@ public class PreparationPhaseUI : MonoBehaviour
     [SerializeField] Image preparationPhaseTimerImage;
     [SerializeField] Button playerReadyButton;
 
-    private bool isReady;
-
     private void Awake() {
         playerReadyButton.onClick.AddListener(() => {
-            isReady = !isReady;
-            PlayerReadyManager.Instance.SetPlayerReady(isReady);
+            Player.LocalInstance.SetPlayerReadyOrUnready();
         });
     }
 
@@ -35,11 +32,6 @@ public class PreparationPhaseUI : MonoBehaviour
         }
 
         Hide();
-    }
-
-    private void SetPlayerUnready() {
-        isReady = false;
-        PlayerReadyManager.Instance.SetPlayerReady(isReady);
     }
 
     public void Show() {

@@ -35,14 +35,14 @@ public class PlayerActionsManager : NetworkBehaviour {
         }
     }
 
-    public void SelectTroopToSpawn(int troopListSOIndex, ulong ownerClientId) {
+    public void SelectTroopToSpawn(int troopListSOIndex) {
         currentAction = Action.SelectingTroopToSpawn;
         if (troopToSpawn != null) {
             Destroy(troopToSpawn.gameObject);
             troopToSpawn = null;
         };
 
-        SpawnTroopServerRpc(troopListSOIndex, ownerClientId);
+        SpawnTroopServerRpc(troopListSOIndex, NetworkManager.Singleton.LocalClientId);
     }
 
     public bool IsValidTroopSpawningTarget() {

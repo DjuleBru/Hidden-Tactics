@@ -4,7 +4,7 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class SpawnTroopTestButton : NetworkBehaviour
+public class SpawnTroopTestButton : MonoBehaviour
 {
     [SerializeField] TroopSO troopToSpawnSO;
 
@@ -15,7 +15,7 @@ public class SpawnTroopTestButton : NetworkBehaviour
 
         spawnTroopButton.onClick.AddListener(() => {
             int troopIndex = BattleDataManager.Instance.GetTroopSOIndex(troopToSpawnSO);
-            PlayerActionsManager.LocalInstance.SelectTroopToSpawn(troopIndex, NetworkManager.Singleton.LocalClientId);
+            PlayerActionsManager.LocalInstance.SelectTroopToSpawn(troopIndex);
         });
     }
 
