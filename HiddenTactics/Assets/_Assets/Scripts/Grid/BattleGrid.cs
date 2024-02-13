@@ -1,12 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.ShaderGraph.Internal;
-using UnityEditor.U2D.Path.GUIFramework;
 using UnityEngine;
 
 public class BattleGrid : MonoBehaviour
 {
-
     public static BattleGrid Instance { get; private set;}
 
     [SerializeField] Transform gridDebugObjectPrefab;
@@ -28,6 +25,18 @@ public class BattleGrid : MonoBehaviour
 
     public GridPosition GetGridPosition(Vector3 worldPosition) {
             return gridSystem.GetGridPosition(worldPosition);
+    }
+
+    public Vector3 GetWorldPosition(GridPosition gridPosition) {
+        return gridSystem.GetWorldPosition(gridPosition);
+    }
+
+    public bool IsValidGridPosition(GridPosition gridPosition) {
+        return gridSystem.IsValidGridPosition(gridPosition);
+    }
+
+    public bool IsValidTroopGridPositioning(GridPosition gridPosition) {
+        return gridSystem.IsValidTroopGridPositioning(gridPosition);
     }
 
     #region TROOP

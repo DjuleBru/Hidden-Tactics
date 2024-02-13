@@ -24,7 +24,9 @@ public class PlayerReadyManager : NetworkBehaviour
         if (HiddenTacticsMultiplayer.Instance.IsMultiplayer()) {
             SetPlayerReadyServerRpc(ready);
         } else {
-            OnAllPlayersReady?.Invoke(this, EventArgs.Empty);
+            if(ready) {
+                OnAllPlayersReady?.Invoke(this, EventArgs.Empty);
+            }
         }
     }
 

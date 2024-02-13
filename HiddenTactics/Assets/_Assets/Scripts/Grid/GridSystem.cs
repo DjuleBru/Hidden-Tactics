@@ -1,10 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
 
 public class GridSystem
 {
+    private int playerBattlefieldWidth = 5;
+
     private int width;
     private int height;
     private float cellSize;
@@ -63,6 +64,20 @@ public class GridSystem
 
     public GridObject GetGridObject(GridPosition gridPosition) {
         return gridObjectArray[gridPosition.x, gridPosition.y];
+    }
+
+    public bool IsValidGridPosition(GridPosition gridPosition) {
+        if (gridPosition.x < 0 || gridPosition.y < 0 || gridPosition.x >= gridObjectArray.GetLength(0) || gridPosition.y >= gridObjectArray.GetLength(1)) {
+            return false;
+        }
+        return true;
+    }
+
+    public bool IsValidTroopGridPositioning(GridPosition gridPosition) {
+        if (gridPosition.x < 0 || gridPosition.y < 0 || gridPosition.x >= playerBattlefieldWidth || gridPosition.y >= gridObjectArray.GetLength(1)) {
+            return false;
+        }
+        return true;
     }
 
     public void SetGridOrigin(Vector3 gridOrigin) {

@@ -16,28 +16,33 @@ public class Unit : MonoBehaviour
     [SerializeField] protected UnitSO unitSO;
     private Troop parentTroop;
 
-    private GridPosition currentBattleGridPosition;
-    private GridPosition currentPreparationGridPosition;
+    private GridPosition currentGridPosition;
 
     protected virtual void Awake() {
         parentTroop = GetComponentInParent<Troop>();
     }
 
-    private void Start() {
-        currentBattleGridPosition = BattleGrid.Instance.GetGridPosition(transform.position);
-        BattleGrid.Instance.AddUnitAtGridPosition(currentBattleGridPosition, this);
-    }
-
     private void Update() {
-        HandlePositionOnGrid();
+        //HandlePositionOnGrid();
     }
 
     public void HandlePositionOnGrid() {
         GridPosition newGridPosition = BattleGrid.Instance.GetGridPosition(transform.position);
-        if (newGridPosition != currentBattleGridPosition) {
+
+        // Grid position is not a valid position
+        if (!BattleGrid.Instance.IsValidGridPosition(newGridPosition)) return;
+
+        // Troop was not set at a grid position yet
+        if (currentGridPosition == null) {
+            currentGridPosition = BattleGrid.Instance.GetGridPosition(transform.position);
+            BattleGrid.Instance.AddUnitAtGridPosition(currentGridPosition, this);
+        }
+
+        // Troop changed grid position
+        if (newGridPosition != currentGridPosition) {
             // Unit changed grid position
-            BattleGrid.Instance.UnitMovedGridPosition(this, currentBattleGridPosition, newGridPosition);
-            currentBattleGridPosition = newGridPosition;
+            BattleGrid.Instance.UnitMovedGridPosition(this, currentGridPosition, newGridPosition);
+            currentGridPosition = newGridPosition;
         }
     }
 

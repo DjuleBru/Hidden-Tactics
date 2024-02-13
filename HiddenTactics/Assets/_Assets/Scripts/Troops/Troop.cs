@@ -7,62 +7,77 @@ using UnityEngine;
 public class Troop : NetworkBehaviour
 {
     public event EventHandler OnTroopPlaced;
-
     private ulong ownerClientId;
 
-    private bool isPositioned;
+    private bool isPlaced;
+    private bool changedGridPosition;
     private bool isOwnedByPlayer;
     private bool isVisibleToOpponent;
 
+    [SerializeField] private TroopSO troopSO;
     [SerializeField] private Transform troopCenterPoint;
 
     private Unit[] unitsInTroop;
 
-    private Vector3 troopPosition;
-    private GridPosition currentBattleGridPosition;
-    private GridPosition currentPreparationGridPosition;
+    private GridPosition currentGridPosition;
 
     private void Awake() {
         unitsInTroop = GetComponentsInChildren<Unit>();
     }
 
-    private void Start() {
-        currentBattleGridPosition = BattleGrid.Instance.GetGridPosition(troopCenterPoint.position);
-        BattleGrid.Instance.AddTroopAtGridPosition(currentBattleGridPosition, this);
-    }
-
     public override void OnNetworkSpawn() {
-        BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
+        //BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
     }
 
     private void Update() {
-        HandleTroopPositioning();
-        HandlePositionOnGrid();
-    }
-
-    private void HandleTroopPositioning() {
-        if (!isPositioned) {
-            if (isOwnedByPlayer) {
-                transform.position = MousePositionManager.Instance.GetMousePositionWorldPoint() - troopCenterPoint.localPosition;
-            }
+        if(this == PlayerActionsManager.LocalInstance.GetTroopToSpawn()) {
+            HandlePositionOnGrid();
+            HandleTroopPlacement();
         }
     }
 
     public void HandlePositionOnGrid() {
-        GridPosition newGridPosition = BattleGrid.Instance.GetGridPosition(troopCenterPoint.position);
-        if (newGridPosition != currentBattleGridPosition) {
+        GridPosition newGridPosition = BattleGrid.Instance.GetGridPosition(MousePositionManager.Instance.GetMousePositionWorldPoint());
+
+        // Grid position is not a valid position
+        if (!BattleGrid.Instance.IsValidTroopGridPositioning(newGridPosition)) return;
+
+        // Troop was not set at a grid position yet
+        if(currentGridPosition == null) {
+            currentGridPosition = BattleGrid.Instance.GetGridPosition(MousePositionManager.Instance.GetMousePositionWorldPoint());
+            BattleGrid.Instance.AddTroopAtGridPosition(currentGridPosition, this);
+        }
+
+        // Troop changed grid position
+        if (newGridPosition != currentGridPosition) {
             // Unit changed grid position
-            BattleGrid.Instance.TroopMovedGridPosition(this, currentBattleGridPosition, newGridPosition);
-            currentBattleGridPosition = newGridPosition;
+            changedGridPosition = true;
+            BattleGrid.Instance.TroopMovedGridPosition(this, currentGridPosition, newGridPosition);
+            currentGridPosition = newGridPosition;
+        }
+    }
+
+    private void HandleTroopPlacement() {
+        if(currentGridPosition == null) {
+            transform.position = MousePositionManager.Instance.GetMousePositionWorldPoint() - troopCenterPoint.localPosition;
+            return;
+        }
+
+        if(changedGridPosition) {
+            transform.position = BattleGrid.Instance.GetWorldPosition(currentGridPosition) - troopCenterPoint.localPosition;
+            changedGridPosition = false;
+            return;
         }
     }
 
     private void BattleManager_OnStateChanged(object sender, EventArgs e) {
+        if (!HiddenTacticsMultiplayer.Instance.IsMultiplayer()) return;
+
         if (BattleManager.Instance.IsBattlePhase()) {
             if (!isVisibleToOpponent) {
                 // Make troop visible to opponent
                 OnTroopPlaced?.Invoke(this, null);
-                transform.position = troopPosition;
+                //transform.position = troopPosition;
             }
             isVisibleToOpponent = true;
         }
@@ -74,26 +89,19 @@ public class Troop : NetworkBehaviour
     }
 
     public void PlaceTroop() {
-        PlaceTroopServerRpc(transform.position);
+        OnTroopPlaced?.Invoke(this, null);
     }
 
-    [ServerRpc(RequireOwnership = false)]
-    private void PlaceTroopServerRpc(Vector3 troopPosition) {
-        PlaceTroopClientRpc(troopPosition);
-    }
-
-    [ClientRpc]
-    private void PlaceTroopClientRpc(Vector3 troopPosition) {
-        this.troopPosition = troopPosition;
-        isPositioned = true;
-        if (isOwnedByPlayer) {
-            transform.position = troopPosition;
-            OnTroopPlaced?.Invoke(this, null);
-        }
+    public void SetTroopPosition(Vector3 troopTransformPosition) {
+        transform.position = troopTransformPosition;
     }
 
     public bool IsOwnedByPlayer() {
         return isOwnedByPlayer;
+    }
+
+    public TroopSO GetTroopSO() {
+        return troopSO;
     }
 
 }

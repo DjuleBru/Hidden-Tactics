@@ -19,8 +19,6 @@ public class BattleManager : NetworkBehaviour
     private NetworkVariable<float> battlePhaseTimer = new NetworkVariable<float>(0f);
     private NetworkVariable<float> preparationPhaseTimer = new NetworkVariable<float>(0f);
 
-    private Dictionary<ulong, bool> playersLoadedDictionary;
-
     private enum State {
         WaitingToStart,
         PreparationPhase,
@@ -31,8 +29,6 @@ public class BattleManager : NetworkBehaviour
 
     private void Awake() {
         Instance = this;
-
-        playersLoadedDictionary = new Dictionary<ulong, bool>();
     }
 
     public override void OnNetworkSpawn() {
@@ -60,7 +56,6 @@ public class BattleManager : NetworkBehaviour
 
             case State.PreparationPhase:
                 battlePhaseTimer.Value = battlePhaseMaxTime;
-
                 if (!HiddenTacticsMultiplayer.Instance.IsMultiplayer()) {
                     return;
                 }
@@ -74,6 +69,7 @@ public class BattleManager : NetworkBehaviour
             case State.BattlePhase:
                 preparationPhaseTimer.Value = preparationPhaseMaxTime;
                 battlePhaseTimer.Value -= Time.deltaTime;
+
                 if (battlePhaseTimer.Value < 0) {
                     state.Value = State.PreparationPhase;
                 }
