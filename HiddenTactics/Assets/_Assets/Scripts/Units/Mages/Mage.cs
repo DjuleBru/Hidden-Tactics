@@ -9,8 +9,9 @@ public class Mage : Unit
     private MageAnimatorManager mageAnimatorManager;
 
     private int orbNumber;
-    private void Awake()
+    protected override void Awake()
     {
+        base.Awake();
         mageAnimatorManager = GetComponentInChildren<MageAnimatorManager>();
     }
 

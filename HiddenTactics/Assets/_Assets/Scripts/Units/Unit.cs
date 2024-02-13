@@ -16,8 +16,29 @@ public class Unit : MonoBehaviour
     [SerializeField] protected UnitSO unitSO;
     private Troop parentTroop;
 
-    private void Awake() {
+    private GridPosition currentBattleGridPosition;
+    private GridPosition currentPreparationGridPosition;
+
+    protected virtual void Awake() {
         parentTroop = GetComponentInParent<Troop>();
+    }
+
+    private void Start() {
+        currentBattleGridPosition = BattleGrid.Instance.GetGridPosition(transform.position);
+        BattleGrid.Instance.AddUnitAtGridPosition(currentBattleGridPosition, this);
+    }
+
+    private void Update() {
+        HandlePositionOnGrid();
+    }
+
+    public void HandlePositionOnGrid() {
+        GridPosition newGridPosition = BattleGrid.Instance.GetGridPosition(transform.position);
+        if (newGridPosition != currentBattleGridPosition) {
+            // Unit changed grid position
+            BattleGrid.Instance.UnitMovedGridPosition(this, currentBattleGridPosition, newGridPosition);
+            currentBattleGridPosition = newGridPosition;
+        }
     }
 
     public virtual void UpgradeUnit() {

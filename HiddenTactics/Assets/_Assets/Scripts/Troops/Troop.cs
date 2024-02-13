@@ -19,17 +19,25 @@ public class Troop : NetworkBehaviour
     private Unit[] unitsInTroop;
 
     private Vector3 troopPosition;
+    private GridPosition currentBattleGridPosition;
+    private GridPosition currentPreparationGridPosition;
 
     private void Awake() {
         unitsInTroop = GetComponentsInChildren<Unit>();
     }
+
+    private void Start() {
+        currentBattleGridPosition = BattleGrid.Instance.GetGridPosition(troopCenterPoint.position);
+        BattleGrid.Instance.AddTroopAtGridPosition(currentBattleGridPosition, this);
+    }
+
     public override void OnNetworkSpawn() {
         BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
     }
 
-
     private void Update() {
         HandleTroopPositioning();
+        HandlePositionOnGrid();
     }
 
     private void HandleTroopPositioning() {
@@ -37,6 +45,15 @@ public class Troop : NetworkBehaviour
             if (isOwnedByPlayer) {
                 transform.position = MousePositionManager.Instance.GetMousePositionWorldPoint() - troopCenterPoint.localPosition;
             }
+        }
+    }
+
+    public void HandlePositionOnGrid() {
+        GridPosition newGridPosition = BattleGrid.Instance.GetGridPosition(troopCenterPoint.position);
+        if (newGridPosition != currentBattleGridPosition) {
+            // Unit changed grid position
+            BattleGrid.Instance.TroopMovedGridPosition(this, currentBattleGridPosition, newGridPosition);
+            currentBattleGridPosition = newGridPosition;
         }
     }
 

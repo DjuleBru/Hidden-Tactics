@@ -38,7 +38,7 @@ public class BattleFieldVisualGeneration : MonoBehaviour
     private void Start() {
         GenerateElfBattleField();
         GenerateHumanBattleField();
-        GenerateGreenSkinBattleField();
+        //GenerateGreenSkinBattleField();
     }
 
     [Button]
