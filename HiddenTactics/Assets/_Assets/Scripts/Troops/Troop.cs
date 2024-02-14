@@ -30,7 +30,7 @@ public class Troop : NetworkBehaviour
     }
 
     private void Update() {
-        if(this == PlayerActionsManager.LocalInstance.GetTroopToSpawn()) {
+        if(this == PlayerAction_SpawnTroop.LocalInstance.GetTroopToSpawn()) {
             HandlePositionOnGrid();
             HandleTroopPlacement();
         }
@@ -90,10 +90,17 @@ public class Troop : NetworkBehaviour
 
     public void PlaceTroop() {
         OnTroopPlaced?.Invoke(this, null);
+        currentGridPosition = BattleGrid.Instance.GetGridPosition(troopCenterPoint.position);
     }
 
-    public void SetTroopPosition(Vector3 troopTransformPosition) {
-        transform.position = troopTransformPosition;
+    public void SetTroopGridPosition(GridPosition troopGridPosition) {
+        Vector3 troopWorldPosition = BattleGrid.Instance.GetWorldPosition(troopGridPosition);
+
+        transform.position = troopWorldPosition - troopCenterPoint.localPosition;
+    }
+
+    public GridPosition GetTroopGridPosition() {
+        return currentGridPosition;
     }
 
     public bool IsOwnedByPlayer() {

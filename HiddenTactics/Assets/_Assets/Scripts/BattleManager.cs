@@ -84,6 +84,12 @@ public class BattleManager : NetworkBehaviour
     [ServerRpc(RequireOwnership =false)]
     private void SetPlayersLoadedServerRpc() {
         state.Value = State.PreparationPhase;
+        SetPlayersLoadedClientRpc();
+    }
+
+    [ClientRpc]
+    private void SetPlayersLoadedClientRpc() {
+        OnAllPlayersLoaded?.Invoke(this, EventArgs.Empty);
     }
 
     private void SceneManager_OnLoadEventCompleted(string sceneName, UnityEngine.SceneManagement.LoadSceneMode loadSceneMode, List<ulong> clientsCompleted, List<ulong> clientsTimedOut) {

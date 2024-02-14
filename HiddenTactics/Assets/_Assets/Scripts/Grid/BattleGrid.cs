@@ -31,6 +31,16 @@ public class BattleGrid : MonoBehaviour
         return gridSystem.GetWorldPosition(gridPosition);
     }
 
+    public GridPosition TranslateOpponentGridPosition(GridPosition gridPosition) {
+        Debug.Log("original grid position : " + gridPosition);
+        GridPosition translatedGridPosition = gridPosition;
+
+        translatedGridPosition.x = 9 - gridPosition.x;
+
+        return translatedGridPosition;
+
+    }
+
     public bool IsValidGridPosition(GridPosition gridPosition) {
         return gridSystem.IsValidGridPosition(gridPosition);
     }
