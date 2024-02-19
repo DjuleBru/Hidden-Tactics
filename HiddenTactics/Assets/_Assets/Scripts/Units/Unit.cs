@@ -17,13 +17,19 @@ public class Unit : MonoBehaviour
     private Troop parentTroop;
 
     private GridPosition currentGridPosition;
+    private Vector3 unitPositionInTroop;
 
     protected virtual void Awake() {
         parentTroop = GetComponentInParent<Troop>();
+        unitPositionInTroop = transform.localPosition;
+    }
+
+    protected virtual void Start() {
+        BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
     }
 
     private void Update() {
-        //HandlePositionOnGrid();
+        HandlePositionOnGrid();
     }
 
     public void HandlePositionOnGrid() {
@@ -32,18 +38,27 @@ public class Unit : MonoBehaviour
         // Grid position is not a valid position
         if (!BattleGrid.Instance.IsValidGridPosition(newGridPosition)) return;
 
-        // Troop was not set at a grid position yet
+        // Unit was not set at a grid position yet
         if (currentGridPosition == null) {
             currentGridPosition = BattleGrid.Instance.GetGridPosition(transform.position);
             BattleGrid.Instance.AddUnitAtGridPosition(currentGridPosition, this);
         }
 
-        // Troop changed grid position
+        // Unit changed grid position
         if (newGridPosition != currentGridPosition) {
-            // Unit changed grid position
             BattleGrid.Instance.UnitMovedGridPosition(this, currentGridPosition, newGridPosition);
             currentGridPosition = newGridPosition;
         }
+    }
+
+    private void BattleManager_OnStateChanged(object sender, EventArgs e) {
+        if(BattleManager.Instance.IsBattlePhaseEnding()) {
+            ResetUnitPosition();
+        }
+    }
+
+    public virtual void ResetUnitPosition() {
+        transform.localPosition = unitPositionInTroop;
     }
 
     public virtual void UpgradeUnit() {

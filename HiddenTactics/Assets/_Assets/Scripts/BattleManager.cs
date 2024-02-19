@@ -8,11 +8,13 @@ public class BattleManager : NetworkBehaviour
 {
     public static BattleManager Instance;
 
+    [SerializeField] private BattlefieldAnimatorManager battleFieldAnimatorControllingPhases;
     public event EventHandler OnStateChanged;
     public event EventHandler OnAllPlayersLoaded;
 
     [SerializeField] private float preparationPhaseMaxTime;
     [SerializeField] private float battlePhaseMaxTime;
+    [SerializeField] private float battlePhaseActivationDelay;
 
     [SerializeField] private Transform playerPrefab;
 
@@ -22,7 +24,9 @@ public class BattleManager : NetworkBehaviour
     private enum State {
         WaitingToStart,
         PreparationPhase,
+        BattlePhaseStarting,
         BattlePhase,
+        BattlePhaseEnding,
     }
 
     private NetworkVariable<State> state = new NetworkVariable<State>(State.WaitingToStart);
@@ -35,14 +39,16 @@ public class BattleManager : NetworkBehaviour
         state.OnValueChanged += State_OnValueChanged;
         PlayerReadyManager.Instance.OnAllPlayersReady += PlayersReadyManager_OnAllPlayersReady;
 
-        if(IsServer) {
+        battleFieldAnimatorControllingPhases.OnBattlefieldsSlammed += BattleFieldAnimatorControllingPhases_OnBattlefieldsSlammed;
+        battleFieldAnimatorControllingPhases.OnBattlefieldsSplit += BattleFieldAnimatorControllingPhases_OnBattlefieldsSplit;
+
+        if (IsServer) {
             NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += SceneManager_OnLoadEventCompleted;
         }
 
         battlePhaseTimer.Value = battlePhaseMaxTime;
         preparationPhaseTimer.Value = preparationPhaseMaxTime;
     }
-
 
     private void Update() {
         if (!IsServer) {
@@ -54,6 +60,9 @@ public class BattleManager : NetworkBehaviour
             case State.WaitingToStart:
             break;
 
+            case State.BattlePhaseStarting:
+            break;
+
             case State.PreparationPhase:
                 battlePhaseTimer.Value = battlePhaseMaxTime;
                 if (!HiddenTacticsMultiplayer.Instance.IsMultiplayer()) {
@@ -62,7 +71,7 @@ public class BattleManager : NetworkBehaviour
 
                 preparationPhaseTimer.Value -= Time.deltaTime;
                 if(preparationPhaseTimer.Value < 0 ) {
-                    state.Value = State.BattlePhase;
+                    state.Value = State.BattlePhaseStarting;
                 }
             break;
 
@@ -71,14 +80,17 @@ public class BattleManager : NetworkBehaviour
                 battlePhaseTimer.Value -= Time.deltaTime;
 
                 if (battlePhaseTimer.Value < 0) {
-                    state.Value = State.PreparationPhase;
+                    state.Value = State.BattlePhaseEnding;
                 }
                 break;
+
+            case State.BattlePhaseEnding:
+            break;
         }
     }
 
     private void PlayersReadyManager_OnAllPlayersReady(object sender, EventArgs e) {
-        state.Value = State.BattlePhase;
+        state.Value = State.BattlePhaseStarting;
     }
 
     [ServerRpc(RequireOwnership =false)]
@@ -101,6 +113,25 @@ public class BattleManager : NetworkBehaviour
         SetPlayersLoadedServerRpc();
     }
 
+
+    private void BattleFieldAnimatorControllingPhases_OnBattlefieldsSlammed(object sender, EventArgs e) {
+        if (!IsServer) {
+            return;
+        }
+        Invoke("SetBattlePhase", battlePhaseActivationDelay);
+    }
+
+    private void BattleFieldAnimatorControllingPhases_OnBattlefieldsSplit(object sender, EventArgs e) {
+        if (!IsServer) {
+            return;
+        }
+        state.Value = State.PreparationPhase;
+    }
+
+    private void SetBattlePhase() {
+        state.Value = State.BattlePhase;
+    }
+
     private void State_OnValueChanged(State previousValue, State newValue) {
         OnStateChanged?.Invoke(this, EventArgs.Empty);
     }
@@ -119,6 +150,14 @@ public class BattleManager : NetworkBehaviour
 
     public bool IsPreparationPhase() {
         return state.Value == State.PreparationPhase;
+    }
+
+    public bool IsBattlePhaseStarting() {
+        return state.Value == State.BattlePhaseStarting;
+    }
+
+    public bool IsBattlePhaseEnding() {
+        return state.Value == State.BattlePhaseEnding;
     }
 
     public bool IsWaitingToStart() {

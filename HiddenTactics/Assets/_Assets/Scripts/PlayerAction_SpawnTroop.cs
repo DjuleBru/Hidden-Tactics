@@ -33,7 +33,7 @@ public class PlayerAction_SpawnTroop : NetworkBehaviour {
 
         troopDictionaryInt = 0;
 
-        if (BattleManager.Instance.IsBattlePhase()) {
+        if (BattleManager.Instance.IsBattlePhaseStarting()) {
             // Set & Fetch spawned troops data from server
 
             for (int i = 0; i < spawnedTroops.Count; i++) {
@@ -110,12 +110,12 @@ public class PlayerAction_SpawnTroop : NetworkBehaviour {
         Troop troopSpawned = troopToSpawnNetworkObject.GetComponent<Troop>();
 
         GridPosition spawnedTroopGridPosition = new GridPosition(gridPositionx, gridPositiony);
+
         if (!troopSpawned.IsOwnedByPlayer()) {
             spawnedTroopGridPosition = BattleGrid.Instance.TranslateOpponentGridPosition(spawnedTroopGridPosition);
         }
 
         troopSpawned.SetTroopGridPosition(spawnedTroopGridPosition);
-
         troopSpawned.PlaceTroop();
     }
 

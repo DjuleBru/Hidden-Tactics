@@ -16,10 +16,10 @@ public class Battlefield : MonoBehaviour
     }
 
     private void BattleManager_OnStateChanged(object sender, System.EventArgs e) {
-        if(BattleManager.Instance.IsBattlePhase()) {
+        if(BattleManager.Instance.IsBattlePhaseStarting()) {
             battlefieldAnimatorManager.SlamBattlefields();
         }
-        if(BattleManager.Instance.IsPreparationPhase()) {
+        if(BattleManager.Instance.IsBattlePhaseEnding()) {
             battlefieldAnimatorManager.SplitBattlefields();
         }
     }

@@ -11,6 +11,9 @@ public class GridObjectVisual : MonoBehaviour
     [SerializeField] TextMeshProUGUI troopDebugText;
     [SerializeField] TextMeshProUGUI unitDebugText;
 
+    [SerializeField] bool showDebugInfo;
+    [SerializeField] GameObject debugCanvas;
+
     [SerializeField] SpriteRenderer gridSprite;
 
     private Material cleanMaterial;
@@ -20,6 +23,10 @@ public class GridObjectVisual : MonoBehaviour
 
     private void Awake() {
         cleanMaterial = gridSprite.material;
+
+        if(!showDebugInfo) {
+            debugCanvas.SetActive(false);
+        }
     }
 
     public void SetGridObject(GridObject gridObject) {

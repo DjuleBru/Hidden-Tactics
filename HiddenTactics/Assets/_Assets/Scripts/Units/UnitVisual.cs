@@ -37,7 +37,6 @@ public class UnitVisual : MonoBehaviour
         unit.GetParentTroop().OnTroopPlaced += ParentTroop_OnTroopPlaced;
     }
 
-
     protected virtual void Unit_OnUnitUpgraded(object sender, System.EventArgs e) {
         bodySpriteRenderer.material = upgradedBodyMaterial;
 

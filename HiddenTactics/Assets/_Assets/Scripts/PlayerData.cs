@@ -8,6 +8,7 @@ using UnityEngine;
 public struct PlayerData : IEquatable<PlayerData>, INetworkSerializable {
 
     public ulong clientId;
+    public int truePlayerNumber;
     public int iconSpriteId;
     public FixedString64Bytes playerName;
     public FixedString64Bytes playerId;
@@ -21,6 +22,7 @@ public struct PlayerData : IEquatable<PlayerData>, INetworkSerializable {
 
     public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter {
         serializer.SerializeValue(ref clientId);
+        serializer.SerializeValue(ref truePlayerNumber);
         serializer.SerializeValue(ref iconSpriteId);
         serializer.SerializeValue(ref playerName);
         serializer.SerializeValue(ref playerId);

@@ -70,6 +70,10 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
             clientId = clientId,
         });
 
+        // Set True player number (1 or 2)
+        PlayerData playerData = GetPlayerDataFromClientId(clientId);
+        playerData.truePlayerNumber = playerDataNetworkList.Count;
+
         SetPlayerNameServerRpc(GetPlayerName());
         SetPlayerIdServerRpc(AuthenticationService.Instance.PlayerId);
     }

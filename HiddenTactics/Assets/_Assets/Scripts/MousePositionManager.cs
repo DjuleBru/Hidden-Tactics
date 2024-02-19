@@ -17,29 +17,45 @@ public class MousePositionManager : MonoBehaviour {
 
     private void Update() {
         //Debug.Log(GetMouseGridPosition());
+        HandleGridObjectHover();
+    }
+
+    private void HandleGridObjectHover() {
 
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit2D hit = Physics2D.GetRayIntersection(ray, Mathf.Infinity);
 
-        if (hit.collider != null)
-        {
+        if (hit.collider != null) {
             hit.collider.gameObject.TryGetComponent<GridObjectVisual>(out GridObjectVisual gridObjectVisual);
 
-            if(hoveredGridObjectVisual != null) {
-                if(hoveredGridObjectVisual == gridObjectVisual) {
+            if (gridObjectVisual != null) {
+                if (hoveredGridObjectVisual == null) {
+                    hoveredGridObjectVisual = gridObjectVisual;
                     return;
-                } else {
-                    hoveredGridObjectVisual.SetUnSelected();
+                }
 
+                if (hoveredGridObjectVisual == gridObjectVisual) {
+                    return;
+                }
+                else {
+                    hoveredGridObjectVisual.SetUnSelected();
                     hoveredGridObjectVisual = gridObjectVisual;
                     hoveredGridObjectVisual.SetSelected();
                 }
             } else {
-                hoveredGridObjectVisual = gridObjectVisual;
-                hoveredGridObjectVisual.SetSelected();
+                if(hoveredGridObjectVisual != null) {
+                    hoveredGridObjectVisual.SetUnSelected();
+                }
             }
 
         }
+        else {
+            if (hoveredGridObjectVisual != null) {
+                hoveredGridObjectVisual.SetUnSelected();
+                return;
+            }
+        }
+
     }
 
     public Vector3 GetMousePositionWorldPoint() {

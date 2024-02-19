@@ -10,15 +10,20 @@ public class BattleGrid : MonoBehaviour
 
     [SerializeField] Transform playerGridOrigin;
     [SerializeField] Transform opponentGridOrigin;
+
     [SerializeField] float interBattlefieldSpacing_Battle;
     [SerializeField] float interBattlefieldSpacing_Preparation;
 
     private GridSystem gridSystem;
 
+    [SerializeField] private int gridWidth;
+    [SerializeField] private int gridHeight;
+    [SerializeField] private int gridCellSize;
+
     private void Awake() {
         Instance = this;
 
-        gridSystem = new GridSystem(12, 5, 9, playerGridOrigin.position, interBattlefieldSpacing_Preparation);
+        gridSystem = new GridSystem(gridWidth, gridHeight, gridCellSize, playerGridOrigin.position, interBattlefieldSpacing_Preparation);
         gridSystem.CreateGridObjectVisuals(gridObjectVisualPrefab, playerGridOrigin, opponentGridOrigin);
     }
 
@@ -112,4 +117,11 @@ public class BattleGrid : MonoBehaviour
     public GridSystem GetGridSystem() {
         return gridSystem;
     }
+
+    public int GetGridWidth() {
+        return gridWidth;
+    }
+
+    public Transform GetPlayerGridOrigin() { return playerGridOrigin; }
+    public Transform GetOpponentGridOrigin() { return opponentGridOrigin; }
 }

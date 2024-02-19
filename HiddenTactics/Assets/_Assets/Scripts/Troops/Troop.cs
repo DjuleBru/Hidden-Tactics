@@ -11,6 +11,7 @@ public class Troop : NetworkBehaviour
 
     private bool isPlaced;
     private bool isOwnedByPlayer;
+
     private bool isVisibleToOpponent;
 
     [SerializeField] private TroopSO troopSO;
@@ -19,6 +20,8 @@ public class Troop : NetworkBehaviour
     private Unit[] unitsInTroop;
 
     private GridPosition currentGridPosition;
+    private Transform battlefieldOwner;
+    private Vector3 battlefieldOffset;
 
     private void Awake() {
         unitsInTroop = GetComponentsInChildren<Unit>();
@@ -30,12 +33,16 @@ public class Troop : NetworkBehaviour
 
     private void Update() {
         if(!isPlaced) {
-            HandlePositionOnGrid();
+            HandlePositioningOnGrid();
+            HandleTroopPositionDuringPlacement();
+        } else {
+            HandleTroopPosition();
         }
-        HandleTroopPlacement();
     }
 
-    public void HandlePositionOnGrid() {
+    public void HandlePositioningOnGrid() {
+        if (!isOwnedByPlayer) return;
+
         GridPosition newGridPosition = MousePositionManager.Instance.GetMouseGridPosition();
 
         // Grid position is not a valid position
@@ -55,13 +62,17 @@ public class Troop : NetworkBehaviour
         }
     }
 
-    private void HandleTroopPlacement() {
-        if(currentGridPosition == null) {
+    private void HandleTroopPositionDuringPlacement() {
+        if (currentGridPosition == null) {
+            if (!isOwnedByPlayer) return;
             transform.position = MousePositionManager.Instance.GetMousePositionWorldPoint() - troopCenterPoint.localPosition;
-            return;
+        } else {
+            transform.position = BattleGrid.Instance.GetWorldPosition(currentGridPosition) - troopCenterPoint.localPosition;
         }
+    }
 
-        transform.position = BattleGrid.Instance.GetWorldPosition(currentGridPosition) - troopCenterPoint.localPosition;
+    private void HandleTroopPosition() {
+        transform.position = battlefieldOwner.position + battlefieldOffset;
     }
 
     private void BattleManager_OnStateChanged(object sender, EventArgs e) {
@@ -85,13 +96,27 @@ public class Troop : NetworkBehaviour
     public void PlaceTroop() {
         OnTroopPlaced?.Invoke(this, null);
         currentGridPosition = BattleGrid.Instance.GetGridPosition(troopCenterPoint.position);
+
         isPlaced = true;
+
+        SetTroopBattlefieldParent(currentGridPosition);
     }
 
     public void SetTroopGridPosition(GridPosition troopGridPosition) {
         Vector3 troopWorldPosition = BattleGrid.Instance.GetWorldPosition(troopGridPosition);
 
+        currentGridPosition = troopGridPosition;
         transform.position = troopWorldPosition - troopCenterPoint.localPosition;
+    }
+
+    private void SetTroopBattlefieldParent(GridPosition troopGridPosition) {
+        if (troopGridPosition.x >= 6) {
+            battlefieldOwner = BattleGrid.Instance.GetOpponentGridOrigin();
+        }
+        else {
+            battlefieldOwner = BattleGrid.Instance.GetPlayerGridOrigin();
+        }
+        battlefieldOffset = transform.position - battlefieldOwner.position;
     }
 
     public GridPosition GetTroopGridPosition() {

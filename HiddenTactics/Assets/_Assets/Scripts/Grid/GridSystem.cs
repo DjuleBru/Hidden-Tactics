@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class GridSystem
 {
-    private int playerBattlefieldWidth = 6;
+    private int playerBattlefieldWidth;
 
     private int width;
     private int height;
@@ -23,6 +23,7 @@ public class GridSystem
         this.interBattlefieldSpacing = interBattlefieldSpacing;
         gridObjectArray = new GridObject[width, height];
         gridObjectVisualArray = new GridObjectVisual[width, height];
+        playerBattlefieldWidth = width/2;
 
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
@@ -59,6 +60,7 @@ public class GridSystem
             for (int y = 0; y < height; y++) {
                 GridPosition gridPosition = new GridPosition(x, y);
                 Transform visualTransform = GameObject.Instantiate(visualPrefab, GetWorldPosition(gridPosition) - new Vector3(cellSize / 2, cellSize / 2, 0), Quaternion.identity);
+                
                 if (x < width/2) {
                     visualTransform.SetParent(playerParentTransform);
                 } else {
@@ -130,5 +132,4 @@ public class GridSystem
     public void SetGridInterBattlefieldSpacing(float interBattlefieldSpacing) {
         this.interBattlefieldSpacing = interBattlefieldSpacing;
     }
-
 }
