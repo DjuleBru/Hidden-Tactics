@@ -28,8 +28,7 @@ public class PlayerAction_SpawnTroop : NetworkBehaviour {
     private void BattleManager_OnStateChanged(object sender, System.EventArgs e) {
         // Destroy troop to spawn 
         if (troopToSpawn != null) {
-            Destroy(troopToSpawn.gameObject);
-            troopToSpawn = null;
+            CancelTroopPlacement();
         };
 
         troopDictionaryInt = 0;
@@ -53,15 +52,15 @@ public class PlayerAction_SpawnTroop : NetworkBehaviour {
 
     public void SelectTroopToSpawn(int troopListSOIndex) {
         if (troopToSpawn != null) {
-            Destroy(troopToSpawn.gameObject);
-            troopToSpawn = null;
+            CancelTroopPlacement();
         };
 
         SpawnTroopServerRpc(troopListSOIndex, NetworkManager.Singleton.LocalClientId);
     }
 
     public bool IsValidTroopSpawningTarget() {
-        return true;
+        GridPosition troopSpawnGridPosition = MousePositionManager.Instance.GetMouseGridPosition();
+        return BattleGrid.Instance.IsValidPlayerGridPosition(troopSpawnGridPosition);
     }
 
     public void PlaceTroop() {
@@ -120,8 +119,10 @@ public class PlayerAction_SpawnTroop : NetworkBehaviour {
         troopSpawned.PlaceTroop();
     }
 
+
     public void CancelTroopPlacement() {
-        Destroy(troopToSpawn.gameObject);
+        NetworkObjectReference troopNetworkObjectReference = troopToSpawn.GetComponent<NetworkObject>();
+        HiddenTacticsMultiplayer.Instance.DestroyTroop(troopNetworkObjectReference);
         troopToSpawn = null;
     }
 

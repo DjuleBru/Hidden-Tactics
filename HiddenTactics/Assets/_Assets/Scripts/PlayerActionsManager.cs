@@ -33,6 +33,7 @@ public class PlayerActionsManager : NetworkBehaviour {
             }
             if (Input.GetMouseButtonDown(1)) {
                 // Cancel troop placement
+                PlayerAction_SpawnTroop.LocalInstance.CancelTroopPlacement();
                 currentAction = Action.Idle;
             }
         }

@@ -6,7 +6,11 @@ public class WaitingForOtherPlayersUI : MonoBehaviour
 {
     private void Start() {
         BattleManager.Instance.OnAllPlayersLoaded += BattleManager_OnAllPlayersLoaded;
-        Show();
+        Hide();
+
+        if (HiddenTacticsMultiplayer.Instance.IsMultiplayer()) {
+            Show();
+        }
     }
 
     private void BattleManager_OnAllPlayersLoaded(object sender, System.EventArgs e) {

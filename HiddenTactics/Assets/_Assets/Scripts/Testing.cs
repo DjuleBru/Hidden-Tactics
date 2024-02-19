@@ -31,7 +31,7 @@ public class Testing : MonoBehaviour
 
     bool walking;
 
-    BattlefieldAnimationManager battlefieldAnimationManager;
+    BattlefieldAnimationTesting battlefieldAnimationManager;
     Battlefield battlefieldParent;
 
     private void Start() {
@@ -46,7 +46,7 @@ public class Testing : MonoBehaviour
 
         unitSpeed = units[0].GetUnitSO().unitMoveSpeed;
 
-        BattlefieldAnimationManager.Instance.OnBattlefieldSlammed += Instance_OnBattlefieldSlammed;
+        BattlefieldAnimationTesting.Instance.OnBattlefieldSlammed += Instance_OnBattlefieldSlammed;
         battlefieldParent = GetComponentInParent<Battlefield>();
     }
 

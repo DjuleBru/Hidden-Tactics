@@ -197,6 +197,31 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
         playerDataNetworkList[playerDataIndex] = playerData;
     }
 
+
+    public void DestroyTroop(NetworkObjectReference troopNetworkObjectReference) {
+        DestroyTroopServerRpc(troopNetworkObjectReference);
+    }
+
+    [ServerRpc(RequireOwnership =false)]
+    private void DestroyTroopServerRpc(NetworkObjectReference troopNetworkObjectReference) {
+        troopNetworkObjectReference.TryGet(out NetworkObject troopNetworkObject);
+        RemoveTroopFromGridClientRpc(troopNetworkObjectReference);
+
+        Troop troop = troopNetworkObject.GetComponent<Troop>();
+
+
+        troop.DestroySelf();
+    }
+
+    [ClientRpc]
+    public void RemoveTroopFromGridClientRpc(NetworkObjectReference troopNetworkObjectReference) {
+        troopNetworkObjectReference.TryGet(out NetworkObject troopNetworkObject);
+        Troop troop = troopNetworkObject.GetComponent<Troop>();
+
+        GridPosition troopGridPosition = troop.GetTroopGridPosition();
+        BattleGrid.Instance.RemoveTroopAtGridPosition(troopGridPosition, troop);
+    }
+
     public bool IsMultiplayer() {
         return isMultiplayer;
     }

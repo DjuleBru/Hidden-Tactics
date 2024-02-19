@@ -6,21 +6,36 @@ public class BattleGrid : MonoBehaviour
 {
     public static BattleGrid Instance { get; private set;}
 
-    [SerializeField] Transform gridDebugObjectPrefab;
+    [SerializeField] Transform gridObjectVisualPrefab;
 
-    [SerializeField] Transform gridOrigin;
-    [SerializeField] float interBattlefieldSpacing;
+    [SerializeField] Transform playerGridOrigin;
+    [SerializeField] Transform opponentGridOrigin;
+    [SerializeField] float interBattlefieldSpacing_Battle;
+    [SerializeField] float interBattlefieldSpacing_Preparation;
+
     private GridSystem gridSystem;
 
     private void Awake() {
         Instance = this;
 
-        gridSystem = new GridSystem(10, 5, 9, gridOrigin.position, interBattlefieldSpacing);
-        gridSystem.CreateDebugObjects(gridDebugObjectPrefab, gridOrigin);
+        gridSystem = new GridSystem(12, 5, 9, playerGridOrigin.position, interBattlefieldSpacing_Preparation);
+        gridSystem.CreateGridObjectVisuals(gridObjectVisualPrefab, playerGridOrigin, opponentGridOrigin);
+    }
+
+    private void Start() {
+        BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
+    }
+
+    private void BattleManager_OnStateChanged(object sender, System.EventArgs e) {
+        if(BattleManager.Instance.IsBattlePhase()) {
+            gridSystem.SetGridInterBattlefieldSpacing(interBattlefieldSpacing_Battle);
+        } else {
+            gridSystem.SetGridInterBattlefieldSpacing(interBattlefieldSpacing_Preparation);
+        }
     }
 
     private void Update() {
-        gridSystem.SetGridOrigin(gridOrigin.position);
+        gridSystem.SetGridOrigin(playerGridOrigin.position);
     }
 
     public GridPosition GetGridPosition(Vector3 worldPosition) {
@@ -32,10 +47,9 @@ public class BattleGrid : MonoBehaviour
     }
 
     public GridPosition TranslateOpponentGridPosition(GridPosition gridPosition) {
-        Debug.Log("original grid position : " + gridPosition);
         GridPosition translatedGridPosition = gridPosition;
 
-        translatedGridPosition.x = 9 - gridPosition.x;
+        translatedGridPosition.x = 11 - gridPosition.x;
 
         return translatedGridPosition;
 
@@ -45,13 +59,14 @@ public class BattleGrid : MonoBehaviour
         return gridSystem.IsValidGridPosition(gridPosition);
     }
 
-    public bool IsValidTroopGridPositioning(GridPosition gridPosition) {
-        return gridSystem.IsValidTroopGridPositioning(gridPosition);
+    public bool IsValidPlayerGridPosition(GridPosition gridPosition) {
+        return gridSystem.IsValidPlayerGridPosition(gridPosition);
     }
 
     #region TROOP
     public void AddTroopAtGridPosition(GridPosition gridPosition, Troop troop) {
             GridObject gridObject = gridSystem.GetGridObject(gridPosition);
+
             gridObject.AddTroop(troop);
     }
 
@@ -62,6 +77,7 @@ public class BattleGrid : MonoBehaviour
 
     public void RemoveTroopAtGridPosition(GridPosition gridPosition, Troop troop) {
             GridObject gridObject = gridSystem.GetGridObject(gridPosition);
+
             gridObject.RemoveTroop(troop);
     }
     public void TroopMovedGridPosition(Troop troop, GridPosition fromGridPosition, GridPosition toGridPosition) {
@@ -93,4 +109,7 @@ public class BattleGrid : MonoBehaviour
     }
     #endregion
 
+    public GridSystem GetGridSystem() {
+        return gridSystem;
+    }
 }
