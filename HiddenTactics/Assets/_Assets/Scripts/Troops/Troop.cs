@@ -14,6 +14,7 @@ public class Troop : NetworkBehaviour
 
     private bool isVisibleToOpponent;
 
+    [SerializeField] private bool debugMode;
     [SerializeField] private TroopSO troopSO;
     [SerializeField] private Transform troopCenterPoint;
 
@@ -25,6 +26,13 @@ public class Troop : NetworkBehaviour
 
     private void Awake() {
         unitsInTroop = GetComponentsInChildren<Unit>();
+    }
+
+    private void Start() {
+        if (debugMode) {
+            PlaceTroop();
+            isOwnedByPlayer = false;
+        }
     }
 
     public override void OnNetworkSpawn() {

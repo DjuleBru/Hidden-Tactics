@@ -12,4 +12,32 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4bc7b5eb9df2cac4eae406c9d717c5aa, type: 3}
   m_Name: HumanGiant
   m_EditorClassIdentifier: 
-  unitMoveSpeed: 1
+  HP: 100
+  armor: 0
+  weight: 200
+  moveType: 0
+  unitMoveSpeed: 50
+  mainAttackTargets: 0000000002000000
+  mainAttackTargetTiles:
+  - {x: 0, y: 0}
+  mainAttackTargetingRange: 5
+  mainAttackDamage: 3
+  mainAttackRate: 4
+  mainAttackRange: 2
+  mainAttackKnockback: 200
+  mainAttackDazedTime: 1
+  mainAttackAOE: 2
+  mainAttackAnimationHitDelay: 0.4
+  mainAttackSpecial: 0
+  hasSideAttack: 0
+  sideAttackTargets: 
+  sideAttackTargetTiles: []
+  sideAttackTargetingRange: 0
+  sideAttackDamage: 0
+  sideAttackRate: 0
+  sideAttackRange: 0
+  sidettackKnockback: 0
+  sideAttackDazedTime: 0
+  sideAttackAOE: 0
+  sideAttackAnimationHitDelay: 0
+  sideAttackSpecial: 0

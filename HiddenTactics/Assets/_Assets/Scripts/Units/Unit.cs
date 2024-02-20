@@ -7,6 +7,15 @@ public class Unit : MonoBehaviour
 {
     public event EventHandler OnUnitUpgraded;
     public event EventHandler OnUnitSpawned;
+    public event EventHandler OnUnitPlaced;
+    public event EventHandler OnHealthChanged;
+    public event EventHandler OnUnitDied;
+    public event EventHandler OnUnitReset;
+    public event EventHandler<OnUnitDazedEventArgs> OnUnitDazed;
+
+    public class OnUnitDazedEventArgs : EventArgs {
+        public float dazedTime;
+    }
 
     [SerializeField] protected bool hasAttack;
     [SerializeField] protected bool hasSideAttack;
@@ -19,13 +28,26 @@ public class Unit : MonoBehaviour
     private GridPosition currentGridPosition;
     private Vector3 unitPositionInTroop;
 
+    private int unitHP;
+    private int unitArmor;
+
+    private Rigidbody2D rb;
+    private Collider2D collider2d;
+    private bool unitIsDead;
+
     protected virtual void Awake() {
         parentTroop = GetComponentInParent<Troop>();
+        collider2d = GetComponent<Collider2D>();
+        rb = GetComponent<Rigidbody2D>();
         unitPositionInTroop = transform.localPosition;
+
+        unitHP = unitSO.HP;
+        unitArmor = unitSO.armor;
     }
 
     protected virtual void Start() {
         BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
+        parentTroop.OnTroopPlaced += ParentTroop_OnTroopPlaced;
     }
 
     private void Update() {
@@ -53,12 +75,19 @@ public class Unit : MonoBehaviour
 
     private void BattleManager_OnStateChanged(object sender, EventArgs e) {
         if(BattleManager.Instance.IsBattlePhaseEnding()) {
-            ResetUnitPosition();
+            ResetUnit();
         }
     }
-
-    public virtual void ResetUnitPosition() {
+    private void ParentTroop_OnTroopPlaced(object sender, System.EventArgs e) {
+        OnUnitPlaced?.Invoke(this, EventArgs.Empty);
+    }
+    public virtual void ResetUnit() {
         transform.localPosition = unitPositionInTroop;
+        unitHP = unitSO.HP;
+        unitIsDead = false;
+
+        OnHealthChanged?.Invoke(this, EventArgs.Empty);
+        OnUnitReset?.Invoke(this, EventArgs.Empty);
     }
 
     public virtual void UpgradeUnit() {
@@ -67,6 +96,41 @@ public class Unit : MonoBehaviour
 
     public void SpawnUnit() {
         OnUnitSpawned?.Invoke(this, EventArgs.Empty);
+    }
+
+    public void TakeDamage(int damage) {
+        unitHP -= (damage - unitArmor);
+        OnHealthChanged?.Invoke(this, EventArgs.Empty);
+
+        if (unitHP < 0) {
+            OnUnitDied?.Invoke(this, EventArgs.Empty);
+            Die();
+        }
+    }
+
+    public void TakeKnockBack(float knockback, Vector3 damageSourcePosition) {
+        Vector2 incomingDamageDirection = new Vector2(transform.position.x - damageSourcePosition.x, transform.position.y - damageSourcePosition.y);
+        Vector2 force = incomingDamageDirection * knockback;
+        rb.AddForce(force);
+    }
+
+    public void TakeDazed(float dazedTime) {
+        OnUnitDazed?.Invoke(this, new OnUnitDazedEventArgs {
+            dazedTime = dazedTime
+        });
+    } 
+
+    private void Die() {
+        unitIsDead = true;
+        collider2d.enabled = false;
+    }
+
+    public bool GetUnitIsDead() {
+        return unitIsDead;
+    }
+
+    public float GetUnitHPNormalized() {
+        return (float)unitHP / (float)unitSO.HP;
     }
 
     public bool GetHasAttack()
@@ -95,5 +159,9 @@ public class Unit : MonoBehaviour
 
     public Troop GetParentTroop() {
         return parentTroop;
+    }
+
+    public GridPosition GetUnitCurrentGridPosition() {
+        return currentGridPosition;
     }
 }

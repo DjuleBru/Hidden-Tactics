@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 using UnityEngine;
 using static UCW;
 
@@ -7,49 +8,80 @@ public class UnitAnimatorManager : MonoBehaviour
 {
 
     protected Animator unitAnimator;
+    [SerializeField] protected Animator unitShaderAnimator;
     protected Unit unit;
     protected UnitAI unitAI;
+    protected UnitMovement unitMovement;
+    protected UnitAttack unitAttack;
 
     protected bool walking;
     protected bool idle;
+    protected bool dead;
+    protected bool unitAIStateHasChanged;
 
     protected float X;
     protected float Y;
 
-    protected virtual void Awake()
-    {
+    protected virtual void Awake() {
         unit = GetComponentInParent<Unit>();
         unitAI = GetComponentInParent<UnitAI>();
+        unitMovement = GetComponentInParent<UnitMovement>();
         unitAnimator = GetComponent<Animator>();
+        unitAttack = GetComponentInParent<UnitAttack>();
     }
 
-    protected virtual void Start()
-    {
+    protected virtual void Start() {
         // Randomize Idle animation starting frame
         float randomOffset = Random.Range(0f, 1f);
         unitAnimator.Play("Idle", 0, randomOffset);
         unitAnimator.SetBool("Idle", true);
 
+        unit.OnHealthChanged += Unit_OnHealthChanged;
+        unit.OnUnitReset += Unit_OnUnitReset;
         unitAI.OnStateChanged += UnitAI_OnStateChanged;
-        unit.GetParentTroop().OnTroopPlaced += UnitParentTroop_OnTroopPlaced;
+        unit.OnUnitPlaced += Unit_OnUnitPlaced;
+        unitAttack.OnUnitAttacked += UnitAttack_OnUnitAttacked;
     }
 
 
-
     protected virtual void Update() {
+        if (dead) {
+            if (unitAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime > .95) {
+                // Unit animator has finished playing die animation
+                unitAnimator.speed = 0;
+            }
+            return;
+        }
+
+        if (unitAIStateHasChanged) {
+            if(unitAnimator.GetCurrentAnimatorStateInfo(0).IsName("Idle") | unitAnimator.GetCurrentAnimatorStateInfo(0).IsName("Walk")) {
+                UpdateAnimatorParameters();
+            }
+            if (unitAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime > .95 && unitAnimator.GetCurrentAnimatorStateInfo(0).IsName("Attack")) {
+                // Unit animator has finished playing Attack animation
+                UpdateAnimatorParameters();
+            }
+        }
+
         if (walking) {
-            Vector2 moveDir = unitAI.GetMoveDir2D();
+            Vector2 moveDir = unitMovement.GetMoveDir2D();
             SetXY(moveDir.x, moveDir.y);
         }
     }
 
-    private void UnitParentTroop_OnTroopPlaced(object sender, System.EventArgs e) {
+    private void Unit_OnUnitReset(object sender, System.EventArgs e) {
+        dead = false;
+        unitAnimator.speed = 1;
+        UpdateAnimatorParameters();
+    }
+
+    private void Unit_OnUnitPlaced(object sender, System.EventArgs e) {
         SetUnitWatchDirection();
     }
 
     private void UnitAI_OnStateChanged(object sender, System.EventArgs e) {
         SetUnitWatchDirection();
-        UpdateAnimatorParameters();
+        unitAIStateHasChanged = true;
     }
 
     private void SetUnitWatchDirection() {
@@ -65,6 +97,14 @@ public class UnitAnimatorManager : MonoBehaviour
         Y = yValue;
         unitAnimator.SetFloat("X", xValue);
         unitAnimator.SetFloat("Y", yValue);
+    }
+
+    private void UnitAttack_OnUnitAttacked(object sender, System.EventArgs e) {
+        unitAnimator.SetTrigger("BaseAttack");
+    }
+
+    private void Unit_OnHealthChanged(object sender, System.EventArgs e) {
+        unitShaderAnimator.SetTrigger("Damaged");
     }
 
     public virtual void SetWalking()
@@ -89,25 +129,39 @@ public class UnitAnimatorManager : MonoBehaviour
     private void UpdateAnimatorParameters() {
         string animationName = "Walk";
 
-        if (unitAI.isWalking()) {
+        if (unitAI.IsWalking() | unitAI.IsMovingToTarget()) {
             walking = true;
             idle = false;
 
             animationName = "Walk";
+            float randomOffset = Random.Range(0f, 1f);
+            unitAnimator.Play(animationName, 0, randomOffset);
         }
-        if(unitAI.isIdle()) {
+        if(unitAI.IsIdle()) {
             walking = false;
             idle = true;
 
             animationName = "Idle";
+            float randomOffset = Random.Range(0f, 1f);
+            unitAnimator.Play(animationName, 0, randomOffset);
+        }
+
+        if(unitAI.IsDead()) {
+            unitAnimator.SetTrigger("Die");
+            dead = true;
+            walking = false;
+            idle = false;
+        }
+
+        if (unitAI.IsAttacking()) {
+            walking = false;
+            idle = true;
         }
 
         unitAnimator.SetBool("Walking", walking);
         unitAnimator.SetBool("Idle", idle);
 
-        float randomOffset = Random.Range(0f, 1f);
-        unitAnimator.Play(animationName, 0, randomOffset);
-
+        unitAIStateHasChanged = false;
     }
 
     public virtual void SetAttackTrigger()
