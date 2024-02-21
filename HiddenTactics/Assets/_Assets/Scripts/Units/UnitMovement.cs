@@ -1,9 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-public class UnitMovement : MonoBehaviour {
+public class UnitMovement : NetworkBehaviour {
 
     private Unit unit;
     private Rigidbody2D rb;
@@ -21,21 +22,34 @@ public class UnitMovement : MonoBehaviour {
     }
 
     public void MoveForwards() {
-        moveDir2D = new Vector2(moveDirMultiplier, 0);
-
-        Vector3 moveDir3D = new Vector3(moveDir2D.x, moveDir2D.y, 0);
-
-        rb.velocity = moveDir3D * unit.GetUnitSO().unitMoveSpeed * Time.fixedDeltaTime;
+        Vector3 moveDir3D = new Vector3(moveDirMultiplier, 0, 0);
+        MoveServerRpc(moveDir3D);
     }
 
     public void MoveToTarget(Vector3 targetPosition) {
         Vector3 moveDir3D = (targetPosition - transform.position).normalized;
-
-        rb.velocity = moveDir3D * unit.GetUnitSO().unitMoveSpeed * Time.fixedDeltaTime;
+        MoveServerRpc(moveDir3D);
     }
 
-    public float GetDistanceToTarget(Vector3 targetPosition) {
-        return Vector3.Distance(transform.position, targetPosition);
+
+    [ServerRpc]
+    private void MoveServerRpc(Vector3 moveDir3DNormalized) {
+        rb.velocity = moveDir3DNormalized * unit.GetUnitSO().unitMoveSpeed * Time.fixedDeltaTime;
+
+        MoveClientRpc(moveDir3DNormalized, transform.position);
+    }
+
+    [ClientRpc]
+    private void MoveClientRpc(Vector3 moveDir3DNormalized, Vector3 position) {
+
+        if (!IsServer) {
+            // Mirror movedir and x position 
+            moveDir3DNormalized.x = -moveDir3DNormalized.x;
+
+            transform.position = new Vector3(position.x + (BattleGrid.Instance.GetBattlefieldMiddlePoint() - position.x) * 2,position.y, 0);
+        }
+
+        moveDir2D = new Vector2(moveDir3DNormalized.x, moveDir3DNormalized.y);
     }
 
     public void StopMoving() {

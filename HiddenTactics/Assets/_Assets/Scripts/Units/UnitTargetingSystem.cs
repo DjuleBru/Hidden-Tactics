@@ -1,78 +1,83 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-public class UnitTargetingSystem : MonoBehaviour
+public class UnitTargetingSystem : NetworkBehaviour
 {
 
     private Unit unit;
     private List<GridPosition> gridPositionAttackTargetList;
-    private List<Unit> meleeTargetUnitList = new List<Unit>();
+    private List<Unit> targetUnitList = new List<Unit>();
 
     private float meleeAttackTargetingRange;
     private float meleeAttackRange;
 
-    private Unit meleeTargetUnit;
+    private Unit targetUnit;
     private float distanceToClosestTargetUnit;
     private bool meleeTargetUnitIsInRange;
 
-    private float targetingRate = .2f;
+    private float targetingRate = .05f;
     private float targetingTimer;
 
     private void Awake() {
         unit = GetComponent<Unit>();
-        meleeAttackTargetingRange = unit.GetUnitSO().mainAttackTargetingRange;
-        meleeAttackRange = unit.GetUnitSO().mainAttackRange;
+        meleeAttackTargetingRange = unit.GetUnitSO().mainAttackSO.attackDamage;
+        meleeAttackRange = unit.GetUnitSO().mainAttackSO.attackDamage;
     }
 
     private void Start() {
         FillGridPositionMainAttackTargetList();
     }
 
+
     private void Update() {
         targetingTimer -= Time.deltaTime;
 
         if(targetingTimer < 0) {
             targetingTimer = targetingRate;
-            FindMeleeAttackTargets();
+            FindAttackTargets();
 
-            if(meleeTargetUnitList.Count > 0) {
+            if(targetUnitList.Count > 0) {
                 // There are potential targets within targeting range
-                FindClosestMeleeAttackTarget();
+                FindClosestAttackTarget();
             } else {
-                meleeTargetUnit = null;
+                targetUnit = null;
             }
         }
     }
 
-    private void FindMeleeAttackTargets() {
-        meleeTargetUnitList.Clear();
+    private void FindAttackTargets() {
+        targetUnitList.Clear();
+
+
         Collider2D[] colliderArray = Physics2D.OverlapCircleAll(transform.position, meleeAttackTargetingRange);
 
         foreach(Collider2D collider in colliderArray) {
             if(collider.TryGetComponent<Unit>(out Unit unit)) {
                 // Collider is a unit
 
-                if(unit.GetParentTroop().IsOwnedByPlayer() != this.unit.GetParentTroop().IsOwnedByPlayer() && !unit.GetUnitIsDead()) {
+                if(unit.GetParentTroop().IsOwnedByPlayer() != this.unit.GetParentTroop().IsOwnedByPlayer() && !unit.UnitIsDead()) {
                     // target unit is not from the same team AND Unit is not dead
 
                     if(unit.GetUnitCurrentGridPosition().y == this.unit.GetUnitCurrentGridPosition().y) {
                         // target unit is on the same row as this unit
-                        meleeTargetUnitList.Add(unit);
+                        targetUnitList.Add(unit);
                     }
                 }
             };
         }
+
     }
 
-    private void FindClosestMeleeAttackTarget() {
+    private void FindClosestAttackTarget() {
         float distanceToClosestTargetUnit = float.MaxValue;
 
-        foreach(Unit targetUnit in meleeTargetUnitList) {
+        foreach(Unit targetUnit in targetUnitList) {
             float distanceToMeleeTargetUnit = Vector3.Distance(transform.position, targetUnit.transform.position);
             if(distanceToMeleeTargetUnit < distanceToClosestTargetUnit) {
                 distanceToClosestTargetUnit = distanceToMeleeTargetUnit;
-                meleeTargetUnit = targetUnit;
+                this.targetUnit = targetUnit;
 
                 if(distanceToClosestTargetUnit < meleeAttackRange) {
                     meleeTargetUnitIsInRange = true;
@@ -88,17 +93,17 @@ public class UnitTargetingSystem : MonoBehaviour
     public void FillGridPositionMainAttackTargetList() {
         gridPositionAttackTargetList = new List<GridPosition>();
 
-        foreach (Vector2 mainAttackTargetTiles in unit.GetUnitSO().mainAttackTargetTiles) {
+        foreach (Vector2 mainAttackTargetTiles in unit.GetUnitSO().mainAttackSO.attackTargetTiles) {
             gridPositionAttackTargetList.Add(new GridPosition((int)mainAttackTargetTiles.x, (int)mainAttackTargetTiles.y));
         }
     }
 
     public List<Unit> GetUnitMeleeTargets() {
-        return meleeTargetUnitList;
+        return targetUnitList;
     }
 
     public Unit GetMeleeTargetUnit() {
-        return meleeTargetUnit; 
+        return targetUnit; 
     }
 
     public float GetClosestTargetDistance() {

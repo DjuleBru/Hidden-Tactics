@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
-public class Troop : NetworkBehaviour
+public class Troop : MonoBehaviour
 {
     public event EventHandler OnTroopPlaced;
     private ulong ownerClientId;
@@ -20,6 +20,9 @@ public class Troop : NetworkBehaviour
 
     private Unit[] unitsInTroop;
 
+    [SerializeField] private List<Transform> baseUnitPositions = new List<Transform>();
+    [SerializeField] private List<Transform> additionalUnitPositions = new List<Transform>();
+
     private GridPosition currentGridPosition;
     private Transform battlefieldOwner;
     private Vector3 battlefieldOffset;
@@ -31,12 +34,15 @@ public class Troop : NetworkBehaviour
     private void Start() {
         if (debugMode) {
             PlaceTroop();
+            foreach(Unit unit in unitsInTroop) {
+                //Set Parent Troop
+                unit.SetParentTroop(this);
+
+                //Set Unit Local Position
+                unit.SetPosition(unit.transform.position);
+            }
             isOwnedByPlayer = false;
         }
-    }
-
-    public override void OnNetworkSpawn() {
-        //BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
     }
 
     private void Update() {
@@ -131,6 +137,10 @@ public class Troop : NetworkBehaviour
         return currentGridPosition;
     }
 
+    public Vector3 GetTroopCenterPoint() {
+        return troopCenterPoint.position;
+    }
+
     public bool IsOwnedByPlayer() {
         return isOwnedByPlayer;
     }
@@ -143,5 +153,11 @@ public class Troop : NetworkBehaviour
         Destroy(gameObject);
     }
 
+    public List<Transform> GetBaseUnitPositions() {
+        return baseUnitPositions;
+    }
 
+    public List<Transform> GetAdditionalUnitPositions() {
+        return additionalUnitPositions;
+    }
 }

@@ -5,4 +5,5 @@ using UnityEngine;
 [CreateAssetMenu()]
 public class TroopSO : ScriptableObject {
     public GameObject troopPrefab;
+    public GameObject unitPrefab;
 }

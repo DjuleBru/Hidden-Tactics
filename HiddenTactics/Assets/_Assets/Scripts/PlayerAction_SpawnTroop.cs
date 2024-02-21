@@ -77,13 +77,21 @@ public class PlayerAction_SpawnTroop : NetworkBehaviour {
     private void SpawnTroopServerRpc(int troopSOIndex, ulong ownerClientId) {
 
         TroopSO troopToSpawnSO = BattleDataManager.Instance.GetTroopSOFromIndex(troopSOIndex);
-
         GameObject troopToSpawnGameObject = Instantiate(troopToSpawnSO.troopPrefab);
 
         NetworkObject troopNetworkObject = troopToSpawnGameObject.GetComponent<NetworkObject>();
         troopNetworkObject.Spawn(true);
 
         SpawnTroopClientRpc(troopNetworkObject, ownerClientId);
+
+        // Spawn units
+        Troop troopToSpawnTroop = troopToSpawnGameObject.GetComponent<Troop>();
+        List<Transform> unitsToSpawnBasePositions = troopToSpawnTroop.GetBaseUnitPositions();
+        List<Transform> unitsToSpawnAdditionalPositions = troopToSpawnTroop.GetAdditionalUnitPositions();
+
+        SpawnUnits(troopToSpawnGameObject, unitsToSpawnBasePositions, false);
+        SpawnUnits(troopToSpawnGameObject, unitsToSpawnAdditionalPositions, true);
+
     }
 
     [ClientRpc]
@@ -98,6 +106,51 @@ public class PlayerAction_SpawnTroop : NetworkBehaviour {
         troopToSpawn.SetTroopOwnerClientId(ownerClientId);
     }
 
+    private List<NetworkObject> SpawnUnits(NetworkObjectReference troopToSpawnNetworkObjectReference, List<Transform> unitsToSpawnPositionList, bool isAdditionalUnits) {
+        troopToSpawnNetworkObjectReference.TryGet(out NetworkObject troopToSpawnNetworkObject);
+        Troop troopToSpawnTroop = troopToSpawnNetworkObject.GetComponent<Troop>();
+        GameObject troopToSpawnGameObject = troopToSpawnTroop.gameObject;
+        TroopSO troopToSpawnSO = troopToSpawnTroop.GetTroopSO();
+
+        List<NetworkObject> unitsSpawnedNetworkObjectList = new List<NetworkObject>();
+
+        foreach (Transform unitPositionTransform in unitsToSpawnPositionList) {
+
+            GameObject unitToSpawnPrefab = Instantiate(troopToSpawnSO.unitPrefab);
+            NetworkObject unitNetworkObject = unitToSpawnPrefab.GetComponent<NetworkObject>();
+            unitNetworkObject.Spawn(true);
+            unitNetworkObject.TrySetParent(troopToSpawnGameObject, true);
+            //unitNetworkObject.transform.position = unitPositionTransform.position;
+
+            Unit unitSpawned = unitNetworkObject.GetComponent<Unit>();
+
+            SetUnitInitialConditionsClientRpc(unitNetworkObject, troopToSpawnNetworkObject, unitPositionTransform.position, isAdditionalUnits);
+
+            unitsSpawnedNetworkObjectList.Add(unitNetworkObject);
+        }
+
+        return unitsSpawnedNetworkObjectList;
+    }
+
+    [ClientRpc]
+    private void SetUnitInitialConditionsClientRpc(NetworkObjectReference unitToSpawnNetworkObjectReference, NetworkObjectReference troopSpawnedNetworkObjectReference, Vector3 unitPosition, bool isAdditionalUnit) {
+        unitToSpawnNetworkObjectReference.TryGet(out NetworkObject unitSpawnedNetworkObject);
+        Unit unitSpawned = unitSpawnedNetworkObject.GetComponent<Unit>();
+
+        troopSpawnedNetworkObjectReference.TryGet(out NetworkObject troopToSpawnNetworkObject);
+        Troop troopToSpawnTroop = troopToSpawnNetworkObject.GetComponent<Troop>();
+
+        //Set Parent Troop
+        unitSpawned.SetParentTroop(troopToSpawnTroop);
+
+        //Set Unit Local Position
+        unitSpawned.SetPosition(unitPosition);
+
+        //Set Parent As addional Unit
+        if (isAdditionalUnit) {
+            unitSpawned.SetUnitAsAdditionalUnit();
+        }
+    }
 
     [ServerRpc(RequireOwnership = false)]
     private void SetTroopPositionServerRpc(NetworkObjectReference troopNetworkObjectReference, int gridPositionx, int gridPositiony) {
@@ -118,7 +171,6 @@ public class PlayerAction_SpawnTroop : NetworkBehaviour {
         troopSpawned.SetTroopGridPosition(spawnedTroopGridPosition);
         troopSpawned.PlaceTroop();
     }
-
 
     public void CancelTroopPlacement() {
         NetworkObjectReference troopNetworkObjectReference = troopToSpawn.GetComponent<NetworkObject>();

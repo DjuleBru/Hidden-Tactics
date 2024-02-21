@@ -1,14 +1,17 @@
 using Sirenix.OdinInspector;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-public class UnitVisual : MonoBehaviour
+public class UnitVisual : NetworkBehaviour
 {
     [SerializeField] protected Unit unit;
     [SerializeField] protected SpriteRenderer bodySpriteRenderer;
+    [SerializeField] protected GameObject shadowGameObject;
 
     [SerializeField] protected Material cleanMaterial;
+    [SerializeField] protected Material invisibleMaterial;
     [SerializeField] protected Material placingUnitMaterial;
 
     [FoldoutGroup("Visual Components")]
@@ -19,7 +22,6 @@ public class UnitVisual : MonoBehaviour
     [SerializeField] protected Material upgradedBodyMaterial;
     [FoldoutGroup("Upgrade visual attributes")]
     [SerializeField] protected bool upgradeReplacesBody;
-
 
     [FoldoutGroup("Upgrade visual attributes"), ShowIf("upgradeReplacesBody"), ShowIf("upgradeReplacesBody")]
     [SerializeField] protected AnimatorOverrideController upgradedBodyAnimator;
@@ -32,12 +34,14 @@ public class UnitVisual : MonoBehaviour
         bodySpriteRenderer.material = placingUnitMaterial;
     }
 
-    protected virtual void Start() {
+    public override void OnNetworkSpawn() {
         unit.OnUnitUpgraded += Unit_OnUnitUpgraded;
         unit.OnUnitPlaced += Unit_OnUnitPlaced;
+        unit.OnUnitSetAsAdditionalUnit += Unit_OnUnitSetAsAdditionalUnit;
     }
 
     protected virtual void Unit_OnUnitUpgraded(object sender, System.EventArgs e) {
+        if (!unit.UnitIsBought()) return;
         bodySpriteRenderer.material = upgradedBodyMaterial;
 
         if (upgradeReplacesBody)
@@ -48,8 +52,13 @@ public class UnitVisual : MonoBehaviour
     }
 
     private void Unit_OnUnitPlaced(object sender, System.EventArgs e) {
-         bodySpriteRenderer.material = cleanMaterial;
+        if (!unit.UnitIsBought()) return;
+        bodySpriteRenderer.material = cleanMaterial;
     }
 
+    private void Unit_OnUnitSetAsAdditionalUnit(object sender, System.EventArgs e) {
+        bodySpriteRenderer.material = invisibleMaterial;
+        shadowGameObject.SetActive(false);
+    }
 
 }

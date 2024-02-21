@@ -1,9 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-public class UnitAI : MonoBehaviour
+public class UnitAI : NetworkBehaviour
 {
     private Unit unit;
     private UnitMovement unitMovement;
@@ -11,6 +12,7 @@ public class UnitAI : MonoBehaviour
     private UnitAttack unitAttack;
 
     private bool unitActive;
+
     public enum State {
         idle,
         moveForwards,
@@ -19,7 +21,7 @@ public class UnitAI : MonoBehaviour
         dead,
     }
 
-    private State state;
+    private NetworkVariable<State> state = new NetworkVariable<State>(State.idle);
     public event EventHandler OnStateChanged;
 
     private void Awake() {
@@ -27,21 +29,24 @@ public class UnitAI : MonoBehaviour
         unitMovement = GetComponent<UnitMovement>();
         unitTargetingSystem = GetComponent<UnitTargetingSystem>();
         unitAttack = GetComponent<UnitAttack>();
-
-        state = State.idle;
     }
 
-    private void Start() {
-        BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
+    public override void OnNetworkSpawn() {
+        state.OnValueChanged += State_OnValueChanged;
 
         unit.OnUnitDied += Unit_OnUnitDied;
         unit.OnUnitDazed += Unit_OnUnitDazed;
+
+        BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
     }
 
     private void Update() {
-        if (!unitActive) return;
+        if (!IsServer) return;
+        // AI runs only on server
 
-        switch(state) {
+        if (!unitActive | !unit.UnitIsBought()) return;
+
+        switch(state.Value) {
             case State.idle:
                 break; 
             case State.moveForwards:
@@ -76,23 +81,40 @@ public class UnitAI : MonoBehaviour
     }
 
     private void FixedUpdate() {
-        if (!unitActive) return;
+        if (!IsServer) return;
+        // AI runs only on server
 
-        if (state == State.moveForwards) {
+        if (!unitActive | !unit.UnitIsBought()) return;
+
+        if (state.Value == State.moveForwards) {
             unitMovement.MoveForwards();
         }
-        if(state == State.moveToTarget) {
+        if(state.Value == State.moveToTarget) {
             unitMovement.MoveToTarget(unitTargetingSystem.GetMeleeTargetUnit().transform.position);
 
-            if(unitTargetingSystem.GetClosestTargetDistance() < unit.GetUnitSO().mainAttackRange) {
+            if(unitTargetingSystem.GetClosestTargetDistance() < unit.GetUnitSO().mainAttackSO.attackDamage) {
                 unitMovement.StopMoving();
                 unitAttack.SetAttackTarget(unitTargetingSystem.GetMeleeTargetUnit());
                 ChangeState(State.attacking);
             }
         }
     }
+    private void State_OnValueChanged(State previousValue, State newValue) {
+        ChangeStateServerRpc();
+    }
+
+    [ServerRpc(RequireOwnership =false)]
+    private void ChangeStateServerRpc() {
+        ChangeStateClientRpc();
+    }
+
+    [ClientRpc] 
+    private void ChangeStateClientRpc() {
+        OnStateChanged?.Invoke(this, EventArgs.Empty);
+    }
 
     private void BattleManager_OnStateChanged(object sender, System.EventArgs e) {
+        if (!IsServer) return; 
         unitActive = BattleManager.Instance.IsBattlePhase();
         if(unitActive) {
             ChangeState(State.moveForwards);
@@ -104,10 +126,12 @@ public class UnitAI : MonoBehaviour
 
 
     private void Unit_OnUnitDazed(object sender, Unit.OnUnitDazedEventArgs e) {
+        if (!IsServer) return;
         StartCoroutine(TakeDazed(e.dazedTime));
     }
 
     private void Unit_OnUnitDied(object sender, EventArgs e) {
+        if (!IsServer) return;
         ChangeState(State.dead);
     }
 
@@ -115,16 +139,16 @@ public class UnitAI : MonoBehaviour
         unitActive = false;
 
         yield return new WaitForSeconds(dazedTime);
-        if(!unit.GetUnitIsDead()) {
-            // Unit is still alive
+
+        if(!unit.UnitIsDead() & BattleManager.Instance.IsBattlePhase()) {
+            // Unit is still alive and it is still battle phase
             unitActive = true;
             ChangeState(State.moveForwards);
         }
     }
 
     private void ChangeState(State newState) {
-        state = newState;
-        OnStateChanged?.Invoke(this, EventArgs.Empty);
+        state.Value = newState;
     }
 
     public void SetUnitActive(bool active) {
@@ -132,23 +156,22 @@ public class UnitAI : MonoBehaviour
     }
 
     public bool IsWalking() {
-        return state == State.moveForwards;
+        return state.Value == State.moveForwards;
     }
 
     public bool IsIdle() {
-        return state == State.idle;
+        return state.Value == State.idle;
     }
 
     public bool IsDead() {
-        return state == State.dead;
+        return state.Value == State.dead;
     }
 
     public bool IsAttacking() {
-        return state == State.attacking;
+        return state.Value == State.attacking;
     }
 
     public bool IsMovingToTarget() {
-        return state == State.moveToTarget;
+        return state.Value == State.moveToTarget;
     }
-
 }

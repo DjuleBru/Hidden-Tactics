@@ -25,33 +25,11 @@ public class UnitSO : ScriptableObject {
 
     public int HP;
     public int armor;
-    public float weight;
+    public float mass;
     public unitType moveType;
     public float unitMoveSpeed;
 
-    public List<unitType> mainAttackTargets;
-    public List<Vector2> mainAttackTargetTiles;
-    public float mainAttackTargetingRange;
-    public int mainAttackDamage;
-    public float mainAttackRate;
-    public float mainAttackRange;
-    public float mainAttackKnockback;
-    public float mainAttackDazedTime;
-    public float mainAttackAOE;
-    public float mainAttackAnimationHitDelay;
-    public UnitAttackSpecial mainAttackSpecial;
-
-    public bool hasSideAttack;
-    public List<unitType> sideAttackTargets;
-    public List<Vector2> sideAttackTargetTiles;
-    public float sideAttackTargetingRange;
-    public int sideAttackDamage;
-    public float sideAttackRate;
-    public float sideAttackRange;
-    public float sidettackKnockback;
-    public float sideAttackDazedTime;
-    public float sideAttackAOE;
-    public float sideAttackAnimationHitDelay;
-    public UnitAttackSpecial sideAttackSpecial;
-
+    public AttackSO mainAttackSO;
+    public AttackSO sideAttackSO;
+    public AttackSO specialAttackSO;
 }

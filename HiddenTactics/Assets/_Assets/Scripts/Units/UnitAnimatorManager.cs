@@ -40,7 +40,7 @@ public class UnitAnimatorManager : MonoBehaviour
         unit.OnUnitReset += Unit_OnUnitReset;
         unitAI.OnStateChanged += UnitAI_OnStateChanged;
         unit.OnUnitPlaced += Unit_OnUnitPlaced;
-        unitAttack.OnUnitAttacked += UnitAttack_OnUnitAttacked;
+        unitAttack.OnUnitAttack += UnitAttack_OnUnitAttacked;
     }
 
 
@@ -72,7 +72,7 @@ public class UnitAnimatorManager : MonoBehaviour
     private void Unit_OnUnitReset(object sender, System.EventArgs e) {
         dead = false;
         unitAnimator.speed = 1;
-        UpdateAnimatorParameters();
+        ResetAnimatorParameters();
     }
 
     private void Unit_OnUnitPlaced(object sender, System.EventArgs e) {
@@ -80,7 +80,16 @@ public class UnitAnimatorManager : MonoBehaviour
     }
 
     private void UnitAI_OnStateChanged(object sender, System.EventArgs e) {
-        SetUnitWatchDirection();
+        if (unitAI.IsDead()) {
+            UpdateAnimatorParameters();
+            return;
+        }
+
+        if (unitAI.IsIdle()) {
+            SetUnitWatchDirection();
+        }
+
+        // Using this bool to let attack&special animations finish (see update)
         unitAIStateHasChanged = true;
     }
 
@@ -95,16 +104,34 @@ public class UnitAnimatorManager : MonoBehaviour
     public void SetXY(float xValue, float yValue) {
         X = xValue;
         Y = yValue;
-        unitAnimator.SetFloat("X", xValue);
-        unitAnimator.SetFloat("Y", yValue);
+
+        if(yValue <= 0) {
+            // Always set y to -1 when <= 0
+            Y = -1;
+        } else {
+            Y = 1;
+        }
+
+        if (xValue <= 0) {
+            // Always set y to -1 when <= 0
+            X = -1;
+        }
+        else {
+            X = 1;
+        }
+
+        unitAnimator.SetFloat("X", X);
+        unitAnimator.SetFloat("Y", Y);
     }
 
     private void UnitAttack_OnUnitAttacked(object sender, System.EventArgs e) {
         unitAnimator.SetTrigger("BaseAttack");
     }
 
-    private void Unit_OnHealthChanged(object sender, System.EventArgs e) {
-        unitShaderAnimator.SetTrigger("Damaged");
+    private void Unit_OnHealthChanged(object sender, Unit.OnHealthChangedEventArgs e) {
+        if(e.newHealth < e.previousHealth) {
+            unitShaderAnimator.SetTrigger("Damaged");
+        }
     }
 
     public virtual void SetWalking()
@@ -162,6 +189,16 @@ public class UnitAnimatorManager : MonoBehaviour
         unitAnimator.SetBool("Idle", idle);
 
         unitAIStateHasChanged = false;
+    }
+
+    private void ResetAnimatorParameters() {
+        walking = false;
+        idle = true;
+        float randomOffset = Random.Range(0f, 1f);
+        unitAnimator.Play("Idle", 0, randomOffset);
+
+        unitAnimator.SetBool("Walking", walking);
+        unitAnimator.SetBool("Idle", idle);
     }
 
     public virtual void SetAttackTrigger()

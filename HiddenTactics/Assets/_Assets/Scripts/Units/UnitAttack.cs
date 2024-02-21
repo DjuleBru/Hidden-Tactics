@@ -1,11 +1,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-public class UnitAttack : MonoBehaviour
+public class UnitAttack : NetworkBehaviour
 {
-    public event EventHandler OnUnitAttacked;
+    public event EventHandler OnUnitAttack;
 
     private Unit unit;
     private UnitAI unitAI;
@@ -27,15 +28,17 @@ public class UnitAttack : MonoBehaviour
     }
 
     private void Start() {
+        attackDamage = unit.GetUnitSO().mainAttackSO.attackDamage;
+        attackRate = unit.GetUnitSO().mainAttackSO.attackRate;
+        attackKnockback = unit.GetUnitSO().mainAttackSO.attackDamage;
+        attackDazedTime = unit.GetUnitSO().mainAttackSO.attackDamage;
+        attackAnimationHitDelay = unit.GetUnitSO().mainAttackSO.attackDamage;
+        attackAOE = unit.GetUnitSO().mainAttackSO.attackDamage;
+    }
+
+    public override void OnNetworkSpawn() {
         unitAI.OnStateChanged += UnitAI_OnStateChanged;
         unit.OnUnitDazed += Unit_OnUnitDazed;
-
-        attackDamage = unit.GetUnitSO().mainAttackDamage;
-        attackRate = unit.GetUnitSO().mainAttackRate;
-        attackKnockback = unit.GetUnitSO().mainAttackKnockback;
-        attackDazedTime = unit.GetUnitSO().mainAttackDazedTime;
-        attackAnimationHitDelay = unit.GetUnitSO().mainAttackAnimationHitDelay;
-        attackAOE = unit.GetUnitSO().mainAttackAOE;
     }
 
     private void Update() {
@@ -49,11 +52,13 @@ public class UnitAttack : MonoBehaviour
     }
 
     private IEnumerator Attack(Unit targetUnit) {
-        OnUnitAttacked?.Invoke(this, EventArgs.Empty);
+        OnUnitAttack?.Invoke(this, EventArgs.Empty);
+
+        if (!IsServer) yield break;
 
         yield return new WaitForSeconds(attackAnimationHitDelay);
 
-        if(!unit.GetUnitIsDead() && !targetUnit.GetUnitIsDead()) {
+        if(!unit.UnitIsDead() && !targetUnit.UnitIsDead()) {
             // Unit is still alive on attack animation hit and target unit is still alive
 
             PerformAllAttackActions(targetUnit);
@@ -69,7 +74,11 @@ public class UnitAttack : MonoBehaviour
     private void PerformAllAttackActions(Unit targetUnit) {
         targetUnit.TakeDamage(attackDamage);
         if (attackKnockback != 0) {
-            targetUnit.TakeKnockBack(attackKnockback, transform.position);
+
+            Vector2 incomingDamageDirection = new Vector2(targetUnit.transform.position.x - transform.position.x, targetUnit.transform.position.y - transform.position.y);
+            Vector2 force = incomingDamageDirection * attackKnockback;
+
+            targetUnit.TakeKnockBack(force);
         }
         if (attackDazedTime != 0) {
             targetUnit.TakeDazed(attackDazedTime);
@@ -85,7 +94,7 @@ public class UnitAttack : MonoBehaviour
             if (collider.TryGetComponent<Unit>(out Unit unit)) {
                 // Collider is a unit
 
-                if (unit.GetParentTroop().IsOwnedByPlayer() != this.unit.GetParentTroop().IsOwnedByPlayer() && !unit.GetUnitIsDead()) {
+                if (unit.GetParentTroop().IsOwnedByPlayer() != this.unit.GetParentTroop().IsOwnedByPlayer() && !unit.UnitIsDead()) {
                     // target unit is not from the same team AND Unit is not dead
                     AOETargetUnitList.Add(unit);
                 }
@@ -96,6 +105,7 @@ public class UnitAttack : MonoBehaviour
     }
 
     private void Unit_OnUnitDazed(object sender, Unit.OnUnitDazedEventArgs e) {
+        if (!IsServer) return;
         attacking = false;
     }
 

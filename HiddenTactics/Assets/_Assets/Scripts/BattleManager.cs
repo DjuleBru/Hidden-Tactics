@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Unity.Netcode;
 using System;
+using QFSW;
+using QFSW.QC;
 
 public class BattleManager : NetworkBehaviour
 {
@@ -128,8 +130,16 @@ public class BattleManager : NetworkBehaviour
         state.Value = State.PreparationPhase;
     }
 
-    private void SetBattlePhase() {
+    [Command]
+    public void SetBattlePhase() {
         state.Value = State.BattlePhase;
+        OnStateChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    [Command]
+    public void SetPreparationPhase() {
+        state.Value = State.PreparationPhase;
+        OnStateChanged?.Invoke(this, EventArgs.Empty);
     }
 
     private void State_OnValueChanged(State previousValue, State newValue) {

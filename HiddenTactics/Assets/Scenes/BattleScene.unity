@@ -216,7 +216,7 @@ Transform:
   - {fileID: 583486947}
   - {fileID: 1888199023}
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &26268816
 MonoBehaviour:
@@ -907,7 +907,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   battleFieldAnimatorControllingPhases: {fileID: 255521820}
   preparationPhaseMaxTime: 100
-  battlePhaseMaxTime: 30
+  battlePhaseMaxTime: 45
   battlePhaseActivationDelay: 1
   playerPrefab: {fileID: 572219078208112512, guid: 8b3c85c0431ea024fbcb4c084a5b23bd, type: 3}
 --- !u!4 &156376281
@@ -4178,7 +4178,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4845161671150009267, guid: 2da3dcc22749e7f4280737786d898334, type: 3}
       propertyPath: m_RootOrder
-      value: 7
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 4845161671150009267, guid: 2da3dcc22749e7f4280737786d898334, type: 3}
       propertyPath: m_AnchorMax.x
@@ -6017,7 +6017,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 572219078208112512, guid: 8b3c85c0431ea024fbcb4c084a5b23bd, type: 3}
       propertyPath: m_RootOrder
-      value: 11
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 572219078208112512, guid: 8b3c85c0431ea024fbcb4c084a5b23bd, type: 3}
       propertyPath: m_AnchorMax.x
@@ -7690,7 +7690,7 @@ RectTransform:
   - {fileID: 224569178}
   - {fileID: 1390796579}
   m_Father: {fileID: 0}
-  m_RootOrder: 10
+  m_RootOrder: 11
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}

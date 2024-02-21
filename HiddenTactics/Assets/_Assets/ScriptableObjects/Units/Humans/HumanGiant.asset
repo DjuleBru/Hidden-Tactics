@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   HP: 100
   armor: 0
-  weight: 200
+  mass: 300
   moveType: 0
   unitMoveSpeed: 50
   mainAttackTargets: 0000000002000000
@@ -24,7 +24,7 @@ MonoBehaviour:
   mainAttackDamage: 3
   mainAttackRate: 4
   mainAttackRange: 2
-  mainAttackKnockback: 200
+  mainAttackKnockback: 10000
   mainAttackDazedTime: 1
   mainAttackAOE: 2
   mainAttackAnimationHitDelay: 0.4

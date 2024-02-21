@@ -122,6 +122,10 @@ public class BattleGrid : MonoBehaviour
         return gridWidth;
     }
 
+    public float GetBattlefieldMiddlePoint() {
+        return playerGridOrigin.position.x + (opponentGridOrigin.position.x - playerGridOrigin.position.x) / 2;
+    }
+
     public Transform GetPlayerGridOrigin() { return playerGridOrigin; }
     public Transform GetOpponentGridOrigin() { return opponentGridOrigin; }
 }

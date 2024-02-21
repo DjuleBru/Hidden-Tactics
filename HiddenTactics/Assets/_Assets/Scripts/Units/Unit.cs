@@ -1,20 +1,28 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-public class Unit : MonoBehaviour
+public class Unit : NetworkBehaviour
 {
     public event EventHandler OnUnitUpgraded;
     public event EventHandler OnUnitSpawned;
     public event EventHandler OnUnitPlaced;
-    public event EventHandler OnHealthChanged;
+    public event EventHandler<OnHealthChangedEventArgs> OnHealthChanged;
     public event EventHandler OnUnitDied;
     public event EventHandler OnUnitReset;
     public event EventHandler<OnUnitDazedEventArgs> OnUnitDazed;
+    public event EventHandler OnUnitSetAsAdditionalUnit;
+    public event EventHandler OnAdditionalUnitBought;
 
     public class OnUnitDazedEventArgs : EventArgs {
         public float dazedTime;
+    }
+
+    public class OnHealthChangedEventArgs : EventArgs {
+        public float previousHealth;
+        public float newHealth;
     }
 
     [SerializeField] protected bool hasAttack;
@@ -34,20 +42,21 @@ public class Unit : MonoBehaviour
     private Rigidbody2D rb;
     private Collider2D collider2d;
     private bool unitIsDead;
+    private bool unitIsBought;
 
     protected virtual void Awake() {
-        parentTroop = GetComponentInParent<Troop>();
         collider2d = GetComponent<Collider2D>();
         rb = GetComponent<Rigidbody2D>();
-        unitPositionInTroop = transform.localPosition;
+        rb.mass = unitSO.mass;
 
         unitHP = unitSO.HP;
         unitArmor = unitSO.armor;
+
+        unitIsBought = true;
     }
 
     protected virtual void Start() {
         BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
-        parentTroop.OnTroopPlaced += ParentTroop_OnTroopPlaced;
     }
 
     private void Update() {
@@ -81,13 +90,21 @@ public class Unit : MonoBehaviour
     private void ParentTroop_OnTroopPlaced(object sender, System.EventArgs e) {
         OnUnitPlaced?.Invoke(this, EventArgs.Empty);
     }
-    public virtual void ResetUnit() {
-        transform.localPosition = unitPositionInTroop;
-        unitHP = unitSO.HP;
-        unitIsDead = false;
 
-        OnHealthChanged?.Invoke(this, EventArgs.Empty);
-        OnUnitReset?.Invoke(this, EventArgs.Empty);
+    public virtual void ResetUnit() {
+        if (unitIsBought) {
+            transform.localPosition = unitPositionInTroop;
+            unitIsDead = false;
+            collider2d.enabled = true;
+            unitHP = unitSO.HP;
+
+            OnHealthChanged?.Invoke(this, new OnHealthChangedEventArgs {
+                previousHealth = 0,
+                newHealth = unitSO.HP
+            });
+
+            OnUnitReset?.Invoke(this, EventArgs.Empty);
+        }
     }
 
     public virtual void UpgradeUnit() {
@@ -99,8 +116,22 @@ public class Unit : MonoBehaviour
     }
 
     public void TakeDamage(int damage) {
+        TakeDamageServerRpc(damage);
+    }
+
+    [ServerRpc]
+    private void TakeDamageServerRpc(int damage) {
+        TakeDamageClientRpc(damage);
+    }
+
+    [ClientRpc]
+    private void TakeDamageClientRpc(int damage) {
         unitHP -= (damage - unitArmor);
-        OnHealthChanged?.Invoke(this, EventArgs.Empty);
+
+        OnHealthChanged?.Invoke(this, new OnHealthChangedEventArgs {
+            previousHealth = unitHP + (damage - unitArmor),
+            newHealth = unitHP
+        });
 
         if (unitHP < 0) {
             OnUnitDied?.Invoke(this, EventArgs.Empty);
@@ -108,9 +139,22 @@ public class Unit : MonoBehaviour
         }
     }
 
-    public void TakeKnockBack(float knockback, Vector3 damageSourcePosition) {
-        Vector2 incomingDamageDirection = new Vector2(transform.position.x - damageSourcePosition.x, transform.position.y - damageSourcePosition.y);
-        Vector2 force = incomingDamageDirection * knockback;
+    public void TakeKnockBack(Vector2 force) {
+        TakeKnockBackServerRpc(force);
+    }
+
+    [ServerRpc]
+    private void TakeKnockBackServerRpc(Vector2 force) {
+        TakeKnockBackClientRpc(force);
+    }
+
+    [ClientRpc]
+    private void TakeKnockBackClientRpc(Vector2 force) {
+
+        if (!IsServer) {
+            // Mirror force on x axis
+            force.x = -force.x;
+        }
         rb.AddForce(force);
     }
 
@@ -118,14 +162,14 @@ public class Unit : MonoBehaviour
         OnUnitDazed?.Invoke(this, new OnUnitDazedEventArgs {
             dazedTime = dazedTime
         });
-    } 
+    }
 
     private void Die() {
         unitIsDead = true;
         collider2d.enabled = false;
     }
 
-    public bool GetUnitIsDead() {
+    public bool UnitIsDead() {
         return unitIsDead;
     }
 
@@ -161,7 +205,43 @@ public class Unit : MonoBehaviour
         return parentTroop;
     }
 
+    public void SetParentTroop(Troop parentTroop) {
+        this.parentTroop = parentTroop;
+        parentTroop.OnTroopPlaced += ParentTroop_OnTroopPlaced;
+    }
+
+    public void SetPosition(Vector3 positionInTroop) {
+
+        if(parentTroop.IsOwnedByPlayer()) {
+
+            unitPositionInTroop = positionInTroop;
+        } else {
+            //Mirror x position in troop
+            float mirroredPositionX = positionInTroop.x + (parentTroop.GetTroopCenterPoint().x - positionInTroop.x) * 2;
+            unitPositionInTroop = new Vector3(mirroredPositionX, positionInTroop.y, 0);
+        }
+
+        transform.position = unitPositionInTroop;
+    }
+
     public GridPosition GetUnitCurrentGridPosition() {
         return currentGridPosition;
     }
+
+    public void SetUnitAsAdditionalUnit() {
+        collider2d.enabled = false;
+        unitIsBought = false;
+        OnUnitSetAsAdditionalUnit?.Invoke(this, EventArgs.Empty);
+    }
+
+    public void BuyAdditionalUnit() {
+        collider2d.enabled = true;
+        unitIsBought = true;
+        OnAdditionalUnitBought?.Invoke(this, EventArgs.Empty);
+    }
+
+    public bool UnitIsBought() {
+        return unitIsBought;
+    }
+
 }
