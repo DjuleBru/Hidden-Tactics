@@ -17,27 +17,6 @@ MonoBehaviour:
   mass: 70
   moveType: 0
   unitMoveSpeed: 100
-  mainAttackTargets: 0000000002000000
-  mainAttackTargetTiles:
-  - {x: 0, y: 0}
-  mainAttackTargetingRange: 5
-  mainAttackDamage: 6
-  mainAttackRate: 2
-  mainAttackRange: 2
-  mainAttackKnockback: 0
-  mainAttackDazedTime: 0
-  mainAttackAOE: 0
-  mainAttackAnimationHitDelay: 0.1
-  mainAttackSpecial: 0
-  hasSideAttack: 0
-  sideAttackTargets: 
-  sideAttackTargetTiles: []
-  sideAttackTargetingRange: 0
-  sideAttackDamage: 0
-  sideAttackRate: 0
-  sideAttackRange: 0
-  sidettackKnockback: 0
-  sideAttackDazedTime: 0
-  sideAttackAOE: 0
-  sideAttackAnimationHitDelay: 0
-  sideAttackSpecial: 0
+  mainAttackSO: {fileID: 11400000, guid: 9a47a449831df2741853c993d2802811, type: 2}
+  sideAttackSO: {fileID: 0}
+  specialAttackSO: {fileID: 0}

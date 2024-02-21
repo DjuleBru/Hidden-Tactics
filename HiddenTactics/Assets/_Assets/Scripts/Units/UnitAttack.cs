@@ -30,10 +30,10 @@ public class UnitAttack : NetworkBehaviour
     private void Start() {
         attackDamage = unit.GetUnitSO().mainAttackSO.attackDamage;
         attackRate = unit.GetUnitSO().mainAttackSO.attackRate;
-        attackKnockback = unit.GetUnitSO().mainAttackSO.attackDamage;
-        attackDazedTime = unit.GetUnitSO().mainAttackSO.attackDamage;
-        attackAnimationHitDelay = unit.GetUnitSO().mainAttackSO.attackDamage;
-        attackAOE = unit.GetUnitSO().mainAttackSO.attackDamage;
+        attackKnockback = unit.GetUnitSO().mainAttackSO.attackKnockback;
+        attackDazedTime = unit.GetUnitSO().mainAttackSO.attackDazedTime;
+        attackAnimationHitDelay = unit.GetUnitSO().mainAttackSO.attackAnimationHitDelay;
+        attackAOE = unit.GetUnitSO().mainAttackSO.attackAOE;
     }
 
     public override void OnNetworkSpawn() {
@@ -58,7 +58,7 @@ public class UnitAttack : NetworkBehaviour
 
         yield return new WaitForSeconds(attackAnimationHitDelay);
 
-        if(!unit.UnitIsDead() && !targetUnit.UnitIsDead()) {
+        if (!unit.UnitIsDead() && !targetUnit.UnitIsDead()) {
             // Unit is still alive on attack animation hit and target unit is still alive
 
             PerformAllAttackActions(targetUnit);

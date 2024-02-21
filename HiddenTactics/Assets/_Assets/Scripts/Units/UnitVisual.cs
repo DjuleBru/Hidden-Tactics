@@ -51,12 +51,13 @@ public class UnitVisual : NetworkBehaviour
         }
     }
 
-    private void Unit_OnUnitPlaced(object sender, System.EventArgs e) {
+    protected void Unit_OnUnitPlaced(object sender, System.EventArgs e) {
         if (!unit.UnitIsBought()) return;
+
         bodySpriteRenderer.material = cleanMaterial;
     }
 
-    private void Unit_OnUnitSetAsAdditionalUnit(object sender, System.EventArgs e) {
+    protected void Unit_OnUnitSetAsAdditionalUnit(object sender, System.EventArgs e) {
         bodySpriteRenderer.material = invisibleMaterial;
         shadowGameObject.SetActive(false);
     }

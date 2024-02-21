@@ -120,10 +120,6 @@ public class PlayerAction_SpawnTroop : NetworkBehaviour {
             NetworkObject unitNetworkObject = unitToSpawnPrefab.GetComponent<NetworkObject>();
             unitNetworkObject.Spawn(true);
             unitNetworkObject.TrySetParent(troopToSpawnGameObject, true);
-            //unitNetworkObject.transform.position = unitPositionTransform.position;
-
-            Unit unitSpawned = unitNetworkObject.GetComponent<Unit>();
-
             SetUnitInitialConditionsClientRpc(unitNetworkObject, troopToSpawnNetworkObject, unitPositionTransform.position, isAdditionalUnits);
 
             unitsSpawnedNetworkObjectList.Add(unitNetworkObject);

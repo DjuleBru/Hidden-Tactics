@@ -59,7 +59,7 @@ public class Unit : NetworkBehaviour
         BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
     }
 
-    private void Update() {
+    protected void Update() {
         HandlePositionOnGrid();
     }
 
@@ -82,12 +82,12 @@ public class Unit : NetworkBehaviour
         }
     }
 
-    private void BattleManager_OnStateChanged(object sender, EventArgs e) {
+    protected void BattleManager_OnStateChanged(object sender, EventArgs e) {
         if(BattleManager.Instance.IsBattlePhaseEnding()) {
             ResetUnit();
         }
     }
-    private void ParentTroop_OnTroopPlaced(object sender, System.EventArgs e) {
+    protected void ParentTroop_OnTroopPlaced(object sender, System.EventArgs e) {
         OnUnitPlaced?.Invoke(this, EventArgs.Empty);
     }
 
@@ -120,12 +120,12 @@ public class Unit : NetworkBehaviour
     }
 
     [ServerRpc]
-    private void TakeDamageServerRpc(int damage) {
+    protected void TakeDamageServerRpc(int damage) {
         TakeDamageClientRpc(damage);
     }
 
     [ClientRpc]
-    private void TakeDamageClientRpc(int damage) {
+    protected void TakeDamageClientRpc(int damage) {
         unitHP -= (damage - unitArmor);
 
         OnHealthChanged?.Invoke(this, new OnHealthChangedEventArgs {
@@ -144,12 +144,12 @@ public class Unit : NetworkBehaviour
     }
 
     [ServerRpc]
-    private void TakeKnockBackServerRpc(Vector2 force) {
+    protected void TakeKnockBackServerRpc(Vector2 force) {
         TakeKnockBackClientRpc(force);
     }
 
     [ClientRpc]
-    private void TakeKnockBackClientRpc(Vector2 force) {
+    protected void TakeKnockBackClientRpc(Vector2 force) {
 
         if (!IsServer) {
             // Mirror force on x axis
@@ -164,7 +164,7 @@ public class Unit : NetworkBehaviour
         });
     }
 
-    private void Die() {
+    protected void Die() {
         unitIsDead = true;
         collider2d.enabled = false;
     }

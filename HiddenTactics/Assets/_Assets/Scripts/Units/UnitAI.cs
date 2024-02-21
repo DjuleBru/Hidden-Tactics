@@ -51,22 +51,28 @@ public class UnitAI : NetworkBehaviour
                 break; 
             case State.moveForwards:
 
-                if(unitTargetingSystem.GetMeleeTargetUnit() != null) {
-                    //Unit has a valid melee target
-                    ChangeState(State.moveToTarget);
+                if (unitTargetingSystem.GetTargetUnit() != null) {
+                    //Unit has a valid target
+                    if(unitTargetingSystem.GetMainAttackType() == AttackSO.AttackType.melee) {
+                        ChangeState(State.moveToTarget);
+                    } else {
+                        unitAttack.SetAttackTarget(unitTargetingSystem.GetTargetUnit());
+                        ChangeState(State.attacking);
+                    }
+
                 }
 
             break;
             case State.moveToTarget:
 
-                if (unitTargetingSystem.GetMeleeTargetUnit() == null) {
+                if (unitTargetingSystem.GetTargetUnit() == null) {
                     ChangeState(State.moveForwards);
                 }
 
                 break;
             case State.attacking:
 
-                if(unitTargetingSystem.GetMeleeTargetUnit() == null | !unitTargetingSystem.GetMeleeTargetUnitIsInRange()) {
+                if(unitTargetingSystem.GetTargetUnit() == null | !unitTargetingSystem.GetTargetUnitIsInRange()) {
                     // Unit has no attack targets or target attack unit is out of range
                     ChangeState(State.moveForwards);
                 }
@@ -90,13 +96,15 @@ public class UnitAI : NetworkBehaviour
             unitMovement.MoveForwards();
         }
         if(state.Value == State.moveToTarget) {
-            unitMovement.MoveToTarget(unitTargetingSystem.GetMeleeTargetUnit().transform.position);
 
-            if(unitTargetingSystem.GetClosestTargetDistance() < unit.GetUnitSO().mainAttackSO.attackDamage) {
+            unitMovement.MoveToTarget(unitTargetingSystem.GetTargetUnit().transform.position);
+
+            if(unitTargetingSystem.GetClosestTargetDistance() < unit.GetUnitSO().mainAttackSO.meleeAttackRange) {
                 unitMovement.StopMoving();
-                unitAttack.SetAttackTarget(unitTargetingSystem.GetMeleeTargetUnit());
+                unitAttack.SetAttackTarget(unitTargetingSystem.GetTargetUnit());
                 ChangeState(State.attacking);
             }
+
         }
     }
     private void State_OnValueChanged(State previousValue, State newValue) {

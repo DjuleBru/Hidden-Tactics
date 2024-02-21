@@ -48,10 +48,12 @@ public class UCWVisual : UnitVisual
     private UCW ucw;
 
     protected override void Awake() {
+        base.Awake();
         ucw = GetComponentInParent<UCW>();
     }
 
     public override void OnNetworkSpawn() {
+        base.OnNetworkSpawn();
         ucw.OnUnitUpgraded += Ucw_OnUnitUpgraded;
         ucw.OnMainWeaponActivated += Ucw_OnMainWeaponActivated;
         ucw.OnSideWeaponActivated += Ucw_OnSideWeaponActivated;

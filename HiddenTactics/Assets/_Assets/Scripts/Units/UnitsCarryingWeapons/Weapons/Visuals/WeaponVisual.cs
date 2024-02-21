@@ -3,9 +3,10 @@ using Sirenix.Serialization;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using Unity.Netcode;
 using UnityEngine;
 
-public class WeaponVisual : MonoBehaviour
+public class WeaponVisual : NetworkBehaviour
 {
     [FoldoutGroup("Base attributes")]
     [SerializeField] private Transform weaponHoldPoint;
@@ -35,7 +36,9 @@ public class WeaponVisual : MonoBehaviour
 
     private WeaponSO activeWeaponSO;
     private Vector3 upgradedWeaponScale;
-    private Material baseMaterial;
+    [SerializeField] private Material cleanMaterial;
+    [SerializeField] private Material placingUnitMaterial;
+    [SerializeField] private Material invisibleMaterial;
     private Material weaponMaterial;
 
     private UCW ucw;
@@ -56,22 +59,24 @@ public class WeaponVisual : MonoBehaviour
         weaponVisualSpriteRenderer = GetComponent<SpriteRenderer>();
         ucw = GetComponentInParent<UCW>();
 
+        weaponVisualSpriteRenderer.material = placingUnitMaterial;
+
         activeWeaponSO = mainWeaponSO;
         activeWeaponAnimator = mainWeaponAnimator;
         magicState = UCW.MagicState.Base;
         magicStateTrigger = "Base";
-        baseMaterial = weaponVisualSpriteRenderer.material;
-        weaponMaterial = weaponVisualSpriteRenderer.material;
+        weaponMaterial = cleanMaterial;
         upgradedWeaponScale = weaponScale;
     }
 
-    private void Start() {
+    public override void OnNetworkSpawn() {
         ucw.OnLegendaryStateChanged += Ucw_OnLegendaryStateChanged;
         ucw.OnMagicStateChanged += Ucw_OnMagicStateChanged;
         ucw.OnSideWeaponActivated += Ucw_OnSideWeaponActivated;
         ucw.OnMainWeaponActivated += Ucw_OnMainWeaponActivated;
+        ucw.OnUnitPlaced += Ucw_OnUnitPlaced;
+        ucw.OnUnitSetAsAdditionalUnit += Ucw_OnUnitSetAsAdditionalUnit;
     }
-
 
     private void LateUpdate() {
         UpdateWeaponVisual();
@@ -273,6 +278,16 @@ public class WeaponVisual : MonoBehaviour
         }
     }
 
+    protected void Ucw_OnUnitSetAsAdditionalUnit(object sender, System.EventArgs e) {
+        weaponVisualSpriteRenderer.material = invisibleMaterial;
+    }
+
+    private void Ucw_OnUnitPlaced(object sender, System.EventArgs e) {
+        if (!ucw.UnitIsBought()) return;
+
+        weaponVisualSpriteRenderer.material = cleanMaterial;
+    }
+
     private void Ucw_OnMagicStateChanged(object sender, System.EventArgs e) {
         magicState = ucw.GetMagicState();
         UpdateWeaponMagicVisual(magicState);
@@ -372,7 +387,7 @@ public class WeaponVisual : MonoBehaviour
             mainWeaponAnimator.enabled = false;
             weaponScale = Vector3.one;
         } else {
-            weaponVisualSpriteRenderer.material = baseMaterial;
+            weaponVisualSpriteRenderer.material = cleanMaterial;
             activeWeaponAnimator = mainWeaponAnimator;
             mainWeaponAnimator.enabled = true;
             weaponScale = upgradedWeaponScale;

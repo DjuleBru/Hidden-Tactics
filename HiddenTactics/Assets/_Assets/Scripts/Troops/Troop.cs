@@ -29,6 +29,12 @@ public class Troop : MonoBehaviour
 
     private void Awake() {
         unitsInTroop = GetComponentsInChildren<Unit>();
+        foreach(Transform position in baseUnitPositions) {
+            position.gameObject.SetActive(false);
+        }
+        foreach (Transform position in additionalUnitPositions) {
+            position.gameObject.SetActive(false);
+        }
     }
 
     private void Start() {

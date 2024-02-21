@@ -6,17 +6,6 @@ using UnityEngine;
 [CreateAssetMenu()]
 
 public class UnitSO : ScriptableObject {
-    public enum UnitAttackSpecial {
-        none,
-        pierce,
-        fire,
-        ice,
-        poison,
-        shock,
-        bleed,
-        fear,
-    }
-
     public enum unitType {
         ground,
         air,
