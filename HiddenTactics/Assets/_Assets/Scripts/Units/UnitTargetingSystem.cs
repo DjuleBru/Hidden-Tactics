@@ -7,15 +7,20 @@ public class UnitTargetingSystem : NetworkBehaviour
 {
 
     private Unit unit;
-    private List<GridPosition> gridPositionAttackTargetList;
-    private List<Unit> targetUnitList = new List<Unit>();
+    private List<GridPosition> mainAttackGridPositionTargetList;
+    private List<GridPosition> sideAttackGridPositionTargetList;
 
-    private AttackSO.AttackType mainAttackType;
+    private List<Unit> mainAttackTargetUnitList = new List<Unit>();
+    private List<Unit> sideAttackTargetUnitList = new List<Unit>();
 
-    private float meleeAttackTargetingRange;
-    private float meleeAttackRange;
+    private AttackSO mainAttackSO;
+    private AttackSO sideAttackSO;
 
-    private Unit targetUnit;
+    private float mainAttackRange;
+
+    private Unit mainAttackTargetUnit;
+    private Unit sideAttackTargetUnit;
+
     private float distanceToClosestTargetUnit;
     private bool targetUnitIsInRange;
 
@@ -25,64 +30,93 @@ public class UnitTargetingSystem : NetworkBehaviour
     private void Awake() {
         unit = GetComponent<Unit>();
 
-        meleeAttackTargetingRange = unit.GetUnitSO().mainAttackSO.meleeAttackTargetingRange;
-        meleeAttackRange = unit.GetUnitSO().mainAttackSO.meleeAttackRange;
+        mainAttackRange = unit.GetUnitSO().mainAttackSO.meleeAttackRange;
 
-        mainAttackType = unit.GetUnitSO().mainAttackSO.attackType;
+        mainAttackSO = unit.GetUnitSO().mainAttackSO;
+        sideAttackSO = unit.GetUnitSO().sideAttackSO;
     }
 
     private void Start() {
-        FillGridPositionAttackTargetList();
+        mainAttackGridPositionTargetList = FillGridPositionAttackTargetList(mainAttackSO);
+        if(sideAttackSO != null) {
+            sideAttackGridPositionTargetList = FillGridPositionAttackTargetList(sideAttackSO);
+        }
     }
-
 
     private void Update() {
         if (!BattleManager.Instance.IsBattlePhase()) return;
 
-        targetingTimer -= Time.deltaTime;
+        CheckIfTargetUnitsAreDead();
 
+        targetingTimer -= Time.deltaTime;
         if(targetingTimer < 0) {
             targetingTimer = targetingRate;
-            FindAttackTargets();
 
-            if(targetUnitList.Count > 0) {
-                // There are potential targets within targeting range
+            mainAttackTargetUnitList = FindAttackTargets(mainAttackSO, mainAttackGridPositionTargetList);
+            if (sideAttackSO != null) {
+                sideAttackTargetUnitList = FindAttackTargets(sideAttackSO, sideAttackGridPositionTargetList);
+            }
 
-                if (mainAttackType == AttackSO.AttackType.melee) {
-                    // Melee attack : constantly re-evaluate attack target
-                    FindClosestAttackTarget();
-                    return;
-                }
+            mainAttackTargetUnit = FindAttackTargetUnit(mainAttackSO, mainAttackTargetUnitList, mainAttackTargetUnit);
 
-                if (mainAttackType == AttackSO.AttackType.ranged && targetUnit == null) {
-                    // Ranged attack : keep same attack target
-                    FindRandomAttackTarget();
-                    return;
-                }
-
-            } else {
-                targetUnit = null;
+            if (sideAttackSO != null) {
+                sideAttackTargetUnit = FindAttackTargetUnit(sideAttackSO, sideAttackTargetUnitList, sideAttackTargetUnit);
             }
         }
     }
 
-    private void FindAttackTargets() {
-        targetUnitList.Clear();
-
-        if(mainAttackType == AttackSO.AttackType.melee) {
-            UpdateMeleeAttackTargets();
-            return;
+    private void CheckIfTargetUnitsAreDead() {
+        if (mainAttackTargetUnit != null) {
+            if (mainAttackTargetUnit.GetUnitIsDead()) {
+                mainAttackTargetUnit = null;
+            }
         }
 
-        if (mainAttackType == AttackSO.AttackType.ranged) {
-            UpdateRangedAttackTargets();
-            return;
+        if (sideAttackTargetUnit != null) {
+            if (sideAttackTargetUnit.GetUnitIsDead()) {
+                sideAttackTargetUnit = null;
+            }
         }
-
     }
 
-    private void UpdateMeleeAttackTargets() {
-        Collider2D[] colliderArray = Physics2D.OverlapCircleAll(transform.position, meleeAttackTargetingRange);
+    private Unit FindAttackTargetUnit(AttackSO attackSO, List<Unit> targetUnitList, Unit targetUnit) {
+        if (targetUnitList.Count > 0) {
+            // There are potential targets within targeting range of attack
+
+            if (attackSO.attackType == AttackSO.AttackType.melee) {
+                // Melee attack : constantly re-evaluate attack target
+                targetUnit = FindClosestAttackTarget(targetUnitList);
+            }
+
+            if (attackSO.attackType == AttackSO.AttackType.ranged && targetUnit == null) {
+                // Ranged attack : keep same attack target
+                targetUnit = FindRandomAttackTarget(targetUnitList);
+            }
+        } else {
+            targetUnit = null;
+        }
+
+        return targetUnit;
+    }
+
+    private List<Unit> FindAttackTargets(AttackSO attackSO, List<GridPosition> rangedGridPositionTargetList) {
+        List<Unit> targetUnitList = new List<Unit>();
+
+        if(attackSO.attackType == AttackSO.AttackType.melee) {
+            targetUnitList = GetMeleeAttackTargets(attackSO);
+        }
+
+        if (attackSO.attackType == AttackSO.AttackType.ranged) {
+            targetUnitList = GetRangedAttackTargets(rangedGridPositionTargetList);
+        }
+        return targetUnitList;
+    }
+
+    private List<Unit> GetMeleeAttackTargets(AttackSO attackSO) {
+        float attackTargetingRange = attackSO.meleeAttackTargetingRange;
+
+        Collider2D[] colliderArray = Physics2D.OverlapCircleAll(transform.position, attackTargetingRange);
+        List<Unit> targetUnitList = new List<Unit>();
 
         foreach (Collider2D collider in colliderArray) {
             if (collider.TryGetComponent<Unit>(out Unit unit)) {
@@ -98,11 +132,15 @@ public class UnitTargetingSystem : NetworkBehaviour
                 }
             };
         }
+
+        return targetUnitList;
     }
 
-    private void UpdateRangedAttackTargets() {
+    private List<Unit> GetRangedAttackTargets(List<GridPosition> attackGridPositionTargetList) {
         int index = 0;
-        foreach (GridPosition relativeTargetGridPosition in gridPositionAttackTargetList) {
+
+        List<Unit> targetUnitList = new List<Unit>();
+        foreach (GridPosition relativeTargetGridPosition in attackGridPositionTargetList) {
             GridPosition targetGridPosition = new GridPosition(unit.GetUnitCurrentGridPosition().x + relativeTargetGridPosition.x, unit.GetUnitCurrentGridPosition().y + relativeTargetGridPosition.y);
 
             if(!BattleGrid.Instance.IsValidGridPosition(targetGridPosition)) {
@@ -112,7 +150,7 @@ public class UnitTargetingSystem : NetworkBehaviour
 
             // PRIORORITY to closest targets(X) : Check if new targetGridPosition is located behind old target grid position.
             if(index != 0) {
-                GridPosition previousRelativeTargetGridPosition = gridPositionAttackTargetList[index -1];
+                GridPosition previousRelativeTargetGridPosition = attackGridPositionTargetList[index -1];
 
                 if (Mathf.Abs(previousRelativeTargetGridPosition .x) < Mathf.Abs(relativeTargetGridPosition.x) && targetUnitList.Count > 0) {
                     break;
@@ -122,11 +160,6 @@ public class UnitTargetingSystem : NetworkBehaviour
             List<Unit> unitListAtTargetGridPosition = BattleGrid.Instance.GetUnitListAtGridPosition(targetGridPosition);
 
             foreach(Unit unit in unitListAtTargetGridPosition) {
-
-                if(unit.GetUnitIsDead()) {
-                    targetUnit = null;
-                }
-
                 if (unit.GetParentTroop().IsOwnedByPlayer() != this.unit.GetParentTroop().IsOwnedByPlayer() && !unit.GetUnitIsDead() && unit.GetUnitIsBought()) {
                     // target unit is not from the same team AND Unit is not dead AND unit is bought
 
@@ -136,29 +169,36 @@ public class UnitTargetingSystem : NetworkBehaviour
 
             index++;
         }
+        return targetUnitList;
     }
 
-    private void FindClosestAttackTarget() {
+    private Unit FindClosestAttackTarget(List<Unit> targetUnitList) {
         float distanceToClosestTargetUnit = float.MaxValue;
 
+        Unit closestUnit = null;
         foreach(Unit targetUnit in targetUnitList) {
             float distanceToTargetUnit = Vector3.Distance(transform.position, targetUnit.transform.position);
 
             if(distanceToTargetUnit < distanceToClosestTargetUnit) {
                 distanceToClosestTargetUnit = distanceToTargetUnit;
-                this.targetUnit = targetUnit;
+                closestUnit = targetUnit;
             }
         }
 
         this.distanceToClosestTargetUnit = distanceToClosestTargetUnit;
+        return closestUnit;
     }
 
-    private void FindRandomAttackTarget() {
-        targetUnit = targetUnitList[Random.Range(0, targetUnitList.Count)];
+    private Unit FindRandomAttackTarget(List<Unit> targetUnitList) {
+        return targetUnitList[Random.Range(0, targetUnitList.Count)];
     }
 
-    public void FillGridPositionAttackTargetList() {
-        gridPositionAttackTargetList = new List<GridPosition>();
+    public List<GridPosition> FillGridPositionAttackTargetList(AttackSO attackSO) {
+        if(attackSO.attackType == AttackSO.AttackType.melee) {
+            return null;
+        }
+
+        List<GridPosition> gridPositionAttackTargetList = new List<GridPosition>();
 
         int xMultiplier = 1;
         // Reverse x if unit is opponent troop
@@ -166,39 +206,44 @@ public class UnitTargetingSystem : NetworkBehaviour
             xMultiplier = -1;
         }
 
-        foreach (Vector2 mainAttackTargetTiles in unit.GetUnitSO().mainAttackSO.attackTargetTiles) {
+        foreach (Vector2 mainAttackTargetTiles in attackSO.attackTargetTiles) {
             gridPositionAttackTargetList.Add(new GridPosition((int)mainAttackTargetTiles.x * xMultiplier, (int)mainAttackTargetTiles.y));
         }
+
+        return gridPositionAttackTargetList;
     }
 
-    public Unit GetTargetUnit() {
-        return targetUnit; 
+    #region GET PARAMETERS
+    public Unit GetMainAttackTargetUnit() {
+        return mainAttackTargetUnit; 
+    }
+
+    public Unit GetSideAttackTargetUnit() {
+        return sideAttackTargetUnit;
     }
 
     public float GetClosestTargetDistance() {
         return distanceToClosestTargetUnit;
     }
 
-    public bool GetTargetUnitIsInRange() {
-        if (mainAttackType == AttackSO.AttackType.melee) {
+    public bool GetTargetUnitIsInRange(AttackSO attackSO) {
+        if (attackSO.attackType == AttackSO.AttackType.melee) {
             // MELEE ATTACK : check if unit is in range
 
-            if (distanceToClosestTargetUnit < meleeAttackRange) {
+            if (distanceToClosestTargetUnit < attackSO.meleeAttackRange) {
                 targetUnitIsInRange = true;
             }
             else {
                 targetUnitIsInRange = false;
             }
         }
-        if (mainAttackType == AttackSO.AttackType.ranged) {
+
+        if (attackSO.attackType == AttackSO.AttackType.ranged) {
             targetUnitIsInRange = true;
         }
 
         return targetUnitIsInRange; 
     }
-
-    public AttackSO.AttackType GetMainAttackType() { 
-        return mainAttackType; 
-    }
+    #endregion
 
 }

@@ -74,12 +74,13 @@ public class WeaponVisual : NetworkBehaviour
     public override void OnNetworkSpawn() {
         ucw.OnLegendaryStateChanged += Ucw_OnLegendaryStateChanged;
         ucw.OnMagicStateChanged += Ucw_OnMagicStateChanged;
-        ucw.OnSideWeaponActivated += Ucw_OnSideWeaponActivated;
-        ucw.OnMainWeaponActivated += Ucw_OnMainWeaponActivated;
+        ucw.GetComponent<UnitAI>().OnSideAttackActivated += WeaponVisual_OnSideAttackActivated;
+        ucw.GetComponent<UnitAI>().OnMainAttackActivated += WeaponVisual_OnMainAttackActivated;
+
         ucw.OnUnitPlaced += Ucw_OnUnitPlaced;
         ucw.OnUnitSetAsAdditionalUnit += Ucw_OnUnitSetAsAdditionalUnit;
 
-        ucw.GetComponent<UnitAI>().OnStateChanged += Unit_OnStateChanged;
+        ucw.GetComponent<UnitAI>().OnStateChanged += UnitAI_OnStateChanged;
         ucwAnimatorManager.OnUcwAttack += UcwAnimatorManager_OnUcwAttack;
         ucwAnimatorManager.OnUcwAttackStart += UcwAnimatorManager_OnUcwAttackStart;
         ucwAnimatorManager.OnUcwAttackEnd += UcwAnimatorManager_OnUcwAttackEnd;
@@ -93,6 +94,7 @@ public class WeaponVisual : NetworkBehaviour
         if(activeWeaponAnimator.runtimeAnimatorController == null) {
             return;
         }
+
         SetXY(ucwAnimatorManager.GetX(), ucwAnimatorManager.GetY());
         if (activeWeaponAnimator.GetCurrentAnimatorStateInfo(0).IsName("Idle")) {
             HandleWeaponIdleVisual();
@@ -297,8 +299,10 @@ public class WeaponVisual : NetworkBehaviour
         }
     }
 
-    private void Unit_OnStateChanged(object sender, System.EventArgs e) {
-        if(!ucw.GetComponent<UnitAI>().IsAttacking()) {
+    private void UnitAI_OnStateChanged(object sender, System.EventArgs e) {
+        activeWeaponAnimator.ResetTrigger("InterruptAttack");
+
+        if (!ucw.GetComponent<UnitAI>().IsAttacking()) {
             if(!activeWeaponAnimator.GetCurrentAnimatorStateInfo(0).IsName("Idle")) {
                 activeWeaponAnimator.SetTrigger("InterruptAttack");
             }
@@ -325,11 +329,11 @@ public class WeaponVisual : NetworkBehaviour
         UpdateLegendaryState();
     }
 
-    private void Ucw_OnMainWeaponActivated(object sender, System.EventArgs e) {
+    private void WeaponVisual_OnMainAttackActivated(object sender, System.EventArgs e) {
         SetMainWeaponActive();
     }
 
-    private void Ucw_OnSideWeaponActivated(object sender, System.EventArgs e) {
+    private void WeaponVisual_OnSideAttackActivated(object sender, System.EventArgs e) {
         SetSideWeaponActive();
     }
 
@@ -351,7 +355,7 @@ public class WeaponVisual : NetworkBehaviour
             mainWeaponAnimator.runtimeAnimatorController = sideWeaponSO.weaponAnimator;
         }
     }
-
+    
     public void SetMainWeaponActive() {
         if (sideWeaponSO != null) {
             activeWeaponSO = mainWeaponSO;
@@ -369,6 +373,7 @@ public class WeaponVisual : NetworkBehaviour
 
     public void SetAttackStartTrigger()
     {
+
         if (!ucw.GetHasAttackStart_End()) {
             // Unit has no attack start and end animation
             return;
@@ -382,7 +387,11 @@ public class WeaponVisual : NetworkBehaviour
             return;
         }
         UpdateWeaponMagicStateTrigger(magicState);
+
+        activeWeaponAnimator.ResetTrigger(magicStateTrigger + "_End");
+
         magicStateTrigger = magicStateTrigger + "_Start";
+
         SetAttackTrigger();
     }
 

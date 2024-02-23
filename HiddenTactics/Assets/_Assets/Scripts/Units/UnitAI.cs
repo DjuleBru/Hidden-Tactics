@@ -11,6 +11,12 @@ public class UnitAI : NetworkBehaviour
     protected UnitTargetingSystem unitTargetingSystem;
     protected UnitAttack unitAttack;
 
+    protected AttackSO mainAttackSO;
+    protected AttackSO sideAttackSO;
+
+    public event EventHandler OnMainAttackActivated;
+    public event EventHandler OnSideAttackActivated;
+
     protected bool unitActive;
 
     public enum State {
@@ -24,11 +30,14 @@ public class UnitAI : NetworkBehaviour
     protected NetworkVariable<State> state = new NetworkVariable<State>(State.idle);
     public event EventHandler OnStateChanged;
 
-    private void Awake() {
+    protected void Awake() {
         unit = GetComponent<Unit>();
         unitMovement = GetComponent<UnitMovement>();
         unitTargetingSystem = GetComponent<UnitTargetingSystem>();
         unitAttack = GetComponent<UnitAttack>();
+
+        mainAttackSO = unit.GetUnitSO().mainAttackSO;
+        sideAttackSO = unit.GetUnitSO().sideAttackSO;
     }
 
     public override void OnNetworkSpawn() {
@@ -115,4 +124,33 @@ public class UnitAI : NetworkBehaviour
     public bool IsMovingToTarget() {
         return state.Value == State.moveToTarget;
     }
+
+    #region CLIENT EVENT INVOKING
+    protected void InvokeOnMainAttackActivated() {
+        InvokeOnMainAttackActivatedServerRpc();
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void InvokeOnMainAttackActivatedServerRpc() {
+        InvokeOnMainAttackActivatedClientRpc();
+    }
+
+    [ClientRpc]
+    private void InvokeOnMainAttackActivatedClientRpc() {
+        OnMainAttackActivated?.Invoke(this, EventArgs.Empty);
+    }
+
+    protected void InvokeOnSideAttackActivated() {
+        InvokeOnSideAttackActivatedServerRpc();
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void InvokeOnSideAttackActivatedServerRpc() {
+        InvokeOnSideAttackActivatedClientRpc();
+    }
+    [ClientRpc]
+    private void InvokeOnSideAttackActivatedClientRpc() {
+        OnSideAttackActivated?.Invoke(this, EventArgs.Empty);
+    }
+    #endregion
 }

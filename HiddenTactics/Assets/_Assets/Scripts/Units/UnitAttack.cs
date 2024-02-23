@@ -10,12 +10,12 @@ public class UnitAttack : NetworkBehaviour
     public event EventHandler OnUnitAttackStarted;
     public event EventHandler OnUnitAttackEnded;
 
-
     [SerializeField] private Transform projectileSpawnPoint;
 
     private Unit unit;
     private UnitAI unitAI;
 
+    private AttackSO activeAttackSO;
     private Unit attackTarget;
     private int attackDamage;
     private float attackTimer;
@@ -29,6 +29,7 @@ public class UnitAttack : NetworkBehaviour
     private float attackKnockback;
     private float attackDazedTime;
     private float attackAnimationHitDelay;
+    private bool attackDecomposition;
 
     private bool attacking;
 
@@ -38,7 +39,8 @@ public class UnitAttack : NetworkBehaviour
     }
 
     private void Start() {
-        UpdateActiveAttackParameters();
+        UpdateActiveAttackParameters(unit.GetUnitSO().mainAttackSO);
+        activeAttackSO = unit.GetUnitSO().mainAttackSO;
     }
 
     public override void OnNetworkSpawn() {
@@ -51,7 +53,7 @@ public class UnitAttack : NetworkBehaviour
     private void Update() {
 
         if (attacking) {
-            if(!unit.GetUnitSO().mainAttackSO.attackDecomposition) {
+            if(!attackDecomposition) {
                 HandleStandardAttack();
             } else {
                 HandleDecomposedAttack();
@@ -75,6 +77,7 @@ public class UnitAttack : NetworkBehaviour
             if (attackStartTimer < 0) {
                 attackStarted = true;
                 OnUnitAttackStarted?.Invoke(this, EventArgs.Empty);
+                Debug.Log("unit attack started");
             }
         } else {
             attackEndTimer -= Time.deltaTime;
@@ -86,6 +89,7 @@ public class UnitAttack : NetworkBehaviour
 
                 Shoot(attackTarget);
                 OnUnitAttackEnded?.Invoke(this, EventArgs.Empty);
+                Debug.Log("unit attack Ended");
             }
         }
     }
@@ -103,7 +107,14 @@ public class UnitAttack : NetworkBehaviour
 
     private void Shoot(Unit targetUnit) {
         NetworkObject targetUnitNetworkObject = targetUnit.GetComponent<NetworkObject>();
-        SpawnProjectileServerRpc(targetUnitNetworkObject);
+        if(IsServer) {
+            SpawnProjectileServerRpc(targetUnitNetworkObject);
+        }
+    }
+
+    public void ProjectileHasHit(Unit targetUnit) {
+        if (!IsServer) return;
+        InflictDamage(targetUnit);
     }
 
     private void InflictDamage(Unit targetUnit) {
@@ -151,34 +162,35 @@ public class UnitAttack : NetworkBehaviour
         return AOETargetUnitList;
     }
 
-    private void UpdateActiveAttackParameters() {
-        attackDamage = unit.GetUnitSO().mainAttackSO.attackDamage;
-        attackRate = unit.GetUnitSO().mainAttackSO.attackRate;
-        attackKnockback = unit.GetUnitSO().mainAttackSO.attackKnockback;
-        attackDazedTime = unit.GetUnitSO().mainAttackSO.attackDazedTime;
-        attackAnimationHitDelay = unit.GetUnitSO().mainAttackSO.attackAnimationHitDelay;
-        attackAOE = unit.GetUnitSO().mainAttackSO.attackAOE;
+    private void UpdateActiveAttackParameters(AttackSO attackSO) {
+        attackDamage = attackSO.attackDamage;
+        attackRate = attackSO.attackRate;
+        attackKnockback = attackSO.attackKnockback;
+        attackDazedTime = attackSO.attackDazedTime;
+        attackAnimationHitDelay = attackSO.attackAnimationHitDelay;
+        attackAOE = attackSO.attackAOE;
+        attackDecomposition = attackSO.attackDecomposition;
 
         if (IsServer) {
             RandomizeAttackTimersServerRpc();
         }
     }
 
-    [ServerRpc(RequireOwnership = false)]
+    [ServerRpc]
     private void SpawnProjectileServerRpc(NetworkObjectReference targetUnitNetworkObjectReference) {
 
         targetUnitNetworkObjectReference.TryGet(out NetworkObject targetUnitNetworkObject);
 
-        GameObject projectile = Instantiate(unit.GetUnitSO().mainAttackSO.projectilePrefab, projectileSpawnPoint.position, Quaternion.identity);
+        GameObject projectile = Instantiate(activeAttackSO.projectilePrefab, projectileSpawnPoint.position, Quaternion.identity);
         NetworkObject projectileNetworkObject = projectile.GetComponent<NetworkObject>();
 
         projectileNetworkObject.Spawn(true);
 
-        SpawnProjectileClientRpc(projectileNetworkObject, targetUnitNetworkObject);
+        InitializeProjectileClientRpc(projectileNetworkObject, targetUnitNetworkObject);
     }
 
     [ClientRpc]
-    private void SpawnProjectileClientRpc(NetworkObjectReference projectileNetworkObjectReference, NetworkObjectReference targetUnitNetworkReference) {
+    private void InitializeProjectileClientRpc(NetworkObjectReference projectileNetworkObjectReference, NetworkObjectReference targetUnitNetworkReference) {
 
         targetUnitNetworkReference.TryGet(out NetworkObject targetUnitNetworkObject);
         Unit targetUnit = targetUnitNetworkObject.GetComponent<Unit>();
@@ -207,11 +219,6 @@ public class UnitAttack : NetworkBehaviour
         this.attackStartTimer = attackStartTimer;
         this.attackEndTimer = attackEndTimer;
 
-    }
-
-    public void ProjectileHasHit(Unit targetUnit) {
-        if (!IsServer) return;
-        InflictDamage(targetUnit);
     }
 
     #region EVENT RESPONSES
@@ -252,6 +259,24 @@ public class UnitAttack : NetworkBehaviour
         unitNetworkObjectReference.TryGet(out NetworkObject targetUnitNetworkObject);
         attackTarget = targetUnitNetworkObject.GetComponent<Unit>();
     }
+
+    public void SetActiveAttackSO(AttackSO attackSO) {
+        activeAttackSO = attackSO;
+        UpdateActiveAttackParameters(attackSO);
+
+        SetActiveAttackSODecompositionParameterServerRpc(attackSO.attackDecomposition);
+    }
+
+    [ServerRpc]
+    private void SetActiveAttackSODecompositionParameterServerRpc(bool attackSODecomposition) {
+        SetActiveAttackSODecompositionParameterClientRpc(attackSODecomposition);
+    }
+
+    [ClientRpc]
+    private void SetActiveAttackSODecompositionParameterClientRpc(bool attackSODecomposition) {
+        attackDecomposition = attackSODecomposition;
+    }
+
     #endregion
 
     #region GET PARAMETERS

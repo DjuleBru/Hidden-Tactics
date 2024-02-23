@@ -15,7 +15,7 @@ public class UnitAI_Melee : UnitAI
                 break;
             case State.moveForwards:
 
-                if (unitTargetingSystem.GetTargetUnit() != null) {
+                if (unitTargetingSystem.GetMainAttackTargetUnit() != null) {
                     //Unit has a valid target
                     ChangeState(State.moveToTarget);
                 }
@@ -23,7 +23,7 @@ public class UnitAI_Melee : UnitAI
                 break;
             case State.moveToTarget:
 
-                if (unitTargetingSystem.GetTargetUnit() == null) {
+                if (unitTargetingSystem.GetMainAttackTargetUnit() == null) {
                     ChangeState(State.moveForwards);
                 }
 
@@ -32,17 +32,21 @@ public class UnitAI_Melee : UnitAI
 
                 if (unitAttack.GetAttackTarget() == null) {
                     // Unit attack has no target !
-                    unitAttack.SetAttackTarget(unitTargetingSystem.GetTargetUnit());
+                    unitAttack.SetAttackTarget(unitTargetingSystem.GetMainAttackTargetUnit());
                 }
 
-                if (unitTargetingSystem.GetTargetUnit() == null | !unitTargetingSystem.GetTargetUnitIsInRange()) {
+                if (unitTargetingSystem.GetMainAttackTargetUnit() == null | !unitTargetingSystem.GetTargetUnitIsInRange(mainAttackSO)) {
                     // Unit has no attack targets or target attack unit is out of range
                     ChangeState(State.moveForwards);
                 }
 
                 if (unitAttack.GetAttackTarget().GetUnitIsDead()) {
                     // Unit attack target is dead !
-                    unitAttack.SetAttackTarget(unitTargetingSystem.GetTargetUnit());
+                    if(unitTargetingSystem.GetMainAttackTargetUnit() != null) {
+                        unitAttack.SetAttackTarget(unitTargetingSystem.GetMainAttackTargetUnit());
+                    } else {
+                        ChangeState(State.moveForwards);
+                    }
                 }
 
                 break;
@@ -65,12 +69,12 @@ public class UnitAI_Melee : UnitAI
         }
 
         if (state.Value == State.moveToTarget) {
-            if (unitTargetingSystem.GetTargetUnit() != null) {
-                unitMovement.MoveToTarget(unitTargetingSystem.GetTargetUnit().transform.position);
+            if (unitTargetingSystem.GetMainAttackTargetUnit() != null) {
+                unitMovement.MoveToTarget(unitTargetingSystem.GetMainAttackTargetUnit().transform.position);
 
                 if (unitTargetingSystem.GetClosestTargetDistance() < unit.GetUnitSO().mainAttackSO.meleeAttackRange) {
                     unitMovement.StopMoving();
-                    unitAttack.SetAttackTarget(unitTargetingSystem.GetTargetUnit());
+                    unitAttack.SetAttackTarget(unitTargetingSystem.GetMainAttackTargetUnit());
                     ChangeState(State.attacking);
                 }
             }

@@ -45,8 +45,6 @@ public class UCW : Unit {
 
     public event EventHandler OnMagicStateChanged;
     public event EventHandler OnLegendaryStateChanged;
-    public event EventHandler OnMainWeaponActivated;
-    public event EventHandler OnSideWeaponActivated;
 
     public override void UpgradeUnit()
     {
@@ -71,13 +69,6 @@ public class UCW : Unit {
 
     public MagicState GetMagicState() {
         return magicState;
-    }
-
-    public void SetMainWeaponActive() {
-        OnMainWeaponActivated?.Invoke(this, new EventArgs());
-    }
-    public void SetSideWeaponActive() {
-        OnSideWeaponActivated?.Invoke(this, new EventArgs());
     }
 
     public bool GetIsMountedUnit() {

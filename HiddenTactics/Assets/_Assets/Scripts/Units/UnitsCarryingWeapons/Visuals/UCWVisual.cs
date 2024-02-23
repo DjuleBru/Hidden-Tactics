@@ -55,15 +55,16 @@ public class UCWVisual : UnitVisual
     public override void OnNetworkSpawn() {
         base.OnNetworkSpawn();
         ucw.OnUnitUpgraded += Ucw_OnUnitUpgraded;
-        ucw.OnMainWeaponActivated += Ucw_OnMainWeaponActivated;
-        ucw.OnSideWeaponActivated += Ucw_OnSideWeaponActivated;
+
+        ucw.GetComponent<UnitAI>().OnMainAttackActivated += UCWVisual_OnMainAttackActivated;
+        ucw.GetComponent<UnitAI>().OnSideAttackActivated += UCWVisual_OnSideAttackActivated;
     }
 
-    private void Ucw_OnSideWeaponActivated(object sender, EventArgs e) {
+    private void UCWVisual_OnSideAttackActivated(object sender, EventArgs e) {
         bodyAnimator.runtimeAnimatorController = bodySideWeaponAnimator;
     }
 
-    private void Ucw_OnMainWeaponActivated(object sender, EventArgs e) {
+    private void UCWVisual_OnMainAttackActivated(object sender, EventArgs e) {
         bodyAnimator.runtimeAnimatorController = activeBodyAnimator;
     }
 
