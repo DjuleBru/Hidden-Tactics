@@ -42,6 +42,7 @@ public class WeaponVisual : NetworkBehaviour
     private Material weaponMaterial;
 
     private UCW ucw;
+    private UCWAnimatorManager ucwAnimatorManager;
     private SpriteRenderer weaponVisualSpriteRenderer;
     private Animator mainWeaponAnimator;
     private Animator activeWeaponAnimator;
@@ -58,6 +59,7 @@ public class WeaponVisual : NetworkBehaviour
         mainWeaponAnimator = GetComponent<Animator>();
         weaponVisualSpriteRenderer = GetComponent<SpriteRenderer>();
         ucw = GetComponentInParent<UCW>();
+        ucwAnimatorManager = GetComponentInParent<UCWAnimatorManager>();
 
         weaponVisualSpriteRenderer.material = placingUnitMaterial;
 
@@ -76,6 +78,11 @@ public class WeaponVisual : NetworkBehaviour
         ucw.OnMainWeaponActivated += Ucw_OnMainWeaponActivated;
         ucw.OnUnitPlaced += Ucw_OnUnitPlaced;
         ucw.OnUnitSetAsAdditionalUnit += Ucw_OnUnitSetAsAdditionalUnit;
+
+        ucw.GetComponent<UnitAI>().OnStateChanged += Unit_OnStateChanged;
+        ucwAnimatorManager.OnUcwAttack += UcwAnimatorManager_OnUcwAttack;
+        ucwAnimatorManager.OnUcwAttackStart += UcwAnimatorManager_OnUcwAttackStart;
+        ucwAnimatorManager.OnUcwAttackEnd += UcwAnimatorManager_OnUcwAttackEnd;
     }
 
     private void LateUpdate() {
@@ -86,6 +93,7 @@ public class WeaponVisual : NetworkBehaviour
         if(activeWeaponAnimator.runtimeAnimatorController == null) {
             return;
         }
+        SetXY(ucwAnimatorManager.GetX(), ucwAnimatorManager.GetY());
         if (activeWeaponAnimator.GetCurrentAnimatorStateInfo(0).IsName("Idle")) {
             HandleWeaponIdleVisual();
         }
@@ -93,6 +101,17 @@ public class WeaponVisual : NetworkBehaviour
             // Weapon is attacking 
             HandleWeaponAttackingVisual();
         };
+    }
+    private void UcwAnimatorManager_OnUcwAttack(object sender, System.EventArgs e) {
+        SetAttackTrigger();
+    }
+
+    private void UcwAnimatorManager_OnUcwAttackEnd(object sender, System.EventArgs e) {
+        SetAttackEndTrigger();
+    }
+
+    private void UcwAnimatorManager_OnUcwAttackStart(object sender, System.EventArgs e) {
+        SetAttackStartTrigger();
     }
 
     private void HandleWeaponIdleVisual() {
@@ -278,12 +297,20 @@ public class WeaponVisual : NetworkBehaviour
         }
     }
 
+    private void Unit_OnStateChanged(object sender, System.EventArgs e) {
+        if(!ucw.GetComponent<UnitAI>().IsAttacking()) {
+            if(!activeWeaponAnimator.GetCurrentAnimatorStateInfo(0).IsName("Idle")) {
+                activeWeaponAnimator.SetTrigger("InterruptAttack");
+            }
+        }
+    }
+
     protected void Ucw_OnUnitSetAsAdditionalUnit(object sender, System.EventArgs e) {
         weaponVisualSpriteRenderer.material = invisibleMaterial;
     }
 
     private void Ucw_OnUnitPlaced(object sender, System.EventArgs e) {
-        if (!ucw.UnitIsBought()) return;
+        if (!ucw.GetUnitIsBought()) return;
 
         weaponVisualSpriteRenderer.material = cleanMaterial;
     }

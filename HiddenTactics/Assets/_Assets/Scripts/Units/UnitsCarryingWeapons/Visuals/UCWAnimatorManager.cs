@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -10,6 +11,10 @@ public class UCWAnimatorManager : UnitAnimatorManager
 
     private UCW.LegendaryState legendaryState;
     private UCW.MagicState magicState;
+
+    public event EventHandler OnUcwAttack;
+    public event EventHandler OnUcwAttackStart;
+    public event EventHandler OnUcwAttackEnd;
 
     protected override void Awake() {
         base.Awake();
@@ -24,6 +29,7 @@ public class UCWAnimatorManager : UnitAnimatorManager
         base.Start();
         ucw.OnLegendaryStateChanged += Ucw_OnLegendaryStateChanged;
         ucw.OnMagicStateChanged += Ucw_OnMagicStateChanged;
+
     }
 
     public override void SetAttackTrigger() {
@@ -44,6 +50,7 @@ public class UCWAnimatorManager : UnitAnimatorManager
         {
             return;
         }
+        ucwAnimator.ResetTrigger("Attack_End");
         ucwAnimator.SetTrigger("Attack_Start");
         ucwAnimator.SetBool("Walking", false);
         ucwAnimator.SetBool("Idle", false);
@@ -64,6 +71,23 @@ public class UCWAnimatorManager : UnitAnimatorManager
 
     private void Ucw_OnLegendaryStateChanged(object sender, System.EventArgs e) {
         legendaryState = ucw.GetLegendaryState();
+    }
+
+    protected override void UnitAttack_OnUnitAttack(object sender, System.EventArgs e) {
+        base.UnitAttack_OnUnitAttack(sender, e);
+        OnUcwAttack?.Invoke(this, e);
+    }
+
+    protected override void UnitAttack_OnUnitAttackStarted(object sender, System.EventArgs e) {
+        base.UnitAttack_OnUnitAttackStarted(sender, e);
+        OnUcwAttackStart?.Invoke(this, EventArgs.Empty);
+        SetAttackStartTrigger();
+    }
+
+    protected override void UnitAttack_OnUnitAttackEnded(object sender, System.EventArgs e) {
+        base.UnitAttack_OnUnitAttackEnded(sender, e);
+        OnUcwAttackEnd?.Invoke(this, EventArgs.Empty);
+        SetAttackEndTrigger();
     }
 
 }

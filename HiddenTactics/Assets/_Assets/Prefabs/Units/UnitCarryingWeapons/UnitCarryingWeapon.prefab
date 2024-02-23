@@ -234,6 +234,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4514339705271225164, guid: ecaf4c1c39222ff458941abdb8115703, type: 3}
   m_PrefabInstance: {fileID: 4281401351482345761}
   m_PrefabAsset: {fileID: 0}
+--- !u!4 &1133931331262664849 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3807264971237317040, guid: ecaf4c1c39222ff458941abdb8115703, type: 3}
+  m_PrefabInstance: {fileID: 4281401351482345761}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1214909075196817842 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3149896878103640211, guid: ecaf4c1c39222ff458941abdb8115703, type: 3}
@@ -266,6 +271,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77f0f7da6ee79734c87a04f9523663a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  projectileTarget: {fileID: 1133931331262664849}
   hasAttack: 0
   hasSideAttack: 0
   hasSpecial1: 0

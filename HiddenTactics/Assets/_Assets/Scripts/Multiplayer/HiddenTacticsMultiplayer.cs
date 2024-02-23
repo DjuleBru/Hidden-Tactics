@@ -213,8 +213,22 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
 
         Troop troop = troopNetworkObject.GetComponent<Troop>();
 
+        foreach(Unit unit in troop.GetUnitInTroopList()) {
+            NetworkObject unitNetworkObject = unit.GetComponent<NetworkObject>();
+            RemoveUnitFromGridClientRpc(unitNetworkObject);
+            unit.DestroySelf();
+        }
 
         troop.DestroySelf();
+    }
+
+    [ClientRpc]
+    public void RemoveUnitFromGridClientRpc(NetworkObjectReference unitNetworkObjectReference) {
+        unitNetworkObjectReference.TryGet(out NetworkObject unitNetworkObject);
+        Unit unit = unitNetworkObject.GetComponent<Unit>();
+
+        GridPosition unitGridPosition = unit.GetUnitCurrentGridPosition();
+        BattleGrid.Instance.RemoveUnitAtGridPosition(unitGridPosition, unit);
     }
 
     [ClientRpc]

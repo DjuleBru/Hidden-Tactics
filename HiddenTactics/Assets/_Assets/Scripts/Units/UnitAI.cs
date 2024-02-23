@@ -6,12 +6,12 @@ using UnityEngine;
 
 public class UnitAI : NetworkBehaviour
 {
-    private Unit unit;
-    private UnitMovement unitMovement;
-    private UnitTargetingSystem unitTargetingSystem;
-    private UnitAttack unitAttack;
+    protected Unit unit;
+    protected UnitMovement unitMovement;
+    protected UnitTargetingSystem unitTargetingSystem;
+    protected UnitAttack unitAttack;
 
-    private bool unitActive;
+    protected bool unitActive;
 
     public enum State {
         idle,
@@ -21,7 +21,7 @@ public class UnitAI : NetworkBehaviour
         dead,
     }
 
-    private NetworkVariable<State> state = new NetworkVariable<State>(State.idle);
+    protected NetworkVariable<State> state = new NetworkVariable<State>(State.idle);
     public event EventHandler OnStateChanged;
 
     private void Awake() {
@@ -40,88 +40,21 @@ public class UnitAI : NetworkBehaviour
         BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
     }
 
-    private void Update() {
-        if (!IsServer) return;
-        // AI runs only on server
-
-        if (!unitActive | !unit.UnitIsBought()) return;
-
-        switch(state.Value) {
-            case State.idle:
-                break; 
-            case State.moveForwards:
-
-                if (unitTargetingSystem.GetTargetUnit() != null) {
-                    //Unit has a valid target
-                    if(unitTargetingSystem.GetMainAttackType() == AttackSO.AttackType.melee) {
-                        ChangeState(State.moveToTarget);
-                    } else {
-                        unitAttack.SetAttackTarget(unitTargetingSystem.GetTargetUnit());
-                        ChangeState(State.attacking);
-                    }
-
-                }
-
-            break;
-            case State.moveToTarget:
-
-                if (unitTargetingSystem.GetTargetUnit() == null) {
-                    ChangeState(State.moveForwards);
-                }
-
-                break;
-            case State.attacking:
-
-                if(unitTargetingSystem.GetTargetUnit() == null | !unitTargetingSystem.GetTargetUnitIsInRange()) {
-                    // Unit has no attack targets or target attack unit is out of range
-                    ChangeState(State.moveForwards);
-                }
-
-                break;
-            case State.dead:
-
-            break;
-
-        }
-
-    }
-
-    private void FixedUpdate() {
-        if (!IsServer) return;
-        // AI runs only on server
-
-        if (!unitActive | !unit.UnitIsBought()) return;
-
-        if (state.Value == State.moveForwards) {
-            unitMovement.MoveForwards();
-        }
-        if(state.Value == State.moveToTarget) {
-
-            unitMovement.MoveToTarget(unitTargetingSystem.GetTargetUnit().transform.position);
-
-            if(unitTargetingSystem.GetClosestTargetDistance() < unit.GetUnitSO().mainAttackSO.meleeAttackRange) {
-                unitMovement.StopMoving();
-                unitAttack.SetAttackTarget(unitTargetingSystem.GetTargetUnit());
-                ChangeState(State.attacking);
-            }
-
-        }
-    }
-    private void State_OnValueChanged(State previousValue, State newValue) {
+    protected void State_OnValueChanged(State previousValue, State newValue) {
         ChangeStateServerRpc();
     }
 
     [ServerRpc(RequireOwnership =false)]
-    private void ChangeStateServerRpc() {
+    protected void ChangeStateServerRpc() {
         ChangeStateClientRpc();
     }
 
-    [ClientRpc] 
-    private void ChangeStateClientRpc() {
+    [ClientRpc]
+    protected void ChangeStateClientRpc() {
         OnStateChanged?.Invoke(this, EventArgs.Empty);
     }
 
-    private void BattleManager_OnStateChanged(object sender, System.EventArgs e) {
+    protected void BattleManager_OnStateChanged(object sender, System.EventArgs e) {
         if (!IsServer) return; 
         unitActive = BattleManager.Instance.IsBattlePhase();
         if(unitActive) {
@@ -133,29 +66,29 @@ public class UnitAI : NetworkBehaviour
     }
 
 
-    private void Unit_OnUnitDazed(object sender, Unit.OnUnitDazedEventArgs e) {
+    protected void Unit_OnUnitDazed(object sender, Unit.OnUnitDazedEventArgs e) {
         if (!IsServer) return;
         StartCoroutine(TakeDazed(e.dazedTime));
     }
 
-    private void Unit_OnUnitDied(object sender, EventArgs e) {
+    protected void Unit_OnUnitDied(object sender, EventArgs e) {
         if (!IsServer) return;
         ChangeState(State.dead);
     }
 
-    private IEnumerator TakeDazed(float dazedTime) {
+    protected IEnumerator TakeDazed(float dazedTime) {
         unitActive = false;
 
         yield return new WaitForSeconds(dazedTime);
 
-        if(!unit.UnitIsDead() & BattleManager.Instance.IsBattlePhase()) {
+        if(!unit.GetUnitIsDead() & BattleManager.Instance.IsBattlePhase()) {
             // Unit is still alive and it is still battle phase
             unitActive = true;
             ChangeState(State.moveForwards);
         }
     }
 
-    private void ChangeState(State newState) {
+    protected void ChangeState(State newState) {
         state.Value = newState;
     }
 

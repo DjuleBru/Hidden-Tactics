@@ -31,7 +31,7 @@ public class UnitUI : NetworkBehaviour
     }
 
     private void Unit_OnUnitReset(object sender, System.EventArgs e) {
-        if (!unit.UnitIsBought()) return;
+        if (!unit.GetUnitIsBought()) return;
         unitHPBarGameObject.SetActive(true);
     }
 

@@ -18,7 +18,7 @@ public class Troop : MonoBehaviour
     [SerializeField] private TroopSO troopSO;
     [SerializeField] private Transform troopCenterPoint;
 
-    private Unit[] unitsInTroop;
+    private List<Unit> unitsInTroop;
 
     [SerializeField] private List<Transform> baseUnitPositions = new List<Transform>();
     [SerializeField] private List<Transform> additionalUnitPositions = new List<Transform>();
@@ -28,8 +28,9 @@ public class Troop : MonoBehaviour
     private Vector3 battlefieldOffset;
 
     private void Awake() {
-        unitsInTroop = GetComponentsInChildren<Unit>();
-        foreach(Transform position in baseUnitPositions) {
+        unitsInTroop = new List<Unit>();
+
+        foreach (Transform position in baseUnitPositions) {
             position.gameObject.SetActive(false);
         }
         foreach (Transform position in additionalUnitPositions) {
@@ -40,7 +41,8 @@ public class Troop : MonoBehaviour
     private void Start() {
         if (debugMode) {
             PlaceTroop();
-            foreach(Unit unit in unitsInTroop) {
+            Unit[] unitArray = GetComponentsInChildren<Unit>();
+            foreach (Unit unit in unitArray) {
                 //Set Parent Troop
                 unit.SetParentTroop(this);
 
@@ -137,6 +139,14 @@ public class Troop : MonoBehaviour
             battlefieldOwner = BattleGrid.Instance.GetPlayerGridOrigin();
         }
         battlefieldOffset = transform.position - battlefieldOwner.position;
+    }
+
+    public void AddUnitToUnitInTroopList(Unit unit) {
+        unitsInTroop.Add(unit);
+    }
+
+    public List<Unit> GetUnitInTroopList() {
+        return unitsInTroop;
     }
 
     public GridPosition GetTroopGridPosition() {

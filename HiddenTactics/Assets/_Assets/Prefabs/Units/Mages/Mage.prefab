@@ -72,7 +72,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 76312135
-  m_SortingLayer: 3
+  m_SortingLayer: 9
   m_SortingOrder: 0
   m_Sprite: {fileID: -1774468358, guid: b8bda218a42fb244c8a86a14fda9781e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -178,7 +178,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 76312135
-  m_SortingLayer: 3
+  m_SortingLayer: 9
   m_SortingOrder: 0
   m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -219,6 +219,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -8097156484951236332, guid: ecaf4c1c39222ff458941abdb8115703, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 951099334
+      objectReference: {fileID: 0}
     - target: {fileID: 410141775492371974, guid: ecaf4c1c39222ff458941abdb8115703, type: 3}
       propertyPath: m_RootOrder
       value: 0
@@ -262,6 +266,10 @@ PrefabInstance:
     - target: {fileID: 410141775492371974, guid: ecaf4c1c39222ff458941abdb8115703, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1200925784089581888, guid: ecaf4c1c39222ff458941abdb8115703, type: 3}
+      propertyPath: m_RootOrder
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 1793905914494342003, guid: ecaf4c1c39222ff458941abdb8115703, type: 3}
       propertyPath: m_Controller
@@ -332,6 +340,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3149896878103640211, guid: ecaf4c1c39222ff458941abdb8115703, type: 3}
   m_PrefabInstance: {fileID: 222686917331400291}
   m_PrefabAsset: {fileID: 0}
+--- !u!4 &4017558053909524435 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3807264971237317040, guid: ecaf4c1c39222ff458941abdb8115703, type: 3}
+  m_PrefabInstance: {fileID: 222686917331400291}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &5307201173716103757 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5382315898739115054, guid: ecaf4c1c39222ff458941abdb8115703, type: 3}
@@ -354,6 +367,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fdf835e135aaae041b73a3035744380e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  unitShaderAnimator: {fileID: 0}
   mainSideSpellAnimator: {fileID: 3354994610781426239}
   shieldAnimator: {fileID: 4437941160979426402}
   mageBodyVisual: {fileID: 5307201173716103757}
@@ -375,9 +389,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 918b99debb01a9f40a69b68c7af7fdc8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  projectileTarget: {fileID: 4017558053909524435}
   hasAttack: 0
   hasSideAttack: 0
   hasSpecial1: 0
   hasSpecial2: 0
+  unitSO: {fileID: 0}
   battleMage: 0
   supportMage: 0

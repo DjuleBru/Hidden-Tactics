@@ -414,6 +414,68 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   unitShaderAnimator: {fileID: 7852375926518810119}
+--- !u!1 &8372209051913420424
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3807264971237317040}
+  m_Layer: 0
+  m_Name: ProjectileTarget
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3807264971237317040
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8372209051913420424}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.044, y: 0.29, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 410141775492371974}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &8684347900879851095
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7396232900771603039}
+  m_Layer: 0
+  m_Name: ProjectileSpawnpoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7396232900771603039
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8684347900879851095}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.022, y: 0.271, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 410141775492371974}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8883300417249960126
 GameObject:
   m_ObjectHideFlags: 0
@@ -426,7 +488,6 @@ GameObject:
   - component: {fileID: 2765246944638138884}
   - component: {fileID: 3238929304469439428}
   - component: {fileID: 6221209888615918512}
-  - component: {fileID: 3211761454528701912}
   - component: {fileID: 3047400702304054071}
   - component: {fileID: 6830934254262187191}
   - component: {fileID: 1945086570058195385}
@@ -451,6 +512,8 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3149896878103640211}
+  - {fileID: 7396232900771603039}
+  - {fileID: 3807264971237317040}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -488,9 +551,9 @@ CircleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0.46978864}
+  m_Offset: {x: 0, y: 0.21625543}
   serializedVersion: 2
-  m_Radius: 0.41112104
+  m_Radius: 0.15758783
 --- !u!114 &6221209888615918512
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -503,23 +566,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5eda3ce5945549141aa5dfa02d907e7f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  projectileTarget: {fileID: 3807264971237317040}
   hasAttack: 0
   hasSideAttack: 0
   hasSpecial1: 0
   hasSpecial2: 0
   unitSO: {fileID: 0}
---- !u!114 &3211761454528701912
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8883300417249960126}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2bf9678b97d092a4b8df0ff7fa2efd93, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &3047400702304054071
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -556,6 +608,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2547376e8bd31d84b90513cbee5aa12b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  projectileSpawnPoint: {fileID: 7396232900771603039}
 --- !u!114 &-8097156484951236332
 MonoBehaviour:
   m_ObjectHideFlags: 0

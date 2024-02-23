@@ -13,16 +13,21 @@ MonoBehaviour:
   m_Name: HumanBowMainAttack
   m_EditorClassIdentifier: 
   attackType: 1
+  attackDecomposition: 1
+  projectilePrefab: {fileID: 2487143347385034294, guid: b0838b5e38d2dab4c9fe086ca3c719fa, type: 3}
   attackTargets: 000000000200000001000000
   attackTargetTiles:
   - {x: 1, y: 0}
   - {x: 2, y: 0}
+  - {x: 2, y: -1}
+  - {x: 2, y: 1}
+  - {x: 3, y: 0}
   meleeAttackTargetingRange: 0
   meleeAttackRange: 0
   attackDamage: 5
-  attackRate: 2
+  attackRate: 3
   attackKnockback: 20
-  attackDazedTime: 0
+  attackDazedTime: 0.1
   attackAOE: 0
   attackAnimationHitDelay: 0.5
   attackSpecialList: 

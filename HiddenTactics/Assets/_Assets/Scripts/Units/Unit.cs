@@ -16,6 +16,8 @@ public class Unit : NetworkBehaviour
     public event EventHandler OnUnitSetAsAdditionalUnit;
     public event EventHandler OnAdditionalUnitBought;
 
+    [SerializeField] private Transform projectileTarget;
+
     public class OnUnitDazedEventArgs : EventArgs {
         public float dazedTime;
     }
@@ -61,6 +63,22 @@ public class Unit : NetworkBehaviour
 
     protected void Update() {
         HandlePositionOnGrid();
+        if(IsServer && BattleManager.Instance.IsBattlePhase()) {
+            HandlePositionSyncServerRpc(transform.position);
+        }
+    }
+
+    [ServerRpc]
+    protected void HandlePositionSyncServerRpc(Vector3 position) {
+        HandlePositionSyncClientRpc(position);
+    }
+
+    [ClientRpc]
+    protected void HandlePositionSyncClientRpc(Vector3 position) {
+        if (!IsServer) {
+            // Mirror x position 
+            transform.position = new Vector3(position.x + (BattleGrid.Instance.GetBattlefieldMiddlePoint() - position.x) * 2, position.y, 0);
+        }
     }
 
     public void HandlePositionOnGrid() {
@@ -140,7 +158,8 @@ public class Unit : NetworkBehaviour
     }
 
     public void TakeKnockBack(Vector2 force) {
-        TakeKnockBackServerRpc(force);
+        rb.AddForce(force);
+        //TakeKnockBackServerRpc(force);
     }
 
     [ServerRpc]
@@ -169,10 +188,16 @@ public class Unit : NetworkBehaviour
         collider2d.enabled = false;
     }
 
-    public bool UnitIsDead() {
+
+
+    #region GET PARAMETERS
+
+    public bool GetUnitIsDead() {
         return unitIsDead;
     }
-
+    public bool GetUnitIsBought() {
+        return unitIsBought;
+    }
     public float GetUnitHPNormalized() {
         return (float)unitHP / (float)unitSO.HP;
     }
@@ -205,9 +230,22 @@ public class Unit : NetworkBehaviour
         return parentTroop;
     }
 
+    public Transform GetProjectileTarget() {
+        return projectileTarget;
+    }
+
+    public GridPosition GetUnitCurrentGridPosition() {
+        return currentGridPosition;
+    }
+
+    #endregion
+
+    #region SET PARAMETERS
+
     public void SetParentTroop(Troop parentTroop) {
         this.parentTroop = parentTroop;
         parentTroop.OnTroopPlaced += ParentTroop_OnTroopPlaced;
+        parentTroop.AddUnitToUnitInTroopList(this);
     }
 
     public void SetPosition(Vector3 positionInTroop) {
@@ -224,15 +262,14 @@ public class Unit : NetworkBehaviour
         transform.position = unitPositionInTroop;
     }
 
-    public GridPosition GetUnitCurrentGridPosition() {
-        return currentGridPosition;
-    }
-
     public void SetUnitAsAdditionalUnit() {
         collider2d.enabled = false;
         unitIsBought = false;
         OnUnitSetAsAdditionalUnit?.Invoke(this, EventArgs.Empty);
     }
+
+    #endregion
+
 
     public void BuyAdditionalUnit() {
         collider2d.enabled = true;
@@ -240,8 +277,7 @@ public class Unit : NetworkBehaviour
         OnAdditionalUnitBought?.Invoke(this, EventArgs.Empty);
     }
 
-    public bool UnitIsBought() {
-        return unitIsBought;
+    public void DestroySelf() {
+        Destroy(gameObject);
     }
-
 }

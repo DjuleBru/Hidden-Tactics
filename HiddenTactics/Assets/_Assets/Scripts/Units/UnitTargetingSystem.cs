@@ -47,7 +47,19 @@ public class UnitTargetingSystem : NetworkBehaviour
 
             if(targetUnitList.Count > 0) {
                 // There are potential targets within targeting range
-                FindClosestAttackTarget();
+
+                if (mainAttackType == AttackSO.AttackType.melee) {
+                    // Melee attack : constantly re-evaluate attack target
+                    FindClosestAttackTarget();
+                    return;
+                }
+
+                if (mainAttackType == AttackSO.AttackType.ranged && targetUnit == null) {
+                    // Ranged attack : keep same attack target
+                    FindRandomAttackTarget();
+                    return;
+                }
+
             } else {
                 targetUnit = null;
             }
@@ -58,25 +70,25 @@ public class UnitTargetingSystem : NetworkBehaviour
         targetUnitList.Clear();
 
         if(mainAttackType == AttackSO.AttackType.melee) {
-            FindMeleeAttackTargets();
+            UpdateMeleeAttackTargets();
             return;
         }
 
         if (mainAttackType == AttackSO.AttackType.ranged) {
-            FindRangedAttackTargets();
+            UpdateRangedAttackTargets();
             return;
         }
 
     }
 
-    private void FindMeleeAttackTargets() {
+    private void UpdateMeleeAttackTargets() {
         Collider2D[] colliderArray = Physics2D.OverlapCircleAll(transform.position, meleeAttackTargetingRange);
 
         foreach (Collider2D collider in colliderArray) {
             if (collider.TryGetComponent<Unit>(out Unit unit)) {
                 // Collider is a unit
 
-                if (unit.GetParentTroop().IsOwnedByPlayer() != this.unit.GetParentTroop().IsOwnedByPlayer() && !unit.UnitIsDead()) {
+                if (unit.GetParentTroop().IsOwnedByPlayer() != this.unit.GetParentTroop().IsOwnedByPlayer() && !unit.GetUnitIsDead()) {
                     // target unit is not from the same team AND Unit is not dead
 
                     if (unit.GetUnitCurrentGridPosition().y == this.unit.GetUnitCurrentGridPosition().y) {
@@ -88,17 +100,41 @@ public class UnitTargetingSystem : NetworkBehaviour
         }
     }
 
-    private void FindRangedAttackTargets() {
-        foreach(GridPosition relativeTargetGridPosition in gridPositionAttackTargetList) {
+    private void UpdateRangedAttackTargets() {
+        int index = 0;
+        foreach (GridPosition relativeTargetGridPosition in gridPositionAttackTargetList) {
             GridPosition targetGridPosition = new GridPosition(unit.GetUnitCurrentGridPosition().x + relativeTargetGridPosition.x, unit.GetUnitCurrentGridPosition().y + relativeTargetGridPosition.y);
+
+            if(!BattleGrid.Instance.IsValidGridPosition(targetGridPosition)) {
+                // Target grid position is not a valid grid position
+                continue;
+            }
+
+            // PRIORORITY to closest targets(X) : Check if new targetGridPosition is located behind old target grid position.
+            if(index != 0) {
+                GridPosition previousRelativeTargetGridPosition = gridPositionAttackTargetList[index -1];
+
+                if (Mathf.Abs(previousRelativeTargetGridPosition .x) < Mathf.Abs(relativeTargetGridPosition.x) && targetUnitList.Count > 0) {
+                    break;
+                }
+            }
+
             List<Unit> unitListAtTargetGridPosition = BattleGrid.Instance.GetUnitListAtGridPosition(targetGridPosition);
 
             foreach(Unit unit in unitListAtTargetGridPosition) {
-                if (unit.GetParentTroop().IsOwnedByPlayer() != this.unit.GetParentTroop().IsOwnedByPlayer() && !unit.UnitIsDead()) {
-                    // target unit is not from the same team AND Unit is not dead
+
+                if(unit.GetUnitIsDead()) {
+                    targetUnit = null;
+                }
+
+                if (unit.GetParentTroop().IsOwnedByPlayer() != this.unit.GetParentTroop().IsOwnedByPlayer() && !unit.GetUnitIsDead() && unit.GetUnitIsBought()) {
+                    // target unit is not from the same team AND Unit is not dead AND unit is bought
+
                     targetUnitList.Add(unit);
                 }
             }
+
+            index++;
         }
     }
 
@@ -117,16 +153,22 @@ public class UnitTargetingSystem : NetworkBehaviour
         this.distanceToClosestTargetUnit = distanceToClosestTargetUnit;
     }
 
+    private void FindRandomAttackTarget() {
+        targetUnit = targetUnitList[Random.Range(0, targetUnitList.Count)];
+    }
+
     public void FillGridPositionAttackTargetList() {
         gridPositionAttackTargetList = new List<GridPosition>();
 
-        foreach (Vector2 mainAttackTargetTiles in unit.GetUnitSO().mainAttackSO.attackTargetTiles) {
-            gridPositionAttackTargetList.Add(new GridPosition((int)mainAttackTargetTiles.x, (int)mainAttackTargetTiles.y));
+        int xMultiplier = 1;
+        // Reverse x if unit is opponent troop
+        if(!unit.GetParentTroop().IsOwnedByPlayer()) {
+            xMultiplier = -1;
         }
-    }
 
-    public List<Unit> GetUnitMeleeTargets() {
-        return targetUnitList;
+        foreach (Vector2 mainAttackTargetTiles in unit.GetUnitSO().mainAttackSO.attackTargetTiles) {
+            gridPositionAttackTargetList.Add(new GridPosition((int)mainAttackTargetTiles.x * xMultiplier, (int)mainAttackTargetTiles.y));
+        }
     }
 
     public Unit GetTargetUnit() {
@@ -151,6 +193,7 @@ public class UnitTargetingSystem : NetworkBehaviour
         if (mainAttackType == AttackSO.AttackType.ranged) {
             targetUnitIsInRange = true;
         }
+
         return targetUnitIsInRange; 
     }
 

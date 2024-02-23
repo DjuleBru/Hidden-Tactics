@@ -41,7 +41,7 @@ public class UnitVisual : NetworkBehaviour
     }
 
     protected virtual void Unit_OnUnitUpgraded(object sender, System.EventArgs e) {
-        if (!unit.UnitIsBought()) return;
+        if (!unit.GetUnitIsBought()) return;
         bodySpriteRenderer.material = upgradedBodyMaterial;
 
         if (upgradeReplacesBody)
@@ -52,7 +52,7 @@ public class UnitVisual : NetworkBehaviour
     }
 
     protected void Unit_OnUnitPlaced(object sender, System.EventArgs e) {
-        if (!unit.UnitIsBought()) return;
+        if (!unit.GetUnitIsBought()) return;
 
         bodySpriteRenderer.material = cleanMaterial;
     }

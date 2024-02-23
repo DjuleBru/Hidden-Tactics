@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class UnitMovement : NetworkBehaviour {
 
@@ -36,22 +37,18 @@ public class UnitMovement : NetworkBehaviour {
     private void MoveServerRpc(Vector3 moveDir3DNormalized) {
         rb.velocity = moveDir3DNormalized * unit.GetUnitSO().unitMoveSpeed * Time.fixedDeltaTime;
 
-        MoveClientRpc(moveDir3DNormalized, transform.position);
+        MoveClientRpc(moveDir3DNormalized);
     }
 
     [ClientRpc]
-    private void MoveClientRpc(Vector3 moveDir3DNormalized, Vector3 position) {
-
+    private void MoveClientRpc(Vector3 moveDir3DNormalized) {
         if (!IsServer) {
-            // Mirror movedir and x position 
+            // Mirror movedir 
             moveDir3DNormalized.x = -moveDir3DNormalized.x;
-
-            transform.position = new Vector3(position.x + (BattleGrid.Instance.GetBattlefieldMiddlePoint() - position.x) * 2,position.y, 0);
         }
 
         moveDir2D = new Vector2(moveDir3DNormalized.x, moveDir3DNormalized.y);
     }
-
     public void StopMoving() {
         rb.velocity = Vector3.zero;
     }

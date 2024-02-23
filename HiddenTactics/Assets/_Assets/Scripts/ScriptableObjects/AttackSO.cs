@@ -22,6 +22,8 @@ public class AttackSO : ScriptableObject
     }
 
     public AttackType attackType;
+    public bool attackDecomposition;
+    public GameObject projectilePrefab;
     public List<UnitSO.unitType> attackTargets;
     public List<Vector2> attackTargetTiles;
     public float meleeAttackTargetingRange;

@@ -40,9 +40,11 @@ public class UnitAnimatorManager : MonoBehaviour
         unit.OnUnitReset += Unit_OnUnitReset;
         unitAI.OnStateChanged += UnitAI_OnStateChanged;
         unit.OnUnitPlaced += Unit_OnUnitPlaced;
-        unitAttack.OnUnitAttack += UnitAttack_OnUnitAttacked;
-    }
 
+        unitAttack.OnUnitAttack += UnitAttack_OnUnitAttack;
+        unitAttack.OnUnitAttackStarted += UnitAttack_OnUnitAttackStarted;
+        unitAttack.OnUnitAttackEnded += UnitAttack_OnUnitAttackEnded;
+    }
 
     protected virtual void Update() {
         if (dead) {
@@ -54,7 +56,7 @@ public class UnitAnimatorManager : MonoBehaviour
         }
 
         if (unitAIStateHasChanged) {
-            if(unitAnimator.GetCurrentAnimatorStateInfo(0).IsName("Idle") | unitAnimator.GetCurrentAnimatorStateInfo(0).IsName("Walk")) {
+            if(unitAnimator.GetCurrentAnimatorStateInfo(0).IsName("Idle") | unitAnimator.GetCurrentAnimatorStateInfo(0).IsName("Walk") | unitAnimator.GetCurrentAnimatorStateInfo(0).IsName("Attack_Start")) {
                 UpdateAnimatorParameters();
             }
             if (unitAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime > .95 && unitAnimator.GetCurrentAnimatorStateInfo(0).IsName("Attack")) {
@@ -69,31 +71,31 @@ public class UnitAnimatorManager : MonoBehaviour
         }
     }
 
-    private void Unit_OnUnitReset(object sender, System.EventArgs e) {
+    protected void Unit_OnUnitReset(object sender, System.EventArgs e) {
         dead = false;
         unitAnimator.speed = 1;
         ResetAnimatorParameters();
     }
 
-    private void Unit_OnUnitPlaced(object sender, System.EventArgs e) {
-        SetUnitWatchDirection();
+    protected void Unit_OnUnitPlaced(object sender, System.EventArgs e) {
+        SetUnitWatchDirectionBasedOnGridPosition();
     }
 
-    private void UnitAI_OnStateChanged(object sender, System.EventArgs e) {
+    protected void UnitAI_OnStateChanged(object sender, System.EventArgs e) {
         if (unitAI.IsDead()) {
             UpdateAnimatorParameters();
             return;
         }
 
         if (unitAI.IsIdle()) {
-            SetUnitWatchDirection();
+            SetUnitWatchDirectionBasedOnGridPosition();
         }
 
         // Using this bool to let attack&special animations finish (see update)
         unitAIStateHasChanged = true;
     }
 
-    private void SetUnitWatchDirection() {
+    protected void SetUnitWatchDirectionBasedOnGridPosition() {
         if(unit.GetParentTroop().GetTroopGridPosition().x >= BattleGrid.Instance.GetGridWidth()/2) {
             SetXY(-1,-1);
         } else {
@@ -124,14 +126,68 @@ public class UnitAnimatorManager : MonoBehaviour
         unitAnimator.SetFloat("Y", Y);
     }
 
-    private void UnitAttack_OnUnitAttacked(object sender, System.EventArgs e) {
+    protected virtual void UnitAttack_OnUnitAttack(object sender, System.EventArgs e) {
         unitAnimator.SetTrigger("BaseAttack");
     }
 
-    private void Unit_OnHealthChanged(object sender, Unit.OnHealthChangedEventArgs e) {
+    protected virtual void UnitAttack_OnUnitAttackEnded(object sender, System.EventArgs e) {
+    }
+
+    protected virtual void UnitAttack_OnUnitAttackStarted(object sender, System.EventArgs e) {
+    }
+
+    protected void Unit_OnHealthChanged(object sender, Unit.OnHealthChangedEventArgs e) {
         if(e.newHealth < e.previousHealth) {
             unitShaderAnimator.SetTrigger("Damaged");
         }
+    }
+
+    protected void UpdateAnimatorParameters() {
+        string animationName = "Walk";
+
+        if (unitAI.IsWalking() | unitAI.IsMovingToTarget()) {
+            walking = true;
+            idle = false;
+
+            animationName = "Walk";
+            float randomOffset = Random.Range(0f, 1f);
+            unitAnimator.Play(animationName, 0, randomOffset);
+        }
+        if (unitAI.IsIdle()) {
+            walking = false;
+            idle = true;
+
+            animationName = "Idle";
+            float randomOffset = Random.Range(0f, 1f);
+            unitAnimator.Play(animationName, 0, randomOffset);
+        }
+
+        if (unitAI.IsDead()) {
+            unitAnimator.SetTrigger("Die");
+            dead = true;
+            walking = false;
+            idle = false;
+        }
+
+        if (unitAI.IsAttacking()) {
+            walking = false;
+            idle = true;
+        }
+
+        unitAnimator.SetBool("Walking", walking);
+        unitAnimator.SetBool("Idle", idle);
+
+        unitAIStateHasChanged = false;
+    }
+
+    protected void ResetAnimatorParameters() {
+        walking = false;
+        idle = true;
+        float randomOffset = Random.Range(0f, 1f);
+        unitAnimator.Play("Idle", 0, randomOffset);
+
+        unitAnimator.SetBool("Walking", walking);
+        unitAnimator.SetBool("Idle", idle);
     }
 
     public virtual void SetWalking()
@@ -151,54 +207,6 @@ public class UnitAnimatorManager : MonoBehaviour
 
         float randomOffset = Random.Range(0f, 1f);
         unitAnimator.Play(animationName, 0, randomOffset);
-    }
-
-    private void UpdateAnimatorParameters() {
-        string animationName = "Walk";
-
-        if (unitAI.IsWalking() | unitAI.IsMovingToTarget()) {
-            walking = true;
-            idle = false;
-
-            animationName = "Walk";
-            float randomOffset = Random.Range(0f, 1f);
-            unitAnimator.Play(animationName, 0, randomOffset);
-        }
-        if(unitAI.IsIdle()) {
-            walking = false;
-            idle = true;
-
-            animationName = "Idle";
-            float randomOffset = Random.Range(0f, 1f);
-            unitAnimator.Play(animationName, 0, randomOffset);
-        }
-
-        if(unitAI.IsDead()) {
-            unitAnimator.SetTrigger("Die");
-            dead = true;
-            walking = false;
-            idle = false;
-        }
-
-        if (unitAI.IsAttacking()) {
-            walking = false;
-            idle = true;
-        }
-
-        unitAnimator.SetBool("Walking", walking);
-        unitAnimator.SetBool("Idle", idle);
-
-        unitAIStateHasChanged = false;
-    }
-
-    private void ResetAnimatorParameters() {
-        walking = false;
-        idle = true;
-        float randomOffset = Random.Range(0f, 1f);
-        unitAnimator.Play("Idle", 0, randomOffset);
-
-        unitAnimator.SetBool("Walking", walking);
-        unitAnimator.SetBool("Idle", idle);
     }
 
     public virtual void SetAttackTrigger()
@@ -237,4 +245,10 @@ public class UnitAnimatorManager : MonoBehaviour
         unitAnimator.SetTrigger("Special2");
     }
 
+    public float GetX() {
+        return X;
+    }
+    public float GetY() {
+        return Y;
+    }
 }
