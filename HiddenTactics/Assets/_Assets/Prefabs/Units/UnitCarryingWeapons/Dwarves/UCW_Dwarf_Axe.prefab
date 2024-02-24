@@ -71,7 +71,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1836888947
-  m_SortingLayer: 8
+  m_SortingLayer: 10
   m_SortingOrder: 1
   m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -109,7 +109,7 @@ PrefabInstance:
       objectReference: {fileID: 1063518027, guid: c1f55cfeee753a942b7b40c2de1edbbe, type: 3}
     - target: {fileID: 2133364694423313781, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
       propertyPath: m_SortingLayer
-      value: 4
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 2133364694423313781, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
       propertyPath: m_SortingLayerID
@@ -135,6 +135,10 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 34b30cd5c18c38b42991457281c4b33e, type: 2}
+    - target: {fileID: 3804284718661281845, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 951099334
+      objectReference: {fileID: 0}
     - target: {fileID: 3953826815579895812, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
       propertyPath: weaponSO
       value: 

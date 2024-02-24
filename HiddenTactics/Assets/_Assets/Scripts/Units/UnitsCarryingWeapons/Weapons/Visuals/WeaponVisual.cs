@@ -350,14 +350,14 @@ public class WeaponVisual : NetworkBehaviour
     }
 
     public void SetSideWeaponActive() {
-        if(sideWeaponSO != null) {
+        if(sideWeaponSO != null && activeWeaponSO != sideWeaponSO) {
             activeWeaponSO = sideWeaponSO;
             mainWeaponAnimator.runtimeAnimatorController = sideWeaponSO.weaponAnimator;
         }
     }
     
     public void SetMainWeaponActive() {
-        if (sideWeaponSO != null) {
+        if (sideWeaponSO != null && activeWeaponSO != mainWeaponSO) {
             activeWeaponSO = mainWeaponSO;
             mainWeaponAnimator.runtimeAnimatorController = mainWeaponSO.weaponAnimator;
         }

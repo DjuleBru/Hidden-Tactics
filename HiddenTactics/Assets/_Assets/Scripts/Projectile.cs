@@ -34,6 +34,7 @@ public class Projectile : MonoBehaviour
 
     private float targetPositionUpdateTime = .2f;
     private float targetPositionUpdateTimer;
+    private float newPositionXNormalized;
 
     private bool projectileHasHit;
 
@@ -46,7 +47,7 @@ public class Projectile : MonoBehaviour
     private void Update() {
         if (projectileHasHit) return;
 
-        if (Mathf.Abs(transform.position.x - trajectoryEndPointRandomized.x) > .5f) {
+        if (newPositionXNormalized < 1) {
             UpdateNewPosition();
         } else {
             projectileHasHit = true;
@@ -92,7 +93,7 @@ public class Projectile : MonoBehaviour
         }
         newPosition = transform.position + new Vector3(projectileMoveSpeed * Time.deltaTime, 0, 0);
 
-        float newPositionXNormalized = (newPosition.x - trajectoryStartPoint.x) / (trajectoryRange.x);
+        newPositionXNormalized = (newPosition.x - trajectoryStartPoint.x) / (trajectoryRange.x);
         float newPositionYNormalized = projectileTrajectoryAnimationCurve.Evaluate(newPositionXNormalized);
 
         float trajectoryYWithTime = trajectoryMaxRelativeHeight * newPositionYNormalized;

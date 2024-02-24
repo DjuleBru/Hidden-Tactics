@@ -22,7 +22,7 @@ public class UnitAI : NetworkBehaviour
     public enum State {
         idle,
         moveForwards,
-        moveToTarget,
+        moveToMeleeTarget,
         attacking,
         dead,
     }
@@ -49,6 +49,20 @@ public class UnitAI : NetworkBehaviour
         BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
     }
 
+    protected void CheckIfTargetUnitIsInMeleeAttackRange(AttackSO meleeAttackSO, bool meleeAttackSOIsMainAttackSO) {
+        if (unitTargetingSystem.GetClosestTargetDistance() < meleeAttackSO.meleeAttackRange) {
+            unitMovement.StopMoving();
+            unitAttack.SetActiveAttackSO(meleeAttackSO);
+
+            if(meleeAttackSOIsMainAttackSO) {
+                unitAttack.SetAttackTarget(unitTargetingSystem.GetMainAttackTargetUnit());
+            } else {
+                unitAttack.SetAttackTarget(unitTargetingSystem.GetSideAttackTargetUnit());
+            }
+            ChangeState(State.attacking);
+        }
+    }
+
     protected void State_OnValueChanged(State previousValue, State newValue) {
         ChangeStateServerRpc();
     }
@@ -59,14 +73,31 @@ public class UnitAI : NetworkBehaviour
     }
 
     [ClientRpc]
-    protected void ChangeStateClientRpc() {
+    protected virtual void ChangeStateClientRpc() {
+        if (state.Value == State.idle) {
+            unitAttack.ResetAttackTarget();
+            ActivateMainAttack();
+            unitMovement.StopMoving();
+        }
+        if (state.Value == State.attacking) {
+            unitMovement.StopMoving();
+        }
+        if (state.Value == State.moveToMeleeTarget) {
+
+        }
+        if (state.Value == State.moveForwards) {
+        }
+        if (state.Value == State.dead) {
+            unitMovement.StopMoving();
+        }
+
         OnStateChanged?.Invoke(this, EventArgs.Empty);
     }
 
     protected void BattleManager_OnStateChanged(object sender, System.EventArgs e) {
         if (!IsServer) return; 
         unitActive = BattleManager.Instance.IsBattlePhase();
-        if(unitActive) {
+        if(BattleManager.Instance.IsBattlePhase()) {
             ChangeState(State.moveForwards);
         } else {
             ChangeState(State.idle);
@@ -87,10 +118,12 @@ public class UnitAI : NetworkBehaviour
 
     protected IEnumerator TakeDazed(float dazedTime) {
         unitActive = false;
-
+        unitMovement.SetDazed(true);
         yield return new WaitForSeconds(dazedTime);
 
-        if(!unit.GetUnitIsDead() & BattleManager.Instance.IsBattlePhase()) {
+        unitMovement.SetDazed(false);
+
+        if (!unit.GetUnitIsDead() & BattleManager.Instance.IsBattlePhase()) {
             // Unit is still alive and it is still battle phase
             unitActive = true;
             ChangeState(State.moveForwards);
@@ -122,12 +155,21 @@ public class UnitAI : NetworkBehaviour
     }
 
     public bool IsMovingToTarget() {
-        return state.Value == State.moveToTarget;
+        return state.Value == State.moveToMeleeTarget;
     }
 
-    #region CLIENT EVENT INVOKING
-    protected void InvokeOnMainAttackActivated() {
+    #region CHANGING ATTACK SO
+
+    protected void ActivateMainAttack() {
         InvokeOnMainAttackActivatedServerRpc();
+        unitAttack.SetAttackTarget(unitTargetingSystem.GetMainAttackTargetUnit());
+        unitAttack.SetActiveAttackSO(mainAttackSO);
+    }
+
+    protected void ActivateSideAttack() {
+        InvokeOnSideAttackActivatedServerRpc();
+        unitAttack.SetAttackTarget(unitTargetingSystem.GetSideAttackTargetUnit());
+        unitAttack.SetActiveAttackSO(sideAttackSO);
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -138,10 +180,6 @@ public class UnitAI : NetworkBehaviour
     [ClientRpc]
     private void InvokeOnMainAttackActivatedClientRpc() {
         OnMainAttackActivated?.Invoke(this, EventArgs.Empty);
-    }
-
-    protected void InvokeOnSideAttackActivated() {
-        InvokeOnSideAttackActivatedServerRpc();
     }
 
     [ServerRpc(RequireOwnership = false)]

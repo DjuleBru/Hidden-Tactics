@@ -17,6 +17,7 @@ public class UnitAnimatorManager : MonoBehaviour
     protected bool walking;
     protected bool idle;
     protected bool dead;
+    protected bool attacking;
     protected bool unitAIStateHasChanged;
 
     protected float X;
@@ -69,6 +70,11 @@ public class UnitAnimatorManager : MonoBehaviour
             Vector2 moveDir = unitMovement.GetMoveDir2D();
             SetXY(moveDir.x, moveDir.y);
         }
+        if(attacking) {
+            Vector2 watchDir = unitMovement.GetWatchDir2D();
+            SetXY(watchDir.x, watchDir.y);
+        }
+        
     }
 
     protected void Unit_OnUnitReset(object sender, System.EventArgs e) {
@@ -148,6 +154,7 @@ public class UnitAnimatorManager : MonoBehaviour
         if (unitAI.IsWalking() | unitAI.IsMovingToTarget()) {
             walking = true;
             idle = false;
+            attacking = false;
 
             animationName = "Walk";
             float randomOffset = Random.Range(0f, 1f);
@@ -156,6 +163,7 @@ public class UnitAnimatorManager : MonoBehaviour
         if (unitAI.IsIdle()) {
             walking = false;
             idle = true;
+            attacking = false;
 
             animationName = "Idle";
             float randomOffset = Random.Range(0f, 1f);
@@ -167,11 +175,13 @@ public class UnitAnimatorManager : MonoBehaviour
             dead = true;
             walking = false;
             idle = false;
+            attacking = false;
         }
 
         if (unitAI.IsAttacking()) {
             walking = false;
             idle = true;
+            attacking = true;
         }
 
         unitAnimator.SetBool("Walking", walking);

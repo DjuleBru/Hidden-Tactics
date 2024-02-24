@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Unit : NetworkBehaviour
@@ -68,7 +69,7 @@ public class Unit : NetworkBehaviour
         }
     }
 
-    [ServerRpc]
+    [ServerRpc(RequireOwnership = false)]
     protected void HandlePositionSyncServerRpc(Vector3 position) {
         HandlePositionSyncClientRpc(position);
     }
@@ -137,7 +138,7 @@ public class Unit : NetworkBehaviour
         TakeDamageServerRpc(damage);
     }
 
-    [ServerRpc]
+    [ServerRpc(RequireOwnership = false)]
     protected void TakeDamageServerRpc(int damage) {
         TakeDamageClientRpc(damage);
     }
@@ -152,7 +153,6 @@ public class Unit : NetworkBehaviour
         });
 
         if (unitHP < 0) {
-            OnUnitDied?.Invoke(this, EventArgs.Empty);
             Die();
         }
     }
@@ -162,7 +162,7 @@ public class Unit : NetworkBehaviour
         //TakeKnockBackServerRpc(force);
     }
 
-    [ServerRpc]
+    [ServerRpc(RequireOwnership = false)]
     protected void TakeKnockBackServerRpc(Vector2 force) {
         TakeKnockBackClientRpc(force);
     }
@@ -184,6 +184,7 @@ public class Unit : NetworkBehaviour
     }
 
     protected void Die() {
+        OnUnitDied?.Invoke(this, EventArgs.Empty);
         unitIsDead = true;
         collider2d.enabled = false;
     }

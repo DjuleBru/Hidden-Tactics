@@ -12,31 +12,40 @@ public class UnitMovement : NetworkBehaviour {
     private Vector3 moveDir2D;
     private int moveDirMultiplier;
 
+    private bool dazed;
+
+    private Vector3 moveDir;
+    private Vector3 watchDir;
+
     private void Awake() {
         rb = GetComponent<Rigidbody2D>();
         unit = GetComponent<Unit>();
     }
 
-
     private void Start() {
         unit.OnUnitPlaced += Unit_OnUnitPlaced;
     }
 
+    private void LateUpdate() {
+        if (IsServer) {
+            if (!dazed) {
+                MoveServerRpc(moveDir);
+            }
+        }
+    }
+
     public void MoveForwards() {
-        Vector3 moveDir3D = new Vector3(moveDirMultiplier, 0, 0);
-        MoveServerRpc(moveDir3D);
+        moveDir = new Vector3(moveDirMultiplier, 0, 0);
     }
 
     public void MoveToTarget(Vector3 targetPosition) {
-        Vector3 moveDir3D = (targetPosition - transform.position).normalized;
-        MoveServerRpc(moveDir3D);
+        moveDir = (targetPosition - transform.position).normalized;
     }
 
 
-    [ServerRpc]
+    [ServerRpc(RequireOwnership = false)]
     private void MoveServerRpc(Vector3 moveDir3DNormalized) {
         rb.velocity = moveDir3DNormalized * unit.GetUnitSO().unitMoveSpeed * Time.fixedDeltaTime;
-
         MoveClientRpc(moveDir3DNormalized);
     }
 
@@ -49,8 +58,37 @@ public class UnitMovement : NetworkBehaviour {
 
         moveDir2D = new Vector2(moveDir3DNormalized.x, moveDir3DNormalized.y);
     }
+
     public void StopMoving() {
-        rb.velocity = Vector3.zero;
+        moveDir = Vector3.zero;
+    }
+
+    public void SetDazed(bool dazed) {
+        this.dazed = dazed;
+    }
+
+    public void SetWatchDir(Transform targetTransform) {
+        Vector3 watchDir = (targetTransform.position - transform.position).normalized;
+        SetWatchDirServerRpc(watchDir);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void SetWatchDirServerRpc(Vector3 watchDir3DNormalized) {
+        SetWatchDirClientRpc(watchDir3DNormalized);
+    }
+
+    [ClientRpc]
+    private void SetWatchDirClientRpc(Vector3 watchDir3DNormalized) {
+        if (!IsServer) {
+            // Mirror watchdir 
+            watchDir3DNormalized.x = -watchDir3DNormalized.x;
+        }
+
+        watchDir = new Vector2(watchDir3DNormalized.x, watchDir3DNormalized.y);
+    }
+
+    public Vector2 GetWatchDir2D() {
+        return watchDir;
     }
 
     public Vector2 GetMoveDir2D() {

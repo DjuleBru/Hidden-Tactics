@@ -53,6 +53,7 @@ public class BattleManager : NetworkBehaviour
     }
 
     private void Update() {
+
         if (!IsServer) {
             return;
         }

@@ -14,6 +14,7 @@ public class UnitAttack : NetworkBehaviour
 
     private Unit unit;
     private UnitAI unitAI;
+    private UnitMovement unitMovement;
 
     private AttackSO activeAttackSO;
     private Unit attackTarget;
@@ -36,10 +37,14 @@ public class UnitAttack : NetworkBehaviour
     private void Awake() {
         unitAI = GetComponent<UnitAI>();
         unit = GetComponent<Unit>();
+        unitMovement = GetComponent<UnitMovement>();
     }
 
     private void Start() {
         UpdateActiveAttackParameters(unit.GetUnitSO().mainAttackSO);
+        if(IsServer) {
+            RandomizeAttackTimersServerRpc();
+        }
         activeAttackSO = unit.GetUnitSO().mainAttackSO;
     }
 
@@ -77,7 +82,6 @@ public class UnitAttack : NetworkBehaviour
             if (attackStartTimer < 0) {
                 attackStarted = true;
                 OnUnitAttackStarted?.Invoke(this, EventArgs.Empty);
-                Debug.Log("unit attack started");
             }
         } else {
             attackEndTimer -= Time.deltaTime;
@@ -89,7 +93,6 @@ public class UnitAttack : NetworkBehaviour
 
                 Shoot(attackTarget);
                 OnUnitAttackEnded?.Invoke(this, EventArgs.Empty);
-                Debug.Log("unit attack Ended");
             }
         }
     }
@@ -170,13 +173,9 @@ public class UnitAttack : NetworkBehaviour
         attackAnimationHitDelay = attackSO.attackAnimationHitDelay;
         attackAOE = attackSO.attackAOE;
         attackDecomposition = attackSO.attackDecomposition;
-
-        if (IsServer) {
-            RandomizeAttackTimersServerRpc();
-        }
     }
-
-    [ServerRpc]
+        
+    [ServerRpc(RequireOwnership = false)]
     private void SpawnProjectileServerRpc(NetworkObjectReference targetUnitNetworkObjectReference) {
 
         targetUnitNetworkObjectReference.TryGet(out NetworkObject targetUnitNetworkObject);
@@ -202,7 +201,7 @@ public class UnitAttack : NetworkBehaviour
     }
 
 
-    [ServerRpc]
+    [ServerRpc(RequireOwnership = false)]
     private void RandomizeAttackTimersServerRpc() {
 
         attackTimer = UnityEngine.Random.Range(0, attackRate / 4);
@@ -245,11 +244,18 @@ public class UnitAttack : NetworkBehaviour
 
     #region SET PARAMETERS
     public void SetAttackTarget(Unit unit) {
-        NetworkObject unitNetworkObject = unit.GetComponent<NetworkObject>();
-        SetAttackTargetServerRpc(unitNetworkObject);
+        if(unit != null) {
+            NetworkObject unitNetworkObject = unit.GetComponent<NetworkObject>();
+            SetAttackTargetServerRpc(unitNetworkObject);
+            unitMovement.SetWatchDir(unit.transform);
+        }
     }
 
-    [ServerRpc]
+    public void ResetAttackTarget() {
+        attackTarget = null;
+    }
+
+    [ServerRpc(RequireOwnership = false)]
     public void SetAttackTargetServerRpc(NetworkObjectReference unitNetworkObjectReference) {
         SetAttackTargetClientRpc(unitNetworkObjectReference);
     }
@@ -267,7 +273,7 @@ public class UnitAttack : NetworkBehaviour
         SetActiveAttackSODecompositionParameterServerRpc(attackSO.attackDecomposition);
     }
 
-    [ServerRpc]
+    [ServerRpc(RequireOwnership = false)]
     private void SetActiveAttackSODecompositionParameterServerRpc(bool attackSODecomposition) {
         SetActiveAttackSODecompositionParameterClientRpc(attackSODecomposition);
     }

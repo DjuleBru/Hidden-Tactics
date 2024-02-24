@@ -13,15 +13,17 @@ MonoBehaviour:
   m_Name: SamuraiMainAttack
   m_EditorClassIdentifier: 
   attackType: 0
+  attackDecomposition: 0
+  projectilePrefab: {fileID: 0}
   attackTargets: 0000000002000000
   attackTargetTiles:
   - {x: 0, y: 0}
   meleeAttackTargetingRange: 5
-  meleeAttackRange: 1.5
-  attackDamage: 5
+  meleeAttackRange: 1
+  attackDamage: 7
   attackRate: 2
   attackKnockback: 0
-  attackDazedTime: 0
+  attackDazedTime: 0.1
   attackAOE: 0
   attackAnimationHitDelay: 0.1
   attackSpecialList: 

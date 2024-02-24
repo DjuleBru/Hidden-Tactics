@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
 public class UnitAI_Melee : UnitAI
@@ -8,24 +9,29 @@ public class UnitAI_Melee : UnitAI
         if (!IsServer) return;
         // AI runs only on server
 
-        if (!unitActive | !unit.GetUnitIsBought()) return;
+        if (!unitActive | !unit.GetUnitIsBought() | state.Value == State.dead) return;
 
         switch (state.Value) {
             case State.idle:
                 break;
             case State.moveForwards:
 
+                unitMovement.MoveForwards();
                 if (unitTargetingSystem.GetMainAttackTargetUnit() != null) {
                     //Unit has a valid target
-                    ChangeState(State.moveToTarget);
+                    ChangeState(State.moveToMeleeTarget);
                 }
 
                 break;
-            case State.moveToTarget:
+            case State.moveToMeleeTarget:
 
-                if (unitTargetingSystem.GetMainAttackTargetUnit() == null) {
+                if (unitTargetingSystem.GetMainAttackTargetUnit() != null) {
+                    unitMovement.MoveToTarget(unitTargetingSystem.GetMainAttackTargetUnit().transform.position);
+                } else { 
                     ChangeState(State.moveForwards);
                 }
+
+                CheckIfTargetUnitIsInMeleeAttackRange(mainAttackSO, true);
 
                 break;
             case State.attacking:
@@ -56,28 +62,5 @@ public class UnitAI_Melee : UnitAI
 
         }
 
-    }
-
-    protected void FixedUpdate() {
-        if (!IsServer) return;
-        // AI runs only on server
-
-        if (!unitActive | !unit.GetUnitIsBought()) return;
-
-        if (state.Value == State.moveForwards) {
-            unitMovement.MoveForwards();
-        }
-
-        if (state.Value == State.moveToTarget) {
-            if (unitTargetingSystem.GetMainAttackTargetUnit() != null) {
-                unitMovement.MoveToTarget(unitTargetingSystem.GetMainAttackTargetUnit().transform.position);
-
-                if (unitTargetingSystem.GetClosestTargetDistance() < unit.GetUnitSO().mainAttackSO.meleeAttackRange) {
-                    unitMovement.StopMoving();
-                    unitAttack.SetAttackTarget(unitTargetingSystem.GetMainAttackTargetUnit());
-                    ChangeState(State.attacking);
-                }
-            }
-        }
     }
 }
