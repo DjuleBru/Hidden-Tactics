@@ -6,16 +6,22 @@ using UnityEngine;
 [CreateAssetMenu()]
 
 public class UnitSO : ScriptableObject {
-    public enum unitType {
+    public enum MoveType {
         ground,
         air,
-        building
     }
+
+    public enum UnitTag {
+        large,
+        mounted,
+    }
+
+    public List<UnitTag> unitTagList;
 
     public int HP;
     public int armor;
     public float mass;
-    public unitType moveType;
+    public MoveType moveType;
     public float unitMoveSpeed;
 
     public AttackSO mainAttackSO;

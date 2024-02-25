@@ -10,38 +10,38 @@ public class UnitAttack : NetworkBehaviour
     public event EventHandler OnUnitAttackStarted;
     public event EventHandler OnUnitAttackEnded;
 
-    [SerializeField] private Transform projectileSpawnPoint;
+    [SerializeField] protected Transform projectileSpawnPoint;
 
-    private Unit unit;
-    private UnitAI unitAI;
-    private UnitMovement unitMovement;
+    protected Unit unit;
+    protected UnitAI unitAI;
+    protected UnitMovement unitMovement;
 
-    private AttackSO activeAttackSO;
-    private Unit attackTarget;
-    private int attackDamage;
-    private float attackTimer;
+    protected AttackSO activeAttackSO;
+    protected Unit attackTarget;
+    protected int attackDamage;
+    protected float attackTimer;
 
-    private float attackStartTimer;
-    private float attackEndTimer;
-    private bool attackStarted;
+    protected float attackStartTimer;
+    protected float attackEndTimer;
+    protected bool attackStarted;
 
-    private float attackRate;
-    private float attackAOE;
-    private float attackKnockback;
-    private float attackDazedTime;
-    private float meleeAttackAnimationHitDelay;
-    private float meleeAttackAnimationDuration;
-    private bool attackDecomposition;
+    protected float attackRate;
+    protected float attackAOE;
+    protected float attackKnockback;
+    protected float attackDazedTime;
+    protected float meleeAttackAnimationHitDelay;
+    protected float meleeAttackAnimationDuration;
+    protected bool attackDecomposition;
 
-    private bool attacking;
+    protected bool attacking;
 
-    private void Awake() {
+    protected void Awake() {
         unitAI = GetComponent<UnitAI>();
         unit = GetComponent<Unit>();
         unitMovement = GetComponent<UnitMovement>();
     }
 
-    private void Start() {
+    protected void Start() {
         UpdateActiveAttackParameters(unit.GetUnitSO().mainAttackSO);
         if(IsServer) {
             RandomizeAttackTimersServerRpc();
@@ -56,7 +56,7 @@ public class UnitAttack : NetworkBehaviour
         BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
     }
 
-    private void Update() {
+    protected void Update() {
         if (attackTarget != null) {
             unitMovement.SetWatchDir(attackTarget.transform);
         }
@@ -71,7 +71,7 @@ public class UnitAttack : NetworkBehaviour
 
     }
 
-    private void HandleStandardAttack() {
+    protected void HandleStandardAttack() {
         attackTimer -= Time.deltaTime;
         if (attackTimer < 0) {
             attackTimer = attackRate;
@@ -79,7 +79,7 @@ public class UnitAttack : NetworkBehaviour
         }
     }
 
-    private void HandleDecomposedAttack() {
+    protected void HandleDecomposedAttack() {
         if (!attackStarted) {
             attackStartTimer -= Time.deltaTime;
 
@@ -101,7 +101,7 @@ public class UnitAttack : NetworkBehaviour
         }
     }
 
-    private IEnumerator MeleeAttack(Unit targetUnit) {
+    protected IEnumerator MeleeAttack(Unit targetUnit) {
         OnUnitAttack?.Invoke(this, EventArgs.Empty);
         unitAI.SetAttackStarted(true);
 
@@ -116,7 +116,7 @@ public class UnitAttack : NetworkBehaviour
         unitAI.SetAttackStarted(false);
     }
 
-    private void Shoot(Unit targetUnit) {
+    protected void Shoot(Unit targetUnit) {
         NetworkObject targetUnitNetworkObject = targetUnit.GetComponent<NetworkObject>();
         if(IsServer) {
             SpawnProjectileServerRpc(targetUnitNetworkObject);
@@ -128,7 +128,7 @@ public class UnitAttack : NetworkBehaviour
         InflictDamage(targetUnit);
     }
 
-    private void InflictDamage(Unit targetUnit) {
+    protected void InflictDamage(Unit targetUnit) {
         if (!IsServer) return;
 
         PerformAllDamageActions(targetUnit);
@@ -140,7 +140,7 @@ public class UnitAttack : NetworkBehaviour
         }
     }
 
-    private void PerformAllDamageActions(Unit targetUnit) {
+    protected virtual void PerformAllDamageActions(Unit targetUnit) {
         targetUnit.TakeDamage(attackDamage);
         if (attackKnockback != 0) {
 
@@ -154,7 +154,7 @@ public class UnitAttack : NetworkBehaviour
         }
     }
 
-    private List<Unit> FindAOEAttackTargets(Vector3 targetPosition) {
+    protected List<Unit> FindAOEAttackTargets(Vector3 targetPosition) {
 
         List<Unit> AOETargetUnitList = new List<Unit>();
         Collider2D[] colliderArray = Physics2D.OverlapCircleAll(targetPosition, attackAOE);
@@ -173,7 +173,7 @@ public class UnitAttack : NetworkBehaviour
         return AOETargetUnitList;
     }
 
-    private void UpdateActiveAttackParameters(AttackSO attackSO) {
+    protected void UpdateActiveAttackParameters(AttackSO attackSO) {
         attackDamage = attackSO.attackDamage;
         attackRate = attackSO.attackRate;
         attackKnockback = attackSO.attackKnockback;
@@ -185,7 +185,7 @@ public class UnitAttack : NetworkBehaviour
     }
         
     [ServerRpc(RequireOwnership = false)]
-    private void SpawnProjectileServerRpc(NetworkObjectReference targetUnitNetworkObjectReference) {
+    protected void SpawnProjectileServerRpc(NetworkObjectReference targetUnitNetworkObjectReference) {
 
         targetUnitNetworkObjectReference.TryGet(out NetworkObject targetUnitNetworkObject);
 
@@ -198,7 +198,7 @@ public class UnitAttack : NetworkBehaviour
     }
 
     [ClientRpc]
-    private void InitializeProjectileClientRpc(NetworkObjectReference projectileNetworkObjectReference, NetworkObjectReference targetUnitNetworkReference) {
+    protected void InitializeProjectileClientRpc(NetworkObjectReference projectileNetworkObjectReference, NetworkObjectReference targetUnitNetworkReference) {
 
         targetUnitNetworkReference.TryGet(out NetworkObject targetUnitNetworkObject);
         Unit targetUnit = targetUnitNetworkObject.GetComponent<Unit>();
@@ -211,7 +211,7 @@ public class UnitAttack : NetworkBehaviour
 
 
     [ServerRpc(RequireOwnership = false)]
-    private void RandomizeAttackTimersServerRpc() {
+    protected void RandomizeAttackTimersServerRpc() {
 
         attackTimer = UnityEngine.Random.Range(0, attackRate / 4);
         attackStartTimer = UnityEngine.Random.Range(attackRate / 6, attackRate / 3);
@@ -221,7 +221,7 @@ public class UnitAttack : NetworkBehaviour
     }
 
     [ClientRpc]
-    private void SetAttackTimersClientRpc(float attackTimer, float attackStartTimer, float attackEndTimer) {
+    protected void SetAttackTimersClientRpc(float attackTimer, float attackStartTimer, float attackEndTimer) {
 
         this.attackTimer = attackTimer;
         this.attackStartTimer = attackStartTimer;
@@ -231,18 +231,18 @@ public class UnitAttack : NetworkBehaviour
 
     #region EVENT RESPONSES
 
-    private void BattleManager_OnStateChanged(object sender, EventArgs e) {
+    protected void BattleManager_OnStateChanged(object sender, EventArgs e) {
         if (BattleManager.Instance.IsBattlePhaseEnding()) {
             RandomizeAttackTimersServerRpc();
         }
     }
 
-    private void Unit_OnUnitDazed(object sender, Unit.OnUnitDazedEventArgs e) {
+    protected void Unit_OnUnitDazed(object sender, Unit.OnUnitDazedEventArgs e) {
         if (!IsServer) return;
         attacking = false;
     }
 
-    private void UnitAI_OnStateChanged(object sender, System.EventArgs e) {
+    protected void UnitAI_OnStateChanged(object sender, System.EventArgs e) {
         if(unitAI.IsAttacking()) {
             attacking = true;
         } else {

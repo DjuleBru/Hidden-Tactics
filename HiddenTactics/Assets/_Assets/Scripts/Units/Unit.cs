@@ -39,7 +39,7 @@ public class Unit : NetworkBehaviour
     private GridPosition currentGridPosition;
     private Vector3 unitPositionInTroop;
 
-    private int unitHP;
+    private float unitHP;
     private int unitArmor;
 
     private Rigidbody2D rb;
@@ -139,17 +139,17 @@ public class Unit : NetworkBehaviour
         OnUnitSpawned?.Invoke(this, EventArgs.Empty);
     }
 
-    public void TakeDamage(int damage) {
+    public void TakeDamage(float damage) {
         TakeDamageServerRpc(damage);
     }
 
     [ServerRpc(RequireOwnership = false)]
-    protected void TakeDamageServerRpc(int damage) {
+    protected void TakeDamageServerRpc(float damage) {
         TakeDamageClientRpc(damage);
     }
 
     [ClientRpc]
-    protected void TakeDamageClientRpc(int damage) {
+    protected void TakeDamageClientRpc(float damage) {
         unitHP -= (damage - unitArmor);
 
         OnHealthChanged?.Invoke(this, new OnHealthChangedEventArgs {

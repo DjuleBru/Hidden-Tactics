@@ -59,7 +59,6 @@ public class UnitAI_Melee : UnitAI
 
                 break;
             case State.dead:
-
                 break;
 
         }
