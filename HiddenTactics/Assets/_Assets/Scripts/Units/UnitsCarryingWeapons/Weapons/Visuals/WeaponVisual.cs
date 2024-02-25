@@ -11,6 +11,8 @@ public class WeaponVisual : NetworkBehaviour
     [FoldoutGroup("Base attributes")]
     [SerializeField] private Transform weaponHoldPoint;
     [FoldoutGroup("Base attributes")]
+    [SerializeField] private Transform weaponSortingLayerTransform;
+    [FoldoutGroup("Base attributes")]
     [SerializeField] private WeaponSO mainWeaponSO;
     [FoldoutGroup("Base attributes")]
     [SerializeField] private WeaponSO sideWeaponSO;
@@ -118,11 +120,7 @@ public class WeaponVisual : NetworkBehaviour
 
     private void HandleWeaponIdleVisual() {
         weaponVisualSpriteRenderer.enabled = true;
-        weaponVisualSpriteRenderer.sortingLayerName = "Weapon_South";
-        legendaryweaponVisualSpriteRenderer.sortingLayerName = "Weapon_South";
-        if (ucw.GetIsMountedUnit()) {
-            weaponMountedVisualSpriteRenderer.sortingLayerName = "Weapon_South";
-        }
+        weaponSortingLayerTransform.localPosition = new Vector3(0,-0.1f,0);
 
         // Weapon is idle : Change weapon idle sprite
         if (legendaryState == UCW.LegendaryState.Base)
@@ -175,23 +173,14 @@ public class WeaponVisual : NetworkBehaviour
         {
             if(Y > 0.5)
             {
-                weaponVisualSpriteRenderer.sortingLayerName = "Weapon_North";
-                legendaryweaponVisualSpriteRenderer.sortingLayerName = "Weapon_North";
-                if (ucw.GetIsMountedUnit())
-                {
-                    weaponMountedVisualSpriteRenderer.sortingLayerName = "Weapon_North";
-                }
+                weaponSortingLayerTransform.localPosition = new Vector3(0, 0.1f, 0);
             }
         } else
         {
             if (Y > 0)
             {
-                weaponVisualSpriteRenderer.sortingLayerName = "Weapon_North";
-                legendaryweaponVisualSpriteRenderer.sortingLayerName = "Weapon_North";
-                if (ucw.GetIsMountedUnit())
-                {
-                    weaponMountedVisualSpriteRenderer.sortingLayerName = "Weapon_North";
-                }
+
+                weaponSortingLayerTransform.localPosition = new Vector3(0, 0.1f, 0);
             }
         }
 

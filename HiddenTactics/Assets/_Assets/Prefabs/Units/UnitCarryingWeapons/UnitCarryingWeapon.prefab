@@ -1,5 +1,38 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1922188935943827825
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5770893209979857150}
+  m_Layer: 0
+  m_Name: WeaponSortingLayerTransform
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5770893209979857150
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1922188935943827825}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 2857838209543982747}
+  - {fileID: 8861936283550865528}
+  m_Father: {fileID: 1214909075196817842}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6739547226070682017
 GameObject:
   m_ObjectHideFlags: 0
@@ -28,8 +61,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1214909075196817842}
-  m_RootOrder: 3
+  m_Father: {fileID: 5770893209979857150}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &4281401351482345761
 PrefabInstance:
@@ -92,7 +125,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1200925784089581888, guid: ecaf4c1c39222ff458941abdb8115703, type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1793905914494342003, guid: ecaf4c1c39222ff458941abdb8115703, type: 3}
       propertyPath: m_Controller
@@ -374,7 +407,7 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
-    m_TransformParent: {fileID: 1214909075196817842}
+    m_TransformParent: {fileID: 5770893209979857150}
     m_Modifications:
     - target: {fileID: 933856135931499846, guid: ee25184de5916c9469e49469c07fd166, type: 3}
       propertyPath: shaderTypes
@@ -402,15 +435,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1045866119622406648, guid: ee25184de5916c9469e49469c07fd166, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 1045866119622406648, guid: ee25184de5916c9469e49469c07fd166, type: 3}
       propertyPath: m_LocalRotation.y
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 1045866119622406648, guid: ee25184de5916c9469e49469c07fd166, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 1045866119622406648, guid: ee25184de5916c9469e49469c07fd166, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -423,6 +456,14 @@ PrefabInstance:
     - target: {fileID: 1045866119622406648, guid: ee25184de5916c9469e49469c07fd166, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1329043315878194129, guid: ee25184de5916c9469e49469c07fd166, type: 3}
+      propertyPath: m_SortingLayer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 1329043315878194129, guid: ee25184de5916c9469e49469c07fd166, type: 3}
+      propertyPath: m_SortingLayerID
+      value: 76312135
       objectReference: {fileID: 0}
     - target: {fileID: 1329043315878194129, guid: ee25184de5916c9469e49469c07fd166, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -444,6 +485,10 @@ PrefabInstance:
       propertyPath: placingUnitMaterial
       value: 
       objectReference: {fileID: 2100000, guid: 684a5a5301c6bfd4eb68f6d32d5b9a09, type: 2}
+    - target: {fileID: 4802690032266236292, guid: ee25184de5916c9469e49469c07fd166, type: 3}
+      propertyPath: weaponSortingLayerTransform
+      value: 
+      objectReference: {fileID: 5770893209979857150}
     - target: {fileID: 7373287197052003574, guid: ee25184de5916c9469e49469c07fd166, type: 3}
       propertyPath: m_Name
       value: Weapon
@@ -466,3 +511,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 475e093bd2a937d45ae6081951c039ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!4 &8861936283550865528 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1045866119622406648, guid: ee25184de5916c9469e49469c07fd166, type: 3}
+  m_PrefabInstance: {fileID: 8392534498386143616}
+  m_PrefabAsset: {fileID: 0}

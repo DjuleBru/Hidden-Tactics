@@ -98,15 +98,27 @@ PrefabInstance:
     - target: {fileID: 390265039669744821, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 1063518027, guid: c1f55cfeee753a942b7b40c2de1edbbe, type: 3}
+      objectReference: {fileID: -795137782, guid: 88534b7e8ae76bb4aa6becfd7592e044, type: 3}
     - target: {fileID: 390265039669744821, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 417919779066184301, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 417919779066184301, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.059999943
+      objectReference: {fileID: 0}
+    - target: {fileID: 1437879440930286512, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
+      propertyPath: unitSO
+      value: 
+      objectReference: {fileID: 11400000, guid: 7606fef14be24454c83720fd9b2a026d, type: 2}
     - target: {fileID: 2133364694423313781, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 1063518027, guid: c1f55cfeee753a942b7b40c2de1edbbe, type: 3}
+      objectReference: {fileID: -795137782, guid: 88534b7e8ae76bb4aa6becfd7592e044, type: 3}
     - target: {fileID: 2133364694423313781, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
       propertyPath: m_SortingLayer
       value: 6
@@ -118,7 +130,7 @@ PrefabInstance:
     - target: {fileID: 2562456056061221458, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
       propertyPath: m_Controller
       value: 
-      objectReference: {fileID: 22100000, guid: 64867b8d78905f74b85b2268e91eccf7, type: 2}
+      objectReference: {fileID: 22100000, guid: ca1194e8ea890e341a9029662504422a, type: 2}
     - target: {fileID: 3299340502619254647, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
       propertyPath: shaderTypes
       value: 0
@@ -171,10 +183,6 @@ PrefabInstance:
       propertyPath: mainWeaponSO
       value: 
       objectReference: {fileID: 11400000, guid: a97eccdf30e8c26459052ea5849af86c, type: 2}
-    - target: {fileID: 3953826815579895812, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
-      propertyPath: sideWeaponSO
-      value: 
-      objectReference: {fileID: 11400000, guid: 41d614a885065b747aa71ca0a64085ed, type: 2}
     - target: {fileID: 3953826815579895812, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
       propertyPath: weaponPoison
       value: 
@@ -229,23 +237,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4624428746373917087, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
       propertyPath: m_Name
-      value: UCW_Dwarf_Axe
+      value: UCW_Goblin_Axe 1
       objectReference: {fileID: 0}
-    - target: {fileID: 7096053914295724965, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
-      propertyPath: hasSideWeapon
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7096053914295724965, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
-      propertyPath: sideWeaponAnimator
-      value: 
-      objectReference: {fileID: 3164696825376086449}
-    - target: {fileID: 7096053914295724965, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
-      propertyPath: ugradedSideWeaponSO
-      value: 
-      objectReference: {fileID: 11400000, guid: 17481942944633f4e88613030a38238f, type: 2}
     - target: {fileID: 7096053914295724965, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
       propertyPath: upgradeReplacesBody
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7096053914295724965, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
       propertyPath: upgradedBodyAnimator
@@ -254,22 +250,14 @@ PrefabInstance:
     - target: {fileID: 7096053914295724965, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
       propertyPath: upgradedBodyMaterial
       value: 
-      objectReference: {fileID: 2100000, guid: 2e7211533b52a90459c075aca744946e, type: 2}
-    - target: {fileID: 7096053914295724965, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
-      propertyPath: bodySideWeaponAnimator
-      value: 
-      objectReference: {fileID: 22100000, guid: 7815f32d6e1b50240b5ae04ffed30e6c, type: 2}
+      objectReference: {fileID: 2100000, guid: c30bb5444de69af40a56c143e85b3b8d, type: 2}
     - target: {fileID: 7096053914295724965, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
       propertyPath: upgradedWeaponMaterial
       value: 
-      objectReference: {fileID: 2100000, guid: 1d285e887d2c21e41824f1a34a65aac4, type: 2}
-    - target: {fileID: 7096053914295724965, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
-      propertyPath: upgradeReplacesSideWeapon
-      value: 1
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 2100000, guid: 2dd6111faaf6a4f409a72e3e7d3ee38b, type: 2}
     - target: {fileID: 7096053914295724965, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
       propertyPath: upgradeChangesWeaponShader
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7339233484989583726, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
       propertyPath: m_Controller
@@ -288,8 +276,28 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7591148188649519246, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.09375
+      objectReference: {fileID: 0}
+    - target: {fileID: 7591148188649519246, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
       propertyPath: m_LocalPosition.y
       value: -0.014999986
+      objectReference: {fileID: 0}
+    - target: {fileID: 7591148188649519246, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7819229
+      objectReference: {fileID: 0}
+    - target: {fileID: 7591148188649519246, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0.5978252
+      objectReference: {fileID: 0}
+    - target: {fileID: 7591148188649519246, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.10728668
+      objectReference: {fileID: 0}
+    - target: {fileID: 7591148188649519246, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0.14032513
       objectReference: {fileID: 0}
     - target: {fileID: 7707950743551370127, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
       propertyPath: shaderTypes
@@ -337,11 +345,6 @@ SpriteRenderer:
 --- !u!4 &2213990894495455491 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 417919779066184301, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
-  m_PrefabInstance: {fileID: 1978508700217793390}
-  m_PrefabAsset: {fileID: 0}
---- !u!95 &3164696825376086449 stripped
-Animator:
-  m_CorrespondingSourceObject: {fileID: 3503327518094082783, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
   m_PrefabInstance: {fileID: 1978508700217793390}
   m_PrefabAsset: {fileID: 0}
 --- !u!4 &7029836679232979734 stripped
