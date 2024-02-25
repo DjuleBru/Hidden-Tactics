@@ -177,9 +177,10 @@ public class UnitTargetingSystem : NetworkBehaviour
 
         Unit closestUnit = null;
         foreach(Unit targetUnit in targetUnitList) {
-            float distanceToTargetUnit = Vector3.Distance(transform.position, targetUnit.transform.position);
+            ColliderDistance2D distanceBetweenUnitColliders = Physics2D.Distance(gameObject.GetComponent<Collider2D>(), targetUnit.gameObject.GetComponent<Collider2D>());
+            float distanceToTargetUnit = distanceBetweenUnitColliders.distance;
 
-            if(distanceToTargetUnit < distanceToClosestTargetUnit) {
+            if (distanceToTargetUnit < distanceToClosestTargetUnit) {
                 distanceToClosestTargetUnit = distanceToTargetUnit;
                 closestUnit = targetUnit;
             }

@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: GiantMainAttack
   m_EditorClassIdentifier: 
   attackType: 0
+  attackDecomposition: 0
+  projectilePrefab: {fileID: 0}
   attackTargets: 0000000002000000
   attackTargetTiles:
   - {x: 0, y: 0}
@@ -23,5 +25,6 @@ MonoBehaviour:
   attackKnockback: 10000
   attackDazedTime: 1
   attackAOE: 3
-  attackAnimationHitDelay: 0.4
+  meleeAttackAnimationHitDelay: 0.4
+  meleeAttackAnimationDuration: 0.8
   attackSpecialList: 

@@ -202,6 +202,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: UnitCarryingWeapon_Visual
       objectReference: {fileID: 0}
+    - target: {fileID: 6922848764123202422, guid: ecaf4c1c39222ff458941abdb8115703, type: 3}
+      propertyPath: TransitionStateInfoList.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6922848764123202422, guid: ecaf4c1c39222ff458941abdb8115703, type: 3}
+      propertyPath: TransitionStateInfoList.Array.data[0].TriggerNameHash
+      value: 242927125
+      objectReference: {fileID: 0}
+    - target: {fileID: 6922848764123202422, guid: ecaf4c1c39222ff458941abdb8115703, type: 3}
+      propertyPath: TransitionStateInfoList.Array.data[0].DestinationState
+      value: 242927125
+      objectReference: {fileID: 0}
+    - target: {fileID: 6922848764123202422, guid: ecaf4c1c39222ff458941abdb8115703, type: 3}
+      propertyPath: TransitionStateInfoList.Array.data[0].OriginatingState
+      value: -1731910537
+      objectReference: {fileID: 0}
     - target: {fileID: 7149792323186041124, guid: ecaf4c1c39222ff458941abdb8115703, type: 3}
       propertyPath: m_LocalScale.y
       value: 1.37

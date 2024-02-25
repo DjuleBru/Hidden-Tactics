@@ -113,20 +113,20 @@ public class UnitAnimatorManager : MonoBehaviour
         X = xValue;
         Y = yValue;
 
-        if(yValue <= 0) {
-            // Always set y to -1 when <= 0
-            Y = -1;
-        } else {
-            Y = 1;
-        }
+        //if(yValue <= 0) {
+        //    // Always set y to -1 when <= 0
+        //    Y = -1;
+        //} else {
+        //    Y = 1;
+        //}
 
-        if (xValue <= 0) {
-            // Always set y to -1 when <= 0
-            X = -1;
-        }
-        else {
-            X = 1;
-        }
+        //if (xValue <= 0) {
+        //    // Always set x to -1 when <= 0
+        //    X = -1;
+        //}
+        //else {
+        //    X = 1;
+        //}
 
         unitAnimator.SetFloat("X", X);
         unitAnimator.SetFloat("Y", Y);

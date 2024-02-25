@@ -18,6 +18,7 @@ public class UnitAI : NetworkBehaviour
     public event EventHandler OnSideAttackActivated;
 
     protected bool unitActive;
+    protected bool attackStarted;
 
     public enum State {
         idle,
@@ -134,8 +135,8 @@ public class UnitAI : NetworkBehaviour
         state.Value = newState;
     }
 
-    public void SetUnitActive(bool active) {
-        unitActive = active;
+    public void SetAttackStarted(bool attackStarted) {
+        this.attackStarted = attackStarted;
     }
 
     public bool IsWalking() {

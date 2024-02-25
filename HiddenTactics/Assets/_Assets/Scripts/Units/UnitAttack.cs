@@ -29,7 +29,8 @@ public class UnitAttack : NetworkBehaviour
     private float attackAOE;
     private float attackKnockback;
     private float attackDazedTime;
-    private float attackAnimationHitDelay;
+    private float meleeAttackAnimationHitDelay;
+    private float meleeAttackAnimationDuration;
     private bool attackDecomposition;
 
     private bool attacking;
@@ -56,9 +57,12 @@ public class UnitAttack : NetworkBehaviour
     }
 
     private void Update() {
+        if (attackTarget != null) {
+            unitMovement.SetWatchDir(attackTarget.transform);
+        }
 
         if (attacking) {
-            if(!attackDecomposition) {
+            if (!attackDecomposition) {
                 HandleStandardAttack();
             } else {
                 HandleDecomposedAttack();
@@ -99,13 +103,17 @@ public class UnitAttack : NetworkBehaviour
 
     private IEnumerator MeleeAttack(Unit targetUnit) {
         OnUnitAttack?.Invoke(this, EventArgs.Empty);
+        unitAI.SetAttackStarted(true);
 
-        yield return new WaitForSeconds(attackAnimationHitDelay);
+        yield return new WaitForSeconds(meleeAttackAnimationHitDelay);
 
         if (!unit.GetUnitIsDead() && !targetUnit.GetUnitIsDead()) {
             // Unit is still alive on attack animation hit and target unit is still alive
             InflictDamage(targetUnit);
         }
+
+        yield return new WaitForSeconds(meleeAttackAnimationDuration - meleeAttackAnimationHitDelay);
+        unitAI.SetAttackStarted(false);
     }
 
     private void Shoot(Unit targetUnit) {
@@ -170,7 +178,8 @@ public class UnitAttack : NetworkBehaviour
         attackRate = attackSO.attackRate;
         attackKnockback = attackSO.attackKnockback;
         attackDazedTime = attackSO.attackDazedTime;
-        attackAnimationHitDelay = attackSO.attackAnimationHitDelay;
+        meleeAttackAnimationHitDelay = attackSO.meleeAttackAnimationHitDelay;
+        meleeAttackAnimationDuration = attackSO.meleeAttackAnimationDuration;
         attackAOE = attackSO.attackAOE;
         attackDecomposition = attackSO.attackDecomposition;
     }
@@ -238,16 +247,16 @@ public class UnitAttack : NetworkBehaviour
             attacking = true;
         } else {
             attacking = false;
+            attackStarted = false;
         }
     }
     #endregion
 
     #region SET PARAMETERS
-    public void SetAttackTarget(Unit unit) {
-        if(unit != null) {
-            NetworkObject unitNetworkObject = unit.GetComponent<NetworkObject>();
+    public void SetAttackTarget(Unit attackTargetUnit) {
+        if(attackTargetUnit != null) {
+            NetworkObject unitNetworkObject = attackTargetUnit.GetComponent<NetworkObject>();
             SetAttackTargetServerRpc(unitNetworkObject);
-            unitMovement.SetWatchDir(unit.transform);
         }
     }
 

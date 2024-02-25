@@ -33,6 +33,7 @@ public class AttackSO : ScriptableObject
     public float attackKnockback;
     public float attackDazedTime;
     public float attackAOE;
-    public float attackAnimationHitDelay;
+    public float meleeAttackAnimationHitDelay;
+    public float meleeAttackAnimationDuration;
     public List<UnitAttackSpecial> attackSpecialList;
 }

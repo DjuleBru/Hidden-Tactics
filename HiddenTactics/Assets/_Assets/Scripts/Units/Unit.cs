@@ -50,6 +50,8 @@ public class Unit : NetworkBehaviour
     protected virtual void Awake() {
         collider2d = GetComponent<Collider2D>();
         rb = GetComponent<Rigidbody2D>();
+        collider2d.enabled = false;
+
         rb.mass = unitSO.mass;
 
         unitHP = unitSO.HP;
@@ -108,6 +110,9 @@ public class Unit : NetworkBehaviour
     }
     protected void ParentTroop_OnTroopPlaced(object sender, System.EventArgs e) {
         OnUnitPlaced?.Invoke(this, EventArgs.Empty);
+        if(unitIsBought) {
+            collider2d.enabled = true;
+        }
     }
 
     public virtual void ResetUnit() {
@@ -159,22 +164,6 @@ public class Unit : NetworkBehaviour
 
     public void TakeKnockBack(Vector2 force) {
         rb.AddForce(force);
-        //TakeKnockBackServerRpc(force);
-    }
-
-    [ServerRpc(RequireOwnership = false)]
-    protected void TakeKnockBackServerRpc(Vector2 force) {
-        TakeKnockBackClientRpc(force);
-    }
-
-    [ClientRpc]
-    protected void TakeKnockBackClientRpc(Vector2 force) {
-
-        if (!IsServer) {
-            // Mirror force on x axis
-            force.x = -force.x;
-        }
-        rb.AddForce(force);
     }
 
     public void TakeDazed(float dazedTime) {
@@ -188,8 +177,6 @@ public class Unit : NetworkBehaviour
         unitIsDead = true;
         collider2d.enabled = false;
     }
-
-
 
     #region GET PARAMETERS
 

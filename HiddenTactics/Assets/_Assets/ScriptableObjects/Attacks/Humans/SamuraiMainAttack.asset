@@ -19,11 +19,12 @@ MonoBehaviour:
   attackTargetTiles:
   - {x: 0, y: 0}
   meleeAttackTargetingRange: 5
-  meleeAttackRange: 1
+  meleeAttackRange: 0.75
   attackDamage: 7
   attackRate: 2
   attackKnockback: 0
   attackDazedTime: 0.1
   attackAOE: 0
-  attackAnimationHitDelay: 0.1
+  meleeAttackAnimationHitDelay: 0.1
+  meleeAttackAnimationDuration: 0.8
   attackSpecialList: 

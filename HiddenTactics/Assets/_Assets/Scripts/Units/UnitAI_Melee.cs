@@ -36,6 +36,8 @@ public class UnitAI_Melee : UnitAI
                 break;
             case State.attacking:
 
+                if (attackStarted) return;
+
                 if (unitAttack.GetAttackTarget() == null) {
                     // Unit attack has no target !
                     unitAttack.SetAttackTarget(unitTargetingSystem.GetMainAttackTargetUnit());
