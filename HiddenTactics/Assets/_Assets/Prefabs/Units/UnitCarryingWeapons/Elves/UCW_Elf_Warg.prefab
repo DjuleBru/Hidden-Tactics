@@ -73,7 +73,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 76312135
-  m_SortingLayer: 9
+  m_SortingLayer: 8
   m_SortingOrder: 0
   m_Sprite: {fileID: 1575703517, guid: 904fdc49753e4a241b1038db2eeb65c2, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -342,7 +342,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1836888947
-  m_SortingLayer: 10
+  m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -494,6 +494,10 @@ PrefabInstance:
       propertyPath: weaponMountedVisualSpriteRenderer
       value: 
       objectReference: {fileID: 2196514299362401131}
+    - target: {fileID: 3440358575719904091, guid: 974a18b8d382e7e49970efa5bd60d332, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 951099334
+      objectReference: {fileID: 0}
     - target: {fileID: 4105804132912431420, guid: 974a18b8d382e7e49970efa5bd60d332, type: 3}
       propertyPath: m_Controller
       value: 

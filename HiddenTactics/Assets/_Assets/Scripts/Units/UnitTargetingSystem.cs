@@ -119,15 +119,19 @@ public class UnitTargetingSystem : NetworkBehaviour
         List<Unit> targetUnitList = new List<Unit>();
 
         foreach (Collider2D collider in colliderArray) {
-            if (collider.TryGetComponent<Unit>(out Unit unit)) {
+            if (collider.TryGetComponent<Unit>(out Unit targetUnit)) {
                 // Collider is a unit
 
-                if (unit.GetParentTroop().IsOwnedByPlayer() != this.unit.GetParentTroop().IsOwnedByPlayer() && !unit.GetUnitIsDead()) {
+                if (targetUnit.GetParentTroop().IsOwnedByPlayer() != this.unit.GetParentTroop().IsOwnedByPlayer() && !targetUnit.GetUnitIsDead()) {
                     // target unit is not from the same team AND Unit is not dead
 
-                    if (unit.GetUnitCurrentGridPosition().y == this.unit.GetUnitCurrentGridPosition().y) {
-                        // target unit is on the same row as this unit
-                        targetUnitList.Add(unit);
+                    if(attackSO.moveTypeAttackTargets.Contains(targetUnit.GetUnitSO().moveType)) {
+                        // target unit can be targeted (air vs ground)
+
+                        if (targetUnit.GetUnitCurrentGridPosition().y == this.unit.GetUnitCurrentGridPosition().y) {
+                            // target unit is on the same row as this unit
+                            targetUnitList.Add(targetUnit);
+                        }
                     }
                 }
             };

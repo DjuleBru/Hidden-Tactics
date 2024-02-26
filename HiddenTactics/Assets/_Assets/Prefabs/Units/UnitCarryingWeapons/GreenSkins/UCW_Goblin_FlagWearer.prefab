@@ -73,7 +73,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 76312135
-  m_SortingLayer: 9
+  m_SortingLayer: 8
   m_SortingOrder: 0
   m_Sprite: {fileID: -1283851859, guid: cdd29baefd1d28142832f99e0f2f9471, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -209,7 +209,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 76312135
-  m_SortingLayer: 9
+  m_SortingLayer: 8
   m_SortingOrder: -1
   m_Sprite: {fileID: -77897583, guid: f3aff77a7ef2ef7479b34b4fc88996e6, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -426,7 +426,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1836888947
-  m_SortingLayer: 10
+  m_SortingLayer: 0
   m_SortingOrder: 1
   m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -511,7 +511,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1836888947
-  m_SortingLayer: 10
+  m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -538,7 +538,7 @@ PrefabInstance:
     - target: {fileID: 612855229817090270, guid: 974a18b8d382e7e49970efa5bd60d332, type: 3}
       propertyPath: unitSO
       value: 
-      objectReference: {fileID: 11400000, guid: 72ffd3fe4c8c0ba44b043141568d2b95, type: 2}
+      objectReference: {fileID: 11400000, guid: 5f513f8e6121acb4fbd114ad83991818, type: 2}
     - target: {fileID: 612855229817090270, guid: 974a18b8d382e7e49970efa5bd60d332, type: 3}
       propertyPath: isMountedUnit
       value: 1
@@ -651,6 +651,10 @@ PrefabInstance:
       propertyPath: weaponMountedVisualSpriteRenderer
       value: 
       objectReference: {fileID: 2196514299362401131}
+    - target: {fileID: 3440358575719904091, guid: 974a18b8d382e7e49970efa5bd60d332, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 951099334
+      objectReference: {fileID: 0}
     - target: {fileID: 4105804132912431420, guid: 974a18b8d382e7e49970efa5bd60d332, type: 3}
       propertyPath: m_Controller
       value: 

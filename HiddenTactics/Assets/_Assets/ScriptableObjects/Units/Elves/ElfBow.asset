@@ -12,4 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4bc7b5eb9df2cac4eae406c9d717c5aa, type: 3}
   m_Name: ElfBow
   m_EditorClassIdentifier: 
-  unitMoveSpeed: 5
+  unitTagList: 
+  HP: 10
+  armor: 0
+  mass: 80
+  moveType: 0
+  unitMoveSpeed: 80
+  mainAttackSO: {fileID: 11400000, guid: 13bc8884bb8389549b0383ec528330d2, type: 2}
+  sideAttackSO: {fileID: 11400000, guid: c21ef32afc2c2e74b8ae69cde27b2236, type: 2}
+  specialAttackSO: {fileID: 0}

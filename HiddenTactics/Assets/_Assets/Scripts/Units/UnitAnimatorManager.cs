@@ -18,6 +18,7 @@ public class UnitAnimatorManager : MonoBehaviour
     protected bool idle;
     protected bool dead;
     protected bool attacking;
+    protected bool movingForwards;
     protected bool unitAIStateHasChanged;
 
     protected float X;
@@ -66,10 +67,17 @@ public class UnitAnimatorManager : MonoBehaviour
             }
         }
 
+        if (movingForwards) {
+            Vector2 moveDir = unitMovement.GetMoveDir2D();
+            SetXY(moveDir.x, -1);
+            return;
+        }
+
         if (walking) {
             Vector2 moveDir = unitMovement.GetMoveDir2D();
             SetXY(moveDir.x, moveDir.y);
         }
+
         if(attacking) {
             Vector2 watchDir = unitMovement.GetWatchDir2D();
             SetXY(watchDir.x, watchDir.y);
@@ -97,6 +105,13 @@ public class UnitAnimatorManager : MonoBehaviour
             SetUnitWatchDirectionBasedOnGridPosition();
         }
 
+        if(unitAI.IsMovingForwards()) {
+            movingForwards = true;
+            SetUnitWatchDirectionBasedOnGridPosition();
+        } else {
+            movingForwards = false;
+        }
+
         // Using this bool to let attack&special animations finish (see update)
         unitAIStateHasChanged = true;
     }
@@ -112,22 +127,6 @@ public class UnitAnimatorManager : MonoBehaviour
     public void SetXY(float xValue, float yValue) {
         X = xValue;
         Y = yValue;
-
-        //if(yValue <= 0) {
-        //    // Always set y to -1 when <= 0
-        //    Y = -1;
-        //} else {
-        //    Y = 1;
-        //}
-
-        //if (xValue <= 0) {
-        //    // Always set x to -1 when <= 0
-        //    X = -1;
-        //}
-        //else {
-        //    X = 1;
-        //}
-
         unitAnimator.SetFloat("X", X);
         unitAnimator.SetFloat("Y", Y);
     }
@@ -142,7 +141,7 @@ public class UnitAnimatorManager : MonoBehaviour
     protected virtual void UnitAttack_OnUnitAttackStarted(object sender, System.EventArgs e) {
     }
 
-    protected void Unit_OnHealthChanged(object sender, Unit.OnHealthChangedEventArgs e) {
+    protected virtual void Unit_OnHealthChanged(object sender, Unit.OnHealthChangedEventArgs e) {
         if(e.newHealth < e.previousHealth) {
             unitShaderAnimator.SetTrigger("Damaged");
         }

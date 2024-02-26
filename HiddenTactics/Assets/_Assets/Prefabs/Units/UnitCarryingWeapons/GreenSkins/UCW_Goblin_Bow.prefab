@@ -71,7 +71,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1836888947
-  m_SortingLayer: 4
+  m_SortingLayer: 0
   m_SortingOrder: 1
   m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -104,6 +104,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 1437879440930286512, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
+      propertyPath: unitSO
+      value: 
+      objectReference: {fileID: 11400000, guid: 6165487b569286a458ffb832439a75ba, type: 2}
+    - target: {fileID: 1437879440930286512, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
       propertyPath: hasAttackStart_End
       value: 1
       objectReference: {fileID: 0}
@@ -131,6 +135,10 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 34b30cd5c18c38b42991457281c4b33e, type: 2}
+    - target: {fileID: 3804284718661281845, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 951099334
+      objectReference: {fileID: 0}
     - target: {fileID: 3953826815579895812, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
       propertyPath: weaponSO
       value: 

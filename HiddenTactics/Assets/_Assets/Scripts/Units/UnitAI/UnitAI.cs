@@ -31,7 +31,7 @@ public class UnitAI : NetworkBehaviour
     protected NetworkVariable<State> state = new NetworkVariable<State>(State.idle);
     public event EventHandler OnStateChanged;
 
-    protected void Awake() {
+    protected virtual void Awake() {
         unit = GetComponent<Unit>();
         unitMovement = GetComponent<UnitMovement>();
         unitTargetingSystem = GetComponent<UnitTargetingSystem>();
@@ -44,10 +44,67 @@ public class UnitAI : NetworkBehaviour
     public override void OnNetworkSpawn() {
         state.OnValueChanged += State_OnValueChanged;
 
+        if(IsServer) {
+            state.Value = State.idle;
+        }
+
         unit.OnUnitDied += Unit_OnUnitDied;
         unit.OnUnitDazed += Unit_OnUnitDazed;
+        unitAttack.OnUnitAttack += UnitAttack_OnUnitAttack;
+        unitAttack.OnUnitAttackEnded += UnitAttack_OnUnitAttackEnded;
+        unitAttack.OnUnitAttackStarted += UnitAttack_OnUnitAttackStarted;
 
         BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
+    }
+
+    protected virtual void Update() {
+        if (!IsServer) return;
+        // AI runs only on server
+
+        if (!unitActive | !unit.GetUnitIsBought() | state.Value == State.dead) return;
+
+        CheckConditionsBeforeSwitch();
+
+        switch (state.Value) {
+            case State.idle:
+                IdleStateUpdate();
+                break;
+            case State.moveForwards:
+                MoveForwardsStateUpdate();
+                break;
+            case State.moveToMeleeTarget:
+                MoveToMeleeTargetStateUpdate();
+                break;
+            case State.attacking:
+                AttackingStateUpdate();
+                break;
+            case State.dead:
+                DeadStateUpdate();
+                break;
+        }
+    }
+
+    protected virtual void CheckConditionsBeforeSwitch() {
+
+    }
+
+    protected virtual void IdleStateUpdate() {
+
+    }
+
+    protected virtual void MoveForwardsStateUpdate() {
+
+    }
+    protected virtual void MoveToMeleeTargetStateUpdate() {
+
+    }
+
+    protected virtual void AttackingStateUpdate() {
+
+    }
+
+    protected virtual void DeadStateUpdate() {
+
     }
 
     protected void CheckIfTargetUnitIsInMeleeAttackRange(AttackSO meleeAttackSO, bool meleeAttackSOIsMainAttackSO) {
@@ -65,6 +122,7 @@ public class UnitAI : NetworkBehaviour
     }
 
     protected void State_OnValueChanged(State previousValue, State newValue) {
+        if (!IsSpawned) return;
         ChangeStateServerRpc();
     }
 
@@ -97,7 +155,9 @@ public class UnitAI : NetworkBehaviour
 
     protected void BattleManager_OnStateChanged(object sender, System.EventArgs e) {
         if (!IsServer) return; 
+
         unitActive = BattleManager.Instance.IsBattlePhase();
+
         if(BattleManager.Instance.IsBattlePhase()) {
             ChangeState(State.moveForwards);
         } else {
@@ -115,6 +175,16 @@ public class UnitAI : NetworkBehaviour
     protected void Unit_OnUnitDied(object sender, EventArgs e) {
         if (!IsServer) return;
         ChangeState(State.dead);
+    }
+
+    protected virtual void UnitAttack_OnUnitAttack(object sender, EventArgs e) {
+
+    }
+
+    protected virtual void UnitAttack_OnUnitAttackStarted(object sender, EventArgs e) {
+    }
+
+    protected virtual void UnitAttack_OnUnitAttackEnded(object sender, EventArgs e) {
     }
 
     protected IEnumerator TakeDazed(float dazedTime) {
@@ -154,7 +224,9 @@ public class UnitAI : NetworkBehaviour
     public bool IsAttacking() {
         return state.Value == State.attacking;
     }
-
+    public bool IsMovingForwards() {
+        return state.Value == State.moveForwards;
+    }
     public bool IsMovingToTarget() {
         return state.Value == State.moveToMeleeTarget;
     }

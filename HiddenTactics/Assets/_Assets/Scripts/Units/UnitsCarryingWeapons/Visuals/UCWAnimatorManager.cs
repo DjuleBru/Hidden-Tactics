@@ -7,6 +7,7 @@ using UnityEngine;
 public class UCWAnimatorManager : UnitAnimatorManager
 {
     [SerializeField] private Animator ucwAnimator;
+    [SerializeField] protected Animator mountShaderAnimator;
     private UCW ucw;
 
     private UCW.LegendaryState legendaryState;
@@ -46,10 +47,6 @@ public class UCWAnimatorManager : UnitAnimatorManager
 
     public void SetAttackStartTrigger()
     {
-        if (!ucw.GetHasAttackStart_End() | ucw.GetStartIsWeaponSprite())
-        {
-            return;
-        }
         ucwAnimator.ResetTrigger("Attack_End");
         ucwAnimator.SetTrigger("Attack_Start");
         ucwAnimator.SetBool("Walking", false);
@@ -58,10 +55,6 @@ public class UCWAnimatorManager : UnitAnimatorManager
 
     public void SetAttackEndTrigger()
     {
-        if (!ucw.GetHasAttackStart_End() | ucw.GetStartIsWeaponSprite())
-        {
-            return;
-        }
         ucwAnimator.SetTrigger("Attack_End");
     }
 
@@ -74,8 +67,20 @@ public class UCWAnimatorManager : UnitAnimatorManager
     }
 
     protected override void UnitAttack_OnUnitAttack(object sender, System.EventArgs e) {
-        base.UnitAttack_OnUnitAttack(sender, e);
         OnUcwAttack?.Invoke(this, e);
+        if (ucw.GetIsMountedUnit()) {
+            if (!ucw.MountedUnit_HasBodyAttackAnimation()) return;
+        }
+        unitAnimator.SetTrigger("BaseAttack");
+    }
+
+    protected override void Unit_OnHealthChanged(object sender, Unit.OnHealthChangedEventArgs e) {
+        if (e.newHealth < e.previousHealth) {
+            unitShaderAnimator.SetTrigger("Damaged");
+            if(ucw.GetIsMountedUnit()) {
+                mountShaderAnimator.SetTrigger("Damaged");
+            }
+        }
     }
 
     protected override void UnitAttack_OnUnitAttackStarted(object sender, System.EventArgs e) {

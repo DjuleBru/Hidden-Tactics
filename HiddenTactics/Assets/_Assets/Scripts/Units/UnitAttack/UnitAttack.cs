@@ -18,7 +18,7 @@ public class UnitAttack : NetworkBehaviour
 
     protected AttackSO activeAttackSO;
     protected Unit attackTarget;
-    protected int attackDamage;
+    protected float attackDamage;
     protected float attackTimer;
 
     protected float attackStartTimer;
@@ -33,20 +33,25 @@ public class UnitAttack : NetworkBehaviour
     protected float meleeAttackAnimationDuration;
     protected bool attackDecomposition;
 
+    protected float attackRateModidier;
+    protected float attackDamageModifier;
+    protected float attackKnockbackModifier;
+
     protected bool attacking;
 
     protected void Awake() {
         unitAI = GetComponent<UnitAI>();
         unit = GetComponent<Unit>();
         unitMovement = GetComponent<UnitMovement>();
+
+        UpdateActiveAttackParameters(unit.GetUnitSO().mainAttackSO);
+        activeAttackSO = unit.GetUnitSO().mainAttackSO;
     }
 
     protected void Start() {
-        UpdateActiveAttackParameters(unit.GetUnitSO().mainAttackSO);
         if(IsServer) {
             RandomizeAttackTimersServerRpc();
         }
-        activeAttackSO = unit.GetUnitSO().mainAttackSO;
     }
 
     public override void OnNetworkSpawn() {
@@ -65,13 +70,13 @@ public class UnitAttack : NetworkBehaviour
             if (!attackDecomposition) {
                 HandleStandardAttack();
             } else {
-                HandleDecomposedAttack();
+                HandleDecomposedRangedAttack();
             }
         }
 
     }
 
-    protected void HandleStandardAttack() {
+    protected virtual void HandleStandardAttack() {
         attackTimer -= Time.deltaTime;
         if (attackTimer < 0) {
             attackTimer = attackRate;
@@ -79,7 +84,7 @@ public class UnitAttack : NetworkBehaviour
         }
     }
 
-    protected void HandleDecomposedAttack() {
+    protected void HandleDecomposedRangedAttack() {
         if (!attackStarted) {
             attackStartTimer -= Time.deltaTime;
 
@@ -174,9 +179,9 @@ public class UnitAttack : NetworkBehaviour
     }
 
     protected void UpdateActiveAttackParameters(AttackSO attackSO) {
-        attackDamage = attackSO.attackDamage;
-        attackRate = attackSO.attackRate;
-        attackKnockback = attackSO.attackKnockback;
+        attackDamage = attackSO.attackDamage + attackDamageModifier;
+        attackRate = attackSO.attackRate + attackRateModidier;
+        attackKnockback = attackSO.attackKnockback + attackKnockbackModifier;
         attackDazedTime = attackSO.attackDazedTime;
         meleeAttackAnimationHitDelay = attackSO.meleeAttackAnimationHitDelay;
         meleeAttackAnimationDuration = attackSO.meleeAttackAnimationDuration;
@@ -229,6 +234,18 @@ public class UnitAttack : NetworkBehaviour
 
     }
 
+    #region INVOKE EVENTS
+    public void InvokeOnAttackStarted() {
+        OnUnitAttackStarted?.Invoke(this, EventArgs.Empty);
+    }
+
+    public void InvokeOnAttackEnded() {
+        OnUnitAttackEnded?.Invoke(this, EventArgs.Empty);
+    }
+
+
+    #endregion
+
     #region EVENT RESPONSES
 
     protected void BattleManager_OnStateChanged(object sender, EventArgs e) {
@@ -253,11 +270,37 @@ public class UnitAttack : NetworkBehaviour
     #endregion
 
     #region SET PARAMETERS
+
+    public void BuffAttackDamage(float attackDamagebuff) {
+        attackDamageModifier += attackDamagebuff;
+        UpdateActiveAttackParameters(activeAttackSO);
+    }
+
+    public void DebuffAttackDamage(float attackDamageDebuff) {
+        attackDamageModifier -= attackDamageDebuff;
+        UpdateActiveAttackParameters(activeAttackSO);
+    }
+
+    public void BuffAttackKnockback(float attackKnockbackbuff) {
+        attackKnockbackModifier += attackKnockbackbuff;
+        UpdateActiveAttackParameters(activeAttackSO);
+    }
+
+    public void DebuffAttackKnockback(float attackKnockbackDebuff) {
+        attackKnockbackModifier -= attackKnockbackDebuff;
+        UpdateActiveAttackParameters(activeAttackSO);
+    }
+
+
     public void SetAttackTarget(Unit attackTargetUnit) {
         if(attackTargetUnit != null) {
             NetworkObject unitNetworkObject = attackTargetUnit.GetComponent<NetworkObject>();
             SetAttackTargetServerRpc(unitNetworkObject);
         }
+    }
+
+    public void SetAttackTimer(float attackTimer) {
+        this.attackTimer = attackTimer;
     }
 
     public void ResetAttackTarget() {
@@ -301,6 +344,10 @@ public class UnitAttack : NetworkBehaviour
 
     public Vector3 GetProjectileSpawnPointPosition() {
         return projectileSpawnPoint.position;
+    }
+
+    public float GetAttackDamage() {
+        return attackDamage;
     }
     #endregion
 }

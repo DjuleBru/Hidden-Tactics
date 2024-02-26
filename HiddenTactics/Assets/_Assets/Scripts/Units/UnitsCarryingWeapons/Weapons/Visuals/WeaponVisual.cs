@@ -160,7 +160,6 @@ public class WeaponVisual : NetworkBehaviour
         } else
         {
             transform.localScale = Vector3.one;
-            weaponVisualSpriteRenderer.enabled = false;
         }
 
         // change sorting layer if Y > 0 (only works with legendary weapons)
@@ -296,6 +295,12 @@ public class WeaponVisual : NetworkBehaviour
                 activeWeaponAnimator.SetTrigger("InterruptAttack");
             }
         }
+        if(ucw.GetComponent<UnitAI>().IsDead()) {
+            weaponVisualSpriteRenderer.sortingOrder = -1;
+        }
+        if (ucw.GetComponent<UnitAI>().IsIdle()) {
+            weaponVisualSpriteRenderer.sortingOrder = 0;
+        }
     }
 
     protected void Ucw_OnUnitSetAsAdditionalUnit(object sender, System.EventArgs e) {
@@ -362,11 +367,6 @@ public class WeaponVisual : NetworkBehaviour
 
     public void SetAttackStartTrigger()
     {
-
-        if (!ucw.GetHasAttackStart_End()) {
-            // Unit has no attack start and end animation
-            return;
-        }
         if(ucw.GetStartIsWeaponSprite())
         {
             // Weapon start animation is only one sprite
@@ -386,11 +386,6 @@ public class WeaponVisual : NetworkBehaviour
 
     public void SetAttackEndTrigger()
     {
-        if(!ucw.GetHasAttackStart_End())
-        {
-            // Unit has no attack start and end animation
-            return;
-        }
 
         if (ucw.GetStartIsWeaponSprite())
         {

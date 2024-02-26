@@ -13,6 +13,7 @@ public class UnitMovement : NetworkBehaviour {
     private int moveDirMultiplier;
 
     private bool dazed;
+    private float moveSpeed;
 
     private Vector3 moveDir;
     private Vector3 watchDir;
@@ -20,6 +21,8 @@ public class UnitMovement : NetworkBehaviour {
     private void Awake() {
         rb = GetComponent<Rigidbody2D>();
         unit = GetComponent<Unit>();
+
+        moveSpeed = unit.GetUnitSO().unitMoveSpeed;
     }
 
     private void Start() {
@@ -45,7 +48,7 @@ public class UnitMovement : NetworkBehaviour {
 
     [ServerRpc(RequireOwnership = false)]
     private void MoveServerRpc(Vector3 moveDir3DNormalized) {
-        rb.velocity = moveDir3DNormalized * unit.GetUnitSO().unitMoveSpeed * Time.fixedDeltaTime;
+        rb.velocity = moveDir3DNormalized * moveSpeed * Time.fixedDeltaTime;
         MoveClientRpc(moveDir3DNormalized);
     }
 
@@ -66,6 +69,15 @@ public class UnitMovement : NetworkBehaviour {
     public void SetDazed(bool dazed) {
         this.dazed = dazed;
     }
+
+    public void BuffMoveSpeed(float moveSpeedBuff) {
+        moveSpeed += moveSpeedBuff;
+
+    }
+    public void DebuffMoveSpeed(float moveSpeedDebuff) {
+        moveSpeed -= moveSpeedDebuff;
+    }
+
 
     public void SetWatchDir(Transform targetTransform) {
         Vector3 watchDir = (targetTransform.position - transform.position).normalized;
@@ -95,6 +107,9 @@ public class UnitMovement : NetworkBehaviour {
         return moveDir2D;
     }
 
+    public float GetMoveSpeed() {
+        return moveSpeed;
+    }
 
     private void Unit_OnUnitPlaced(object sender, EventArgs e) {
         if (unit.GetParentTroop().IsOwnedByPlayer()) {

@@ -329,8 +329,8 @@ MonoBehaviour:
   isMountedUnit: 0
   upgradedIsMountedUnit: 0
   mountAttackAnimation: 0
+  mountedUnit_HasBodyAttackAnimation: 0
   upgradedMountAttackAnimation: 0
-  hasAttackStart_End: 0
   startIsWeaponSprite: 0
 --- !u!1 &5080694719648640392 stripped
 GameObject:
@@ -366,6 +366,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   unitShaderAnimator: {fileID: 6310573961516158758}
   ucwAnimator: {fileID: 2562456056061221458}
+  mountShaderAnimator: {fileID: 0}
 --- !u!114 &7096053914295724965
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -399,6 +400,7 @@ MonoBehaviour:
   upgradedWeaponScale: {x: 0, y: 0, z: 0}
   upgradedWeaponMaterial: {fileID: 0}
   mountSpriteRenderer: {fileID: 0}
+  mountShadowGameObject: {fileID: 0}
   ugradedMountShader: {fileID: 0}
   hasSideWeapon: 0
   bodySideWeaponAnimator: {fileID: 0}
@@ -459,7 +461,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1329043315878194129, guid: ee25184de5916c9469e49469c07fd166, type: 3}
       propertyPath: m_SortingLayer
-      value: 9
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 1329043315878194129, guid: ee25184de5916c9469e49469c07fd166, type: 3}
       propertyPath: m_SortingLayerID
@@ -468,6 +470,14 @@ PrefabInstance:
     - target: {fileID: 1329043315878194129, guid: ee25184de5916c9469e49469c07fd166, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 3269924745705472728, guid: ee25184de5916c9469e49469c07fd166, type: 3}
+      propertyPath: m_SortingLayer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 3269924745705472728, guid: ee25184de5916c9469e49469c07fd166, type: 3}
+      propertyPath: m_SortingLayerID
+      value: 76312135
       objectReference: {fileID: 0}
     - target: {fileID: 4802690032266236292, guid: ee25184de5916c9469e49469c07fd166, type: 3}
       propertyPath: cleanMaterial

@@ -13,12 +13,12 @@ public class UCW : Unit {
     [SerializeField] private bool upgradedIsMountedUnit;
     [FoldoutGroup("Mounted units parameters"), ShowIf("isMountedUnit")]
     [SerializeField] private bool mountAttackAnimation;
+    [FoldoutGroup("Mounted units parameters"), ShowIf("isMountedUnit")]
+    [SerializeField] private bool mountedUnit_HasBodyAttackAnimation;
     [FoldoutGroup("Mounted units parameters"), ShowIf("upgradedIsMountedUnit")]
     [SerializeField] private bool upgradedMountAttackAnimation;
 
 
-    [FoldoutGroup("Attack decomposition")]
-    [SerializeField] private bool hasAttackStart_End;
     [FoldoutGroup("Attack decomposition"), ShowIf("hasAttackStart_End")]
     [SerializeField] private bool startIsWeaponSprite;
 
@@ -74,14 +74,14 @@ public class UCW : Unit {
     public bool GetIsMountedUnit() {
         return isMountedUnit;
     }
+
+    public bool MountedUnit_HasBodyAttackAnimation() {
+        return mountedUnit_HasBodyAttackAnimation;
+    }
+
     public bool GetMountAttackAnimation()
     {
         return mountAttackAnimation;
-    }
-
-    public bool GetHasAttackStart_End()
-    {
-        return hasAttackStart_End;
     }
 
     public bool GetStartIsWeaponSprite()

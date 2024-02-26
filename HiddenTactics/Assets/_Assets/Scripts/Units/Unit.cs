@@ -186,8 +186,11 @@ public class Unit : NetworkBehaviour
     public bool GetUnitIsBought() {
         return unitIsBought;
     }
-    public float GetUnitHPNormalized() {
-        return (float)unitHP / (float)unitSO.HP;
+    public float GetUnitMaxHP() {
+        return unitSO.HP;
+    }
+    public float GetUnitHP() {
+        return unitHP;
     }
 
     public bool GetHasAttack()
@@ -258,7 +261,6 @@ public class Unit : NetworkBehaviour
 
     #endregion
 
-
     public void BuyAdditionalUnit() {
         collider2d.enabled = true;
         unitIsBought = true;
@@ -267,5 +269,13 @@ public class Unit : NetworkBehaviour
 
     public void DestroySelf() {
         Destroy(gameObject);
+    }
+
+    public void DebugModeStartFunction() {
+        OnUnitPlaced?.Invoke(this, EventArgs.Empty);
+        if (unitIsBought) {
+            collider2d.enabled = true;
+        }
+        Debug.Log("debug mode");
     }
 }

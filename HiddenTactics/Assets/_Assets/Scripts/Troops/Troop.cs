@@ -40,6 +40,7 @@ public class Troop : MonoBehaviour
 
     private void Start() {
         if (debugMode) {
+            isOwnedByPlayer = false;
             PlaceTroop();
             Unit[] unitArray = GetComponentsInChildren<Unit>();
             foreach (Unit unit in unitArray) {
@@ -48,8 +49,8 @@ public class Troop : MonoBehaviour
 
                 //Set Unit Local Position
                 unit.SetPosition(unit.transform.position);
+                unit.DebugModeStartFunction();  
             }
-            isOwnedByPlayer = false;
         }
     }
 

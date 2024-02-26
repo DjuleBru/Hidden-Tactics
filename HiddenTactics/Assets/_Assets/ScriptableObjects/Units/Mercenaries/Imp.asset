@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4bc7b5eb9df2cac4eae406c9d717c5aa, type: 3}
+  m_Name: Imp
+  m_EditorClassIdentifier: 
+  unitTagList: 
+  HP: 10
+  armor: 0
+  mass: 60
+  moveType: 0
+  unitMoveSpeed: 80
+  mainAttackSO: {fileID: 11400000, guid: 385580abebce0f4498364c7ce3150c9e, type: 2}
+  sideAttackSO: {fileID: 11400000, guid: 1665b88c4be65264181bcc853277a35e, type: 2}
+  specialAttackSO: {fileID: 0}

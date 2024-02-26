@@ -23,6 +23,10 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 1437879440930286512, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
+      propertyPath: unitSO
+      value: 
+      objectReference: {fileID: 11400000, guid: 1d83f60e41b0ca845a395981d3bfd902, type: 2}
     - target: {fileID: 2133364694423313781, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
       propertyPath: m_Sprite
       value: 
@@ -153,7 +157,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6420266725413792600, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
       propertyPath: m_SortingLayer
-      value: 10
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6420266725413792600, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
       propertyPath: m_SortingLayerID
@@ -201,7 +205,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7591148188649519246, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.0149998665
+      value: -0.014999986
       objectReference: {fileID: 0}
     - target: {fileID: 8393628555918220568, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
       propertyPath: m_Sprite
@@ -248,6 +252,24 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 417919779066184301, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
   m_PrefabInstance: {fileID: 1978508700217793390}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &6582105824262927089 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4624428746373917087, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
+  m_PrefabInstance: {fileID: 1978508700217793390}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &3748308103714011008
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6582105824262927089}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 84fcf11a80ec03b4cb3efb63f812986f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ammoMax: 1
 --- !u!4 &8227018930490549216 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7591148188649519246, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
