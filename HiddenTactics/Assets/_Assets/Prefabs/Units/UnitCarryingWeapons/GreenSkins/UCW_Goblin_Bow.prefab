@@ -172,6 +172,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 11400000, guid: 1221645990cf7d74ab26c7f045d05ddc, type: 2}
     - target: {fileID: 3953826815579895812, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
+      propertyPath: sideWeaponSO
+      value: 
+      objectReference: {fileID: 11400000, guid: 7ff3268b34d992b4e950a1b8cc241886, type: 2}
+    - target: {fileID: 3953826815579895812, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
       propertyPath: weaponPoison
       value: 
       objectReference: {fileID: -942622899, guid: 5616833dce429a847b1d8b97774d5bc9, type: 3}
@@ -232,6 +236,10 @@ PrefabInstance:
       value: UCW_Goblin_Bow
       objectReference: {fileID: 0}
     - target: {fileID: 7096053914295724965, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
+      propertyPath: hasSideWeapon
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7096053914295724965, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
       propertyPath: upgradeReplacesBody
       value: 1
       objectReference: {fileID: 0}
@@ -243,6 +251,10 @@ PrefabInstance:
       propertyPath: upgradedBodyMaterial
       value: 
       objectReference: {fileID: 2100000, guid: c30bb5444de69af40a56c143e85b3b8d, type: 2}
+    - target: {fileID: 7096053914295724965, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
+      propertyPath: bodySideWeaponAnimator
+      value: 
+      objectReference: {fileID: 22100000, guid: 3165a938ac3490d44a636a0601344428, type: 2}
     - target: {fileID: 7096053914295724965, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
       propertyPath: upgradedWeaponMaterial
       value: 
@@ -269,7 +281,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7591148188649519246, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.0149998665
+      value: -0.014999986
       objectReference: {fileID: 0}
     - target: {fileID: 7707950743551370127, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
       propertyPath: shaderTypes
@@ -319,6 +331,23 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 417919779066184301, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
   m_PrefabInstance: {fileID: 1978508700217793390}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &6582105824262927089 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4624428746373917087, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
+  m_PrefabInstance: {fileID: 1978508700217793390}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &3743194690345583926
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6582105824262927089}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d053127ffce35ef40bdc1d2839b669ac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &7029836679232979734 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8861936283550865528, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}

@@ -10,6 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4bc7b5eb9df2cac4eae406c9d717c5aa, type: 3}
-  m_Name: GreenSkinBow Troop
+  m_Name: GreenSkinBow
   m_EditorClassIdentifier: 
-  unitMoveSpeed: 6
+  unitTagList: 
+  HP: 8
+  armor: 0
+  mass: 40
+  moveType: 0
+  unitMoveSpeed: 80
+  mainAttackSO: {fileID: 11400000, guid: 3683e9e28052bd04b9eb8fb1b17bc377, type: 2}
+  sideAttackSO: {fileID: 11400000, guid: 40c464bed85ba6441ab32bd6a49d3224, type: 2}
+  specialAttackSO: {fileID: 0}

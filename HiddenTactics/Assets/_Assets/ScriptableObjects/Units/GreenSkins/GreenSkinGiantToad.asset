@@ -12,4 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4bc7b5eb9df2cac4eae406c9d717c5aa, type: 3}
   m_Name: GreenSkinGiantToad
   m_EditorClassIdentifier: 
-  unitMoveSpeed: 6
+  unitTagList: 
+  HP: 80
+  armor: 0
+  mass: 100
+  moveType: 0
+  unitMoveSpeed: 60
+  mainAttackSO: {fileID: 11400000, guid: aa7861c2c7de39748956e7906099921b, type: 2}
+  sideAttackSO: {fileID: 0}
+  specialAttackSO: {fileID: 0}

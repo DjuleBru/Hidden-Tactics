@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7ee1ca236a14dc74fb53cd3b7b7d810a, type: 3}
+  m_Name: GreenskinBowMainAttack
+  m_EditorClassIdentifier: 
+  attackType: 1
+  attackDecomposition: 1
+  projectilePrefab: {fileID: 2487143347385034294, guid: b0838b5e38d2dab4c9fe086ca3c719fa, type: 3}
+  moveTypeAttackTargets: 0000000001000000
+  attackTargetTiles:
+  - {x: 1, y: 0}
+  - {x: 2, y: 0}
+  meleeAttackTargetingRange: 0
+  meleeAttackRange: 0
+  attackDamage: 3
+  attackRate: 2
+  attackKnockback: 20
+  attackDazedTime: 0.1
+  attackAOE: 0
+  meleeAttackAnimationHitDelay: 0
+  meleeAttackAnimationDuration: 0
+  attackSpecialList: 
