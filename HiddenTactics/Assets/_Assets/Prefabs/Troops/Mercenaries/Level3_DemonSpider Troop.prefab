@@ -11,6 +11,22 @@ PrefabInstance:
       propertyPath: troopSO
       value: 
       objectReference: {fileID: 11400000, guid: 94adca1ec7e46aa4fac50f2b2787d166, type: 2}
+    - target: {fileID: -7405699509265139040, guid: 9d1640ba9a10f1741a99343e77b3c0fe, type: 3}
+      propertyPath: baseUnitPositions.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -7405699509265139040, guid: 9d1640ba9a10f1741a99343e77b3c0fe, type: 3}
+      propertyPath: baseUnitPositions.Array.data[0]
+      value: 
+      objectReference: {fileID: 923111655178536860}
+    - target: {fileID: -7405699509265139040, guid: 9d1640ba9a10f1741a99343e77b3c0fe, type: 3}
+      propertyPath: additionalUnitPositions.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -7405699509265139040, guid: 9d1640ba9a10f1741a99343e77b3c0fe, type: 3}
+      propertyPath: additionalUnitPositions.Array.data[0]
+      value: 
+      objectReference: {fileID: 884529664983543422}
     - target: {fileID: 1532217804133066148, guid: 9d1640ba9a10f1741a99343e77b3c0fe, type: 3}
       propertyPath: m_IsActive
       value: 1
@@ -45,7 +61,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4936534630087044481, guid: 9d1640ba9a10f1741a99343e77b3c0fe, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 4.17
+      value: 6.33
       objectReference: {fileID: 0}
     - target: {fileID: 7704603315532921427, guid: 9d1640ba9a10f1741a99343e77b3c0fe, type: 3}
       propertyPath: m_Name
@@ -101,3 +117,13 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9d1640ba9a10f1741a99343e77b3c0fe, type: 3}
+--- !u!4 &884529664983543422 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4903274529575634019, guid: 9d1640ba9a10f1741a99343e77b3c0fe, type: 3}
+  m_PrefabInstance: {fileID: 5209984443920427549}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &923111655178536860 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4936534630087044481, guid: 9d1640ba9a10f1741a99343e77b3c0fe, type: 3}
+  m_PrefabInstance: {fileID: 5209984443920427549}
+  m_PrefabAsset: {fileID: 0}

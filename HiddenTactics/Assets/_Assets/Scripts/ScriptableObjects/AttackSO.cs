@@ -23,6 +23,8 @@ public class AttackSO : ScriptableObject
 
     public AttackType attackType;
     public bool attackDecomposition;
+    public bool attackHasAOE;
+    public bool attackHasAOECollider;
     public GameObject projectilePrefab;
     public List<UnitSO.MoveType> moveTypeAttackTargets;
     public List<Vector2> attackTargetTiles;

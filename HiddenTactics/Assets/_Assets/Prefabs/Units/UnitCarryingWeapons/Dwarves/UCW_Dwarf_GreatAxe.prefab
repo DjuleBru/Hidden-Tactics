@@ -115,6 +115,14 @@ PrefabInstance:
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 22100000, guid: 5b9583f6daa33ed438f1cff72ba53ff4, type: 2}
+    - target: {fileID: 3288238776557434743, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
+      propertyPath: m_Size.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3288238776557434743, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
+      propertyPath: m_Size.y
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3299340502619254647, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
       propertyPath: shaderTypes
       value: 0
@@ -227,6 +235,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: UCW_Dwarf_GreatAxe
       objectReference: {fileID: 0}
+    - target: {fileID: 6064264838552676886, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.68
+      objectReference: {fileID: 0}
+    - target: {fileID: 6064264838552676886, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.67
+      objectReference: {fileID: 0}
     - target: {fileID: 7096053914295724965, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
       propertyPath: hasSideWeapon
       value: 0
@@ -246,7 +262,7 @@ PrefabInstance:
     - target: {fileID: 7096053914295724965, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
       propertyPath: upgradedBodyAnimator
       value: 
-      objectReference: {fileID: 22100000, guid: ca1194e8ea890e341a9029662504422a, type: 2}
+      objectReference: {fileID: 0}
     - target: {fileID: 7096053914295724965, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
       propertyPath: upgradedBodyMaterial
       value: 
@@ -285,7 +301,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7591148188649519246, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.0149998665
+      value: -0.014999986
       objectReference: {fileID: 0}
     - target: {fileID: 7707950743551370127, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
       propertyPath: shaderTypes
@@ -340,6 +356,23 @@ Animator:
   m_CorrespondingSourceObject: {fileID: 3503327518094082783, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
   m_PrefabInstance: {fileID: 1978508700217793390}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &6582105824262927089 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4624428746373917087, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
+  m_PrefabInstance: {fileID: 1978508700217793390}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &5949716902851301541
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6582105824262927089}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f04232ea015d6b4a9c9dc32c827ed89, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &7029836679232979734 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8861936283550865528, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}

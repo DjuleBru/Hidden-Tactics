@@ -109,6 +109,7 @@ public class UnitAI : NetworkBehaviour
 
     protected void CheckIfTargetUnitIsInMeleeAttackRange(AttackSO meleeAttackSO, bool meleeAttackSOIsMainAttackSO) {
         if (unitTargetingSystem.GetClosestTargetDistance() < meleeAttackSO.meleeAttackRange) {
+            // There is a unit in melee range
             unitMovement.StopMoving();
             unitAttack.SetActiveAttackSO(meleeAttackSO);
 

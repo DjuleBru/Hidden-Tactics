@@ -11,6 +11,7 @@ public class UnitAttack : NetworkBehaviour
     public event EventHandler OnUnitAttackEnded;
 
     [SerializeField] protected Transform projectileSpawnPoint;
+    [SerializeField] protected AttackColliderAOE attackColliderAOE;
 
     protected Unit unit;
     protected UnitAI unitAI;
@@ -32,6 +33,8 @@ public class UnitAttack : NetworkBehaviour
     protected float meleeAttackAnimationHitDelay;
     protected float meleeAttackAnimationDuration;
     protected bool attackDecomposition;
+    protected bool attackHasAOECollider;
+    protected bool attackHasAOE;
 
     protected float attackRateModidier;
     protected float attackDamageModifier;
@@ -62,6 +65,7 @@ public class UnitAttack : NetworkBehaviour
     }
 
     protected void Update() {
+
         if (attackTarget != null) {
             unitMovement.SetWatchDir(attackTarget.transform);
         }
@@ -135,47 +139,74 @@ public class UnitAttack : NetworkBehaviour
 
     protected void InflictDamage(Unit targetUnit) {
         if (!IsServer) return;
+        if(attackHasAOE) {
+            // Attack has one form of AOE
 
-        PerformAllDamageActions(targetUnit);
-
-        if (attackAOE != 0) {
-            foreach (Unit unitAOETarget in FindAOEAttackTargets(transform.position)) {
-                PerformAllDamageActions(unitAOETarget);
+            if (attackAOE != 0) {
+                // Attack AOE is centered aroud this unit
+                foreach (Unit unitAOETarget in FindAOEAttackTargets(transform.position)) {
+                    PerformAllDamageActions(unitAOETarget);
+                }
             }
+
+            if (attackHasAOECollider) {
+                // Attack AOE uses a specific collider
+                List<Collider2D> collidersInAttackAOEList = attackColliderAOE.GetCollidersInAttackAOEList();
+                List<Unit> unitsInAttackAOE = FindTargetUnitsInColliderList(collidersInAttackAOEList);
+
+                foreach (Unit unitAOETarget in unitsInAttackAOE) {
+                    PerformAllDamageActions(unitAOETarget);
+                }
+            }
+        } else {
+            // Attack has no AOE
+            PerformAllDamageActions(targetUnit);
         }
+
     }
 
     protected virtual void PerformAllDamageActions(Unit targetUnit) {
         targetUnit.TakeDamage(attackDamage);
-        if (attackKnockback != 0) {
 
+        if (attackKnockback != 0) {
             Vector2 incomingDamageDirection = new Vector2(targetUnit.transform.position.x - transform.position.x, targetUnit.transform.position.y - transform.position.y);
             Vector2 force = incomingDamageDirection * attackKnockback;
 
             targetUnit.TakeKnockBack(force);
         }
+
         if (attackDazedTime != 0) {
             targetUnit.TakeDazed(attackDazedTime);
         }
+
+
     }
 
     protected List<Unit> FindAOEAttackTargets(Vector3 targetPosition) {
 
-        List<Unit> AOETargetUnitList = new List<Unit>();
         Collider2D[] colliderArray = Physics2D.OverlapCircleAll(targetPosition, attackAOE);
-
+        List<Collider2D> colliderList = new List<Collider2D>();
         foreach (Collider2D collider in colliderArray) {
+            colliderList.Add(collider);
+        }
+
+        return FindTargetUnitsInColliderList(colliderList);
+    }
+
+    protected List<Unit> FindTargetUnitsInColliderList(List<Collider2D> colliderList) {
+        List<Unit> targetUnitList = new List<Unit>();
+
+        foreach (Collider2D collider in colliderList) {
             if (collider.TryGetComponent<Unit>(out Unit unit)) {
                 // Collider is a unit
 
                 if (unit.GetParentTroop().IsOwnedByPlayer() != this.unit.GetParentTroop().IsOwnedByPlayer() && !unit.GetUnitIsDead()) {
                     // target unit is not from the same team AND Unit is not dead
-                    AOETargetUnitList.Add(unit);
+                    targetUnitList.Add(unit);
                 }
             };
         }
-
-        return AOETargetUnitList;
+        return targetUnitList;
     }
 
     protected void UpdateActiveAttackParameters(AttackSO attackSO) {
@@ -187,6 +218,8 @@ public class UnitAttack : NetworkBehaviour
         meleeAttackAnimationDuration = attackSO.meleeAttackAnimationDuration;
         attackAOE = attackSO.attackAOE;
         attackDecomposition = attackSO.attackDecomposition;
+        attackHasAOECollider = attackSO.attackHasAOECollider;
+        attackHasAOE = attackSO.attackHasAOE;
     }
         
     [ServerRpc(RequireOwnership = false)]

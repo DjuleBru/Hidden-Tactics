@@ -10,23 +10,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7ee1ca236a14dc74fb53cd3b7b7d810a, type: 3}
-  m_Name: GiantMainAttack
+  m_Name: NagaMainAttack
   m_EditorClassIdentifier: 
   attackType: 0
   attackDecomposition: 0
-  attackHasAOE: 1
-  attackHasAOECollider: 0
   projectilePrefab: {fileID: 0}
   moveTypeAttackTargets: 00000000
   attackTargetTiles:
   - {x: 0, y: 0}
   meleeAttackTargetingRange: 5
-  meleeAttackRange: 1
-  attackDamage: 5
-  attackRate: 4
-  attackKnockback: 10000
-  attackDazedTime: 1
-  attackAOE: 3
-  meleeAttackAnimationHitDelay: 0.4
-  meleeAttackAnimationDuration: 0.8
+  meleeAttackRange: 2.5
+  attackDamage: 4
+  attackRate: 2
+  attackKnockback: 0
+  attackDazedTime: 0
+  attackAOE: 0
+  meleeAttackAnimationHitDelay: 0.3
+  meleeAttackAnimationDuration: 0.6
   attackSpecialList: 

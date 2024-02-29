@@ -115,6 +115,22 @@ PrefabInstance:
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 22100000, guid: aac989cb18e2db1448d16d3006eee0ed, type: 2}
+    - target: {fileID: 3288238776557434743, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
+      propertyPath: m_Size.x
+      value: 1.3826337
+      objectReference: {fileID: 0}
+    - target: {fileID: 3288238776557434743, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
+      propertyPath: m_Size.y
+      value: 0.6173661
+      objectReference: {fileID: 0}
+    - target: {fileID: 3288238776557434743, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
+      propertyPath: m_Offset.x
+      value: 0.19131684
+      objectReference: {fileID: 0}
+    - target: {fileID: 3288238776557434743, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
+      propertyPath: m_Offset.y
+      value: 0.23546696
+      objectReference: {fileID: 0}
     - target: {fileID: 3299340502619254647, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
       propertyPath: shaderTypes
       value: 0
@@ -223,6 +239,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: UCW_Goblin_Flail
       objectReference: {fileID: 0}
+    - target: {fileID: 6064264838552676886, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.567
+      objectReference: {fileID: 0}
+    - target: {fileID: 6064264838552676886, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.044
+      objectReference: {fileID: 0}
     - target: {fileID: 7096053914295724965, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
       propertyPath: upgradeReplacesBody
       value: 1
@@ -311,6 +335,23 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 417919779066184301, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
   m_PrefabInstance: {fileID: 1978508700217793390}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &6582105824262927089 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4624428746373917087, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
+  m_PrefabInstance: {fileID: 1978508700217793390}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2783235891661369845
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6582105824262927089}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f04232ea015d6b4a9c9dc32c827ed89, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &7029836679232979734 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8861936283550865528, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}

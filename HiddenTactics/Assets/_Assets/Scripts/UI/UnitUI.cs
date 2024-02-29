@@ -14,7 +14,7 @@ public class UnitUI : NetworkBehaviour
     private float damageBarUpdateTimer;
     private float damageBarUpdateRate = .8f;
 
-    private float delayToUpdateDamageBar = .6f;
+    private float delayToUpdateDamageBar = .4f;
 
     private bool updateHPBarFinished;
     private float updateHPBarDuration = 1f;
