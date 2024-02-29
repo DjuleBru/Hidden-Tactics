@@ -47,7 +47,7 @@ public class UnitAI_HumanCavalry : UnitAI_Melee
         }
     }
 
-    private void UnitAttack_OnUnitAttack(object sender, System.EventArgs e) {
+    protected override void UnitAttack_OnUnitAttack(object sender, System.EventArgs e) {
         if (galloping.Value == true) {
             StartCoroutine(RemoveGallopBuffsCoroutine());
             galloping.Value = false;
@@ -64,14 +64,14 @@ public class UnitAI_HumanCavalry : UnitAI_Melee
         unitAttack.DebuffAttackDamage(unitInitialDamage * gallopDamageBuffMultiplier);
         unitAttack.DebuffAttackKnockback(gallopKnockbackBuffAbsolute);
         unitMovement.DebuffMoveSpeed(unitInitialMoveSpeed * gallopMoveSpeedMultiplier);
-        unitAttack.InvokeOnAttackEnded();
+        unitAttack.InvokeOnUnitAttackEnded();
     }
 
     private void Galloping_OnValueChanged(bool previousValue, bool newValue) {
         if(newValue == true) {
-            unitAttack.InvokeOnAttackStarted();
+            unitAttack.InvokeOnUnitAttackStarted();
         } else {
-            unitAttack.InvokeOnAttackEnded();
+            unitAttack.InvokeOnUnitAttackEnded();
         }
     }
 

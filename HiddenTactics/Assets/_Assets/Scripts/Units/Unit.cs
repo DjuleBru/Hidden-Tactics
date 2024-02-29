@@ -10,7 +10,6 @@ public class Unit : NetworkBehaviour
     public event EventHandler OnUnitUpgraded;
     public event EventHandler OnUnitSpawned;
     public event EventHandler OnUnitPlaced;
-    public event EventHandler<OnHealthChangedEventArgs> OnHealthChanged;
     public event EventHandler OnUnitDied;
     public event EventHandler OnUnitReset;
     public event EventHandler<OnUnitDazedEventArgs> OnUnitDazed;
@@ -23,24 +22,11 @@ public class Unit : NetworkBehaviour
         public float dazedTime;
     }
 
-    public class OnHealthChangedEventArgs : EventArgs {
-        public float previousHealth;
-        public float newHealth;
-    }
-
-    [SerializeField] protected bool hasAttack;
-    [SerializeField] protected bool hasSideAttack;
-    [SerializeField] protected bool hasSpecial1;
-    [SerializeField] protected bool hasSpecial2;
-
     [SerializeField] protected UnitSO unitSO;
     private Troop parentTroop;
 
     private GridPosition currentGridPosition;
     private Vector3 unitPositionInTroop;
-
-    private float unitHP;
-    private int unitArmor;
 
     private Rigidbody2D rb;
     private Collider2D collider2d;
@@ -53,10 +39,6 @@ public class Unit : NetworkBehaviour
         collider2d.enabled = false;
 
         rb.mass = unitSO.mass;
-
-        unitHP = unitSO.HP;
-        unitArmor = unitSO.armor;
-
         unitIsBought = true;
     }
 
@@ -120,12 +102,6 @@ public class Unit : NetworkBehaviour
             transform.localPosition = unitPositionInTroop;
             unitIsDead = false;
             collider2d.enabled = true;
-            unitHP = unitSO.HP;
-
-            OnHealthChanged?.Invoke(this, new OnHealthChangedEventArgs {
-                previousHealth = 0,
-                newHealth = unitSO.HP
-            });
 
             OnUnitReset?.Invoke(this, EventArgs.Empty);
         }
@@ -139,29 +115,6 @@ public class Unit : NetworkBehaviour
         OnUnitSpawned?.Invoke(this, EventArgs.Empty);
     }
 
-    public void TakeDamage(float damage) {
-        TakeDamageServerRpc(damage);
-    }
-
-    [ServerRpc(RequireOwnership = false)]
-    protected void TakeDamageServerRpc(float damage) {
-        TakeDamageClientRpc(damage);
-    }
-
-    [ClientRpc]
-    protected void TakeDamageClientRpc(float damage) {
-        unitHP -= (damage - unitArmor);
-
-        OnHealthChanged?.Invoke(this, new OnHealthChangedEventArgs {
-            previousHealth = unitHP + (damage - unitArmor),
-            newHealth = unitHP
-        });
-
-        if (unitHP < 0) {
-            Die();
-        }
-    }
-
     public void TakeKnockBack(Vector2 force) {
         rb.AddForce(force);
     }
@@ -172,7 +125,7 @@ public class Unit : NetworkBehaviour
         });
     }
 
-    protected void Die() {
+    public void Die() {
         OnUnitDied?.Invoke(this, EventArgs.Empty);
         unitIsDead = true;
         collider2d.enabled = false;
@@ -185,32 +138,6 @@ public class Unit : NetworkBehaviour
     }
     public bool GetUnitIsBought() {
         return unitIsBought;
-    }
-    public float GetUnitMaxHP() {
-        return unitSO.HP;
-    }
-    public float GetUnitHP() {
-        return unitHP;
-    }
-
-    public bool GetHasAttack()
-    {
-        return hasAttack;
-    }
-
-    public bool GetHasSpecial1()
-    {
-        return hasSpecial1;
-    }
-
-    public bool GetHasSpecial2()
-    {
-        return hasSpecial2;
-    }
-
-    public bool GetHasSideAttack()
-    {
-        return hasSideAttack;
     }
 
     public UnitSO GetUnitSO() {
@@ -258,6 +185,7 @@ public class Unit : NetworkBehaviour
         unitIsBought = false;
         OnUnitSetAsAdditionalUnit?.Invoke(this, EventArgs.Empty);
     }
+
 
     #endregion
 

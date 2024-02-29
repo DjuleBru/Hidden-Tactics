@@ -166,7 +166,7 @@ public class UnitAttack : NetworkBehaviour
     }
 
     protected virtual void PerformAllDamageActions(Unit targetUnit) {
-        targetUnit.TakeDamage(attackDamage);
+        targetUnit.GetComponent<UnitHP>().TakeDamage(attackDamage);
 
         if (attackKnockback != 0) {
             Vector2 incomingDamageDirection = new Vector2(targetUnit.transform.position.x - transform.position.x, targetUnit.transform.position.y - transform.position.y);
@@ -268,11 +268,15 @@ public class UnitAttack : NetworkBehaviour
     }
 
     #region INVOKE EVENTS
-    public void InvokeOnAttackStarted() {
+
+    public void InvokeOnUnitAttack() {
+        OnUnitAttack?.Invoke(this, EventArgs.Empty);
+    }
+    public void InvokeOnUnitAttackStarted() {
         OnUnitAttackStarted?.Invoke(this, EventArgs.Empty);
     }
 
-    public void InvokeOnAttackEnded() {
+    public void InvokeOnUnitAttackEnded() {
         OnUnitAttackEnded?.Invoke(this, EventArgs.Empty);
     }
 

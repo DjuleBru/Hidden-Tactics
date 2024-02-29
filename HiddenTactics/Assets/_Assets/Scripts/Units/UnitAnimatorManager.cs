@@ -13,6 +13,7 @@ public class UnitAnimatorManager : MonoBehaviour
     protected UnitAI unitAI;
     protected UnitMovement unitMovement;
     protected UnitAttack unitAttack;
+    protected UnitHP unitHP;
 
     protected bool walking;
     protected bool idle;
@@ -26,6 +27,7 @@ public class UnitAnimatorManager : MonoBehaviour
 
     protected virtual void Awake() {
         unit = GetComponentInParent<Unit>();
+        unitHP = GetComponentInParent<UnitHP>();
         unitAI = GetComponentInParent<UnitAI>();
         unitMovement = GetComponentInParent<UnitMovement>();
         unitAnimator = GetComponent<Animator>();
@@ -38,7 +40,7 @@ public class UnitAnimatorManager : MonoBehaviour
         unitAnimator.Play("Idle", 0, randomOffset);
         unitAnimator.SetBool("Idle", true);
 
-        unit.OnHealthChanged += Unit_OnHealthChanged;
+        unitHP.OnHealthChanged += Unit_OnHealthChanged;
         unit.OnUnitReset += Unit_OnUnitReset;
         unitAI.OnStateChanged += UnitAI_OnStateChanged;
         unit.OnUnitPlaced += Unit_OnUnitPlaced;
@@ -141,7 +143,7 @@ public class UnitAnimatorManager : MonoBehaviour
     protected virtual void UnitAttack_OnUnitAttackStarted(object sender, System.EventArgs e) {
     }
 
-    protected virtual void Unit_OnHealthChanged(object sender, Unit.OnHealthChangedEventArgs e) {
+    protected virtual void Unit_OnHealthChanged(object sender, UnitHP.OnHealthChangedEventArgs e) {
         if(e.newHealth < e.previousHealth) {
             unitShaderAnimator.SetTrigger("Damaged");
         }
@@ -220,37 +222,21 @@ public class UnitAnimatorManager : MonoBehaviour
 
     public virtual void SetAttackTrigger()
     {
-        if(!unit.GetHasAttack())
-        {
-            return;
-        }
         unitAnimator.SetTrigger("BaseAttack");
     }
 
     public virtual void SetSideAttackTrigger()
     {
-        if (!unit.GetHasSideAttack())
-        {
-            return;
-        }
         unitAnimator.SetTrigger("SideAttack");
     }
 
     public virtual void SetSpecial1Trigger()
     {
-        if (!unit.GetHasSpecial1())
-        {
-            return;
-        }
         unitAnimator.SetTrigger("Special1");
     }
 
     public virtual void SetSpecial2Trigger()
     {
-        if (!unit.GetHasSpecial2())
-        {
-            return;
-        }
         unitAnimator.SetTrigger("Special2");
     }
 

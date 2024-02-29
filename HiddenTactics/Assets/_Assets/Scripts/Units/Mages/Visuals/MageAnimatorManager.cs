@@ -12,7 +12,7 @@ public class MageAnimatorManager : UnitAnimatorManager
 
     private bool castingSideSpell;
 
-    private void Update()
+    protected override void Update()
     {
         
         if (unitAnimator.GetCurrentAnimatorStateInfo(0).IsName("SideSpell_Cast") | unitAnimator.GetCurrentAnimatorStateInfo(0).IsName("SideSpell_Hold") | unitAnimator.GetCurrentAnimatorStateInfo(0).IsName("SideSpell_Throw"))

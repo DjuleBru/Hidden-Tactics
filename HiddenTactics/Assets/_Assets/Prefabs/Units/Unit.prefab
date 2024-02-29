@@ -674,6 +674,7 @@ GameObject:
   - component: {fileID: 6830934254262187191}
   - component: {fileID: 1945086570058195385}
   - component: {fileID: -8097156484951236332}
+  - component: {fileID: 7605315189400509567}
   m_Layer: 0
   m_Name: Unit
   m_TagString: Untagged
@@ -749,10 +750,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   projectileTarget: {fileID: 3807264971237317040}
-  hasAttack: 0
-  hasSideAttack: 0
-  hasSpecial1: 0
-  hasSpecial2: 0
   unitSO: {fileID: 0}
 --- !u!114 &3047400702304054071
 MonoBehaviour:
@@ -811,6 +808,18 @@ MonoBehaviour:
   SceneMigrationSynchronization: 0
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
+--- !u!114 &7605315189400509567
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8883300417249960126}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ad0a9271ef8481489aeb7229461f261, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &769170229685668158
 PrefabInstance:
   m_ObjectHideFlags: 0

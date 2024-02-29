@@ -12,8 +12,6 @@ public class Projectile : MonoBehaviour
 
     [SerializeField] private GameObject projectileVisual;
 
-    public event EventHandler OnProjectileHit;
-
     private float trajectoryMaxRelativeHeight;
     [SerializeField] private float projectileMaxMoveSpeed;
     [SerializeField] private float projectileTrajectoryYCurve = .2f;

@@ -19,6 +19,8 @@ public class WeaponVisual : NetworkBehaviour
     [FoldoutGroup("Base attributes")]
     [SerializeField] private SpriteRenderer weaponMountedVisualSpriteRenderer;
     [FoldoutGroup("Base attributes")]
+    [SerializeField] private bool makeIdleWeaponSpriteInactiveDuringAttackAnimation;
+    [FoldoutGroup("Base attributes")]
     [SerializeField] private Vector3 weaponScale = Vector3.one;
     [FoldoutGroup("Base attributes")]
     [SerializeField] private bool orthogonalAnimations;
@@ -148,7 +150,7 @@ public class WeaponVisual : NetworkBehaviour
 
     private void HandleWeaponAttackingVisual() {
         // If legendary : disable base weapon sprite
-        if (legendaryState != UCW.LegendaryState.Base)
+        if (legendaryState != UCW.LegendaryState.Base | makeIdleWeaponSpriteInactiveDuringAttackAnimation)
         {
             weaponVisualSpriteRenderer.enabled = false;
         }

@@ -14,6 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   attackType: 0
   attackDecomposition: 0
+  attackHasAOE: 0
+  attackHasAOECollider: 0
   projectilePrefab: {fileID: 0}
   moveTypeAttackTargets: 00000000
   attackTargetTiles:
@@ -23,7 +25,7 @@ MonoBehaviour:
   attackDamage: 6
   attackRate: 3
   attackKnockback: 0
-  attackDazedTime: 0.3
+  attackDazedTime: 0.4
   attackAOE: 0
   meleeAttackAnimationHitDelay: 0
   meleeAttackAnimationDuration: 0.3

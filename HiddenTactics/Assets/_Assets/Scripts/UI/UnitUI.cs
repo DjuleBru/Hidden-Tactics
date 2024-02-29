@@ -7,6 +7,7 @@ using UnityEngine.UI;
 public class UnitUI : NetworkBehaviour
 {
     [SerializeField] private Unit unit;
+    private UnitHP unitHP;
     [SerializeField] private GameObject unitHPBarGameObject;
     [SerializeField] private Image unitHPBarImage;
     [SerializeField] private Image unitHPBarDamageImage;
@@ -27,10 +28,12 @@ public class UnitUI : NetworkBehaviour
         unitHPBarGameObject.SetActive(false);
         hideHPBarTimer = hideHPBarDuration;
         damageBarUpdateTimer = delayToUpdateDamageBar;
+
+        unitHP = unit.gameObject.GetComponent<UnitHP>();
     }
 
     public override void OnNetworkSpawn() {
-        unit.OnHealthChanged += Unit_OnHealthChanged;
+        unitHP.OnHealthChanged += Unit_OnHealthChanged;
         unit.OnUnitDied += Unit_OnUnitDied;
         unit.OnUnitReset += Unit_OnUnitReset;
         unit.OnUnitSetAsAdditionalUnit += Unit_OnUnitSetAsAdditionalUnit;
@@ -47,7 +50,7 @@ public class UnitUI : NetworkBehaviour
 
 
             if(damageBarUpdateTimer < 0) {
-                if (unitHPBarDamageImage.fillAmount > unit.GetUnitHP()/unit.GetUnitMaxHP()) {
+                if (unitHPBarDamageImage.fillAmount > unitHP.GetUnitHP()/unitHP.GetUnitMaxHP()) {
                     unitHPBarDamageImage.fillAmount = unitHPBarDamageImage.fillAmount - damageBarUpdateRate * Time.deltaTime;
                 }
             }
@@ -64,7 +67,7 @@ public class UnitUI : NetworkBehaviour
         unitHPBarGameObject.SetActive(false);
     }
 
-    private void Unit_OnHealthChanged(object sender, Unit.OnHealthChangedEventArgs e) {
+    private void Unit_OnHealthChanged(object sender, UnitHP.OnHealthChangedEventArgs e) {
         UpdateUnitHPBar(e.previousHealth, e.newHealth);
     }
 
@@ -85,7 +88,7 @@ public class UnitUI : NetworkBehaviour
         damageBarUpdateTimer = delayToUpdateDamageBar;
 
         unitHPBarGameObject.SetActive(true);
-        unitHPBarImage.fillAmount = newUnitHP / unit.GetUnitMaxHP();
+        unitHPBarImage.fillAmount = newUnitHP / unitHP.GetUnitMaxHP();
 
         if(updateHPBarTimer > 0) {
             updateHPBarTimer = updateHPBarDuration;

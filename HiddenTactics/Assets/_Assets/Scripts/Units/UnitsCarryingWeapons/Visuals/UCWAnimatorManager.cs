@@ -34,7 +34,7 @@ public class UCWAnimatorManager : UnitAnimatorManager
     }
 
     public override void SetAttackTrigger() {
-        if(ucw.GetIsMountedUnit() & !ucw.GetMountAttackAnimation()) {
+        if(ucw.GetIsMountedUnit() && !ucw.GetMountAttackAnimation()) {
             return;
         }
 
@@ -47,6 +47,9 @@ public class UCWAnimatorManager : UnitAnimatorManager
 
     public void SetAttackStartTrigger()
     {
+        if (ucw.GetIsMountedUnit()) {
+            if (!ucw.MountedUnit_HasBodyAttackAnimation()) return;
+        }
         ucwAnimator.ResetTrigger("Attack_End");
         ucwAnimator.SetTrigger("Attack_Start");
         ucwAnimator.SetBool("Walking", false);
@@ -55,6 +58,9 @@ public class UCWAnimatorManager : UnitAnimatorManager
 
     public void SetAttackEndTrigger()
     {
+        if (ucw.GetIsMountedUnit()) {
+            if (!ucw.MountedUnit_HasBodyAttackAnimation()) return;
+        }
         ucwAnimator.SetTrigger("Attack_End");
     }
 
@@ -68,13 +74,15 @@ public class UCWAnimatorManager : UnitAnimatorManager
 
     protected override void UnitAttack_OnUnitAttack(object sender, System.EventArgs e) {
         OnUcwAttack?.Invoke(this, e);
+
         if (ucw.GetIsMountedUnit()) {
             if (!ucw.MountedUnit_HasBodyAttackAnimation()) return;
         }
+
         unitAnimator.SetTrigger("BaseAttack");
     }
 
-    protected override void Unit_OnHealthChanged(object sender, Unit.OnHealthChangedEventArgs e) {
+    protected override void Unit_OnHealthChanged(object sender, UnitHP.OnHealthChangedEventArgs e) {
         if (e.newHealth < e.previousHealth) {
             unitShaderAnimator.SetTrigger("Damaged");
             if(ucw.GetIsMountedUnit()) {

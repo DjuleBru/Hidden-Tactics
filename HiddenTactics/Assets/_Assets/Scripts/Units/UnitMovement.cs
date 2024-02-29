@@ -12,7 +12,6 @@ public class UnitMovement : NetworkBehaviour {
     private Vector3 moveDir2D;
     private int moveDirMultiplier;
 
-    private bool moving;
     private bool dazed;
     private float moveSpeed;
 

@@ -83,22 +83,6 @@ public class Testing : MonoBehaviour
 
     #region UNITS GENERAL
 
-    [Button, TabGroup("Unit")]
-    public void SetWalking()
-    {
-        foreach (var unitAnimatorManager in unitAnimatorManagers)
-        {
-            unitAnimatorManager.SetWalking();
-        }
-    }
-
-    [Button, TabGroup("Unit")]
-    public void SetWalkingSpeed() {
-        foreach (var unitAnimatorManager in unitAnimatorManagers) {
-            unitAnimatorManager.SetWalking();
-            walking = true;
-        }
-    }
 
 
     [Button, TabGroup("Unit")]

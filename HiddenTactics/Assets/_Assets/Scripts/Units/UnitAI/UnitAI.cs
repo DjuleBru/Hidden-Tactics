@@ -154,7 +154,7 @@ public class UnitAI : NetworkBehaviour
         OnStateChanged?.Invoke(this, EventArgs.Empty);
     }
 
-    protected void BattleManager_OnStateChanged(object sender, System.EventArgs e) {
+    protected virtual void BattleManager_OnStateChanged(object sender, System.EventArgs e) {
         if (!IsServer) return; 
 
         unitActive = BattleManager.Instance.IsBattlePhase();
@@ -204,6 +204,10 @@ public class UnitAI : NetworkBehaviour
 
     protected void ChangeState(State newState) {
         state.Value = newState;
+    }
+
+    protected void InvokeOnStateChanged() {
+        OnStateChanged?.Invoke(this, EventArgs.Empty);
     }
 
     public void SetAttackStarted(bool attackStarted) {

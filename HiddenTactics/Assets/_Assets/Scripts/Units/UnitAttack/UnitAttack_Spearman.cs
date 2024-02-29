@@ -12,7 +12,7 @@ public class UnitAttack_Spearman : UnitAttack
             attackDamageModified = attackDamage * largeUnitDamageMultiplier;
         }
 
-        targetUnit.TakeDamage(attackDamageModified);
+        targetUnit.GetComponent<UnitHP>().TakeDamage(attackDamageModified);
         
         if (attackKnockback != 0) {
 

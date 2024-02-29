@@ -556,6 +556,10 @@ PrefabInstance:
       propertyPath: m_SortingLayerID
       value: 76312135
       objectReference: {fileID: 0}
+    - target: {fileID: 5718880567459754360, guid: 974a18b8d382e7e49970efa5bd60d332, type: 3}
+      propertyPath: m_RootOrder
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 6582105824262927089, guid: 974a18b8d382e7e49970efa5bd60d332, type: 3}
       propertyPath: m_Name
       value: UCW_Human_LightCavalry
@@ -646,6 +650,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   projectileSpawnPoint: {fileID: 0}
+  attackColliderAOE: {fileID: 0}
 --- !u!114 &5049191366532260134
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -660,7 +665,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gallopMoveSpeedMultiplier: 1
   gallopDamageBuffMultiplier: 1
-  gallopKnockbackBuffAbsolute: 10000
+  gallopKnockbackBuffAbsolute: 30000
   gallopTriggerTime: 5
 --- !u!4 &2688804089757113189 stripped
 Transform:
