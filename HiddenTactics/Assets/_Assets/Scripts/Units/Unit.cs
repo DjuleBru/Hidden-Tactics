@@ -204,6 +204,5 @@ public class Unit : NetworkBehaviour
         if (unitIsBought) {
             collider2d.enabled = true;
         }
-        Debug.Log("debug mode");
     }
 }

@@ -37,20 +37,20 @@ public class UnitAI_DwarfAxe : UnitAI_Melee
         }
 
         if (state.Value == State.moveForwards) {
-            // Move Forwards is called when unit is dazed to reset it. So we need to check if there are no target units in melee range
-
-            if (unitTargetingSystem.GetMainAttackTargetUnit() == null) {
-                // Activate shield on move forwards
-                wearingShield = true;
-                projectilesShielded = 0;
-                ActivateSideAttack();
-            }
+            // Move Forwards is called when unit is dazed to reset it. So we need to check if it is dazed
+            ActivateShield();
         }
 
         if (state.Value == State.dead) {
 
         }
 
+    }
+
+    private void ActivateShield() {
+        wearingShield = true;
+        projectilesShielded = 0;
+        ActivateSideAttack();
     }
 
     public void TakeShieldDamage() {

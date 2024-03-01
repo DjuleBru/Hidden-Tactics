@@ -263,6 +263,10 @@ PrefabInstance:
       propertyPath: m_LocalPosition.y
       value: 0.02054998
       objectReference: {fileID: 0}
+    - target: {fileID: 8016987216396510007, guid: ecaf4c1c39222ff458941abdb8115703, type: 3}
+      propertyPath: m_RootOrder
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 8883300417249960126, guid: ecaf4c1c39222ff458941abdb8115703, type: 3}
       propertyPath: m_Name
       value: UnitCarryingWeapon
@@ -321,10 +325,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   projectileTarget: {fileID: 1133931331262664849}
-  hasAttack: 0
-  hasSideAttack: 0
-  hasSpecial1: 0
-  hasSpecial2: 0
   unitSO: {fileID: 0}
   isMountedUnit: 0
   upgradedIsMountedUnit: 0
@@ -380,8 +380,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   unit: {fileID: 1437879440930286512}
-  bodySpriteRenderer: {fileID: 390265039669744821}
-  shadowGameObject: {fileID: 5080694719648640392}
+  bodySpriteRendererList:
+  - {fileID: 390265039669744821}
+  shadowGameObjectList:
+  - {fileID: 5080694719648640392}
   cleanMaterial: {fileID: 2100000, guid: 5472c483cff72494e8e1f9233fc2308a, type: 2}
   invisibleMaterial: {fileID: 2100000, guid: 0fd6a58cd0afa51469b9baca76fc6c55, type: 2}
   placingUnitMaterial: {fileID: 2100000, guid: 684a5a5301c6bfd4eb68f6d32d5b9a09, type: 2}

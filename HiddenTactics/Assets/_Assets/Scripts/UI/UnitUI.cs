@@ -77,6 +77,12 @@ public class UnitUI : NetworkBehaviour
 
     private void Unit_OnUnitReset(object sender, System.EventArgs e) {
         if (!unit.GetUnitIsBought()) return;
+        StartCoroutine(RefillHPBars());
+    }
+
+    private IEnumerator RefillHPBars() {
+        // TO DO : change HP bar color to green and refill them
+        yield return new WaitForSeconds(.1f);
         unitHPBarGameObject.SetActive(false);
     }
 
@@ -94,7 +100,5 @@ public class UnitUI : NetworkBehaviour
             updateHPBarTimer = updateHPBarDuration;
         }
     }
-
-
 
 }

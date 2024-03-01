@@ -136,6 +136,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 11400000, guid: 1221645990cf7d74ab26c7f045d05ddc, type: 2}
     - target: {fileID: 3953826815579895812, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
+      propertyPath: sideWeaponSO
+      value: 
+      objectReference: {fileID: 11400000, guid: 7ff3268b34d992b4e950a1b8cc241886, type: 2}
+    - target: {fileID: 3953826815579895812, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
       propertyPath: weaponPoison
       value: 
       objectReference: {fileID: 1597291546, guid: 2d4fda29486d4c04fae694a9c7427036, type: 3}
@@ -239,6 +243,10 @@ PrefabInstance:
       propertyPath: upgradedWeaponScale.z
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 7096053914295724965, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
+      propertyPath: bodySideWeaponAnimator
+      value: 
+      objectReference: {fileID: 22100000, guid: e8d8b16355e581a4d9b58df09683c40d, type: 2}
     - target: {fileID: 7096053914295724965, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
       propertyPath: upgradedWeaponMaterial
       value: 

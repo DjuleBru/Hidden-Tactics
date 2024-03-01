@@ -30,7 +30,7 @@ public class UnitAttack : NetworkBehaviour
     protected float attackAOE;
     protected float attackKnockback;
     protected float attackDazedTime;
-    protected float meleeAttackAnimationHitDelay;
+    protected float attackAnimationHitDelay;
     protected float meleeAttackAnimationDuration;
     protected bool attackDecomposition;
     protected bool attackHasAOECollider;
@@ -84,8 +84,15 @@ public class UnitAttack : NetworkBehaviour
         attackTimer -= Time.deltaTime;
         if (attackTimer < 0) {
             attackTimer = attackRate;
-            StartCoroutine(MeleeAttack(attackTarget));
+
+            if (activeAttackSO.attackType == AttackSO.AttackType.melee) {
+                StartCoroutine(MeleeAttack(attackTarget));
+            }
+            if (activeAttackSO.attackType == AttackSO.AttackType.ranged) {
+                StartCoroutine(RangedAttack(attackTarget));
+            }
         }
+
     }
 
     protected void HandleDecomposedRangedAttack() {
@@ -114,14 +121,30 @@ public class UnitAttack : NetworkBehaviour
         OnUnitAttack?.Invoke(this, EventArgs.Empty);
         unitAI.SetAttackStarted(true);
 
-        yield return new WaitForSeconds(meleeAttackAnimationHitDelay);
+        yield return new WaitForSeconds(attackAnimationHitDelay);
+
 
         if (!unit.GetUnitIsDead() && !targetUnit.GetUnitIsDead()) {
             // Unit is still alive on attack animation hit and target unit is still alive
             InflictDamage(targetUnit);
         }
 
-        yield return new WaitForSeconds(meleeAttackAnimationDuration - meleeAttackAnimationHitDelay);
+        yield return new WaitForSeconds(meleeAttackAnimationDuration - attackAnimationHitDelay);
+        unitAI.SetAttackStarted(false);
+    }
+
+    protected IEnumerator RangedAttack(Unit targetUnit) {
+        OnUnitAttack?.Invoke(this, EventArgs.Empty);
+        unitAI.SetAttackStarted(true);
+
+        yield return new WaitForSeconds(attackAnimationHitDelay);
+
+        if (!unit.GetUnitIsDead() && !targetUnit.GetUnitIsDead()) {
+            // Unit is still alive on attack animation hit and target unit is still alive
+            Shoot(attackTarget);
+        }
+
+        yield return new WaitForSeconds(meleeAttackAnimationDuration - attackAnimationHitDelay);
         unitAI.SetAttackStarted(false);
     }
 
@@ -139,13 +162,19 @@ public class UnitAttack : NetworkBehaviour
 
     protected void InflictDamage(Unit targetUnit) {
         if (!IsServer) return;
-        if(attackHasAOE) {
+
+        PerformAllDamageActions(targetUnit);
+
+        if (attackHasAOE) {
             // Attack has one form of AOE
 
             if (attackAOE != 0) {
                 // Attack AOE is centered aroud this unit
                 foreach (Unit unitAOETarget in FindAOEAttackTargets(transform.position)) {
-                    PerformAllDamageActions(unitAOETarget);
+                    // Don't damage target unit twice
+                    if(unitAOETarget != targetUnit) {
+                        PerformAllDamageActions(unitAOETarget);
+                    }
                 }
             }
 
@@ -155,12 +184,12 @@ public class UnitAttack : NetworkBehaviour
                 List<Unit> unitsInAttackAOE = FindTargetUnitsInColliderList(collidersInAttackAOEList);
 
                 foreach (Unit unitAOETarget in unitsInAttackAOE) {
-                    PerformAllDamageActions(unitAOETarget);
+                    // Don't damage target unit twice
+                    if (unitAOETarget != targetUnit) {
+                        PerformAllDamageActions(unitAOETarget);
+                    }
                 }
             }
-        } else {
-            // Attack has no AOE
-            PerformAllDamageActions(targetUnit);
         }
 
     }
@@ -214,7 +243,7 @@ public class UnitAttack : NetworkBehaviour
         attackRate = attackSO.attackRate + attackRateModidier;
         attackKnockback = attackSO.attackKnockback + attackKnockbackModifier;
         attackDazedTime = attackSO.attackDazedTime;
-        meleeAttackAnimationHitDelay = attackSO.meleeAttackAnimationHitDelay;
+        attackAnimationHitDelay = attackSO.meleeAttackAnimationHitDelay;
         meleeAttackAnimationDuration = attackSO.meleeAttackAnimationDuration;
         attackAOE = attackSO.attackAOE;
         attackDecomposition = attackSO.attackDecomposition;

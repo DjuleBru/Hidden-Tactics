@@ -10,23 +10,25 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7ee1ca236a14dc74fb53cd3b7b7d810a, type: 3}
-  m_Name: GreenskinBowSideAttack
+  m_Name: DwarfCannonAttack
   m_EditorClassIdentifier: 
-  attackType: 0
+  attackType: 1
   attackDecomposition: 0
   attackHasAOE: 0
   attackHasAOECollider: 0
-  projectilePrefab: {fileID: 0}
+  projectilePrefab: {fileID: 2487143347385034294, guid: 5822ed157f8cfc64886495a45ed3cf8c, type: 3}
   moveTypeAttackTargets: 00000000
   attackTargetTiles:
-  - {x: 0, y: 0}
-  meleeAttackTargetingRange: 5
-  meleeAttackRange: 1
-  attackDamage: 1
-  attackRate: 2
-  attackKnockback: 0
-  attackDazedTime: 0
-  attackAOE: 0
-  meleeAttackAnimationHitDelay: 0.1
-  meleeAttackAnimationDuration: 0.4
+  - {x: 1, y: 0}
+  - {x: 2, y: 0}
+  - {x: 3, y: 0}
+  meleeAttackTargetingRange: 0
+  meleeAttackRange: 0
+  attackDamage: 6
+  attackRate: 4
+  attackKnockback: 10000
+  attackDazedTime: 0.5
+  attackAOE: 3
+  meleeAttackAnimationHitDelay: 0.4
+  meleeAttackAnimationDuration: 0.7
   attackSpecialList: 

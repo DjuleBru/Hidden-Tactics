@@ -7,8 +7,8 @@ using UnityEngine;
 public class UnitVisual : NetworkBehaviour
 {
     [SerializeField] protected Unit unit;
-    [SerializeField] protected SpriteRenderer bodySpriteRenderer;
-    [SerializeField] protected GameObject shadowGameObject;
+    [SerializeField] protected List<SpriteRenderer> bodySpriteRendererList;
+    [SerializeField] protected List<GameObject> shadowGameObjectList;
 
     [SerializeField] protected Material cleanMaterial;
     [SerializeField] protected Material invisibleMaterial;
@@ -31,7 +31,7 @@ public class UnitVisual : NetworkBehaviour
         bodyAnimator = GetComponent<Animator>();
         activeBodyAnimator = bodyAnimator.runtimeAnimatorController;
 
-        bodySpriteRenderer.material = placingUnitMaterial;
+        ChangeSpriteRendererListMaterial(bodySpriteRendererList, placingUnitMaterial);
     }
 
     public override void OnNetworkSpawn() {
@@ -42,7 +42,7 @@ public class UnitVisual : NetworkBehaviour
 
     protected virtual void Unit_OnUnitUpgraded(object sender, System.EventArgs e) {
         if (!unit.GetUnitIsBought()) return;
-        bodySpriteRenderer.material = upgradedBodyMaterial;
+        ChangeSpriteRendererListMaterial(bodySpriteRendererList, upgradedBodyMaterial);
 
         if (upgradeReplacesBody)
         {
@@ -54,12 +54,20 @@ public class UnitVisual : NetworkBehaviour
     protected virtual void Unit_OnUnitPlaced(object sender, System.EventArgs e) {
         if (!unit.GetUnitIsBought()) return;
 
-        bodySpriteRenderer.material = cleanMaterial;
+        ChangeSpriteRendererListMaterial(bodySpriteRendererList, cleanMaterial);
     }
 
     protected virtual void Unit_OnUnitSetAsAdditionalUnit(object sender, System.EventArgs e) {
-        bodySpriteRenderer.material = invisibleMaterial;
-        shadowGameObject.SetActive(false);
+        ChangeSpriteRendererListMaterial(bodySpriteRendererList, invisibleMaterial);
+        foreach(GameObject shadowGameObject in shadowGameObjectList) {
+            shadowGameObject.SetActive(false);
+        }
+    }
+
+    protected virtual void ChangeSpriteRendererListMaterial(List<SpriteRenderer> spriteRendererList, Material material) {
+        foreach(SpriteRenderer spriteRenderer in spriteRendererList) {
+            spriteRenderer.material = material;
+        }
     }
 
 }

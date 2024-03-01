@@ -193,13 +193,12 @@ public class UnitAI : NetworkBehaviour
         unitMovement.SetDazed(true);
         yield return new WaitForSeconds(dazedTime);
 
-        unitMovement.SetDazed(false);
-
         if (!unit.GetUnitIsDead() & BattleManager.Instance.IsBattlePhase()) {
             // Unit is still alive and it is still battle phase
             unitActive = true;
-            ChangeState(State.moveForwards);
         }
+
+        unitMovement.SetDazed(false);
     }
 
     protected void ChangeState(State newState) {
