@@ -55,6 +55,11 @@ public class UnitAI_Ranged : UnitAI
                 unitAttack.SetAttackTarget(unitTargetingSystem.GetMainAttackTargetUnit());
             }
 
+            if (unitAttack.GetAttackTarget() != unitTargetingSystem.GetMainAttackTargetUnit()) {
+                // Unit attack target is not targeted anymore.
+                unitAttack.SetAttackTarget(unitTargetingSystem.GetMainAttackTargetUnit());
+            }
+
         }
         else {
             // Unit is attacking in melee

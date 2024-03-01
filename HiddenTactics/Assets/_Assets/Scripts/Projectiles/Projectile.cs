@@ -1,48 +1,50 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-public class Projectile : MonoBehaviour
+public class Projectile : NetworkBehaviour
 {
 
-    [SerializeField] private AnimationCurve projectileTrajectoryAnimationCurve;
-    [SerializeField] private AnimationCurve projectileSpeedAnimationCurve;
-    [SerializeField] private AnimationCurve projectileYDifferentialWithTargetAnimationCurve;
+    [SerializeField] protected AnimationCurve projectileTrajectoryAnimationCurve;
+    [SerializeField] protected AnimationCurve projectileSpeedAnimationCurve;
+    [SerializeField] protected AnimationCurve projectileYDifferentialWithTargetAnimationCurve;
 
-    [SerializeField] private GameObject projectileVisual;
+    [SerializeField] protected ProjectileVisual projectileVisual;
+    [SerializeField] protected GameObject projectileHitVisualPrefab;
 
-    private float trajectoryMaxRelativeHeight;
-    [SerializeField] private float projectileMaxMoveSpeed;
-    [SerializeField] private float projectileTrajectoryYCurve = .2f;
+    protected float trajectoryMaxRelativeHeight;
+    [SerializeField] protected float projectileMaxMoveSpeed;
+    [SerializeField] protected float projectileTrajectoryYCurve = .2f;
 
-    private float projectileMoveSpeed;
+    protected float projectileMoveSpeed;
 
-    private Unit targetUnit;
+    protected Unit targetUnit;
 
-    private Transform targetTransform;
-    private UnitAttack unitAttackOrigin;
-    private Vector2 trajectoryStartPoint;
-    private Vector2 trajectoryEndPointRandomized;
-    private Vector3 trajectoryEndPointRandomOffset;
-    private float trajectoryEndPointRandomOffsetValue = .5f;
-    private Vector3 newPosition;
+    protected Transform targetTransform;
+    protected UnitAttack unitAttackOrigin;
+    protected Vector2 trajectoryStartPoint;
+    protected Vector2 trajectoryEndPointRandomized;
+    protected Vector3 trajectoryEndPointRandomOffset;
+    protected float trajectoryEndPointRandomOffsetValue = .5f;
+    protected Vector3 newPosition;
 
-    private Vector3 projectileMoveDir;
+    protected Vector3 projectileMoveDir;
 
-    private float targetPositionUpdateTime = .2f;
-    private float targetPositionUpdateTimer;
-    private float newPositionXNormalized;
+    protected float targetPositionUpdateTime = .2f;
+    protected float targetPositionUpdateTimer;
+    protected float newPositionXNormalized;
 
-    private bool projectileHasHit;
+    protected bool projectileHasHit;
 
-    private void Start() {
+    protected void Start() {
         trajectoryStartPoint = transform.position;
 
         projectileMoveSpeed = projectileMaxMoveSpeed;
     }
 
-    private void Update() {
+    protected virtual void Update() {
         if (projectileHasHit) return;
 
         if (newPositionXNormalized < 1) {
@@ -50,13 +52,13 @@ public class Projectile : MonoBehaviour
         } else {
             projectileHasHit = true;
             StartCoroutine(DestroyProjectile());
-            unitAttackOrigin.ProjectileHasHit(targetUnit);
+            unitAttackOrigin.ProjectileHasHit(targetUnit, transform.position);
         }
 
         UpdateTrajectoryEndPoint();
     }
 
-    private void UpdateTrajectoryEndPoint() {
+    protected void UpdateTrajectoryEndPoint() {
         targetPositionUpdateTimer -= Time.deltaTime;
         if (targetPositionUpdateTimer < 0) {
             targetPositionUpdateTimer = targetPositionUpdateTime;
@@ -78,12 +80,12 @@ public class Projectile : MonoBehaviour
         trajectoryMaxRelativeHeight = distanceToTarget * projectileTrajectoryYCurve;
     }
 
-    private void CalculateNewProjectileMoveSpeed(float newPositionXNormalized) {
+    protected void CalculateNewProjectileMoveSpeed(float newPositionXNormalized) {
         float projectileMoveSpeedNormalized = projectileSpeedAnimationCurve.Evaluate(newPositionXNormalized);
         projectileMoveSpeed = projectileMaxMoveSpeed * projectileMoveSpeedNormalized;
     }
 
-    private void UpdateNewPosition() {
+    protected void UpdateNewPosition() {
         Vector2 trajectoryRange = trajectoryEndPointRandomized - trajectoryStartPoint;
         if(trajectoryRange.x < 0) {
             // Target is located behind shooted
@@ -107,14 +109,41 @@ public class Projectile : MonoBehaviour
         transform.position = newPosition;
     }
 
-    private IEnumerator DestroyProjectile() {
-        projectileVisual.SetActive(false);
+    protected IEnumerator DestroyProjectile() {
+        if(IsServer) {
+            if(projectileHitVisualPrefab != null) {
+                SpawnProjectileHitVisualGameObjectServerRpc();
+            }
+        }
+        projectileVisual.gameObject.SetActive(false);
         yield return new WaitForSeconds(.5f);
 
-        if(unitAttackOrigin.IsServer) {
+        if(IsServer) {
             Destroy(gameObject);
         }
     }
+
+
+    [ServerRpc(RequireOwnership = false)]
+    protected void SpawnProjectileHitVisualGameObjectServerRpc() {
+
+        GameObject projectileHitVisualGameObject = Instantiate(projectileHitVisualPrefab);
+        NetworkObject projectileHitVisualGameObjectNetworkObject = projectileHitVisualGameObject.GetComponent<NetworkObject>();
+
+        projectileHitVisualGameObjectNetworkObject.Spawn(true);
+
+        SetProjectileHitVisualGameObjectPositionClientRpc(projectileHitVisualGameObjectNetworkObject);
+    }
+
+
+    [ClientRpc]
+    protected void SetProjectileHitVisualGameObjectPositionClientRpc(NetworkObjectReference projectileHitVisualGameObjectNetworkObjectReference) {
+        projectileHitVisualGameObjectNetworkObjectReference.TryGet(out NetworkObject projectileHitVisualGameObjectNetworkObject);
+        ProjectileHitVisual projectileHitVisual = projectileHitVisualGameObjectNetworkObject.GetComponent<ProjectileHitVisual>();
+
+        projectileHitVisual.Initialize(transform.position);
+    }
+
 
     public Vector2 GetTrajectoryEndPoint() {
         return trajectoryEndPointRandomized;
@@ -138,6 +167,10 @@ public class Projectile : MonoBehaviour
 
     public Vector3 GetProjectileMoveDir() {
         return projectileMoveDir;
+    }
+
+    public GameObject GetProjectileHitVisualGameObject() {
+        return projectileHitVisualPrefab;
     }
 
 }

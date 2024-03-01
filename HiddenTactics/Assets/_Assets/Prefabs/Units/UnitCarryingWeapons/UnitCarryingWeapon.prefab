@@ -143,6 +143,10 @@ PrefabInstance:
       propertyPath: m_SortingLayerID
       value: 1516724993
       objectReference: {fileID: 0}
+    - target: {fileID: 2806213410428916820, guid: ecaf4c1c39222ff458941abdb8115703, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: a8b3c63cb6cbd774e928ebeed6177369, type: 2}
     - target: {fileID: 3268602464715426115, guid: ecaf4c1c39222ff458941abdb8115703, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.09375
@@ -263,6 +267,10 @@ PrefabInstance:
       propertyPath: m_LocalPosition.y
       value: 0.02054998
       objectReference: {fileID: 0}
+    - target: {fileID: 7206156626738903265, guid: ecaf4c1c39222ff458941abdb8115703, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: a8b3c63cb6cbd774e928ebeed6177369, type: 2}
     - target: {fileID: 8016987216396510007, guid: ecaf4c1c39222ff458941abdb8115703, type: 3}
       propertyPath: m_RootOrder
       value: 3
@@ -347,6 +355,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5923283366198014383, guid: ecaf4c1c39222ff458941abdb8115703, type: 3}
   m_PrefabInstance: {fileID: 4281401351482345761}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &7648940769980904882 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5858313138869206163, guid: ecaf4c1c39222ff458941abdb8115703, type: 3}
+  m_PrefabInstance: {fileID: 4281401351482345761}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &7870211414174943624 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6220047560856617129, guid: ecaf4c1c39222ff458941abdb8115703, type: 3}
@@ -364,9 +377,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f3a16ab18a69b24e821309825e4c8fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  unitShaderAnimator: {fileID: 6310573961516158758}
+  unitShaderAnimatorList:
+  - {fileID: 6310573961516158758}
   ucwAnimator: {fileID: 2562456056061221458}
-  mountShaderAnimator: {fileID: 0}
 --- !u!114 &7096053914295724965
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -384,6 +397,7 @@ MonoBehaviour:
   - {fileID: 390265039669744821}
   shadowGameObjectList:
   - {fileID: 5080694719648640392}
+  - {fileID: 7648940769980904882}
   cleanMaterial: {fileID: 2100000, guid: 5472c483cff72494e8e1f9233fc2308a, type: 2}
   invisibleMaterial: {fileID: 2100000, guid: 0fd6a58cd0afa51469b9baca76fc6c55, type: 2}
   placingUnitMaterial: {fileID: 2100000, guid: 684a5a5301c6bfd4eb68f6d32d5b9a09, type: 2}

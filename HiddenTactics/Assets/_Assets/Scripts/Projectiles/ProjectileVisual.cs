@@ -11,7 +11,6 @@ public class ProjectileVisual : MonoBehaviour
     private Projectile projectile;
     private Vector3 trajectoryStartPoint;
     private Vector3 trajectoryEndPoint;
-    private Vector3 oldPosition;
 
     private float newPositionXNormalized;
 
@@ -57,6 +56,10 @@ public class ProjectileVisual : MonoBehaviour
 
     private Quaternion LookAtTarget(Vector2 moveDir) {
         return Quaternion.Euler(0, 0, Mathf.Atan2(moveDir.y, moveDir.x) * Mathf.Rad2Deg);
+    }
+
+    public void SetShadowVisualInactive() {
+        shadowVisual.gameObject.SetActive(false);
     }
 
 }

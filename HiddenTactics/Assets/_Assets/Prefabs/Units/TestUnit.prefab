@@ -323,6 +323,7 @@ MonoBehaviour:
   unit: {fileID: 6221209888615918512}
   unitHPBarGameObject: {fileID: 1239429430629773935}
   unitHPBarImage: {fileID: 3523552392977486113}
+  unitHPBarDamageImage: {fileID: 0}
 --- !u!1 &6220047560856617129
 GameObject:
   m_ObjectHideFlags: 0
@@ -393,8 +394,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   unit: {fileID: 6221209888615918512}
-  bodySpriteRenderer: {fileID: 4467826071772814740}
+  bodySpriteRendererList: []
+  shadowGameObjectList: []
   cleanMaterial: {fileID: 2100000, guid: 5472c483cff72494e8e1f9233fc2308a, type: 2}
+  invisibleMaterial: {fileID: 0}
   placingUnitMaterial: {fileID: 2100000, guid: 684a5a5301c6bfd4eb68f6d32d5b9a09, type: 2}
   upgradedBodyMaterial: {fileID: 0}
   upgradeReplacesBody: 0
@@ -411,7 +414,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dbdb4a71fef913341b117d002e6927b4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  unitShaderAnimator: {fileID: 8734627499291674683}
+  unitShaderAnimatorList: []
 --- !u!1 &8883300417249960126
 GameObject:
   m_ObjectHideFlags: 0
@@ -428,6 +431,7 @@ GameObject:
   - component: {fileID: 3047400702304054071}
   - component: {fileID: 6830934254262187191}
   - component: {fileID: 1945086570058195385}
+  - component: {fileID: 2469941413343441656}
   m_Layer: 0
   m_Name: TestUnit
   m_TagString: Untagged
@@ -500,10 +504,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5eda3ce5945549141aa5dfa02d907e7f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hasAttack: 0
-  hasSideAttack: 0
-  hasSpecial1: 0
-  hasSpecial2: 0
+  projectileTarget: {fileID: 0}
   unitSO: {fileID: 0}
 --- !u!114 &3211761454528701912
 MonoBehaviour:
@@ -553,6 +554,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2547376e8bd31d84b90513cbee5aa12b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  projectileSpawnPoint: {fileID: 0}
+  attackColliderAOE: {fileID: 0}
+--- !u!114 &2469941413343441656
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8883300417249960126}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 951099334
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!1001 &769170229685668158
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -666,11 +688,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a3e3d85f4ceaeb142b56061e8aafdab8, type: 3}
---- !u!212 &4467826071772814740 stripped
-SpriteRenderer:
-  m_CorrespondingSourceObject: {fileID: 3795492267734013098, guid: a3e3d85f4ceaeb142b56061e8aafdab8, type: 3}
-  m_PrefabInstance: {fileID: 769170229685668158}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &5382315898739115054 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4619980685383306512, guid: a3e3d85f4ceaeb142b56061e8aafdab8, type: 3}

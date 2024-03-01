@@ -7,7 +7,6 @@ using UnityEngine;
 public class UCWAnimatorManager : UnitAnimatorManager
 {
     [SerializeField] private Animator ucwAnimator;
-    [SerializeField] protected Animator mountShaderAnimator;
     private UCW ucw;
 
     private UCW.LegendaryState legendaryState;
@@ -80,15 +79,6 @@ public class UCWAnimatorManager : UnitAnimatorManager
         }
 
         unitAnimator.SetTrigger("BaseAttack");
-    }
-
-    protected override void Unit_OnHealthChanged(object sender, UnitHP.OnHealthChangedEventArgs e) {
-        if (e.newHealth < e.previousHealth) {
-            unitShaderAnimator.SetTrigger("Damaged");
-            if(ucw.GetIsMountedUnit()) {
-                mountShaderAnimator.SetTrigger("Damaged");
-            }
-        }
     }
 
     protected override void UnitAttack_OnUnitAttackStarted(object sender, System.EventArgs e) {

@@ -126,7 +126,7 @@ public class UnitAttack : NetworkBehaviour
 
         if (!unit.GetUnitIsDead() && !targetUnit.GetUnitIsDead()) {
             // Unit is still alive on attack animation hit and target unit is still alive
-            InflictDamage(targetUnit);
+            InflictDamage(targetUnit, transform.position);
         }
 
         yield return new WaitForSeconds(meleeAttackAnimationDuration - attackAnimationHitDelay);
@@ -155,25 +155,25 @@ public class UnitAttack : NetworkBehaviour
         }
     }
 
-    public void ProjectileHasHit(Unit targetUnit) {
+    public void ProjectileHasHit(Unit targetUnit, Vector3 projectileHitPosition) {
         if (!IsServer) return;
-        InflictDamage(targetUnit);
+        InflictDamage(targetUnit, projectileHitPosition);
     }
 
-    protected void InflictDamage(Unit targetUnit) {
+    protected void InflictDamage(Unit targetUnit, Vector3 damageHitPosition) {
         if (!IsServer) return;
 
-        PerformAllDamageActions(targetUnit);
+        PerformAllDamageActions(targetUnit, damageHitPosition);
 
         if (attackHasAOE) {
             // Attack has one form of AOE
 
             if (attackAOE != 0) {
-                // Attack AOE is centered aroud this unit
-                foreach (Unit unitAOETarget in FindAOEAttackTargets(transform.position)) {
+                // Attack AOE is a circle around damageHitPosition
+                foreach (Unit unitAOETarget in FindAOEAttackTargets(damageHitPosition)) {
                     // Don't damage target unit twice
                     if(unitAOETarget != targetUnit) {
-                        PerformAllDamageActions(unitAOETarget);
+                        PerformAllDamageActions(unitAOETarget, damageHitPosition);
                     }
                 }
             }
@@ -186,7 +186,7 @@ public class UnitAttack : NetworkBehaviour
                 foreach (Unit unitAOETarget in unitsInAttackAOE) {
                     // Don't damage target unit twice
                     if (unitAOETarget != targetUnit) {
-                        PerformAllDamageActions(unitAOETarget);
+                        PerformAllDamageActions(unitAOETarget, damageHitPosition);
                     }
                 }
             }
@@ -194,11 +194,11 @@ public class UnitAttack : NetworkBehaviour
 
     }
 
-    protected virtual void PerformAllDamageActions(Unit targetUnit) {
+    protected virtual void PerformAllDamageActions(Unit targetUnit, Vector3 damageHitPosition) {
         targetUnit.GetComponent<UnitHP>().TakeDamage(attackDamage);
 
         if (attackKnockback != 0) {
-            Vector2 incomingDamageDirection = new Vector2(targetUnit.transform.position.x - transform.position.x, targetUnit.transform.position.y - transform.position.y);
+            Vector2 incomingDamageDirection = new Vector2(targetUnit.transform.position.x - damageHitPosition.x, targetUnit.transform.position.y - damageHitPosition.y);
             Vector2 force = incomingDamageDirection * attackKnockback;
 
             targetUnit.TakeKnockBack(force);

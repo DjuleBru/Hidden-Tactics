@@ -8,7 +8,7 @@ public class UnitAnimatorManager : MonoBehaviour
 {
 
     protected Animator unitAnimator;
-    [SerializeField] protected Animator unitShaderAnimator;
+    [SerializeField] protected List<Animator> unitShaderAnimatorList;
     protected Unit unit;
     protected UnitAI unitAI;
     protected UnitMovement unitMovement;
@@ -145,7 +145,9 @@ public class UnitAnimatorManager : MonoBehaviour
 
     protected virtual void Unit_OnHealthChanged(object sender, UnitHP.OnHealthChangedEventArgs e) {
         if(e.newHealth < e.previousHealth) {
-            unitShaderAnimator.SetTrigger("Damaged");
+            foreach(Animator unitShaderAnimator in unitShaderAnimatorList) {
+                unitShaderAnimator.SetTrigger("Damaged");
+            }
         }
     }
 
