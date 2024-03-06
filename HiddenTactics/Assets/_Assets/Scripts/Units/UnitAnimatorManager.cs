@@ -119,7 +119,7 @@ public class UnitAnimatorManager : MonoBehaviour
     }
 
     protected void SetUnitWatchDirectionBasedOnGridPosition() {
-        if(unit.GetParentTroop().GetTroopGridPosition().x >= BattleGrid.Instance.GetGridWidth()/2) {
+        if(unit.GetParentTroop().GetIPlaceableGridPosition().x >= BattleGrid.Instance.GetGridWidth()/2) {
             SetXY(-1,-1);
         } else {
             SetXY(1,-1);

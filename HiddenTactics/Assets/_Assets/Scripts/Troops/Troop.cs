@@ -4,8 +4,7 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
-public class Troop : MonoBehaviour
-{
+public class Troop : MonoBehaviour, IPlaceable {
     public event EventHandler OnTroopPlaced;
     private ulong ownerClientId;
 
@@ -41,7 +40,7 @@ public class Troop : MonoBehaviour
     private void Start() {
         if (debugMode) {
             isOwnedByPlayer = false;
-            PlaceTroop();
+            PlaceIPlaceable();
             Unit[] unitArray = GetComponentsInChildren<Unit>();
             foreach (Unit unit in unitArray) {
                 //Set Parent Troop
@@ -57,9 +56,9 @@ public class Troop : MonoBehaviour
     private void Update() {
         if(!isPlaced) {
             HandlePositioningOnGrid();
-            HandleTroopPositionDuringPlacement();
+            HandleIPlaceablePositionDuringPlacement();
         } else {
-            HandleTroopPosition();
+            HandleIPlaceablePosition();
         }
     }
 
@@ -74,18 +73,18 @@ public class Troop : MonoBehaviour
         // Troop was not set at a grid position yet
         if(currentGridPosition == null) {
             currentGridPosition = MousePositionManager.Instance.GetMouseGridPosition();
-            BattleGrid.Instance.AddTroopAtGridPosition(currentGridPosition, this);
+            BattleGrid.Instance.AddIPlaceableAtGridPosition(currentGridPosition, this);
         }
 
         // Troop changed grid position
         if (newGridPosition != currentGridPosition) {
             // Unit changed grid position
-            BattleGrid.Instance.TroopMovedGridPosition(this, currentGridPosition, newGridPosition);
+            BattleGrid.Instance.IPlaceableMovedGridPosition(this, currentGridPosition, newGridPosition);
             currentGridPosition = newGridPosition;
         }
     }
 
-    private void HandleTroopPositionDuringPlacement() {
+    public void HandleIPlaceablePositionDuringPlacement() {
         if (currentGridPosition == null) {
             if (!isOwnedByPlayer) return;
             transform.position = MousePositionManager.Instance.GetMousePositionWorldPoint() - troopCenterPoint.localPosition;
@@ -94,7 +93,7 @@ public class Troop : MonoBehaviour
         }
     }
 
-    private void HandleTroopPosition() {
+    public void HandleIPlaceablePosition() {
         transform.position = battlefieldOwner.position + battlefieldOffset;
     }
 
@@ -105,34 +104,33 @@ public class Troop : MonoBehaviour
             if (!isVisibleToOpponent) {
                 // Make troop visible to opponent
                 OnTroopPlaced?.Invoke(this, null);
-                //transform.position = troopPosition;
             }
             isVisibleToOpponent = true;
         }
     }
 
-    public void SetTroopOwnerClientId(ulong clientId) {
+    public void SetIPlaceableOwnerClientId(ulong clientId) {
         ownerClientId = clientId;
         isOwnedByPlayer = (ownerClientId == NetworkManager.Singleton.LocalClientId);
     }
 
-    public void PlaceTroop() {
+    public void PlaceIPlaceable() {
         OnTroopPlaced?.Invoke(this, null);
         currentGridPosition = BattleGrid.Instance.GetGridPosition(troopCenterPoint.position);
 
         isPlaced = true;
 
-        SetTroopBattlefieldParent(currentGridPosition);
+        SetIPlaceableBattlefieldParent(currentGridPosition);
     }
 
-    public void SetTroopGridPosition(GridPosition troopGridPosition) {
+    public void SetIPlaceableGridPosition(GridPosition troopGridPosition) {
         Vector3 troopWorldPosition = BattleGrid.Instance.GetWorldPosition(troopGridPosition);
 
         currentGridPosition = troopGridPosition;
         transform.position = troopWorldPosition - troopCenterPoint.localPosition;
     }
 
-    private void SetTroopBattlefieldParent(GridPosition troopGridPosition) {
+    public void SetIPlaceableBattlefieldParent(GridPosition troopGridPosition) {
         if (troopGridPosition.x >= 6) {
             battlefieldOwner = BattleGrid.Instance.GetOpponentGridOrigin();
         }
@@ -150,7 +148,7 @@ public class Troop : MonoBehaviour
         return unitsInTroop;
     }
 
-    public GridPosition GetTroopGridPosition() {
+    public GridPosition GetIPlaceableGridPosition() {
         return currentGridPosition;
     }
 

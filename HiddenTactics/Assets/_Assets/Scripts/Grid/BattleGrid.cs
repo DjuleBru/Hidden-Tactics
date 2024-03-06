@@ -69,10 +69,10 @@ public class BattleGrid : MonoBehaviour
     }
 
     #region TROOP
-    public void AddTroopAtGridPosition(GridPosition gridPosition, Troop troop) {
+    public void AddIPlaceableAtGridPosition(GridPosition gridPosition, IPlaceable iPlaceable) {
             GridObject gridObject = gridSystem.GetGridObject(gridPosition);
 
-            gridObject.AddTroop(troop);
+            gridObject.AddIPlaceable(iPlaceable);
     }
 
     public List<Troop> GetTroopListAtGridPosition(GridPosition gridPosition) {
@@ -80,14 +80,15 @@ public class BattleGrid : MonoBehaviour
             return gridObject.GetTroopList();
     }
 
-    public void RemoveTroopAtGridPosition(GridPosition gridPosition, Troop troop) {
+    public void RemoveIPlaceableAtGridPosition(GridPosition gridPosition, IPlaceable iPlaceable) {
             GridObject gridObject = gridSystem.GetGridObject(gridPosition);
 
-            gridObject.RemoveTroop(troop);
+            gridObject.RemoveIPlaceable(iPlaceable);
     }
-    public void TroopMovedGridPosition(Troop troop, GridPosition fromGridPosition, GridPosition toGridPosition) {
-        RemoveTroopAtGridPosition(fromGridPosition, troop);
-        AddTroopAtGridPosition(toGridPosition, troop);
+
+    public void IPlaceableMovedGridPosition(IPlaceable iPlaceable, GridPosition fromGridPosition, GridPosition toGridPosition) {
+        RemoveIPlaceableAtGridPosition(fromGridPosition, iPlaceable);
+        AddIPlaceableAtGridPosition(toGridPosition, iPlaceable);
     }
     #endregion
 

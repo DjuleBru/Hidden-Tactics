@@ -503,7 +503,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2495463524177989710, guid: 4dcc7c12297e84b4f89e7920ef3446c3, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2640435722494688644, guid: 4dcc7c12297e84b4f89e7920ef3446c3, type: 3}
       propertyPath: GlobalObjectIdHash
@@ -1028,6 +1028,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   troopToSpawnSO: {fileID: 11400000, guid: e640f53c2be1699469cbe4119ef7faee, type: 2}
+  buildingToSpawnSO: {fileID: 0}
 --- !u!114 &62009361
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1629,6 +1630,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   troopToSpawnSO: {fileID: 11400000, guid: b2406b183d0dfa24a9e41976b89fddec, type: 2}
+  buildingToSpawnSO: {fileID: 0}
 --- !u!114 &113902691
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2454,6 +2456,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   troopToSpawnSO: {fileID: 11400000, guid: b45357bead11aca4b8bf9a59fea352a9, type: 2}
+  buildingToSpawnSO: {fileID: 0}
 --- !u!114 &249320895
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2756,6 +2759,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   troopToSpawnSO: {fileID: 11400000, guid: 00baa01afd9ce3e41a7edd2b286acaf6, type: 2}
+  buildingToSpawnSO: {fileID: 0}
 --- !u!114 &261745089
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2976,6 +2980,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   troopToSpawnSO: {fileID: 11400000, guid: 152e2acd4e6f3d742b7d953ed6fe81f4, type: 2}
+  buildingToSpawnSO: {fileID: 0}
 --- !u!114 &264509136
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3112,6 +3117,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   troopToSpawnSO: {fileID: 11400000, guid: 30c30fd0f50c44b42b439115dc40b5c4, type: 2}
+  buildingToSpawnSO: {fileID: 0}
 --- !u!114 &266227303
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3414,6 +3420,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   troopToSpawnSO: {fileID: 11400000, guid: 8982decaa369386489a71918ac2ec436, type: 2}
+  buildingToSpawnSO: {fileID: 0}
 --- !u!114 &279506098
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3904,6 +3911,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   troopToSpawnSO: {fileID: 11400000, guid: 7dbc4709ebadaf343b1acdd707bed234, type: 2}
+  buildingToSpawnSO: {fileID: 0}
 --- !u!114 &319327541
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4373,6 +4381,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   troopToSpawnSO: {fileID: 11400000, guid: 6ab492f275762974e9024ccc8818b045, type: 2}
+  buildingToSpawnSO: {fileID: 0}
 --- !u!114 &378008638
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4585,6 +4594,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   troopToSpawnSO: {fileID: 11400000, guid: c0cec2b5ae4ba9e4c8b61d987f8b4bd7, type: 2}
+  buildingToSpawnSO: {fileID: 0}
 --- !u!114 &411441477
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4805,6 +4815,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   troopToSpawnSO: {fileID: 11400000, guid: 8479fd72270b4e84382a4404a1c0d67d, type: 2}
+  buildingToSpawnSO: {fileID: 0}
 --- !u!114 &463218011
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5391,6 +5402,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   troopToSpawnSO: {fileID: 11400000, guid: 41462b2ce4aa9a7488f5fdb640ea0bf7, type: 2}
+  buildingToSpawnSO: {fileID: 0}
 --- !u!114 &518491994
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5780,6 +5792,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   troopToSpawnSO: {fileID: 11400000, guid: 9d2b00c9978f66543bfee1d94c980df4, type: 2}
+  buildingToSpawnSO: {fileID: 0}
 --- !u!114 &532218934
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7064,6 +7077,7 @@ RectTransform:
   - {fileID: 266227301}
   - {fileID: 1396175361}
   - {fileID: 113902689}
+  - {fileID: 802081931}
   m_Father: {fileID: 1248634822}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -7228,6 +7242,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   troopToSpawnSO: {fileID: 11400000, guid: 65ea0e2c69d91364ba907f176576ebe9, type: 2}
+  buildingToSpawnSO: {fileID: 0}
 --- !u!114 &655657055
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7493,6 +7508,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   troopToSpawnSO: {fileID: 11400000, guid: 0e834b0ac5dc8c149b4d94ce0c7c852b, type: 2}
+  buildingToSpawnSO: {fileID: 0}
 --- !u!114 &707559115
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7705,6 +7721,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   troopToSpawnSO: {fileID: 11400000, guid: c86bcc17fc62ffc4a8199ae996975ef6, type: 2}
+  buildingToSpawnSO: {fileID: 0}
 --- !u!114 &712067687
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7841,6 +7858,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   troopToSpawnSO: {fileID: 11400000, guid: baa9b481a5bf46d4786b7e20c06ff3e8, type: 2}
+  buildingToSpawnSO: {fileID: 0}
 --- !u!114 &734427565
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8128,6 +8146,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   troopToSpawnSO: {fileID: 11400000, guid: eaa34c01890b2ba4ebb84fdd6150357e, type: 2}
+  buildingToSpawnSO: {fileID: 0}
 --- !u!114 &762483807
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8359,6 +8378,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   troopToSpawnSO: {fileID: 11400000, guid: 44aa6549ec168be44806b75949238aa9, type: 2}
+  buildingToSpawnSO: {fileID: 0}
 --- !u!114 &773830747
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8571,6 +8591,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   troopToSpawnSO: {fileID: 11400000, guid: 87a73a70a9967ec41ae5df2710b39e04, type: 2}
+  buildingToSpawnSO: {fileID: 0}
 --- !u!114 &800740978
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8652,6 +8673,219 @@ CanvasRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 800740975}
+  m_CullTransparentMesh: 1
+--- !u!1 &801413052
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 801413053}
+  - component: {fileID: 801413055}
+  - component: {fileID: 801413054}
+  m_Layer: 5
+  m_Name: TroopIcon
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &801413053
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 801413052}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 802081931}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0}
+  m_AnchorMax: {x: 0.5, y: 0}
+  m_AnchoredPosition: {x: -2, y: 31.3}
+  m_SizeDelta: {x: 90, y: 90}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &801413054
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 801413052}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 0
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 0
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: 598e96ee0a820824faa4b08195b4f414, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &801413055
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 801413052}
+  m_CullTransparentMesh: 1
+--- !u!1 &802081930
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 802081931}
+  - component: {fileID: 802081935}
+  - component: {fileID: 802081934}
+  - component: {fileID: 802081933}
+  - component: {fileID: 802081932}
+  m_Layer: 5
+  m_Name: SpawnBuildingTestButton
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &802081931
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 802081930}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 801413053}
+  m_Father: {fileID: 642418182}
+  m_RootOrder: 10
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 0, y: 0}
+  m_AnchoredPosition: {x: -841.4, y: -239.4}
+  m_SizeDelta: {x: 60, y: 60}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &802081932
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 802081930}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 257675a6e8aedfe41bd149f535ee435f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  troopToSpawnSO: {fileID: 0}
+  buildingToSpawnSO: {fileID: 11400000, guid: 1371ce9a81806f54182318d872845a55, type: 2}
+--- !u!114 &802081933
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 802081930}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Navigation:
+    m_Mode: 3
+    m_WrapAround: 0
+    m_SelectOnUp: {fileID: 0}
+    m_SelectOnDown: {fileID: 0}
+    m_SelectOnLeft: {fileID: 0}
+    m_SelectOnRight: {fileID: 0}
+  m_Transition: 1
+  m_Colors:
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_ColorMultiplier: 1
+    m_FadeDuration: 0.1
+  m_SpriteState:
+    m_HighlightedSprite: {fileID: 0}
+    m_PressedSprite: {fileID: 0}
+    m_SelectedSprite: {fileID: 0}
+    m_DisabledSprite: {fileID: 0}
+  m_AnimationTriggers:
+    m_NormalTrigger: Normal
+    m_HighlightedTrigger: Highlighted
+    m_PressedTrigger: Pressed
+    m_SelectedTrigger: Selected
+    m_DisabledTrigger: Disabled
+  m_Interactable: 1
+  m_TargetGraphic: {fileID: 802081934}
+  m_OnClick:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &802081934
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 802081930}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 0.93945235, b: 0.7971698, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
+  m_Type: 1
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &802081935
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 802081930}
   m_CullTransparentMesh: 1
 --- !u!1001 &804674534
 PrefabInstance:
@@ -8774,6 +9008,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   troopToSpawnSO: {fileID: 11400000, guid: 9e02236b3706c4d49812bfef4734e325, type: 2}
+  buildingToSpawnSO: {fileID: 0}
 --- !u!114 &805347003
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8910,6 +9145,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   troopToSpawnSO: {fileID: 11400000, guid: f8c0eb0489fc2354d93e8ae78b322f6f, type: 2}
+  buildingToSpawnSO: {fileID: 0}
 --- !u!114 &807369319
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10923,6 +11159,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   troopToSpawnSO: {fileID: 11400000, guid: ee451cfaa99349645bfa464f8d16df90, type: 2}
+  buildingToSpawnSO: {fileID: 0}
 --- !u!114 &971256862
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11241,6 +11478,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   troopToSpawnSO: {fileID: 11400000, guid: 03abd093ab284934390b866177f5f6a6, type: 2}
+  buildingToSpawnSO: {fileID: 0}
 --- !u!114 &1000919655
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11911,6 +12149,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   troopToSpawnSO: {fileID: 11400000, guid: 7af98e71fc4dad84fad80b01b66974dc, type: 2}
+  buildingToSpawnSO: {fileID: 0}
 --- !u!114 &1066434866
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12420,6 +12659,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   troopToSpawnSO: {fileID: 11400000, guid: 0bcd963c4d49e214cbcf1351292b15d6, type: 2}
+  buildingToSpawnSO: {fileID: 0}
 --- !u!114 &1086033221
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12737,6 +12977,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   troopToSpawnSO: {fileID: 11400000, guid: d673c863417c6c348a69e04442ea1799, type: 2}
+  buildingToSpawnSO: {fileID: 0}
 --- !u!114 &1122473772
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12949,6 +13190,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   troopToSpawnSO: {fileID: 11400000, guid: a157a3134c6ea214d9d6851f703714a4, type: 2}
+  buildingToSpawnSO: {fileID: 0}
 --- !u!114 &1141558148
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -13770,7 +14012,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1268741104
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14033,6 +14275,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   troopToSpawnSO: {fileID: 11400000, guid: 6948e0ecaad47a548af0396951751599, type: 2}
+  buildingToSpawnSO: {fileID: 0}
 --- !u!114 &1284027675
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14347,6 +14590,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   troopToSpawnSO: {fileID: 11400000, guid: 2b1f1e434d8da9d4683a2317ff27f675, type: 2}
+  buildingToSpawnSO: {fileID: 0}
 --- !u!114 &1332879421
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14545,6 +14789,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   troopToSpawnSO: {fileID: 11400000, guid: baa9b481a5bf46d4786b7e20c06ff3e8, type: 2}
+  buildingToSpawnSO: {fileID: 0}
 --- !u!114 &1368273161
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14909,6 +15154,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   troopToSpawnSO: {fileID: 11400000, guid: 2dd7e2142df5b304097c6359c24f75a1, type: 2}
+  buildingToSpawnSO: {fileID: 0}
 --- !u!114 &1393544132
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15045,6 +15291,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   troopToSpawnSO: {fileID: 11400000, guid: db4bb05d0e2a26646aff8cc81ffc681e, type: 2}
+  buildingToSpawnSO: {fileID: 0}
 --- !u!114 &1396175363
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15417,6 +15664,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   troopToSpawnSO: {fileID: 11400000, guid: 2e82b8f82dbfcfa4389e65865e773734, type: 2}
+  buildingToSpawnSO: {fileID: 0}
 --- !u!114 &1410027921
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15910,6 +16158,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   troopToSpawnSO: {fileID: 11400000, guid: c583f7ff589c3b94c907866c81383e17, type: 2}
+  buildingToSpawnSO: {fileID: 0}
 --- !u!114 &1462682902
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16046,6 +16295,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   troopToSpawnSO: {fileID: 11400000, guid: 149e37ff8259e63478c0b05295d40707, type: 2}
+  buildingToSpawnSO: {fileID: 0}
 --- !u!114 &1462718266
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16182,6 +16432,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   troopToSpawnSO: {fileID: 11400000, guid: 7030a1433f7b2e34a9cc11e439256f27, type: 2}
+  buildingToSpawnSO: {fileID: 0}
 --- !u!114 &1503623333
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16394,6 +16645,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   troopToSpawnSO: {fileID: 11400000, guid: c46c136efdc02a542aa02ffd5db578f1, type: 2}
+  buildingToSpawnSO: {fileID: 0}
 --- !u!114 &1531528161
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16606,6 +16858,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   troopToSpawnSO: {fileID: 11400000, guid: 1ee696ee8eb946f41826cab998dd3943, type: 2}
+  buildingToSpawnSO: {fileID: 0}
 --- !u!114 &1565411123
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16779,6 +17032,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   troopToSpawnSO: {fileID: 11400000, guid: 5e5842136c9f04d41840c8e7b724995b, type: 2}
+  buildingToSpawnSO: {fileID: 0}
 --- !u!114 &1575445436
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16915,6 +17169,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   troopToSpawnSO: {fileID: 11400000, guid: a3b3dc9608bca9f469e9f76de59eb2f6, type: 2}
+  buildingToSpawnSO: {fileID: 0}
 --- !u!114 &1575546064
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17051,6 +17306,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   troopToSpawnSO: {fileID: 11400000, guid: 7835deacbfed48543a8002b2ffa0db54, type: 2}
+  buildingToSpawnSO: {fileID: 0}
 --- !u!114 &1579763198
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17395,6 +17651,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   troopToSpawnSO: {fileID: 11400000, guid: 2eea602e4c7379a4f9db10c26b610dde, type: 2}
+  buildingToSpawnSO: {fileID: 0}
 --- !u!114 &1625902875
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -17825,6 +18082,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   troopToSpawnSO: {fileID: 11400000, guid: 8c12c899f91e9fe4ba3c1dbf913de193, type: 2}
+  buildingToSpawnSO: {fileID: 0}
 --- !u!114 &1649819864
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18265,6 +18523,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   troopToSpawnSO: {fileID: 11400000, guid: e81be00023b89fd4f94be7d163b2679b, type: 2}
+  buildingToSpawnSO: {fileID: 0}
 --- !u!114 &1681415069
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -18401,6 +18660,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   troopToSpawnSO: {fileID: 11400000, guid: 20409a5c0f2d19046a61620f4b9da97e, type: 2}
+  buildingToSpawnSO: {fileID: 0}
 --- !u!114 &1689837447
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19066,7 +19326,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1741985861
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19249,6 +19509,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   troopToSpawnSO: {fileID: 11400000, guid: a8478e2ca29f6764392e2ae70500ee6d, type: 2}
+  buildingToSpawnSO: {fileID: 0}
 --- !u!114 &1756800795
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -19461,6 +19722,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   troopToSpawnSO: {fileID: 11400000, guid: 149cdf0f56da3a9468ab99f4f408c06d, type: 2}
+  buildingToSpawnSO: {fileID: 0}
 --- !u!114 &1760324736
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20079,6 +20341,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   troopToSpawnSO: {fileID: 11400000, guid: 94adca1ec7e46aa4fac50f2b2787d166, type: 2}
+  buildingToSpawnSO: {fileID: 0}
 --- !u!114 &1862976220
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20555,6 +20818,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   troopToSpawnSO: {fileID: 11400000, guid: d4f0b6744b51ddb4198b1a9ac14e2e9b, type: 2}
+  buildingToSpawnSO: {fileID: 0}
 --- !u!114 &1919376082
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20691,6 +20955,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   troopToSpawnSO: {fileID: 11400000, guid: fea130cce7551ee4d9f54264b243ac0a, type: 2}
+  buildingToSpawnSO: {fileID: 0}
 --- !u!114 &1925083177
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21160,6 +21425,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   troopToSpawnSO: {fileID: 11400000, guid: 25c624dea8b263c4c8b430cbd6ecbdd7, type: 2}
+  buildingToSpawnSO: {fileID: 0}
 --- !u!114 &1947119655
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21441,6 +21707,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   troopToSpawnSO: {fileID: 11400000, guid: 812947468d9860140835416286e4dde7, type: 2}
+  buildingToSpawnSO: {fileID: 0}
 --- !u!114 &1975075193
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21644,6 +21911,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   troopToSpawnSO: {fileID: 11400000, guid: 85000eb3fa5763a49ab39b9b8776c8c9, type: 2}
+  buildingToSpawnSO: {fileID: 0}
 --- !u!114 &1979665857
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -21811,6 +22079,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   troopToSpawnSO: {fileID: 11400000, guid: 5c1860792f8af044596166638a894814, type: 2}
+  buildingToSpawnSO: {fileID: 0}
 --- !u!114 &1996853553
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -22948,6 +23217,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   troopToSpawnSO: {fileID: 11400000, guid: 6c4efe60e6742bc4e9cd7a32aba8bfde, type: 2}
+  buildingToSpawnSO: {fileID: 0}
 --- !u!114 &2080015357
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -23168,6 +23438,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   troopToSpawnSO: {fileID: 11400000, guid: c417b8e2a1575384ba5253a70f7c698b, type: 2}
+  buildingToSpawnSO: {fileID: 0}
 --- !u!114 &2087181101
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -23365,7 +23636,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5bc1cc04d82d8bb44b39a91abb82371a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  troopListSO: {fileID: 11400000, guid: 6cea04064dff99345a13faab678aa466, type: 2}
+  IPlaceableListSO: {fileID: 11400000, guid: da69ad09572560b4d9e4aa1cbd153847, type: 2}
 --- !u!1 &2107775137
 GameObject:
   m_ObjectHideFlags: 0

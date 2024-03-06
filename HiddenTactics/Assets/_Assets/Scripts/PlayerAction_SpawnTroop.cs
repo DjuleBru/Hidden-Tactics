@@ -7,17 +7,18 @@ public class PlayerAction_SpawnTroop : NetworkBehaviour {
 
     public static PlayerAction_SpawnTroop LocalInstance;
 
-    private Troop troopToSpawn;
+    private IPlaceable iPlaceableToSpawn;
 
-    private Dictionary<int, Troop> spawnedTroops;
-    private Dictionary<int, GridPosition> spawnedTroopsGridPositions;
+    private Dictionary<int, IPlaceable> spawnedIPlaceablesDictionary;
+    private Dictionary<int, GridPosition> spawnedIPlaceableGridPositions;
     private int troopDictionaryInt;
 
 
     private void Awake() {
-        spawnedTroops = new Dictionary<int, Troop>();
-        spawnedTroopsGridPositions = new Dictionary<int, GridPosition>();
+        spawnedIPlaceablesDictionary = new Dictionary<int, IPlaceable>();
+        spawnedIPlaceableGridPositions = new Dictionary<int, GridPosition>();
     }
+
     public override void OnNetworkSpawn() {
         if (IsOwner) {
             LocalInstance = this;
@@ -27,8 +28,8 @@ public class PlayerAction_SpawnTroop : NetworkBehaviour {
 
     private void BattleManager_OnStateChanged(object sender, System.EventArgs e) {
         // Destroy troop to spawn 
-        if (troopToSpawn != null) {
-            CancelTroopPlacement();
+        if (iPlaceableToSpawn != null) {
+            CancelIPlaceablePlacement();
         };
 
         troopDictionaryInt = 0;
@@ -36,43 +37,56 @@ public class PlayerAction_SpawnTroop : NetworkBehaviour {
         if (BattleManager.Instance.IsBattlePhaseStarting()) {
             // Set & Fetch spawned troops data from server
 
-            for (int i = 0; i < spawnedTroops.Count; i++) {
-                Troop spawnedTroop = spawnedTroops[i];
-                GridPosition spawnedTroopGridPosition = spawnedTroopsGridPositions[i];
+            for (int i = 0; i < spawnedIPlaceablesDictionary.Count; i++) {
+                IPlaceable spawnedIPLaceable = spawnedIPlaceablesDictionary[i];
+                GridPosition spawnedIPlaceableGridPosition = spawnedIPlaceableGridPositions[i];
 
-                NetworkObjectReference spawnedTroopNetworkObject = spawnedTroop.GetComponent<NetworkObject>();
+                NetworkObjectReference spawnedIPlaceableNetworkObject = (spawnedIPLaceable as MonoBehaviour).GetComponent<NetworkObject>();
 
-                SetTroopPositionServerRpc(spawnedTroopNetworkObject, spawnedTroopGridPosition.x, spawnedTroopGridPosition.y);
+                SetIPlaceablePositionServerRpc(spawnedIPlaceableNetworkObject, spawnedIPlaceableGridPosition.x, spawnedIPlaceableGridPosition.y);
             }
 
-            spawnedTroops.Clear();
-            spawnedTroopsGridPositions.Clear();
+            spawnedIPlaceablesDictionary.Clear();
+            spawnedIPlaceableGridPositions.Clear();
         }
     }
 
     public void SelectTroopToSpawn(int troopListSOIndex) {
-        if (troopToSpawn != null) {
-            CancelTroopPlacement();
+        if (iPlaceableToSpawn != null) {
+            CancelIPlaceablePlacement();
         };
 
         SpawnTroopServerRpc(troopListSOIndex, NetworkManager.Singleton.LocalClientId);
     }
 
-    public bool IsValidTroopSpawningTarget() {
-        GridPosition troopSpawnGridPosition = MousePositionManager.Instance.GetMouseGridPosition();
-        return BattleGrid.Instance.IsValidPlayerGridPosition(troopSpawnGridPosition);
+    public void SelectBuildingToSpawn(int buildingListSOIndex) {
+        if (iPlaceableToSpawn != null) {
+            CancelIPlaceablePlacement();
+        };
+
+        SpawnBuildingServerRpc(buildingListSOIndex, NetworkManager.Singleton.LocalClientId);
     }
 
-    public void PlaceTroop() {
-        troopToSpawn.PlaceTroop();
-        spawnedTroops.Add(troopDictionaryInt, troopToSpawn);
-        spawnedTroopsGridPositions.Add(troopDictionaryInt, troopToSpawn.GetTroopGridPosition());
+    public bool IsValidIPlaceableSpawningTarget() {
+        GridPosition iPlaceableSpawnGridPosition = MousePositionManager.Instance.GetMouseGridPosition();
+        return BattleGrid.Instance.IsValidPlayerGridPosition(iPlaceableSpawnGridPosition);
+    }
+
+    public void PlaceIPlaceable() {
+        iPlaceableToSpawn.PlaceIPlaceable();
+        spawnedIPlaceablesDictionary.Add(troopDictionaryInt, iPlaceableToSpawn);
+        spawnedIPlaceableGridPositions.Add(troopDictionaryInt, iPlaceableToSpawn.GetIPlaceableGridPosition());
         troopDictionaryInt++;
 
-        troopToSpawn = null;
+        iPlaceableToSpawn = null;
+    }
+    public void CancelIPlaceablePlacement() {
+        NetworkObjectReference troopNetworkObjectReference = (iPlaceableToSpawn as MonoBehaviour).GetComponent<NetworkObject>();
+        HiddenTacticsMultiplayer.Instance.DestroyIPlaceable(troopNetworkObjectReference);
+        iPlaceableToSpawn = null;
     }
 
-
+    #region SPAWN TROOPS, UNITS AND BUILDINGS
     [ServerRpc(RequireOwnership = false)]
     private void SpawnTroopServerRpc(int troopSOIndex, ulong ownerClientId) {
 
@@ -82,7 +96,7 @@ public class PlayerAction_SpawnTroop : NetworkBehaviour {
         NetworkObject troopNetworkObject = troopToSpawnGameObject.GetComponent<NetworkObject>();
         troopNetworkObject.Spawn(true);
 
-        SpawnTroopClientRpc(troopNetworkObject, ownerClientId);
+        SpawnIPlaceableClientRpc(troopNetworkObject, ownerClientId);
 
         // Spawn units
         Troop troopToSpawnTroop = troopToSpawnGameObject.GetComponent<Troop>();
@@ -91,19 +105,31 @@ public class PlayerAction_SpawnTroop : NetworkBehaviour {
 
         SpawnUnits(troopToSpawnGameObject, unitsToSpawnBasePositions, false);
         SpawnUnits(troopToSpawnGameObject, unitsToSpawnAdditionalPositions, true);
+    }
 
+
+    [ServerRpc(RequireOwnership = false)]
+    private void SpawnBuildingServerRpc(int buildingSOIndex, ulong ownerClientId) {
+
+        BuildingSO buildingToSpawnSO = BattleDataManager.Instance.GetBuildingSOFromIndex(buildingSOIndex);
+        GameObject buildingToSpawnGameObject = Instantiate(buildingToSpawnSO.buildingPrefab);
+
+        NetworkObject buildingNetworkObject = buildingToSpawnGameObject.GetComponent<NetworkObject>();
+        buildingNetworkObject.Spawn(true);
+
+        SpawnIPlaceableClientRpc(buildingNetworkObject, ownerClientId);
     }
 
     [ClientRpc]
-    private void SpawnTroopClientRpc(NetworkObjectReference troopToSpawnNetworkObjectReference, ulong ownerClientId) {
-        troopToSpawnNetworkObjectReference.TryGet(out NetworkObject troopToSpawnNetworkObject);
-        Troop troopToSpawn = troopToSpawnNetworkObject.GetComponent<Troop>();
+    private void SpawnIPlaceableClientRpc(NetworkObjectReference iPlaceableToSpawnNetworkObjectReference, ulong ownerClientId) {
+        iPlaceableToSpawnNetworkObjectReference.TryGet(out NetworkObject iPlaceableToSpawnNetworkObject);
+        IPlaceable iPlaceableToSpawn = iPlaceableToSpawnNetworkObject.GetComponent<IPlaceable>();
 
         if (ownerClientId == NetworkManager.Singleton.LocalClientId) {
-            this.troopToSpawn = troopToSpawn;
+            this.iPlaceableToSpawn = iPlaceableToSpawn;
         }
 
-        troopToSpawn.SetTroopOwnerClientId(ownerClientId);
+        iPlaceableToSpawn.SetIPlaceableOwnerClientId(ownerClientId);
     }
 
     private List<NetworkObject> SpawnUnits(NetworkObjectReference troopToSpawnNetworkObjectReference, List<Transform> unitsToSpawnPositionList, bool isAdditionalUnits) {
@@ -127,7 +153,9 @@ public class PlayerAction_SpawnTroop : NetworkBehaviour {
 
         return unitsSpawnedNetworkObjectList;
     }
+    #endregion
 
+    #region SET TROOP, UNIT AND BUILDINGS CONDITIONS
     [ClientRpc]
     private void SetUnitInitialConditionsClientRpc(NetworkObjectReference unitToSpawnNetworkObjectReference, NetworkObjectReference troopSpawnedNetworkObjectReference, Vector3 unitPosition, bool isAdditionalUnit) {
         unitToSpawnNetworkObjectReference.TryGet(out NetworkObject unitSpawnedNetworkObject);
@@ -149,33 +177,25 @@ public class PlayerAction_SpawnTroop : NetworkBehaviour {
     }
 
     [ServerRpc(RequireOwnership = false)]
-    private void SetTroopPositionServerRpc(NetworkObjectReference troopNetworkObjectReference, int gridPositionx, int gridPositiony) {
-        SetTroopPositionClientRpc(troopNetworkObjectReference, gridPositionx, gridPositiony);
+    private void SetIPlaceablePositionServerRpc(NetworkObjectReference IPlaceableNetworkObjectReference, int gridPositionx, int gridPositiony) {
+        SetIPlaceablePositionClientRpc(IPlaceableNetworkObjectReference, gridPositionx, gridPositiony);
     }
 
     [ClientRpc]
-    private void SetTroopPositionClientRpc(NetworkObjectReference troopNetworkObjectReference, int gridPositionx, int gridPositiony) {
-        troopNetworkObjectReference.TryGet(out NetworkObject troopToSpawnNetworkObject);
-        Troop troopSpawned = troopToSpawnNetworkObject.GetComponent<Troop>();
+    private void SetIPlaceablePositionClientRpc(NetworkObjectReference IPlaceableNetworkObjectReference, int gridPositionx, int gridPositiony) {
+        IPlaceableNetworkObjectReference.TryGet(out NetworkObject IPlaceableToSpawnNetworkObject);
 
-        GridPosition spawnedTroopGridPosition = new GridPosition(gridPositionx, gridPositiony);
+        IPlaceable iPlaceableSpawned = IPlaceableToSpawnNetworkObject.GetComponent<IPlaceable>();
 
-        if (!troopSpawned.IsOwnedByPlayer()) {
-            spawnedTroopGridPosition = BattleGrid.Instance.TranslateOpponentGridPosition(spawnedTroopGridPosition);
+        GridPosition spawnedIPlaceableGridPosition = new GridPosition(gridPositionx, gridPositiony);
+
+        if (!iPlaceableSpawned.IsOwnedByPlayer()) {
+            spawnedIPlaceableGridPosition = BattleGrid.Instance.TranslateOpponentGridPosition(spawnedIPlaceableGridPosition);
         }
 
-        troopSpawned.SetTroopGridPosition(spawnedTroopGridPosition);
-        troopSpawned.PlaceTroop();
+        iPlaceableSpawned.SetIPlaceableGridPosition(spawnedIPlaceableGridPosition);
+        iPlaceableSpawned.PlaceIPlaceable();
     }
-
-    public void CancelTroopPlacement() {
-        NetworkObjectReference troopNetworkObjectReference = troopToSpawn.GetComponent<NetworkObject>();
-        HiddenTacticsMultiplayer.Instance.DestroyTroop(troopNetworkObjectReference);
-        troopToSpawn = null;
-    }
-
-    public Troop GetTroopToSpawn() {
-        return troopToSpawn;
-    }
+    #endregion
 
 }

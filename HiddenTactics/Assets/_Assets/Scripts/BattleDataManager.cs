@@ -8,22 +8,27 @@ public class BattleDataManager : NetworkBehaviour
 {
     public static BattleDataManager Instance;
 
-    [SerializeField] private TroopListSO troopListSO;
+    [SerializeField] private IPlaceableListSO IPlaceableListSO;
 
     private void Awake() {
         Instance = this;
     }
 
-    public TroopListSO GetTroopListSO() {
-        return troopListSO;
-    }
-
     public int GetTroopSOIndex(TroopSO troopSO) {
-        return troopListSO.troopSOList.IndexOf(troopSO);
+        return IPlaceableListSO.troopSOList.IndexOf(troopSO);
     }
 
     public TroopSO GetTroopSOFromIndex(int troopIndex) {
-        return troopListSO.troopSOList[troopIndex];
+        return IPlaceableListSO.troopSOList[troopIndex];
+    }
+
+    public int GetBuildingSOIndex(BuildingSO buildingSO) {
+        Debug.Log(IPlaceableListSO.buildingSOList.IndexOf(buildingSO));
+        return IPlaceableListSO.buildingSOList.IndexOf(buildingSO);
+    }
+
+    public BuildingSO GetBuildingSOFromIndex(int buildingSOIndex) {
+        return IPlaceableListSO.buildingSOList[buildingSOIndex];
     }
 
 }

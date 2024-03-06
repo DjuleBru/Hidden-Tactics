@@ -9,7 +9,7 @@ public class PlayerActionsManager : NetworkBehaviour {
 
     private enum Action {
         Idle,
-        SelectingTroopToSpawn,
+        SelectingIPlaceableToSpawn,
         PreparationPhase,
         BattlePhase,
     }
@@ -23,17 +23,17 @@ public class PlayerActionsManager : NetworkBehaviour {
     }
 
     private void Update() {
-        if(currentAction == Action.SelectingTroopToSpawn) {
+        if(currentAction == Action.SelectingIPlaceableToSpawn) {
             if(Input.GetMouseButtonDown(0)) {
                 // Player is trying to place troop : check if troop placement conditions are met
-                if(PlayerAction_SpawnTroop.LocalInstance.IsValidTroopSpawningTarget()) {
-                    PlayerAction_SpawnTroop.LocalInstance.PlaceTroop();
+                if(PlayerAction_SpawnTroop.LocalInstance.IsValidIPlaceableSpawningTarget()) {
+                    PlayerAction_SpawnTroop.LocalInstance.PlaceIPlaceable();
                     currentAction = Action.Idle;
                 }
             }
             if (Input.GetMouseButtonDown(1)) {
                 // Cancel troop placement
-                PlayerAction_SpawnTroop.LocalInstance.CancelTroopPlacement();
+                PlayerAction_SpawnTroop.LocalInstance.CancelIPlaceablePlacement();
                 currentAction = Action.Idle;
             }
         }
@@ -41,8 +41,13 @@ public class PlayerActionsManager : NetworkBehaviour {
 
 
     public void SelectTroopToSpawn(int troopListSOIndex) {
-        currentAction = Action.SelectingTroopToSpawn;
+        currentAction = Action.SelectingIPlaceableToSpawn;
         PlayerAction_SpawnTroop.LocalInstance.SelectTroopToSpawn(troopListSOIndex);
+    }
+
+    public void SelectBuildingToSpawn(int buildingListSOIndex) {
+        currentAction = Action.SelectingIPlaceableToSpawn;
+        PlayerAction_SpawnTroop.LocalInstance.SelectBuildingToSpawn(buildingListSOIndex);
     }
 
 }

@@ -202,24 +202,29 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
     }
 
 
-    public void DestroyTroop(NetworkObjectReference troopNetworkObjectReference) {
-        DestroyTroopServerRpc(troopNetworkObjectReference);
+    public void DestroyIPlaceable(NetworkObjectReference iPlaceableNetworkObjectReference) {
+
+        DestroyIPlaceableServerRpc(iPlaceableNetworkObjectReference);
+
     }
 
     [ServerRpc(RequireOwnership =false)]
-    private void DestroyTroopServerRpc(NetworkObjectReference troopNetworkObjectReference) {
-        troopNetworkObjectReference.TryGet(out NetworkObject troopNetworkObject);
-        RemoveTroopFromGridClientRpc(troopNetworkObjectReference);
+    private void DestroyIPlaceableServerRpc(NetworkObjectReference iPlaceableNetworkObjectReference) {
+        iPlaceableNetworkObjectReference.TryGet(out NetworkObject iPlaceableNetworkObject);
 
-        Troop troop = troopNetworkObject.GetComponent<Troop>();
+        RemoveIPlaceableFromGridClientRpc(iPlaceableNetworkObject);
 
-        foreach(Unit unit in troop.GetUnitInTroopList()) {
-            NetworkObject unitNetworkObject = unit.GetComponent<NetworkObject>();
-            RemoveUnitFromGridClientRpc(unitNetworkObject);
-            unit.DestroySelf();
+        // IF IPLACEABLE IS TROOP : DESTROY UNITS IN TROOP
+        if(iPlaceableNetworkObject.TryGetComponent<Troop>(out Troop troop)) {
+            foreach (Unit unit in troop.GetUnitInTroopList()) {
+                NetworkObject unitNetworkObject = unit.GetComponent<NetworkObject>();
+                RemoveUnitFromGridClientRpc(unitNetworkObject);
+                unit.DestroySelf();
+            }
         }
 
-        troop.DestroySelf();
+        IPlaceable iPlaceable = iPlaceableNetworkObject.GetComponent<IPlaceable>();
+        iPlaceable.DestroySelf();
     }
 
     [ClientRpc]
@@ -232,12 +237,12 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
     }
 
     [ClientRpc]
-    public void RemoveTroopFromGridClientRpc(NetworkObjectReference troopNetworkObjectReference) {
-        troopNetworkObjectReference.TryGet(out NetworkObject troopNetworkObject);
-        Troop troop = troopNetworkObject.GetComponent<Troop>();
+    public void RemoveIPlaceableFromGridClientRpc(NetworkObjectReference iPlaceableNetworkObjectReference) {
+        iPlaceableNetworkObjectReference.TryGet(out NetworkObject iPlaceableNetworkObject);
+        IPlaceable iPlaceable = iPlaceableNetworkObject.GetComponent<IPlaceable>();
 
-        GridPosition troopGridPosition = troop.GetTroopGridPosition();
-        BattleGrid.Instance.RemoveTroopAtGridPosition(troopGridPosition, troop);
+        GridPosition iPlaceableGridPosition = iPlaceable.GetIPlaceableGridPosition();
+        BattleGrid.Instance.RemoveIPlaceableAtGridPosition(iPlaceableGridPosition, iPlaceable);
     }
 
     public bool IsMultiplayer() {
