@@ -36,10 +36,10 @@ public class UnitAI_MeleeMain_SideRanged : UnitAI
             ChangeState(State.moveForwards);
         }
         else {
-            unitMovement.MoveToTarget(unitTargetingSystem.GetMainAttackTargetUnit().transform.position);
+            unitMovement.MoveToTarget((unitTargetingSystem.GetMainAttackTargetUnit() as MonoBehaviour).transform.position);
         }
 
-        CheckIfTargetUnitIsInMeleeAttackRange(mainAttackSO, true);
+        CheckIfTargetIsInMeleeAttackRange(mainAttackSO, true);
     }
 
     protected override void AttackingStateUpdate() {
@@ -51,7 +51,7 @@ public class UnitAI_MeleeMain_SideRanged : UnitAI
                 ChangeState(State.moveForwards);
             }
 
-            if (unitAttack.GetAttackTarget().GetUnitIsDead() && unitTargetingSystem.GetMainAttackTargetUnit() != null) {
+            if (unitAttack.GetAttackTarget().GetIsDead() && unitTargetingSystem.GetMainAttackTargetUnit() != null) {
                 // Unit attack target is dead and there are other target units!
                 unitAttack.SetAttackTarget(unitTargetingSystem.GetMainAttackTargetUnit());
             }
@@ -64,7 +64,7 @@ public class UnitAI_MeleeMain_SideRanged : UnitAI
                 ChangeState(State.moveForwards);
             }
 
-            if (unitAttack.GetAttackTarget().GetUnitIsDead() && unitTargetingSystem.GetSideAttackTargetUnit() != null) {
+            if (unitAttack.GetAttackTarget().GetIsDead() && unitTargetingSystem.GetSideAttackTargetUnit() != null) {
                 // Unit attack target is dead and there are other target units!
                 unitAttack.SetAttackTarget(unitTargetingSystem.GetSideAttackTargetUnit());
             }

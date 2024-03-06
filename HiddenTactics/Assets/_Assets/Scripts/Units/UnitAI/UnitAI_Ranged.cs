@@ -30,10 +30,10 @@ public class UnitAI_Ranged : UnitAI
             ChangeState(State.moveForwards);
         }
         else {
-            unitMovement.MoveToTarget(unitTargetingSystem.GetSideAttackTargetUnit().transform.position);
+            unitMovement.MoveToTarget((unitTargetingSystem.GetSideAttackTargetUnit() as MonoBehaviour).transform.position);
         }
 
-        CheckIfTargetUnitIsInMeleeAttackRange(sideAttackSO, false);
+        CheckIfTargetIsInMeleeAttackRange(sideAttackSO, false);
     }
 
     protected override void AttackingStateUpdate() {
@@ -48,9 +48,10 @@ public class UnitAI_Ranged : UnitAI
             if (unitTargetingSystem.GetMainAttackTargetUnit() == null) {
                 // Unit has no more attack targets
                 ChangeState(State.moveForwards);
+                return;
             }
 
-            if (unitAttack.GetAttackTarget().GetUnitIsDead() && unitTargetingSystem.GetMainAttackTargetUnit() != null) {
+            if (unitAttack.GetAttackTarget().GetIsDead() && unitTargetingSystem.GetMainAttackTargetUnit() != null) {
                 // Unit attack target is dead and there are other target units!
                 unitAttack.SetAttackTarget(unitTargetingSystem.GetMainAttackTargetUnit());
             }
@@ -66,9 +67,10 @@ public class UnitAI_Ranged : UnitAI
             if (unitTargetingSystem.GetSideAttackTargetUnit() == null | !unitTargetingSystem.GetTargetUnitIsInRange(sideAttackSO)) {
                 // Unit has no attack targets or target attack unit is out of range
                 ChangeState(State.moveForwards);
+                return;
             }
 
-            if (unitAttack.GetAttackTarget().GetUnitIsDead() && unitTargetingSystem.GetSideAttackTargetUnit() != null) {
+            if (unitAttack.GetAttackTarget().GetIsDead() && unitTargetingSystem.GetSideAttackTargetUnit() != null) {
                 // Unit attack target is dead and there are other target units!
                 unitAttack.SetAttackTarget(unitTargetingSystem.GetSideAttackTargetUnit());
             }

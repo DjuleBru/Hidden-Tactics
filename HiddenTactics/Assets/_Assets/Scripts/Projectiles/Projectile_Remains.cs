@@ -14,7 +14,7 @@ public class Projectile_Remains : Projectile
             UpdateNewPosition();
         } else {
             StartCoroutine(ProjectileHitCoroutine());
-            unitAttackOrigin.ProjectileHasHit(targetUnit, transform.position);
+            unitAttackOrigin.ProjectileHasHit(target, transform.position);
         }
 
         UpdateTrajectoryEndPoint();

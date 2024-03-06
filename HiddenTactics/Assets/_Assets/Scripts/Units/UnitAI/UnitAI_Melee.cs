@@ -16,13 +16,16 @@ public class UnitAI_Melee : UnitAI
 
     protected override void MoveToMeleeTargetStateUpdate() {
         if (unitTargetingSystem.GetMainAttackTargetUnit() != null) {
-            unitMovement.MoveToTarget(unitTargetingSystem.GetMainAttackTargetUnit().transform.position);
+
+            Collider2D targetCollider = (unitTargetingSystem.GetMainAttackTargetUnit() as MonoBehaviour).GetComponent<Collider2D>();
+            Vector3 closestPointOnTargetCollider = targetCollider.ClosestPoint(transform.position);
+            unitMovement.MoveToTarget(closestPointOnTargetCollider);
         }
         else {
             ChangeState(State.moveForwards);
         }
 
-        CheckIfTargetUnitIsInMeleeAttackRange(mainAttackSO, true);
+        CheckIfTargetIsInMeleeAttackRange(mainAttackSO, true);
     }
 
     protected override void AttackingStateUpdate() {
@@ -39,15 +42,17 @@ public class UnitAI_Melee : UnitAI
             ChangeState(State.moveForwards);
         }
 
-        if (unitAttack.GetAttackTarget().GetUnitIsDead()) {
-            // Unit attack target is dead !
-            if (unitTargetingSystem.GetMainAttackTargetUnit() != null) {
-                unitAttack.SetAttackTarget(unitTargetingSystem.GetMainAttackTargetUnit());
-            }
-            else {
-                ChangeState(State.moveForwards);
+        if(unitAttack.GetAttackTarget() != null) {
+
+            if (unitAttack.GetAttackTarget().GetIsDead()) {
+                // Attack target is dead !
+                if (unitTargetingSystem.GetMainAttackTargetUnit() != null) {
+                    unitAttack.SetAttackTarget(unitTargetingSystem.GetMainAttackTargetUnit());
+                }
+                else {
+                    ChangeState(State.moveForwards);
+                }
             }
         }
     }
-
 }

@@ -18,7 +18,7 @@ public class UnitAttack : NetworkBehaviour
     protected UnitMovement unitMovement;
 
     protected AttackSO activeAttackSO;
-    protected Unit attackTarget;
+    protected ITargetable attackTarget;
     protected float attackDamage;
     protected float attackTimer;
 
@@ -41,6 +41,7 @@ public class UnitAttack : NetworkBehaviour
     protected float attackKnockbackModifier;
 
     protected bool attacking;
+    protected bool dazed;
 
     protected void Awake() {
         unitAI = GetComponent<UnitAI>();
@@ -59,7 +60,6 @@ public class UnitAttack : NetworkBehaviour
 
     public override void OnNetworkSpawn() {
         unitAI.OnStateChanged += UnitAI_OnStateChanged;
-        unit.OnUnitDazed += Unit_OnUnitDazed;
 
         BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
     }
@@ -67,10 +67,10 @@ public class UnitAttack : NetworkBehaviour
     protected void Update() {
 
         if (attackTarget != null) {
-            unitMovement.SetWatchDir(attackTarget.transform);
+            unitMovement.SetWatchDir((attackTarget as MonoBehaviour).transform);
         }
 
-        if (attacking) {
+        if (attacking && !dazed) {
             if (!attackDecomposition) {
                 HandleStandardAttack();
             } else {
@@ -82,6 +82,7 @@ public class UnitAttack : NetworkBehaviour
 
     protected virtual void HandleStandardAttack() {
         attackTimer -= Time.deltaTime;
+
         if (attackTimer < 0) {
             attackTimer = attackRate;
 
@@ -117,29 +118,29 @@ public class UnitAttack : NetworkBehaviour
         }
     }
 
-    protected IEnumerator MeleeAttack(Unit targetUnit) {
+    protected IEnumerator MeleeAttack(ITargetable target) {
         OnUnitAttack?.Invoke(this, EventArgs.Empty);
         unitAI.SetAttackStarted(true);
 
         yield return new WaitForSeconds(attackAnimationHitDelay);
 
 
-        if (!unit.GetUnitIsDead() && !targetUnit.GetUnitIsDead()) {
-            // Unit is still alive on attack animation hit and target unit is still alive
-            InflictDamage(targetUnit, transform.position);
+        if (!unit.GetIsDead() && !target.GetIsDead()) {
+            // Unit is still alive on attack animation hit and target is still alive
+            InflictDamage(target, transform.position);
         }
 
         yield return new WaitForSeconds(meleeAttackAnimationDuration - attackAnimationHitDelay);
         unitAI.SetAttackStarted(false);
     }
 
-    protected IEnumerator RangedAttack(Unit targetUnit) {
+    protected IEnumerator RangedAttack(ITargetable target) {
         OnUnitAttack?.Invoke(this, EventArgs.Empty);
         unitAI.SetAttackStarted(true);
 
         yield return new WaitForSeconds(attackAnimationHitDelay);
 
-        if (!unit.GetUnitIsDead() && !targetUnit.GetUnitIsDead()) {
+        if (!unit.GetIsDead() && !target.GetIsDead()) {
             // Unit is still alive on attack animation hit and target unit is still alive
             Shoot(attackTarget);
         }
@@ -148,31 +149,32 @@ public class UnitAttack : NetworkBehaviour
         unitAI.SetAttackStarted(false);
     }
 
-    protected void Shoot(Unit targetUnit) {
-        NetworkObject targetUnitNetworkObject = targetUnit.GetComponent<NetworkObject>();
+    protected void Shoot(ITargetable target) {
+        NetworkObject targetUnitNetworkObject = (target as MonoBehaviour).GetComponent<NetworkObject>();
         if(IsServer) {
             SpawnProjectileServerRpc(targetUnitNetworkObject);
         }
     }
 
-    public void ProjectileHasHit(Unit targetUnit, Vector3 projectileHitPosition) {
+    public void ProjectileHasHit(ITargetable target, Vector3 projectileHitPosition) {
         if (!IsServer) return;
-        InflictDamage(targetUnit, projectileHitPosition);
+        InflictDamage(target, projectileHitPosition);
     }
 
-    protected void InflictDamage(Unit targetUnit, Vector3 damageHitPosition) {
+    protected void InflictDamage(ITargetable target, Vector3 damageHitPosition) {
         if (!IsServer) return;
 
-        PerformAllDamageActions(targetUnit, damageHitPosition);
+        PerformAllDamageActions(target, damageHitPosition);
 
         if (attackHasAOE) {
             // Attack has one form of AOE
 
             if (attackAOE != 0) {
                 // Attack AOE is a circle around damageHitPosition
+
                 foreach (Unit unitAOETarget in FindAOEAttackTargets(damageHitPosition)) {
                     // Don't damage target unit twice
-                    if(unitAOETarget != targetUnit) {
+                    if(unitAOETarget != (target as MonoBehaviour)) {
                         PerformAllDamageActions(unitAOETarget, damageHitPosition);
                     }
                 }
@@ -185,7 +187,7 @@ public class UnitAttack : NetworkBehaviour
 
                 foreach (Unit unitAOETarget in unitsInAttackAOE) {
                     // Don't damage target unit twice
-                    if (unitAOETarget != targetUnit) {
+                    if (unitAOETarget != (target as MonoBehaviour)) {
                         PerformAllDamageActions(unitAOETarget, damageHitPosition);
                     }
                 }
@@ -194,21 +196,22 @@ public class UnitAttack : NetworkBehaviour
 
     }
 
-    protected virtual void PerformAllDamageActions(Unit targetUnit, Vector3 damageHitPosition) {
-        targetUnit.GetComponent<UnitHP>().TakeDamage(attackDamage);
+    protected virtual void PerformAllDamageActions(ITargetable target, Vector3 damageHitPosition) {
+        IDamageable targetIDamageable = target.GetIDamageable();
+        targetIDamageable.TakeDamage(attackDamage);
 
-        if (attackKnockback != 0) {
-            Vector2 incomingDamageDirection = new Vector2(targetUnit.transform.position.x - damageHitPosition.x, targetUnit.transform.position.y - damageHitPosition.y);
-            Vector2 force = incomingDamageDirection * attackKnockback;
+        if(target is Unit) {
+            if (attackKnockback != 0) {
+                Vector2 incomingDamageDirection = new Vector2((target as Unit).transform.position.x - damageHitPosition.x, (target as Unit).transform.position.y - damageHitPosition.y);
+                Vector2 force = incomingDamageDirection * attackKnockback;
 
-            targetUnit.TakeKnockBack(force);
+                (target as Unit).TakeKnockBack(force);
+            }
+
+            if (attackDazedTime != 0) {
+                (target as Unit).TakeDazed(attackDazedTime);
+            }
         }
-
-        if (attackDazedTime != 0) {
-            targetUnit.TakeDazed(attackDazedTime);
-        }
-
-
     }
 
     protected List<Unit> FindAOEAttackTargets(Vector3 targetPosition) {
@@ -229,7 +232,7 @@ public class UnitAttack : NetworkBehaviour
             if (collider.TryGetComponent<Unit>(out Unit unit)) {
                 // Collider is a unit
 
-                if (unit.GetParentTroop().IsOwnedByPlayer() != this.unit.GetParentTroop().IsOwnedByPlayer() && !unit.GetUnitIsDead()) {
+                if (unit.GetParentTroop().IsOwnedByPlayer() != this.unit.GetParentTroop().IsOwnedByPlayer() && !unit.GetIsDead()) {
                     // target unit is not from the same team AND Unit is not dead
                     targetUnitList.Add(unit);
                 }
@@ -265,15 +268,15 @@ public class UnitAttack : NetworkBehaviour
     }
 
     [ClientRpc]
-    protected void InitializeProjectileClientRpc(NetworkObjectReference projectileNetworkObjectReference, NetworkObjectReference targetUnitNetworkReference) {
+    protected void InitializeProjectileClientRpc(NetworkObjectReference projectileNetworkObjectReference, NetworkObjectReference targetNetworkReference) {
 
-        targetUnitNetworkReference.TryGet(out NetworkObject targetUnitNetworkObject);
-        Unit targetUnit = targetUnitNetworkObject.GetComponent<Unit>();
+        targetNetworkReference.TryGet(out NetworkObject targetNetworkObject);
+        ITargetable target = targetNetworkObject.GetComponent<ITargetable>();
 
         projectileNetworkObjectReference.TryGet(out NetworkObject projectileNetworkObject);
         Projectile projectile = projectileNetworkObject.GetComponent<Projectile>();
 
-        projectile.GetComponent<Projectile>().Initialize(this, targetUnit);
+        projectile.GetComponent<Projectile>().Initialize(this, target);
     }
 
 
@@ -320,9 +323,8 @@ public class UnitAttack : NetworkBehaviour
         }
     }
 
-    protected void Unit_OnUnitDazed(object sender, Unit.OnUnitDazedEventArgs e) {
-        if (!IsServer) return;
-        attacking = false;
+    public void SetDazed(bool dazed) {
+        this.dazed = dazed;
     }
 
     protected void UnitAI_OnStateChanged(object sender, System.EventArgs e) {
@@ -358,10 +360,10 @@ public class UnitAttack : NetworkBehaviour
     }
 
 
-    public void SetAttackTarget(Unit attackTargetUnit) {
-        if(attackTargetUnit != null) {
-            NetworkObject unitNetworkObject = attackTargetUnit.GetComponent<NetworkObject>();
-            SetAttackTargetServerRpc(unitNetworkObject);
+    public void SetAttackTarget(ITargetable attackTarget) {
+        if(attackTarget != null) {
+            NetworkObject targetNetworkObject = (attackTarget as MonoBehaviour).GetComponent<NetworkObject>();
+            SetAttackTargetServerRpc(targetNetworkObject);
         }
     }
 
@@ -379,9 +381,9 @@ public class UnitAttack : NetworkBehaviour
     }
 
     [ClientRpc]
-    public void SetAttackTargetClientRpc(NetworkObjectReference unitNetworkObjectReference) {
-        unitNetworkObjectReference.TryGet(out NetworkObject targetUnitNetworkObject);
-        attackTarget = targetUnitNetworkObject.GetComponent<Unit>();
+    public void SetAttackTargetClientRpc(NetworkObjectReference targetNetworkObjectReference) {
+        targetNetworkObjectReference.TryGet(out NetworkObject targetNetworkObject);
+        attackTarget = targetNetworkObject.GetComponent<ITargetable>();
     }
 
     public void SetActiveAttackSO(AttackSO attackSO) {
@@ -404,7 +406,7 @@ public class UnitAttack : NetworkBehaviour
     #endregion
 
     #region GET PARAMETERS
-    public Unit GetAttackTarget() {
+    public ITargetable GetAttackTarget() {
         return attackTarget;
     }
 

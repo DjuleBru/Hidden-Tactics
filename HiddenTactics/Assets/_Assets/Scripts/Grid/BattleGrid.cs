@@ -104,6 +104,7 @@ public class BattleGrid : MonoBehaviour
             return gridObject.GetUnitList();
     }
 
+
     public void RemoveUnitAtGridPosition(GridPosition gridPosition, Unit unit) {
             GridObject gridObject = gridSystem.GetGridObject(gridPosition);
             gridObject.RemoveUnit(unit);
@@ -114,6 +115,11 @@ public class BattleGrid : MonoBehaviour
             AddUnitAtGridPosition(toGridPosition, unit);
     }
     #endregion
+
+    public List<Building> GetBuildingListAtGridPosition(GridPosition gridPosition) {
+        GridObject gridObject = gridSystem.GetGridObject(gridPosition);
+        return gridObject.GetBuildingList();
+    }
 
     public GridSystem GetGridSystem() {
         return gridSystem;

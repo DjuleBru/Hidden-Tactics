@@ -50,7 +50,7 @@ public class UnitUI : NetworkBehaviour
 
 
             if(damageBarUpdateTimer < 0) {
-                if (unitHPBarDamageImage.fillAmount > unitHP.GetUnitHP()/unitHP.GetUnitMaxHP()) {
+                if (unitHPBarDamageImage.fillAmount > unitHP.GetHP()/unitHP.GetMaxHP()) {
                     unitHPBarDamageImage.fillAmount = unitHPBarDamageImage.fillAmount - damageBarUpdateRate * Time.deltaTime;
                 }
             }
@@ -94,7 +94,7 @@ public class UnitUI : NetworkBehaviour
         damageBarUpdateTimer = delayToUpdateDamageBar;
 
         unitHPBarGameObject.SetActive(true);
-        unitHPBarImage.fillAmount = newUnitHP / unitHP.GetUnitMaxHP();
+        unitHPBarImage.fillAmount = newUnitHP / unitHP.GetMaxHP();
 
         if(updateHPBarTimer > 0) {
             updateHPBarTimer = updateHPBarDuration;

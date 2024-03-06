@@ -10,27 +10,23 @@ public class UnitTargetingSystem : NetworkBehaviour
     private List<GridPosition> mainAttackGridPositionTargetList;
     private List<GridPosition> sideAttackGridPositionTargetList;
 
-    private List<Unit> mainAttackTargetUnitList = new List<Unit>();
-    private List<Unit> sideAttackTargetUnitList = new List<Unit>();
+    private List<ITargetable> mainAttackITargerableList = new List<ITargetable>();
+    private List<ITargetable> sideAttackITargetableList = new List<ITargetable>();
 
     private AttackSO mainAttackSO;
     private AttackSO sideAttackSO;
 
-    private float mainAttackRange;
+    private ITargetable mainAttackITargetable;
+    private ITargetable sideAttackITargetable;
 
-    private Unit mainAttackTargetUnit;
-    private Unit sideAttackTargetUnit;
-
-    private float distanceToClosestTargetUnit;
-    private bool targetUnitIsInRange;
+    private float distanceToClosestTargetITargetable;
+    private bool ITargetableIsInRange;
 
     private float targetingRate = .05f;
     private float targetingTimer;
 
     private void Awake() {
         unit = GetComponent<Unit>();
-
-        mainAttackRange = unit.GetUnitSO().mainAttackSO.meleeAttackRange;
 
         mainAttackSO = unit.GetUnitSO().mainAttackSO;
         sideAttackSO = unit.GetUnitSO().sideAttackSO;
@@ -52,100 +48,103 @@ public class UnitTargetingSystem : NetworkBehaviour
         if(targetingTimer < 0) {
             targetingTimer = targetingRate;
 
-            mainAttackTargetUnitList = FindAttackTargets(mainAttackSO, mainAttackGridPositionTargetList);
+            mainAttackITargerableList = FindAttackTargets(mainAttackSO, mainAttackGridPositionTargetList);
             if (sideAttackSO != null) {
-                sideAttackTargetUnitList = FindAttackTargets(sideAttackSO, sideAttackGridPositionTargetList);
+                sideAttackITargetableList = FindAttackTargets(sideAttackSO, sideAttackGridPositionTargetList);
             }
 
-            mainAttackTargetUnit = FindAttackTargetUnit(mainAttackSO, mainAttackTargetUnitList, mainAttackTargetUnit);
+            mainAttackITargetable = FindAttackTarget(mainAttackSO, mainAttackITargerableList, mainAttackITargetable);
 
             if (sideAttackSO != null) {
-                sideAttackTargetUnit = FindAttackTargetUnit(sideAttackSO, sideAttackTargetUnitList, sideAttackTargetUnit);
+                sideAttackITargetable = FindAttackTarget(sideAttackSO, sideAttackITargetableList, sideAttackITargetable);
             }
         }
     }
 
     private void CheckIfTargetUnitsAreDead() {
-        if (mainAttackTargetUnit != null) {
-            if (mainAttackTargetUnit.GetUnitIsDead()) {
-                mainAttackTargetUnit = null;
+        if (mainAttackITargetable != null) {
+            if (mainAttackITargetable.GetIsDead()) {
+                mainAttackITargetable = null;
             }
         }
 
-        if (sideAttackTargetUnit != null) {
-            if (sideAttackTargetUnit.GetUnitIsDead()) {
-                sideAttackTargetUnit = null;
+        if (sideAttackITargetable != null) {
+            if (sideAttackITargetable.GetIsDead()) {
+                sideAttackITargetable = null;
             }
         }
     }
 
-    private Unit FindAttackTargetUnit(AttackSO attackSO, List<Unit> targetUnitList, Unit targetUnit) {
-        if (targetUnitList.Count > 0) {
+    private ITargetable FindAttackTarget(AttackSO attackSO, List<ITargetable> targetList, ITargetable target) {
+        if (targetList.Count > 0) {
             // There are potential targets within targeting range of attack
 
             if (attackSO.attackType == AttackSO.AttackType.melee) {
                 // Melee attack : constantly re-evaluate attack target
-                targetUnit = FindClosestAttackTarget(targetUnitList);
+                target = FindClosestAttackTarget(targetList);
             }
 
-            if (attackSO.attackType == AttackSO.AttackType.ranged && targetUnit == null) {
+            if (attackSO.attackType == AttackSO.AttackType.ranged && target == null) {
                 // Ranged attack : keep same attack target
-                targetUnit = FindRandomAttackTarget(targetUnitList);
+                target = FindRandomAttackTarget(targetList);
             }
         } else {
-            targetUnit = null;
+            target = null;
         }
 
-        return targetUnit;
+        return target;
     }
 
-    private List<Unit> FindAttackTargets(AttackSO attackSO, List<GridPosition> rangedGridPositionTargetList) {
-        List<Unit> targetUnitList = new List<Unit>();
+    private List<ITargetable> FindAttackTargets(AttackSO attackSO, List<GridPosition> rangedGridPositionTargetList) {
+        List<ITargetable> targetUnitList = new List<ITargetable>();
 
         if(attackSO.attackType == AttackSO.AttackType.melee) {
             targetUnitList = GetMeleeAttackTargets(attackSO);
         }
 
         if (attackSO.attackType == AttackSO.AttackType.ranged) {
-            targetUnitList = GetRangedAttackTargets(rangedGridPositionTargetList);
+            targetUnitList = GetRangedAttackTargets(rangedGridPositionTargetList, attackSO);
         }
+
         return targetUnitList;
     }
 
-    private List<Unit> GetMeleeAttackTargets(AttackSO attackSO) {
+    private List<ITargetable> GetMeleeAttackTargets(AttackSO attackSO) {
         float attackTargetingRange = attackSO.meleeAttackTargetingRange;
 
         Collider2D[] colliderArray = Physics2D.OverlapCircleAll(transform.position, attackTargetingRange);
-        List<Unit> targetUnitList = new List<Unit>();
+        List<ITargetable> targetItargetableList = new List<ITargetable>();
 
         foreach (Collider2D collider in colliderArray) {
-            if (collider.TryGetComponent<Unit>(out Unit targetUnit)) {
-                // Collider is a unit
+            if (collider.TryGetComponent<ITargetable>(out ITargetable targetITargetable)) {
+                // Collider is targetable
 
-                if (targetUnit.GetParentTroop().IsOwnedByPlayer() != this.unit.GetParentTroop().IsOwnedByPlayer() && !targetUnit.GetUnitIsDead()) {
-                    // target unit is not from the same team AND Unit is not dead
+                if (targetITargetable.IsOwnedByPlayer() != unit.IsOwnedByPlayer() && !targetITargetable.GetIsDead()) {
+                    // targetable is not from the same team AND targetable is not dead
 
-                    if(attackSO.moveTypeAttackTargets.Contains(targetUnit.GetUnitSO().moveType)) {
-                        // target unit can be targeted (air vs ground)
 
-                        if (targetUnit.GetUnitCurrentGridPosition().y == this.unit.GetUnitCurrentGridPosition().y) {
+                    if (attackSO.attackTargetTypes.Contains(targetITargetable.GetTargetType())) {
+                        // target can be targeted (air unit vs ground unit, building, village)
+
+                        if (targetITargetable.GetCurrentGridPosition().y == unit.GetCurrentGridPosition().y) {
                             // target unit is on the same row as this unit
-                            targetUnitList.Add(targetUnit);
+                            targetItargetableList.Add(targetITargetable);
                         }
                     }
                 }
             };
         }
 
-        return targetUnitList;
+        return targetItargetableList;
     }
 
-    private List<Unit> GetRangedAttackTargets(List<GridPosition> attackGridPositionTargetList) {
+    private List<ITargetable> GetRangedAttackTargets(List<GridPosition> attackGridPositionTargetList, AttackSO attackSO) {
         int index = 0;
 
-        List<Unit> targetUnitList = new List<Unit>();
+        List<ITargetable> targetItargetableList = new List<ITargetable>();
+
         foreach (GridPosition relativeTargetGridPosition in attackGridPositionTargetList) {
-            GridPosition targetGridPosition = new GridPosition(unit.GetUnitCurrentGridPosition().x + relativeTargetGridPosition.x, unit.GetUnitCurrentGridPosition().y + relativeTargetGridPosition.y);
+            GridPosition targetGridPosition = new GridPosition(unit.GetCurrentGridPosition().x + relativeTargetGridPosition.x, unit.GetCurrentGridPosition().y + relativeTargetGridPosition.y);
 
             if(!BattleGrid.Instance.IsValidGridPosition(targetGridPosition)) {
                 // Target grid position is not a valid grid position
@@ -156,46 +155,54 @@ public class UnitTargetingSystem : NetworkBehaviour
             if(index != 0) {
                 GridPosition previousRelativeTargetGridPosition = attackGridPositionTargetList[index -1];
 
-                if (Mathf.Abs(previousRelativeTargetGridPosition .x) < Mathf.Abs(relativeTargetGridPosition.x) && targetUnitList.Count > 0) {
+                if (Mathf.Abs(previousRelativeTargetGridPosition .x) < Mathf.Abs(relativeTargetGridPosition.x) && targetItargetableList.Count > 0) {
                     break;
                 }
             }
 
             List<Unit> unitListAtTargetGridPosition = BattleGrid.Instance.GetUnitListAtGridPosition(targetGridPosition);
+            List<Building> buildingListAtTargetGridPosition = BattleGrid.Instance.GetBuildingListAtGridPosition(targetGridPosition);
 
-            foreach(Unit unit in unitListAtTargetGridPosition) {
-                if (unit.GetParentTroop().IsOwnedByPlayer() != this.unit.GetParentTroop().IsOwnedByPlayer() && !unit.GetUnitIsDead() && unit.GetUnitIsBought()) {
-                    // target unit is not from the same team AND Unit is not dead AND unit is bought
+            foreach (Unit unit in unitListAtTargetGridPosition) {
+                if (unit.IsOwnedByPlayer() != this.unit.IsOwnedByPlayer() && !unit.GetIsDead() && unit.GetUnitIsBought() && attackSO.attackTargetTypes.Contains(unit.GetTargetType())) {
+                    // target unit is not from the same team AND Unit is not dead AND unit is bought AND unit is targetable (air vs ground)
+                    targetItargetableList.Add(unit);
+                }
+            }
 
-                    targetUnitList.Add(unit);
+            foreach (Building building in buildingListAtTargetGridPosition) {
+                if (building.IsOwnedByPlayer() != unit.IsOwnedByPlayer() && attackSO.attackTargetTypes.Contains(building.GetTargetType())) {
+                    // target building is not from the same team AND building is targetable
+                    targetItargetableList.Add(building);
                 }
             }
 
             index++;
         }
-        return targetUnitList;
+        return targetItargetableList;
     }
 
-    private Unit FindClosestAttackTarget(List<Unit> targetUnitList) {
-        float distanceToClosestTargetUnit = float.MaxValue;
+    private ITargetable FindClosestAttackTarget(List<ITargetable> targetList) {
+        float distanceToClosestTarget = float.MaxValue;
 
-        Unit closestUnit = null;
-        foreach(Unit targetUnit in targetUnitList) {
-            ColliderDistance2D distanceBetweenUnitColliders = Physics2D.Distance(gameObject.GetComponent<Collider2D>(), targetUnit.gameObject.GetComponent<Collider2D>());
-            float distanceToTargetUnit = distanceBetweenUnitColliders.distance;
+        ITargetable closestTarget = null;
 
-            if (distanceToTargetUnit < distanceToClosestTargetUnit) {
-                distanceToClosestTargetUnit = distanceToTargetUnit;
-                closestUnit = targetUnit;
+        foreach(ITargetable target in targetList) {
+            ColliderDistance2D distanceBetweenUnitColliders = Physics2D.Distance(gameObject.GetComponent<Collider2D>(), (target as MonoBehaviour).gameObject.GetComponent<Collider2D>());
+            float distanceToTarget = distanceBetweenUnitColliders.distance;
+
+            if (distanceToTarget < distanceToClosestTarget) {
+                distanceToClosestTarget = distanceToTarget;
+                closestTarget = target;
             }
         }
 
-        this.distanceToClosestTargetUnit = distanceToClosestTargetUnit;
-        return closestUnit;
+        this.distanceToClosestTargetITargetable = distanceToClosestTarget;
+        return closestTarget;
     }
 
-    private Unit FindRandomAttackTarget(List<Unit> targetUnitList) {
-        return targetUnitList[Random.Range(0, targetUnitList.Count)];
+    private ITargetable FindRandomAttackTarget(List<ITargetable> targetList) {
+        return targetList[Random.Range(0, targetList.Count)];
     }
 
     public List<GridPosition> FillGridPositionAttackTargetList(AttackSO attackSO) {
@@ -219,35 +226,35 @@ public class UnitTargetingSystem : NetworkBehaviour
     }
 
     #region GET PARAMETERS
-    public Unit GetMainAttackTargetUnit() {
-        return mainAttackTargetUnit; 
+    public ITargetable GetMainAttackTargetUnit() {
+        return mainAttackITargetable; 
     }
 
-    public Unit GetSideAttackTargetUnit() {
-        return sideAttackTargetUnit;
+    public ITargetable GetSideAttackTargetUnit() {
+        return sideAttackITargetable;
     }
 
     public float GetClosestTargetDistance() {
-        return distanceToClosestTargetUnit;
+        return distanceToClosestTargetITargetable;
     }
 
     public bool GetTargetUnitIsInRange(AttackSO attackSO) {
         if (attackSO.attackType == AttackSO.AttackType.melee) {
             // MELEE ATTACK : check if unit is in range
 
-            if (distanceToClosestTargetUnit < attackSO.meleeAttackRange) {
-                targetUnitIsInRange = true;
+            if (distanceToClosestTargetITargetable < attackSO.meleeAttackRange) {
+                ITargetableIsInRange = true;
             }
             else {
-                targetUnitIsInRange = false;
+                ITargetableIsInRange = false;
             }
         }
 
         if (attackSO.attackType == AttackSO.AttackType.ranged) {
-            targetUnitIsInRange = true;
+            ITargetableIsInRange = true;
         }
 
-        return targetUnitIsInRange; 
+        return ITargetableIsInRange; 
     }
     #endregion
 

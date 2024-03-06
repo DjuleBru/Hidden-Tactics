@@ -203,9 +203,7 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
 
 
     public void DestroyIPlaceable(NetworkObjectReference iPlaceableNetworkObjectReference) {
-
         DestroyIPlaceableServerRpc(iPlaceableNetworkObjectReference);
-
     }
 
     [ServerRpc(RequireOwnership =false)]
@@ -232,7 +230,7 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
         unitNetworkObjectReference.TryGet(out NetworkObject unitNetworkObject);
         Unit unit = unitNetworkObject.GetComponent<Unit>();
 
-        GridPosition unitGridPosition = unit.GetUnitCurrentGridPosition();
+        GridPosition unitGridPosition = unit.GetCurrentGridPosition();
         BattleGrid.Instance.RemoveUnitAtGridPosition(unitGridPosition, unit);
     }
 

@@ -5,16 +5,21 @@ using Unity.Netcode;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class Building : NetworkBehaviour, IPlaceable {
+public class Building : NetworkBehaviour, IPlaceable, ITargetable {
 
 
     public event EventHandler OnBuildingPlaced;
+    public event EventHandler OnBuildingDestroyed;
+    
     private ulong ownerClientId;
 
     [SerializeField] private Transform buildingCenterPoint;
+    [SerializeField] private List<Transform> projectileTargetList;
+    [SerializeField] private BuildingSO buildingSO;
 
     private bool isOwnedByPlayer;
     private bool isPlaced;
+    private bool isDestroyed;
 
     private GridPosition currentGridPosition;
     private Transform battlefieldOwner;
@@ -60,6 +65,17 @@ public class Building : NetworkBehaviour, IPlaceable {
             transform.position = BattleGrid.Instance.GetWorldPosition(currentGridPosition) - buildingCenterPoint.localPosition;
         }
     }
+    public void Die() {
+        isDestroyed = true;
+        StartCoroutine(DieCoroutine());
+    }
+
+    private IEnumerator DieCoroutine() {
+        GetComponent<Collider2D>().enabled = false;
+        OnBuildingDestroyed?.Invoke(this, EventArgs.Empty);
+        yield return new WaitForSeconds(1f);
+        HiddenTacticsMultiplayer.Instance.DestroyIPlaceable(this.GetComponent<NetworkObject>());
+    }
 
     public void HandleIPlaceablePosition() {
         transform.position = battlefieldOwner.position + battlefieldOffset;
@@ -73,6 +89,11 @@ public class Building : NetworkBehaviour, IPlaceable {
         isPlaced = true;
 
         SetIPlaceableBattlefieldParent(currentGridPosition);
+
+        // Reverse X symmetry if not owned by player
+        if(!isOwnedByPlayer) {
+            transform.localScale = new Vector3(-1,1,1);
+        }
     }
 
     public void SetIPlaceableOwnerClientId(ulong clientId) {
@@ -81,10 +102,16 @@ public class Building : NetworkBehaviour, IPlaceable {
     }
 
     public void SetIPlaceableGridPosition(GridPosition iPlaceableGridPosition) {
-        Vector3 troopWorldPosition = BattleGrid.Instance.GetWorldPosition(iPlaceableGridPosition);
+        Vector3 buildingWorldPosition = BattleGrid.Instance.GetWorldPosition(iPlaceableGridPosition);
 
         currentGridPosition = iPlaceableGridPosition;
-        transform.position = troopWorldPosition - buildingCenterPoint.localPosition;
+
+        // Reverse X symmetry if not owned by player
+        if (isOwnedByPlayer) {
+            transform.position = new Vector2(buildingWorldPosition.x - buildingCenterPoint.localPosition.x, buildingWorldPosition.y - buildingCenterPoint.localPosition.y);
+        } else {
+            transform.position = new Vector2(buildingWorldPosition.x + buildingCenterPoint.localPosition.x, buildingWorldPosition.y - buildingCenterPoint.localPosition.y);
+        }
     }
 
     public void SetIPlaceableBattlefieldParent(GridPosition iPlaceableGridPosition) {
@@ -107,5 +134,31 @@ public class Building : NetworkBehaviour, IPlaceable {
 
     public void DestroySelf() {
         Destroy(gameObject);
+    }
+
+    public BuildingSO GetBuildingSO() {
+        return buildingSO;
+    }
+
+    public bool GetIsDead() {
+        return isDestroyed;
+    }
+
+    public Transform GetProjectileTarget() {
+        Transform projectileTarget = projectileTargetList[UnityEngine.Random.Range(0, projectileTargetList.Count)];
+
+        return projectileTarget;
+    }
+
+    public GridPosition GetCurrentGridPosition() {
+        return currentGridPosition;
+    }
+
+    public ITargetable.TargetType GetTargetType() {
+        return ITargetable.TargetType.building;
+    }
+
+    public IDamageable GetIDamageable() {
+        return GetComponent<BuildingHP>();
     }
 }

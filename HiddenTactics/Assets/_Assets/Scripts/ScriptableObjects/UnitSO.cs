@@ -18,6 +18,8 @@ public class UnitSO : ScriptableObject {
 
     public List<UnitTag> unitTagList;
 
+    public ITargetable.TargetType unitTargetType;
+
     public int HP;
     public int armor;
     public float mass;

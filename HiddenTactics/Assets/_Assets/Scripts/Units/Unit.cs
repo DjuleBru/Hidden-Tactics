@@ -5,8 +5,8 @@ using Unity.Netcode;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class Unit : NetworkBehaviour
-{
+public class Unit : NetworkBehaviour, ITargetable {
+
     public event EventHandler OnUnitUpgraded;
     public event EventHandler OnUnitSpawned;
     public event EventHandler OnUnitPlaced;
@@ -133,7 +133,7 @@ public class Unit : NetworkBehaviour
 
     #region GET PARAMETERS
 
-    public bool GetUnitIsDead() {
+    public bool GetIsDead() {
         return unitIsDead;
     }
     public bool GetUnitIsBought() {
@@ -148,12 +148,24 @@ public class Unit : NetworkBehaviour
         return parentTroop;
     }
 
+    public ITargetable.TargetType GetTargetType() {
+        return unitSO.unitTargetType;
+    }
+
     public Transform GetProjectileTarget() {
         return projectileTarget;
     }
 
-    public GridPosition GetUnitCurrentGridPosition() {
+    public GridPosition GetCurrentGridPosition() {
         return currentGridPosition;
+    }
+
+    public bool IsOwnedByPlayer() {
+        return parentTroop.IsOwnedByPlayer();
+    }
+
+    public IDamageable GetIDamageable() {
+        return GetComponent<UnitHP>();
     }
 
     #endregion

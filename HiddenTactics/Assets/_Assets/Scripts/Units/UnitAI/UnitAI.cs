@@ -107,7 +107,8 @@ public class UnitAI : NetworkBehaviour
 
     }
 
-    protected void CheckIfTargetUnitIsInMeleeAttackRange(AttackSO meleeAttackSO, bool meleeAttackSOIsMainAttackSO) {
+    protected void CheckIfTargetIsInMeleeAttackRange(AttackSO meleeAttackSO, bool meleeAttackSOIsMainAttackSO) {
+
         if (unitTargetingSystem.GetClosestTargetDistance() < meleeAttackSO.meleeAttackRange/2 ) {
             // There is a unit in melee range (use half of the range to give the unit time to attack)
             unitMovement.StopMoving();
@@ -146,6 +147,7 @@ public class UnitAI : NetworkBehaviour
 
         }
         if (state.Value == State.moveForwards) {
+            unitAttack.ResetAttackTarget();
         }
         if (state.Value == State.dead) {
             unitMovement.StopMoving();
@@ -191,14 +193,17 @@ public class UnitAI : NetworkBehaviour
     protected IEnumerator TakeDazed(float dazedTime) {
         unitActive = false;
         unitMovement.SetDazed(true);
+        unitAttack.SetDazed(true);
+
         yield return new WaitForSeconds(dazedTime);
 
-        if (!unit.GetUnitIsDead() & BattleManager.Instance.IsBattlePhase()) {
+        if (!unit.GetIsDead() & BattleManager.Instance.IsBattlePhase()) {
             // Unit is still alive and it is still battle phase
             unitActive = true;
         }
 
         unitMovement.SetDazed(false);
+        unitAttack.SetDazed(false);
     }
 
     protected void ChangeState(State newState) {

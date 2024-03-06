@@ -26,7 +26,7 @@ public class AttackSO : ScriptableObject
     public bool attackHasAOE;
     public bool attackHasAOECollider;
     public GameObject projectilePrefab;
-    public List<UnitSO.MoveType> moveTypeAttackTargets;
+    public List<ITargetable.TargetType> attackTargetTypes;
     public List<Vector2> attackTargetTiles;
     public float meleeAttackTargetingRange;
     public float meleeAttackRange;

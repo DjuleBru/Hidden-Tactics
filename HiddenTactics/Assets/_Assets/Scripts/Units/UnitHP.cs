@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
-public class UnitHP : NetworkBehaviour
+public class UnitHP : NetworkBehaviour, IDamageable
 {
     protected Unit unit;
     protected float unitHP;
@@ -69,10 +69,10 @@ public class UnitHP : NetworkBehaviour
         unitArmor -= unitArmorDebuff;
     }
 
-    public float GetUnitMaxHP() {
+    public float GetMaxHP() {
         return unit.GetUnitSO().HP;
     }
-    public float GetUnitHP() {
+    public float GetHP() {
         return unitHP;
     }
 

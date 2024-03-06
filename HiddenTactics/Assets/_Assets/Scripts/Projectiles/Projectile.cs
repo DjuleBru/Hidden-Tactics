@@ -20,7 +20,7 @@ public class Projectile : NetworkBehaviour
 
     protected float projectileMoveSpeed;
 
-    protected Unit targetUnit;
+    protected ITargetable target;
 
     protected Transform targetTransform;
     protected UnitAttack unitAttackOrigin;
@@ -52,7 +52,7 @@ public class Projectile : NetworkBehaviour
         } else {
             projectileHasHit = true;
             StartCoroutine(DestroyProjectile());
-            unitAttackOrigin.ProjectileHasHit(targetUnit, transform.position);
+            unitAttackOrigin.ProjectileHasHit(target, transform.position);
         }
 
         UpdateTrajectoryEndPoint();
@@ -66,10 +66,10 @@ public class Projectile : NetworkBehaviour
         }
     }
 
-    public void Initialize(UnitAttack unitAttackOrigin, Unit targetUnit) {
-        this.targetUnit = targetUnit;
+    public void Initialize(UnitAttack unitAttackOrigin, ITargetable target) {
+        this.target = target;
         this.unitAttackOrigin = unitAttackOrigin;
-        targetTransform = targetUnit.GetProjectileTarget();
+        targetTransform = target.GetProjectileTarget();
 
         transform.position = unitAttackOrigin.GetProjectileSpawnPointPosition();
 
