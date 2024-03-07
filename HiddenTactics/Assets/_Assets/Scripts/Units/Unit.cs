@@ -92,6 +92,7 @@ public class Unit : NetworkBehaviour, ITargetable {
     }
     protected void ParentTroop_OnTroopPlaced(object sender, System.EventArgs e) {
         OnUnitPlaced?.Invoke(this, EventArgs.Empty);
+
         if(unitIsBought) {
             collider2d.enabled = true;
         }

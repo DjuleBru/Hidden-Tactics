@@ -25,6 +25,12 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
     private Transform battlefieldOwner;
     private Vector3 battlefieldOffset;
 
+    private void Awake() {
+        if(buildingSO.buildingBlocksUnitMovement) {
+            GetComponent<Collider2D>().enabled = true;
+        }
+    }
+
     private void Update() {
         if (!isPlaced) {
             HandlePositioningOnGrid();
@@ -73,7 +79,10 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
     private IEnumerator DieCoroutine() {
         GetComponent<Collider2D>().enabled = false;
         OnBuildingDestroyed?.Invoke(this, EventArgs.Empty);
+        BattleGrid.Instance.RemoveIPlaceableAtGridPosition(BattleGrid.Instance.GetGridPosition(transform.position), this);
+
         yield return new WaitForSeconds(1f);
+
         HiddenTacticsMultiplayer.Instance.DestroyIPlaceable(this.GetComponent<NetworkObject>());
     }
 
@@ -90,8 +99,10 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
 
         SetIPlaceableBattlefieldParent(currentGridPosition);
 
+        BattleGrid.Instance.AddIPlaceableAtGridPosition(currentGridPosition, this);
+
         // Reverse X symmetry if not owned by player
-        if(!isOwnedByPlayer) {
+        if (!isOwnedByPlayer) {
             transform.localScale = new Vector3(-1,1,1);
         }
     }

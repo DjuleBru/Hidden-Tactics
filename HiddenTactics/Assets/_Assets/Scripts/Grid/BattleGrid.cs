@@ -116,11 +116,18 @@ public class BattleGrid : MonoBehaviour
     }
     #endregion
 
-    public List<Building> GetBuildingListAtGridPosition(GridPosition gridPosition) {
+    #region BUILDING
+    public void AddBuildingAtGridPosition(GridPosition gridPosition, Building building) {
         GridObject gridObject = gridSystem.GetGridObject(gridPosition);
-        return gridObject.GetBuildingList();
+        gridObject.AddIPlaceable(building);
     }
 
+    public Building GetBuildingAtGridPosition(GridPosition gridPosition) {
+        GridObject gridObject = gridSystem.GetGridObject(gridPosition);
+        return gridObject.GetBuilding();
+    }
+
+    #endregion
     public GridSystem GetGridSystem() {
         return gridSystem;
     }

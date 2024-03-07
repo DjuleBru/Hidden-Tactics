@@ -163,7 +163,8 @@ public class UnitAnimatorManager : MonoBehaviour
             float randomOffset = Random.Range(0f, 1f);
             unitAnimator.Play(animationName, 0, randomOffset);
         }
-        if (unitAI.IsIdle()) {
+
+        if (unitAI.IsIdle() | unitAI.IsBlockedByBuilding()) {
             walking = false;
             idle = true;
             attacking = false;

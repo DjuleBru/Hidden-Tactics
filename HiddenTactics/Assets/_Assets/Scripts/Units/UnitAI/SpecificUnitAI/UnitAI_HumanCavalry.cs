@@ -31,6 +31,8 @@ public class UnitAI_HumanCavalry : UnitAI_Melee
     }
 
     protected override void CheckConditionsBeforeSwitch() {
+        base.CheckConditionsBeforeSwitch();
+
         if (galloping.Value) return;
         if(state.Value == State.moveToMeleeTarget | state.Value == State.moveForwards) {
 

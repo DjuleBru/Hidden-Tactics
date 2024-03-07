@@ -30,8 +30,7 @@ public class UnitVisual : NetworkBehaviour
         unit = GetComponentInParent<Unit>();
         bodyAnimator = GetComponent<Animator>();
         activeBodyAnimator = bodyAnimator.runtimeAnimatorController;
-
-        ChangeSpriteRendererListMaterial(bodySpriteRendererList, placingUnitMaterial);
+    
     }
 
     public override void OnNetworkSpawn() {

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
-public class BuildingHP : MonoBehaviour, IDamageable {
+public class BuildingHP : NetworkBehaviour, IDamageable {
 
     private Building building;
     private float buildingHP;
@@ -38,7 +38,7 @@ public class BuildingHP : MonoBehaviour, IDamageable {
     [ClientRpc]
     protected virtual void TakeDamageClientRpc(float damage) {
         buildingHP -= damage;
-
+        
         OnHealthChanged?.Invoke(this, new OnHealthChangedEventArgs {
             previousHealth = buildingHP + damage,
             newHealth = buildingHP

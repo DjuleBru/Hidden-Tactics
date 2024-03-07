@@ -22,6 +22,7 @@ public class UnitAI : NetworkBehaviour
 
     public enum State {
         idle,
+        blockedByBuilding,
         moveForwards,
         moveToMeleeTarget,
         attacking,
@@ -69,6 +70,9 @@ public class UnitAI : NetworkBehaviour
             case State.idle:
                 IdleStateUpdate();
                 break;
+            case State.blockedByBuilding:
+                BlockedByBuildingStateUpdate();
+                break;
             case State.moveForwards:
                 MoveForwardsStateUpdate();
                 break;
@@ -85,13 +89,50 @@ public class UnitAI : NetworkBehaviour
     }
 
     protected virtual void CheckConditionsBeforeSwitch() {
+        CheckIfBuildingBlocksMovement();
+    }
 
+    protected virtual void CheckIfBuildingBlocksMovement() {
+        // Determine nextGridPosition in function of unit belonging
+        GridPosition nextGridPosition = new GridPosition(0, 0);
+
+        if (unit.IsOwnedByPlayer()) {
+            nextGridPosition = new GridPosition(unit.GetCurrentGridPosition().x + 1, unit.GetCurrentGridPosition().y);
+        }
+        else {
+            nextGridPosition = new GridPosition(unit.GetCurrentGridPosition().x - 1, unit.GetCurrentGridPosition().y);
+        }
+
+        if (BattleGrid.Instance.IsValidGridPosition(nextGridPosition)) {
+            // This GridPosition is a valid grid position
+            Building building = BattleGrid.Instance.GetBuildingAtGridPosition(nextGridPosition);
+
+            if (state.Value != State.blockedByBuilding) {
+                // There is a building that blocks the unit
+
+                if (building != null) {
+
+                    if (building.GetBuildingSO().buildingBlocksUnitMovement && (building.IsOwnedByPlayer()) == unit.IsOwnedByPlayer()) {
+                        // Building blocks unit movement AND is owned by the same player
+                        ChangeState(State.blockedByBuilding);
+                    }
+                };
+            }
+
+            else {
+                if (building == null) {
+                    ChangeState(State.moveForwards);
+                }
+            }
+        }
     }
 
     protected virtual void IdleStateUpdate() {
 
     }
 
+    protected virtual void BlockedByBuildingStateUpdate() {
+    }
     protected virtual void MoveForwardsStateUpdate() {
 
     }
@@ -115,9 +156,9 @@ public class UnitAI : NetworkBehaviour
             unitAttack.SetActiveAttackSO(meleeAttackSO);
 
             if(meleeAttackSOIsMainAttackSO) {
-                unitAttack.SetAttackTarget(unitTargetingSystem.GetMainAttackTargetUnit());
+                unitAttack.SetAttackTarget(unitTargetingSystem.GetMainAttackTarget());
             } else {
-                unitAttack.SetAttackTarget(unitTargetingSystem.GetSideAttackTargetUnit());
+                unitAttack.SetAttackTarget(unitTargetingSystem.GetSideAttackTarget());
             }
             ChangeState(State.attacking);
         }
@@ -140,15 +181,23 @@ public class UnitAI : NetworkBehaviour
             ActivateMainAttack();
             unitMovement.StopMoving();
         }
+
+        if(state.Value == State.blockedByBuilding) {
+            unitMovement.StopMoving();
+        }
+
         if (state.Value == State.attacking) {
             unitMovement.StopMoving();
         }
+
         if (state.Value == State.moveToMeleeTarget) {
 
         }
+
         if (state.Value == State.moveForwards) {
             unitAttack.ResetAttackTarget();
         }
+
         if (state.Value == State.dead) {
             unitMovement.StopMoving();
         }
@@ -156,6 +205,7 @@ public class UnitAI : NetworkBehaviour
         OnStateChanged?.Invoke(this, EventArgs.Empty);
     }
 
+    #region EVENT RESPONSES
     protected virtual void BattleManager_OnStateChanged(object sender, System.EventArgs e) {
         if (!IsServer) return; 
 
@@ -189,7 +239,7 @@ public class UnitAI : NetworkBehaviour
 
     protected virtual void UnitAttack_OnUnitAttackEnded(object sender, EventArgs e) {
     }
-
+    #endregion
     protected IEnumerator TakeDazed(float dazedTime) {
         unitActive = false;
         unitMovement.SetDazed(true);
@@ -218,12 +268,17 @@ public class UnitAI : NetworkBehaviour
         this.attackStarted = attackStarted;
     }
 
+    #region GET PARAMETERS
     public bool IsWalking() {
         return state.Value == State.moveForwards;
     }
 
     public bool IsIdle() {
         return state.Value == State.idle;
+    }
+
+    public bool IsBlockedByBuilding() {
+        return state.Value == State.blockedByBuilding;
     }
 
     public bool IsDead() {
@@ -239,18 +294,19 @@ public class UnitAI : NetworkBehaviour
     public bool IsMovingToTarget() {
         return state.Value == State.moveToMeleeTarget;
     }
+    #endregion
 
     #region CHANGING ATTACK SO
 
     protected void ActivateMainAttack() {
         InvokeOnMainAttackActivatedServerRpc();
-        unitAttack.SetAttackTarget(unitTargetingSystem.GetMainAttackTargetUnit());
+        unitAttack.SetAttackTarget(unitTargetingSystem.GetMainAttackTarget());
         unitAttack.SetActiveAttackSO(mainAttackSO);
     }
 
     protected void ActivateSideAttack() {
         InvokeOnSideAttackActivatedServerRpc();
-        unitAttack.SetAttackTarget(unitTargetingSystem.GetSideAttackTargetUnit());
+        unitAttack.SetAttackTarget(unitTargetingSystem.GetSideAttackTarget());
         unitAttack.SetActiveAttackSO(sideAttackSO);
     }
 

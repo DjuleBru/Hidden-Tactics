@@ -14,8 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   attackType: 0
   attackDecomposition: 0
+  attackHasAOE: 0
+  attackHasAOECollider: 0
   projectilePrefab: {fileID: 0}
-  moveTypeAttackTargets: 00000000
+  attackTargetTypes: 0000000002000000
   attackTargetTiles:
   - {x: 0, y: 0}
   meleeAttackTargetingRange: 5

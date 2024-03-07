@@ -8,7 +8,7 @@ public class GridObject
     private GridPosition gridPosition;
     private List<IPlaceable> iPlaceableList;
     private List<Troop> troopList;
-    private List<Building> buildingsList;
+    private Building building;
     private List<Unit> unitList;
 
     public GridObject(GridSystem gridSystem, GridPosition gridPosition) {
@@ -16,7 +16,6 @@ public class GridObject
         this.gridPosition = gridPosition;
         iPlaceableList = new List<IPlaceable>();
         troopList = new List<Troop>();
-        buildingsList = new List<Building>();
         unitList = new List<Unit>();
     }
 
@@ -32,7 +31,7 @@ public class GridObject
         }
 
         if (iPlaceable is Building) {
-            buildingsList.Add(iPlaceable as Building);
+            building = iPlaceable as Building;
         }
     }
 
@@ -44,7 +43,7 @@ public class GridObject
         }
 
         if (iPlaceable is Building) {
-            buildingsList.Remove(iPlaceable as Building);
+            building = null;
         }
     }
 
@@ -52,8 +51,8 @@ public class GridObject
         return troopList;
     }
 
-    public List<Building> GetBuildingList() {
-        return buildingsList;
+    public Building GetBuilding() {
+        return building;
     }
 
     public void AddUnit(Unit unit) {

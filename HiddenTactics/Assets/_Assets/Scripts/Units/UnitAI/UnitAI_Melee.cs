@@ -8,16 +8,16 @@ public class UnitAI_Melee : UnitAI
 
     protected override void MoveForwardsStateUpdate() {
         unitMovement.MoveForwards();
-        if (unitTargetingSystem.GetMainAttackTargetUnit() != null) {
+        if (unitTargetingSystem.GetMainAttackTarget() != null) {
             //Unit has a valid target
             ChangeState(State.moveToMeleeTarget);
         }
     }
 
     protected override void MoveToMeleeTargetStateUpdate() {
-        if (unitTargetingSystem.GetMainAttackTargetUnit() != null) {
+        if (unitTargetingSystem.GetMainAttackTarget() != null) {
 
-            Collider2D targetCollider = (unitTargetingSystem.GetMainAttackTargetUnit() as MonoBehaviour).GetComponent<Collider2D>();
+            Collider2D targetCollider = (unitTargetingSystem.GetMainAttackTarget() as MonoBehaviour).GetComponent<Collider2D>();
             Vector3 closestPointOnTargetCollider = targetCollider.ClosestPoint(transform.position);
             unitMovement.MoveToTarget(closestPointOnTargetCollider);
         }
@@ -34,10 +34,10 @@ public class UnitAI_Melee : UnitAI
 
         if (unitAttack.GetAttackTarget() == null) {
             // Unit attack has no target !
-            unitAttack.SetAttackTarget(unitTargetingSystem.GetMainAttackTargetUnit());
+            unitAttack.SetAttackTarget(unitTargetingSystem.GetMainAttackTarget());
         }
 
-        if (unitTargetingSystem.GetMainAttackTargetUnit() == null | !unitTargetingSystem.GetTargetUnitIsInRange(mainAttackSO)) {
+        if (unitTargetingSystem.GetMainAttackTarget() == null | !unitTargetingSystem.GetTargetUnitIsInRange(mainAttackSO)) {
             // Unit has no attack targets or target attack unit is out of range
             ChangeState(State.moveForwards);
         }
@@ -46,8 +46,8 @@ public class UnitAI_Melee : UnitAI
 
             if (unitAttack.GetAttackTarget().GetIsDead()) {
                 // Attack target is dead !
-                if (unitTargetingSystem.GetMainAttackTargetUnit() != null) {
-                    unitAttack.SetAttackTarget(unitTargetingSystem.GetMainAttackTargetUnit());
+                if (unitTargetingSystem.GetMainAttackTarget() != null) {
+                    unitAttack.SetAttackTarget(unitTargetingSystem.GetMainAttackTarget());
                 }
                 else {
                     ChangeState(State.moveForwards);

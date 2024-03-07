@@ -163,7 +163,6 @@ public class UnitAttack : NetworkBehaviour
 
     protected void InflictDamage(ITargetable target, Vector3 damageHitPosition) {
         if (!IsServer) return;
-
         PerformAllDamageActions(target, damageHitPosition);
 
         if (attackHasAOE) {
@@ -197,6 +196,7 @@ public class UnitAttack : NetworkBehaviour
     }
 
     protected virtual void PerformAllDamageActions(ITargetable target, Vector3 damageHitPosition) {
+
         IDamageable targetIDamageable = target.GetIDamageable();
         targetIDamageable.TakeDamage(attackDamage);
 

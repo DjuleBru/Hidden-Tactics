@@ -26,6 +26,8 @@ public class UnitSO : ScriptableObject {
     public MoveType moveType;
     public float unitMoveSpeed;
 
+    public bool isGarrisonedUnit;
+
     public AttackSO mainAttackSO;
     public AttackSO sideAttackSO;
     public AttackSO specialAttackSO;

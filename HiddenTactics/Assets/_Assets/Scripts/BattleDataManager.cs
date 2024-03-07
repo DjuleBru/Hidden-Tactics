@@ -23,7 +23,6 @@ public class BattleDataManager : NetworkBehaviour
     }
 
     public int GetBuildingSOIndex(BuildingSO buildingSO) {
-        Debug.Log(IPlaceableListSO.buildingSOList.IndexOf(buildingSO));
         return IPlaceableListSO.buildingSOList.IndexOf(buildingSO);
     }
 

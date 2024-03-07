@@ -38,7 +38,6 @@ public class GridObjectVisual : MonoBehaviour
         gridPositionDebugText.text = gridObject.ToString();
 
         string troopString = "";
-        string buildingString = "";
         string unitString = "";
 
         if (gridObject.GetTroopList().Count != 0) {
@@ -50,11 +49,8 @@ public class GridObjectVisual : MonoBehaviour
             troopDebugText.text = "";
         }
 
-        if (gridObject.GetBuildingList().Count != 0) {
-            foreach (Building building in gridObject.GetBuildingList()) {
-                buildingString += building + "\n";
-            }
-            buildingDebugText.text = buildingString;
+        if (gridObject.GetBuilding() != null) {
+            buildingDebugText.text = gridObject.GetBuilding().ToString();
         }
         else {
             buildingDebugText.text = "";

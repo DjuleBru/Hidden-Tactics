@@ -161,7 +161,7 @@ public class UnitTargetingSystem : NetworkBehaviour
             }
 
             List<Unit> unitListAtTargetGridPosition = BattleGrid.Instance.GetUnitListAtGridPosition(targetGridPosition);
-            List<Building> buildingListAtTargetGridPosition = BattleGrid.Instance.GetBuildingListAtGridPosition(targetGridPosition);
+            Building buildingAtTargetGridPosition = BattleGrid.Instance.GetBuildingAtGridPosition(targetGridPosition);
 
             foreach (Unit unit in unitListAtTargetGridPosition) {
                 if (unit.IsOwnedByPlayer() != this.unit.IsOwnedByPlayer() && !unit.GetIsDead() && unit.GetUnitIsBought() && attackSO.attackTargetTypes.Contains(unit.GetTargetType())) {
@@ -170,10 +170,11 @@ public class UnitTargetingSystem : NetworkBehaviour
                 }
             }
 
-            foreach (Building building in buildingListAtTargetGridPosition) {
-                if (building.IsOwnedByPlayer() != unit.IsOwnedByPlayer() && attackSO.attackTargetTypes.Contains(building.GetTargetType())) {
+            if(buildingAtTargetGridPosition != null) {
+                // There is a building on the target grid position
+                if (buildingAtTargetGridPosition.IsOwnedByPlayer() != unit.IsOwnedByPlayer() && attackSO.attackTargetTypes.Contains(buildingAtTargetGridPosition.GetTargetType())) {
                     // target building is not from the same team AND building is targetable
-                    targetItargetableList.Add(building);
+                    targetItargetableList.Add(buildingAtTargetGridPosition);
                 }
             }
 
@@ -226,11 +227,11 @@ public class UnitTargetingSystem : NetworkBehaviour
     }
 
     #region GET PARAMETERS
-    public ITargetable GetMainAttackTargetUnit() {
+    public ITargetable GetMainAttackTarget() {
         return mainAttackITargetable; 
     }
 
-    public ITargetable GetSideAttackTargetUnit() {
+    public ITargetable GetSideAttackTarget() {
         return sideAttackITargetable;
     }
 

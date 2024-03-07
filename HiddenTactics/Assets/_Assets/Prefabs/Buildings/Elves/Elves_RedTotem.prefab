@@ -7,6 +7,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 215290846825094706, guid: e3e93ece8e3f9f342bf64a8dd15cb760, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 951099334
+      objectReference: {fileID: 0}
     - target: {fileID: 1447241349536656891, guid: e3e93ece8e3f9f342bf64a8dd15cb760, type: 3}
       propertyPath: m_Size.x
       value: 15
@@ -23,6 +27,10 @@ PrefabInstance:
       propertyPath: m_WasSpriteAssigned
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1926300818682292901, guid: e3e93ece8e3f9f342bf64a8dd15cb760, type: 3}
+      propertyPath: buildingSO
+      value: 
+      objectReference: {fileID: 11400000, guid: a8d5e7b387d44f9408a0fb4d5142f997, type: 2}
     - target: {fileID: 1946531853438748068, guid: e3e93ece8e3f9f342bf64a8dd15cb760, type: 3}
       propertyPath: m_Size.x
       value: 15
@@ -101,7 +109,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1960146068611182066, guid: e3e93ece8e3f9f342bf64a8dd15cb760, type: 3}
       propertyPath: m_Name
-      value: Elves_ManaTotem
+      value: Elves_RedTotem
       objectReference: {fileID: 0}
     - target: {fileID: 1960146069012228224, guid: e3e93ece8e3f9f342bf64a8dd15cb760, type: 3}
       propertyPath: m_IsActive
@@ -111,9 +119,45 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2989051983261877285, guid: e3e93ece8e3f9f342bf64a8dd15cb760, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 1.39
+      objectReference: {fileID: 0}
+    - target: {fileID: 2989051983261877285, guid: e3e93ece8e3f9f342bf64a8dd15cb760, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -1.02
+      objectReference: {fileID: 0}
+    - target: {fileID: 3896558055471667740, guid: e3e93ece8e3f9f342bf64a8dd15cb760, type: 3}
+      propertyPath: m_Size.x
+      value: 3.5436132
+      objectReference: {fileID: 0}
+    - target: {fileID: 3896558055471667740, guid: e3e93ece8e3f9f342bf64a8dd15cb760, type: 3}
+      propertyPath: m_Size.y
+      value: 2.3292427
+      objectReference: {fileID: 0}
+    - target: {fileID: 3896558055471667740, guid: e3e93ece8e3f9f342bf64a8dd15cb760, type: 3}
+      propertyPath: m_Offset.x
+      value: 0.09025729
+      objectReference: {fileID: 0}
+    - target: {fileID: 3896558055471667740, guid: e3e93ece8e3f9f342bf64a8dd15cb760, type: 3}
+      propertyPath: m_Offset.y
+      value: -2.0759163
+      objectReference: {fileID: 0}
     - target: {fileID: 7236345148894600409, guid: e3e93ece8e3f9f342bf64a8dd15cb760, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7522236696230173018, guid: e3e93ece8e3f9f342bf64a8dd15cb760, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7599617386902110506, guid: e3e93ece8e3f9f342bf64a8dd15cb760, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -1.18
+      objectReference: {fileID: 0}
+    - target: {fileID: 7599617386902110506, guid: e3e93ece8e3f9f342bf64a8dd15cb760, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.79
       objectReference: {fileID: 0}
     - target: {fileID: 8331313115355839646, guid: e3e93ece8e3f9f342bf64a8dd15cb760, type: 3}
       propertyPath: m_Size.x

@@ -18,25 +18,29 @@ public class UnitAI_MeleeMain_SideRanged : UnitAI
     }
 
     protected override void CheckConditionsBeforeSwitch() {
-        CheckIfEnemyUnitsAreInRangedRange();
+        base.CheckConditionsBeforeSwitch();
+
+        if(state.Value != State.blockedByBuilding) {
+            CheckIfEnemyUnitsAreInRangedRange();
+        }
     }
 
     protected override void MoveForwardsStateUpdate() {
         unitMovement.MoveForwards();
 
-        if (unitTargetingSystem.GetMainAttackTargetUnit() != null) {
+        if (unitTargetingSystem.GetMainAttackTarget() != null) {
             //Unit has a valid main attack target
             ChangeState(State.moveToMeleeTarget);
         }
     }
 
     protected override void MoveToMeleeTargetStateUpdate() {
-        if (unitTargetingSystem.GetMainAttackTargetUnit() == null) {
+        if (unitTargetingSystem.GetMainAttackTarget() == null) {
             // There is no more unit in melee range
             ChangeState(State.moveForwards);
         }
         else {
-            unitMovement.MoveToTarget((unitTargetingSystem.GetMainAttackTargetUnit() as MonoBehaviour).transform.position);
+            unitMovement.MoveToTarget((unitTargetingSystem.GetMainAttackTarget() as MonoBehaviour).transform.position);
         }
 
         CheckIfTargetIsInMeleeAttackRange(mainAttackSO, true);
@@ -46,27 +50,27 @@ public class UnitAI_MeleeMain_SideRanged : UnitAI
         if (!foundRangedTarget) {
             // Unit is attacking in melee 
 
-            if (unitTargetingSystem.GetMainAttackTargetUnit() == null | !unitTargetingSystem.GetTargetUnitIsInRange(mainAttackSO)) {
+            if (unitTargetingSystem.GetMainAttackTarget() == null | !unitTargetingSystem.GetTargetUnitIsInRange(mainAttackSO)) {
                 // Unit has no attack targets or target attack unit is out of range
                 ChangeState(State.moveForwards);
             }
 
-            if (unitAttack.GetAttackTarget().GetIsDead() && unitTargetingSystem.GetMainAttackTargetUnit() != null) {
+            if (unitAttack.GetAttackTarget().GetIsDead() && unitTargetingSystem.GetMainAttackTarget() != null) {
                 // Unit attack target is dead and there are other target units!
-                unitAttack.SetAttackTarget(unitTargetingSystem.GetMainAttackTargetUnit());
+                unitAttack.SetAttackTarget(unitTargetingSystem.GetMainAttackTarget());
             }
 
         }
         else {
             // Unit is attacking in ranged
-            if (unitTargetingSystem.GetSideAttackTargetUnit() == null | ammoCount == 0) {
+            if (unitTargetingSystem.GetSideAttackTarget() == null | ammoCount == 0) {
                 // Unit has no attack targets or has no more ammo
                 ChangeState(State.moveForwards);
             }
 
-            if (unitAttack.GetAttackTarget().GetIsDead() && unitTargetingSystem.GetSideAttackTargetUnit() != null) {
+            if (unitAttack.GetAttackTarget().GetIsDead() && unitTargetingSystem.GetSideAttackTarget() != null) {
                 // Unit attack target is dead and there are other target units!
-                unitAttack.SetAttackTarget(unitTargetingSystem.GetSideAttackTargetUnit());
+                unitAttack.SetAttackTarget(unitTargetingSystem.GetSideAttackTarget());
             }
         }
     }
@@ -77,7 +81,7 @@ public class UnitAI_MeleeMain_SideRanged : UnitAI
             return;
         }
 
-        if (unitTargetingSystem.GetSideAttackTargetUnit() != null && unitTargetingSystem.GetMainAttackTargetUnit() == null) {
+        if (unitTargetingSystem.GetSideAttackTarget() != null && unitTargetingSystem.GetMainAttackTarget() == null) {
             foundRangedTarget = true;
 
             // THERE IS A UNIT IN RANGED RANGE AND NO UNIT IN MELEE 
