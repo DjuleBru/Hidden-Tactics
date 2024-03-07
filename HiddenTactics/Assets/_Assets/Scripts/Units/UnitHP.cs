@@ -10,6 +10,8 @@ public class UnitHP : NetworkBehaviour, IDamageable
     protected float unitHP;
     protected int unitArmor;
 
+    protected int garrisonedProtectionChance = 50;
+
     public event EventHandler<OnHealthChangedEventArgs> OnHealthChanged;
 
     public class OnHealthChangedEventArgs : EventArgs {
@@ -44,7 +46,16 @@ public class UnitHP : NetworkBehaviour, IDamageable
 
     [ServerRpc(RequireOwnership = false)]
     protected void TakeDamageServerRpc(float damage) {
-        TakeDamageClientRpc(damage);
+        if(unit.GetUnitSO().isGarrisonedUnit) {
+            // There is a chance the unit is not damaged
+            int damagedChance = UnityEngine.Random.Range(0, 100);
+
+            if(damagedChance >= garrisonedProtectionChance) {
+                TakeDamageClientRpc(damage);
+            }
+        } else {
+            TakeDamageClientRpc(damage);
+        }
     }
 
     [ClientRpc]

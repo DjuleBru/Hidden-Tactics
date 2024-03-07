@@ -124,7 +124,7 @@ public class UnitTargetingSystem : NetworkBehaviour
 
 
                     if (attackSO.attackTargetTypes.Contains(targetITargetable.GetTargetType())) {
-                        // target can be targeted (air unit vs ground unit, building, village)
+                        // target can be targeted (air unit vs ground unit vs garrisoned unit, building, village)
 
                         if (targetITargetable.GetCurrentGridPosition().y == unit.GetCurrentGridPosition().y) {
                             // target unit is on the same row as this unit

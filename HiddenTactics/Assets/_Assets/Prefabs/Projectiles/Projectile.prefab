@@ -137,6 +137,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   projectileVisual: {fileID: 4928077520713705031}
+  projectileHitVisualPrefab: {fileID: 0}
   projectileMaxMoveSpeed: 0
   projectileTrajectoryYCurve: 0.2
 --- !u!114 &2222617113043081062
@@ -290,6 +291,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bodyVisual: {fileID: 1435734682426111729}
   shadowVisual: {fileID: 7386933829204924874}
+  trailRenderer: {fileID: 7239920512116507335}
 --- !u!1 &6098083659787599748
 GameObject:
   m_ObjectHideFlags: 0

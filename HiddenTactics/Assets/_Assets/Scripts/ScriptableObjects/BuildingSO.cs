@@ -8,5 +8,6 @@ public class BuildingSO : ScriptableObject
     public GameObject buildingPrefab;
     public float buildingHP;
     public bool buildingBlocksUnitMovement;
-    public bool hasGarrisonedUnits;
+    public bool hasGarrisonedTroop;
+    public TroopSO garrisonedTroopSO;
 }

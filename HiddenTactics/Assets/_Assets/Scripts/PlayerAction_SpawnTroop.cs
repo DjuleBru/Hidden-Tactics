@@ -7,7 +7,7 @@ public class PlayerAction_SpawnTroop : NetworkBehaviour {
 
     public static PlayerAction_SpawnTroop LocalInstance;
 
-    private IPlaceable iPlaceableToSpawn;
+    private List<IPlaceable> iPlaceableToSpawnList;
 
     private Dictionary<int, IPlaceable> spawnedIPlaceablesDictionary;
     private Dictionary<int, GridPosition> spawnedIPlaceableGridPositions;
@@ -17,6 +17,8 @@ public class PlayerAction_SpawnTroop : NetworkBehaviour {
     private void Awake() {
         spawnedIPlaceablesDictionary = new Dictionary<int, IPlaceable>();
         spawnedIPlaceableGridPositions = new Dictionary<int, GridPosition>();
+
+        iPlaceableToSpawnList = new List<IPlaceable>();
     }
 
     public override void OnNetworkSpawn() {
@@ -28,7 +30,7 @@ public class PlayerAction_SpawnTroop : NetworkBehaviour {
 
     private void BattleManager_OnStateChanged(object sender, System.EventArgs e) {
         // Destroy troop to spawn 
-        if (iPlaceableToSpawn != null) {
+        if (iPlaceableToSpawnList.Count != 0) {
             CancelIPlaceablePlacement();
         };
 
@@ -52,7 +54,7 @@ public class PlayerAction_SpawnTroop : NetworkBehaviour {
     }
 
     public void SelectTroopToSpawn(int troopListSOIndex) {
-        if (iPlaceableToSpawn != null) {
+        if (iPlaceableToSpawnList != null) {
             CancelIPlaceablePlacement();
         };
 
@@ -60,7 +62,7 @@ public class PlayerAction_SpawnTroop : NetworkBehaviour {
     }
 
     public void SelectBuildingToSpawn(int buildingListSOIndex) {
-        if (iPlaceableToSpawn != null) {
+        if (iPlaceableToSpawnList != null) {
             CancelIPlaceablePlacement();
         };
 
@@ -72,18 +74,23 @@ public class PlayerAction_SpawnTroop : NetworkBehaviour {
         return BattleGrid.Instance.IsValidPlayerGridPosition(iPlaceableSpawnGridPosition);
     }
 
-    public void PlaceIPlaceable() {
-        iPlaceableToSpawn.PlaceIPlaceable();
-        spawnedIPlaceablesDictionary.Add(troopDictionaryInt, iPlaceableToSpawn);
-        spawnedIPlaceableGridPositions.Add(troopDictionaryInt, iPlaceableToSpawn.GetIPlaceableGridPosition());
-        troopDictionaryInt++;
+    public void PlaceIPlaceableList() {
+        foreach(IPlaceable iPlaceable in iPlaceableToSpawnList) {
 
-        iPlaceableToSpawn = null;
+            iPlaceable.PlaceIPlaceable();
+            spawnedIPlaceablesDictionary.Add(troopDictionaryInt, iPlaceable);
+            spawnedIPlaceableGridPositions.Add(troopDictionaryInt, iPlaceable.GetIPlaceableGridPosition());
+            troopDictionaryInt++;
+        }
+        iPlaceableToSpawnList = new List<IPlaceable>();
     }
+
     public void CancelIPlaceablePlacement() {
-        NetworkObjectReference troopNetworkObjectReference = (iPlaceableToSpawn as MonoBehaviour).GetComponent<NetworkObject>();
-        HiddenTacticsMultiplayer.Instance.DestroyIPlaceable(troopNetworkObjectReference);
-        iPlaceableToSpawn = null;
+        foreach (IPlaceable iPlaceable in iPlaceableToSpawnList) {
+            NetworkObjectReference iPlaceableNetworkObjectReference = (iPlaceable as MonoBehaviour).GetComponent<NetworkObject>();
+            HiddenTacticsMultiplayer.Instance.DestroyIPlaceable(iPlaceableNetworkObjectReference);
+        }
+        iPlaceableToSpawnList = new List<IPlaceable>();
     }
 
     #region SPAWN TROOPS, UNITS AND BUILDINGS
@@ -118,6 +125,13 @@ public class PlayerAction_SpawnTroop : NetworkBehaviour {
         buildingNetworkObject.Spawn(true);
 
         SpawnIPlaceableClientRpc(buildingNetworkObject, ownerClientId);
+
+        if(buildingToSpawnSO.hasGarrisonedTroop) {
+            // Spawn garrisoned troop
+            int troopIndex = BattleDataManager.Instance.GetTroopSOIndex(buildingToSpawnSO.garrisonedTroopSO);
+            SpawnTroopServerRpc(troopIndex, NetworkManager.Singleton.LocalClientId);
+        }
+
     }
 
     [ClientRpc]
@@ -126,7 +140,7 @@ public class PlayerAction_SpawnTroop : NetworkBehaviour {
         IPlaceable iPlaceableToSpawn = iPlaceableToSpawnNetworkObject.GetComponent<IPlaceable>();
 
         if (ownerClientId == NetworkManager.Singleton.LocalClientId) {
-            this.iPlaceableToSpawn = iPlaceableToSpawn;
+            iPlaceableToSpawnList.Add(iPlaceableToSpawn);
         }
 
         iPlaceableToSpawn.SetIPlaceableOwnerClientId(ownerClientId);

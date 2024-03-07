@@ -23,15 +23,16 @@ public class Unit : NetworkBehaviour, ITargetable {
     }
 
     [SerializeField] protected UnitSO unitSO;
-    private Troop parentTroop;
+    protected Troop parentTroop;
+    protected Building parentBuilding;
 
-    private GridPosition currentGridPosition;
-    private Vector3 unitPositionInTroop;
+    protected GridPosition currentGridPosition;
+    protected Vector3 unitPositionInTroop;
 
-    private Rigidbody2D rb;
-    private Collider2D collider2d;
-    private bool unitIsDead;
-    private bool unitIsBought;
+    protected Rigidbody2D rb;
+    protected Collider2D collider2d;
+    protected bool unitIsDead;
+    protected bool unitIsBought;
 
     protected virtual void Awake() {
         collider2d = GetComponent<Collider2D>();
@@ -90,19 +91,36 @@ public class Unit : NetworkBehaviour, ITargetable {
             ResetUnit();
         }
     }
-    protected void ParentTroop_OnTroopPlaced(object sender, System.EventArgs e) {
+    protected virtual void ParentTroop_OnTroopPlaced(object sender, System.EventArgs e) {
         OnUnitPlaced?.Invoke(this, EventArgs.Empty);
 
-        if(unitIsBought) {
+        if(unitIsBought && !unitSO.isGarrisonedUnit) {
             collider2d.enabled = true;
         }
+
+        if(unitSO.isGarrisonedUnit) {
+            SetParentBuilding();
+        }
+    }
+
+    protected void SetParentBuilding() {
+        Building parentBuilding = BattleGrid.Instance.GetBuildingAtGridPosition(currentGridPosition);
+        this.parentBuilding = parentBuilding;
+        parentBuilding.OnBuildingDestroyed += ParentBuilding_OnBuildingDestroyed;
+    }
+
+    private void ParentBuilding_OnBuildingDestroyed(object sender, EventArgs e) {
+        HiddenTacticsMultiplayer.Instance.DestroyIPlaceable(parentTroop.GetComponent<NetworkObject>());
     }
 
     public virtual void ResetUnit() {
         if (unitIsBought) {
             transform.localPosition = unitPositionInTroop;
             unitIsDead = false;
-            collider2d.enabled = true;
+
+            if(!unitSO.isGarrisonedUnit) {
+                collider2d.enabled = true;
+            }
 
             OnUnitReset?.Invoke(this, EventArgs.Empty);
         }
@@ -201,6 +219,14 @@ public class Unit : NetworkBehaviour, ITargetable {
 
 
     #endregion
+
+    protected void InvokeOnUnitPlaced() {
+        OnUnitPlaced?.Invoke(this, EventArgs.Empty);
+    }
+
+    protected void InvokeOnUnitReset() {
+        OnUnitReset?.Invoke(this, EventArgs.Empty);
+    }
 
     public void BuyAdditionalUnit() {
         collider2d.enabled = true;

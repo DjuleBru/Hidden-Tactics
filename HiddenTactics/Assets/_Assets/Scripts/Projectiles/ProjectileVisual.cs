@@ -9,6 +9,7 @@ public class ProjectileVisual : MonoBehaviour
     [SerializeField] private Transform shadowVisual;
 
     private Projectile projectile;
+    [SerializeField] private TrailRenderer trailRenderer;
     private Vector3 trajectoryStartPoint;
     private Vector3 trajectoryEndPoint;
 
@@ -62,4 +63,11 @@ public class ProjectileVisual : MonoBehaviour
         shadowVisual.gameObject.SetActive(false);
     }
 
+
+    public void InitializeProjectileVisual(ITargetable target) {
+        if(target is Building) {
+            trailRenderer.endColor = new Color(1f, .1f, 0f, 1f);
+            trailRenderer.startColor = new Color(1f, .8f, 0f, 1f);
+        }
+    }
 }

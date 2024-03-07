@@ -78,6 +78,8 @@ public class Projectile : NetworkBehaviour
 
         float distanceToTarget = Mathf.Abs(trajectoryEndPointRandomized.x - transform.position.x);
         trajectoryMaxRelativeHeight = distanceToTarget * projectileTrajectoryYCurve;
+
+        projectileVisual.InitializeProjectileVisual(target);
     }
 
     protected void CalculateNewProjectileMoveSpeed(float newPositionXNormalized) {

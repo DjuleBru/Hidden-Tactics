@@ -6,6 +6,7 @@ public interface ITargetable {
     public enum TargetType {
         groundUnit,
         airUnit,
+        garrisonedUnit,
         building,
         village,
     }

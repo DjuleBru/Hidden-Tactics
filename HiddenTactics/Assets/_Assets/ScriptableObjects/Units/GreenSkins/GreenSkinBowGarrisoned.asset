@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4bc7b5eb9df2cac4eae406c9d717c5aa, type: 3}
+  m_Name: GreenSkinBowGarrisoned
+  m_EditorClassIdentifier: 
+  unitTagList: 
+  unitTargetType: 2
+  HP: 8
+  armor: 0
+  mass: 40
+  moveType: 0
+  unitMoveSpeed: 80
+  isGarrisonedUnit: 1
+  mainAttackSO: {fileID: 11400000, guid: deea784b91f5e3f488f2015c70572f82, type: 2}
+  sideAttackSO: {fileID: 0}
+  specialAttackSO: {fileID: 0}

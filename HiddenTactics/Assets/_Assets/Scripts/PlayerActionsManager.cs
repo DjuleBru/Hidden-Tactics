@@ -27,10 +27,11 @@ public class PlayerActionsManager : NetworkBehaviour {
             if(Input.GetMouseButtonDown(0)) {
                 // Player is trying to place troop : check if troop placement conditions are met
                 if(PlayerAction_SpawnTroop.LocalInstance.IsValidIPlaceableSpawningTarget()) {
-                    PlayerAction_SpawnTroop.LocalInstance.PlaceIPlaceable();
+                    PlayerAction_SpawnTroop.LocalInstance.PlaceIPlaceableList();
                     currentAction = Action.Idle;
                 }
             }
+
             if (Input.GetMouseButtonDown(1)) {
                 // Cancel troop placement
                 PlayerAction_SpawnTroop.LocalInstance.CancelIPlaceablePlacement();
