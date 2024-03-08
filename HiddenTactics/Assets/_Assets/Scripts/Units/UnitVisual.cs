@@ -7,7 +7,8 @@ using UnityEngine;
 public class UnitVisual : NetworkBehaviour
 {
     [SerializeField] protected Unit unit;
-    [SerializeField] protected List<SpriteRenderer> bodySpriteRendererList;
+    [SerializeField] protected List<SpriteRenderer> allVisualsSpriteRendererList;
+    [SerializeField] protected SpriteRenderer selectedUnitSpriteRenderer;
     [SerializeField] protected List<GameObject> shadowGameObjectList;
 
     [SerializeField] protected Material cleanMaterial;
@@ -31,6 +32,7 @@ public class UnitVisual : NetworkBehaviour
         bodyAnimator = GetComponent<Animator>();
         activeBodyAnimator = bodyAnimator.runtimeAnimatorController;
     
+        allVisualsSpriteRendererList.Add(selectedUnitSpriteRenderer);
     }
 
     public override void OnNetworkSpawn() {
@@ -39,9 +41,14 @@ public class UnitVisual : NetworkBehaviour
         unit.OnUnitSetAsAdditionalUnit += Unit_OnUnitSetAsAdditionalUnit;
     }
 
+    protected virtual void Start() {
+        if (!unit.GetUnitIsBought()) return;
+        ChangeSpriteRendererListMaterial(allVisualsSpriteRendererList, placingUnitMaterial);
+    }
+
     protected virtual void Unit_OnUnitUpgraded(object sender, System.EventArgs e) {
         if (!unit.GetUnitIsBought()) return;
-        ChangeSpriteRendererListMaterial(bodySpriteRendererList, upgradedBodyMaterial);
+        ChangeSpriteRendererListMaterial(allVisualsSpriteRendererList, upgradedBodyMaterial);
 
         if (upgradeReplacesBody)
         {
@@ -53,11 +60,11 @@ public class UnitVisual : NetworkBehaviour
     protected virtual void Unit_OnUnitPlaced(object sender, System.EventArgs e) {
         if (!unit.GetUnitIsBought()) return;
 
-        ChangeSpriteRendererListMaterial(bodySpriteRendererList, cleanMaterial);
+        ChangeSpriteRendererListMaterial(allVisualsSpriteRendererList, cleanMaterial);
     }
 
     protected virtual void Unit_OnUnitSetAsAdditionalUnit(object sender, System.EventArgs e) {
-        ChangeSpriteRendererListMaterial(bodySpriteRendererList, invisibleMaterial);
+        ChangeSpriteRendererListMaterial(allVisualsSpriteRendererList, invisibleMaterial);
         foreach(GameObject shadowGameObject in shadowGameObjectList) {
             shadowGameObject.SetActive(false);
         }
@@ -66,6 +73,24 @@ public class UnitVisual : NetworkBehaviour
     protected virtual void ChangeSpriteRendererListMaterial(List<SpriteRenderer> spriteRendererList, Material material) {
         foreach(SpriteRenderer spriteRenderer in spriteRendererList) {
             spriteRenderer.material = material;
+        }
+    }
+
+    public void SetUnitHovered(bool hovered) {
+        if (!unit.GetUnitIsBought()) return;
+        if(hovered) {
+            selectedUnitSpriteRenderer.material = placingUnitMaterial;
+        } else {
+            selectedUnitSpriteRenderer.material = invisibleMaterial;
+        }
+    }
+
+    public void SetUnitSelected(bool selected) {
+        if (!unit.GetUnitIsBought()) return;
+        if (selected) {
+            selectedUnitSpriteRenderer.material = cleanMaterial;
+        } else {
+            selectedUnitSpriteRenderer.material = invisibleMaterial;
         }
     }
 

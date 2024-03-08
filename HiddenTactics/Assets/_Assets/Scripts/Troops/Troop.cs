@@ -16,6 +16,7 @@ public class Troop : MonoBehaviour, IPlaceable {
     [SerializeField] private bool debugMode;
     [SerializeField] private TroopSO troopSO;
     [SerializeField] private Transform troopCenterPoint;
+    [SerializeField] private TroopUI troopUI;
 
     private List<Unit> unitsInTroop;
 
@@ -156,6 +157,10 @@ public class Troop : MonoBehaviour, IPlaceable {
         return troopCenterPoint.position;
     }
 
+    public TroopUI GetTroopUI() {
+        return troopUI;
+    }
+         
     public bool IsOwnedByPlayer() {
         return isOwnedByPlayer;
     }

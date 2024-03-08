@@ -232,7 +232,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7779875014053899129}
   - component: {fileID: 6998290291304174747}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: 'Horse : shadow'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -247,8 +247,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6027076930663085077}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.03125, y: 0.059999943, z: 0}
-  m_LocalScale: {x: 1, y: 4, z: 1}
+  m_LocalPosition: {x: -0.03125, y: 0.04244996, z: 0}
+  m_LocalScale: {x: 1, y: 2.83, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3693029527722045962}
@@ -330,7 +330,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7775877373702691044}
-  m_LocalRotation: {x: 0.5978252, y: -0.10728668, z: 0.14032513, w: 0.7819229}
+  m_LocalRotation: {x: 0.60697967, y: -0.0988338, z: 0.1267293, w: 0.7782977}
   m_LocalPosition: {x: 0.03125, y: -0.014999986, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -577,7 +577,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2213990894495455491, guid: 974a18b8d382e7e49970efa5bd60d332, type: 3}
       propertyPath: m_LocalScale.y
-      value: 4
+      value: 2.83
       objectReference: {fileID: 0}
     - target: {fileID: 2213990894495455491, guid: 974a18b8d382e7e49970efa5bd60d332, type: 3}
       propertyPath: m_LocalPosition.x
@@ -585,7 +585,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2213990894495455491, guid: 974a18b8d382e7e49970efa5bd60d332, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -2.44
+      value: -1.7263
       objectReference: {fileID: 0}
     - target: {fileID: 2715276073192293449, guid: 974a18b8d382e7e49970efa5bd60d332, type: 3}
       propertyPath: m_RootOrder
@@ -667,6 +667,10 @@ PrefabInstance:
       propertyPath: m_LocalPosition.y
       value: 0.76
       objectReference: {fileID: 0}
+    - target: {fileID: 5718880567459754360, guid: 974a18b8d382e7e49970efa5bd60d332, type: 3}
+      propertyPath: m_RootOrder
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 6582105824262927089, guid: 974a18b8d382e7e49970efa5bd60d332, type: 3}
       propertyPath: m_Name
       value: UCW_Goblin_FlagWearer
@@ -693,19 +697,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8227018930490549216, guid: 974a18b8d382e7e49970efa5bd60d332, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.7819229
+      value: 0.7782977
       objectReference: {fileID: 0}
     - target: {fileID: 8227018930490549216, guid: 974a18b8d382e7e49970efa5bd60d332, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.5978252
+      value: 0.60697967
       objectReference: {fileID: 0}
     - target: {fileID: 8227018930490549216, guid: 974a18b8d382e7e49970efa5bd60d332, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.10728668
+      value: -0.0988338
       objectReference: {fileID: 0}
     - target: {fileID: 8227018930490549216, guid: 974a18b8d382e7e49970efa5bd60d332, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.14032513
+      value: 0.1267293
       objectReference: {fileID: 0}
     - target: {fileID: 8723239787107823819, guid: 974a18b8d382e7e49970efa5bd60d332, type: 3}
       propertyPath: ugradedMountShader

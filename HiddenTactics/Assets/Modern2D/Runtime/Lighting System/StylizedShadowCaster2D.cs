@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using LeafUtils;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -93,6 +94,10 @@ namespace Modern2D
                 rebuildShadowsBF_2_0_1_v = false;
                 _shadowData = CreateShadowData();
             }
+
+#if UNITY_EDITOR
+            _shadowData.shadow.shadow.gameObject.layer = Layers.FindLayerIndex(LightingSystem.shadowsLayer);
+#endif
         }
 
         private void OnValidate()
@@ -102,7 +107,6 @@ namespace Modern2D
 
         public static bool IsFromSpriteSheet(Sprite s)
         {
-            if(s == null) return false;
             if (s.textureRect.xMax - s.textureRect.xMin >= (s.texture.width - 2) && s.textureRect.yMax - s.textureRect.yMin >= (s.texture.height - 2)) return false;
 
             return true;

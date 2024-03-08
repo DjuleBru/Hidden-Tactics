@@ -170,7 +170,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7779875014053899129}
   - component: {fileID: 6998290291304174747}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: 'Horse : shadow'
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -185,8 +185,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6027076930663085077}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.28125, y: 0.059999943, z: 0}
-  m_LocalScale: {x: 1, y: 4, z: 1}
+  m_LocalPosition: {x: 0.28125, y: 0.058799945, z: 0}
+  m_LocalScale: {x: 1, y: 3.92, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3693029527722045962}
@@ -212,7 +212,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 0cd8f168e1f1a274c8411edc6c8401a4, type: 2}
+  - {fileID: 2100000, guid: 21bf8b6f555823e40be5c25739d4f42e, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -268,7 +268,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7775877373702691044}
-  m_LocalRotation: {x: 0.5978252, y: -0.10728668, z: 0.14032513, w: 0.7819229}
+  m_LocalRotation: {x: 0.59783185, y: -0.05569181, z: 0.07417452, w: 0.79623723}
   m_LocalPosition: {x: -0.28125, y: -0.014999986, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -436,6 +436,14 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0.505
       objectReference: {fileID: 0}
+    - target: {fileID: 1783418606759316809, guid: 974a18b8d382e7e49970efa5bd60d332, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.189
+      objectReference: {fileID: 0}
+    - target: {fileID: 1783418606759316809, guid: 974a18b8d382e7e49970efa5bd60d332, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.126
+      objectReference: {fileID: 0}
     - target: {fileID: 2170573195760144347, guid: 974a18b8d382e7e49970efa5bd60d332, type: 3}
       propertyPath: m_Sprite
       value: 
@@ -447,10 +455,10 @@ PrefabInstance:
     - target: {fileID: 2170573195760144347, guid: 974a18b8d382e7e49970efa5bd60d332, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 2100000, guid: 5472c483cff72494e8e1f9233fc2308a, type: 2}
     - target: {fileID: 2213990894495455491, guid: 974a18b8d382e7e49970efa5bd60d332, type: 3}
       propertyPath: m_LocalScale.y
-      value: 4
+      value: 3.92
       objectReference: {fileID: 0}
     - target: {fileID: 2213990894495455491, guid: 974a18b8d382e7e49970efa5bd60d332, type: 3}
       propertyPath: m_LocalPosition.x
@@ -458,7 +466,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2213990894495455491, guid: 974a18b8d382e7e49970efa5bd60d332, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.94
+      value: -1.9012
       objectReference: {fileID: 0}
     - target: {fileID: 2715276073192293449, guid: 974a18b8d382e7e49970efa5bd60d332, type: 3}
       propertyPath: m_RootOrder
@@ -564,6 +572,10 @@ PrefabInstance:
       propertyPath: m_SortingLayerID
       value: 76312135
       objectReference: {fileID: 0}
+    - target: {fileID: 4908622000943180462, guid: 974a18b8d382e7e49970efa5bd60d332, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 8ddd6572ea284884f92ac4393d64ef3d, type: 3}
     - target: {fileID: 5718880567459754360, guid: 974a18b8d382e7e49970efa5bd60d332, type: 3}
       propertyPath: m_RootOrder
       value: 4
@@ -588,6 +600,10 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8165989522550992604, guid: 974a18b8d382e7e49970efa5bd60d332, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8227018930490549216, guid: 974a18b8d382e7e49970efa5bd60d332, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.34375
@@ -598,19 +614,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8227018930490549216, guid: 974a18b8d382e7e49970efa5bd60d332, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.7819229
+      value: 0.79623723
       objectReference: {fileID: 0}
     - target: {fileID: 8227018930490549216, guid: 974a18b8d382e7e49970efa5bd60d332, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.5978252
+      value: 0.59783185
       objectReference: {fileID: 0}
     - target: {fileID: 8227018930490549216, guid: 974a18b8d382e7e49970efa5bd60d332, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.10728668
+      value: -0.05569181
       objectReference: {fileID: 0}
     - target: {fileID: 8227018930490549216, guid: 974a18b8d382e7e49970efa5bd60d332, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.14032513
+      value: 0.07417452
       objectReference: {fileID: 0}
     - target: {fileID: 8723239787107823819, guid: 974a18b8d382e7e49970efa5bd60d332, type: 3}
       propertyPath: mountSpriteRenderer

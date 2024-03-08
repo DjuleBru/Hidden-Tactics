@@ -23,7 +23,6 @@ public class ProjectileHitVisual : NetworkBehaviour
     }
 
     public void Initialize(Vector3 position) {
-        Debug.Log(position);
         transform.position = position;
     }
 }

@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using System.Linq;
+using UnityEngine.Rendering.VirtualTexturing;
 
 namespace Modern2D
 {
@@ -42,6 +43,14 @@ namespace Modern2D
             GUILayout.Space(5); system._shadowFalloff.value = EditorGUILayout.Slider("Shadow Falloff", system._shadowFalloff.value, 0, 15);
             GUILayout.Space(5); system._shadowAngle.value = EditorGUILayout.Slider("Shadow Angle", system._shadowAngle.value, 0, 90);
             GUILayout.Space(5); system.ShadowsLayerName = EditorGUILayout.TextField("default shadow sorting layer", system.ShadowsLayerName);
+
+            var v = system.noBlending.value;
+            GUILayout.Space(5); system.noBlending.value = EditorGUILayout.Toggle("disable shadow blending ", system.noBlending.value);
+            if(v != system.noBlending.value)
+            {
+                DeleteAllShadows();
+                CreateAllShadows(system);
+            }
 
             if (!system._useClosestPointLightForDirection || system.isLightDirectional.value)
             {
@@ -117,21 +126,15 @@ namespace Modern2D
             GUILayout.Space(15);
 
             if (GUILayout.Button("DELETE ALL SHADOWS"))
-                foreach (var s in GameObject.FindGameObjectsWithTag("Shadow"))
-                    DestroyImmediate(s);
+            {
+                DeleteAllShadows();
+            }
 
             //this is an example of horribly unreadable code
             //don't try this at home kids
             if (GUILayout.Button("CREATE ALL SHADOWS"))
             {
-                foreach (var s in Transform.FindObjectsOfType<StylizedShadowCaster2D>())
-                {
-                    s.RebuildShadow();
-                    system.AddShadow(s.shadowData);
-                    system.extendedUpdateThisFrame = true;
-                    system.OnShadowSettingsChanged();
-                    system.UpdateShadows(Transform.FindObjectsOfType<StylizedShadowCaster2D>().ToDictionary(t => t.transform, t => t.shadowData.shadow));
-                }
+                CreateAllShadows(system);
             }
             if (GUILayout.Button("UPDATE ALL SHADOWS"))
             {
@@ -142,9 +145,27 @@ namespace Modern2D
             }
 
 
-            //SetLayers();
+            SetLayers();
 
             if(EditorGUI.EndChangeCheck()) EditorUtility.SetDirty(system);
+        }
+
+
+        private void CreateAllShadows(LightingSystem system)
+        {
+            foreach (var s in Transform.FindObjectsOfType<StylizedShadowCaster2D>())
+            {
+                s.RebuildShadow();
+                system.AddShadow(s.shadowData);
+                system.extendedUpdateThisFrame = true;
+                system.OnShadowSettingsChanged();
+                system.UpdateShadows(Transform.FindObjectsOfType<StylizedShadowCaster2D>().ToDictionary(t => t.transform, t => t.shadowData.shadow));
+            }
+        }
+        private void DeleteAllShadows() 
+        {
+            foreach (var s in GameObject.FindGameObjectsWithTag("Shadow"))
+                DestroyImmediate(s);
         }
 
         private void DirectionalFields(LightingSystem system)

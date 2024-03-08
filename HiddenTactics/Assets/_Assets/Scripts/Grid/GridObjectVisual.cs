@@ -16,9 +16,11 @@ public class GridObjectVisual : MonoBehaviour
     [SerializeField] GameObject debugCanvas;
 
     [SerializeField] SpriteRenderer gridSprite;
+    [SerializeField] GameObject attackTargetGameObject;
 
     private Material cleanMaterial;
     [SerializeField] Material selectedMaterial;
+    [SerializeField] Material targetTileMaterial;
 
     [SerializeField] List<SpriteRenderer> villageSpriteRenderers;
 
@@ -34,16 +36,16 @@ public class GridObjectVisual : MonoBehaviour
         this.gridObject = gridObject;
     }
 
+
+
     private void Update() {
         gridPositionDebugText.text = gridObject.ToString();
 
         string troopString = "";
         string unitString = "";
 
-        if (gridObject.GetTroopList().Count != 0) {
-            foreach(Troop troop in gridObject.GetTroopList()) {
-                troopString += troop + "\n";
-            }
+        if (gridObject.GetTroop() != null) {
+            troopString += gridObject.GetTroop().ToString() + "\n";
             troopDebugText.text = troopString;
         } else {
             troopDebugText.text = "";
@@ -71,8 +73,14 @@ public class GridObjectVisual : MonoBehaviour
         gridSprite.material = selectedMaterial;
     }
 
-    public void SetUnSelected() {
+    public void ResetVisual() {
         gridSprite.material = cleanMaterial;
+        attackTargetGameObject.SetActive(false);
+    }
+
+    public void SetAsAttackTargetTile() {
+        attackTargetGameObject.SetActive(true);
+        gridSprite.material = targetTileMaterial;
     }
 
     public void SetGridSprite(List<Sprite> sprites) {

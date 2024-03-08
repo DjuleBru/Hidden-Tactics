@@ -22,6 +22,10 @@ public struct GridPosition : IEquatable<GridPosition> {
         return !(a ==b);
     }
 
+    public static GridPosition operator +(GridPosition a, GridPosition b) {
+        return new GridPosition(a.x + b.x, a.y + b.y);
+    }
+
     public override bool Equals(object obj) {
         return obj is GridPosition position &&
             x == position.x && y == position.y;

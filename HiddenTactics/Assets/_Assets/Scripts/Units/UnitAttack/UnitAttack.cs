@@ -93,7 +93,6 @@ public class UnitAttack : NetworkBehaviour
                 StartCoroutine(RangedAttack(attackTarget));
             }
         }
-
     }
 
     protected void HandleDecomposedRangedAttack() {
@@ -113,6 +112,7 @@ public class UnitAttack : NetworkBehaviour
                 attackEndTimer = attackRate;
 
                 Shoot(attackTarget);
+
                 OnUnitAttackEnded?.Invoke(this, EventArgs.Empty);
             }
         }

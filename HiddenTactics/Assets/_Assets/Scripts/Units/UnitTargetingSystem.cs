@@ -33,6 +33,7 @@ public class UnitTargetingSystem : NetworkBehaviour
     }
 
     private void Start() {
+
         mainAttackGridPositionTargetList = FillGridPositionAttackTargetList(mainAttackSO);
         if(sideAttackSO != null) {
             sideAttackGridPositionTargetList = FillGridPositionAttackTargetList(sideAttackSO);

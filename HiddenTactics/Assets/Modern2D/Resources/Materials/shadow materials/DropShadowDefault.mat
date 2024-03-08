@@ -22,6 +22,8 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: DropShadowDefault
   m_Shader: {fileID: -6465566751694194690, guid: a6d6d34cafd2a8348be95774ab27573b, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
   m_InvalidKeywords: []
   m_LightmapFlags: 4
@@ -30,6 +32,7 @@ Material:
   m_CustomRenderQueue: -1
   stringTagMap: {}
   disabledShaderPasses: []
+  m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -57,15 +60,15 @@ Material:
     m_Floats:
     - _2DLightMLP: 3.11
     - _2DLightMinAlpha: 0
-    - _Bot: 0.302
-    - _Left: 0.461
-    - _Right: 0.4
+    - _Bot: 0.621
+    - _Left: 0.28
+    - _Right: 0
     - _Shadow_Reflectiveness: 0.99
-    - _Top: 0.201
+    - _Top: 0.161
     - _circleSmoothness: 0.512
-    - _fastAntyaliasing: 0.698
+    - _fastAntyaliasing: 0.369
     - _onlyRenderIn2DLight: 1
-    - _smoothness: 0.882
+    - _smoothness: 0.745
     m_Colors:
-    - _Shadow_Color: {r: 0, g: 0, b: 0, a: 0}
+    - _Shadow_Color: {r: 0.014017441, g: 0.025851145, b: 0.14150941, a: 0}
   m_BuildTextureStacks: []

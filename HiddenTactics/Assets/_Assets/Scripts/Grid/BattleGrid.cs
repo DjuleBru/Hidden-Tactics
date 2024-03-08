@@ -75,9 +75,9 @@ public class BattleGrid : MonoBehaviour
             gridObject.AddIPlaceable(iPlaceable);
     }
 
-    public List<Troop> GetTroopListAtGridPosition(GridPosition gridPosition) {
+    public Troop GetTroopAtGridPosition(GridPosition gridPosition) {
             GridObject gridObject = gridSystem.GetGridObject(gridPosition);
-            return gridObject.GetTroopList();
+            return gridObject.GetTroop();
     }
 
     public void RemoveIPlaceableAtGridPosition(GridPosition gridPosition, IPlaceable iPlaceable) {
@@ -130,6 +130,11 @@ public class BattleGrid : MonoBehaviour
     #endregion
     public GridSystem GetGridSystem() {
         return gridSystem;
+    }
+
+    public GridObjectVisual GetGridObjectVisual(GridPosition gridPosition) {
+        GridObject gridObject = gridSystem.GetGridObject(gridPosition);
+        return gridObject.GetGridObjectVisual();
     }
 
     public int GetGridWidth() {

@@ -45,10 +45,6 @@ public class UnitAI : NetworkBehaviour
     public override void OnNetworkSpawn() {
         state.OnValueChanged += State_OnValueChanged;
 
-        if(IsServer) {
-            state.Value = State.idle;
-        }
-
         unit.OnUnitDied += Unit_OnUnitDied;
         unit.OnUnitDazed += Unit_OnUnitDazed;
         unitAttack.OnUnitAttack += UnitAttack_OnUnitAttack;
@@ -258,6 +254,10 @@ public class UnitAI : NetworkBehaviour
 
     protected void ChangeState(State newState) {
         state.Value = newState;
+    }
+
+    public void SetIdleState() {
+        state.Value = State.idle;
     }
 
     protected void InvokeOnStateChanged() {

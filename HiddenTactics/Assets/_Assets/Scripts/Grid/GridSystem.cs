@@ -68,7 +68,7 @@ public class GridSystem
                 }
                 GridObjectVisual gridObjectVisual = visualTransform.GetComponent<GridObjectVisual>();
                 gridObjectVisual.SetGridObject(GetGridObject(gridPosition));
-
+                GetGridObject(gridPosition).SetGridObjectVisual(gridObjectVisual);
                 gridObjectVisualArray[x, y] = gridObjectVisual;
             }
         }

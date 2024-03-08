@@ -17,6 +17,7 @@ public class Unit : NetworkBehaviour, ITargetable {
     public event EventHandler OnAdditionalUnitBought;
 
     [SerializeField] private Transform projectileTarget;
+    [SerializeField] private UnitVisual unitVisual;
 
     public class OnUnitDazedEventArgs : EventArgs {
         public float dazedTime;
@@ -103,8 +104,9 @@ public class Unit : NetworkBehaviour, ITargetable {
         }
     }
 
-    protected void SetParentBuilding() {
-        Building parentBuilding = BattleGrid.Instance.GetBuildingAtGridPosition(currentGridPosition);
+    public void SetParentBuilding() {
+        GridPosition parentTroopCenterPointGridPosition = BattleGrid.Instance.GetGridPosition(parentTroop.GetTroopCenterPoint());
+        Building parentBuilding = BattleGrid.Instance.GetBuildingAtGridPosition(parentTroopCenterPointGridPosition);
         this.parentBuilding = parentBuilding;
         parentBuilding.OnBuildingDestroyed += ParentBuilding_OnBuildingDestroyed;
     }
@@ -185,6 +187,10 @@ public class Unit : NetworkBehaviour, ITargetable {
 
     public IDamageable GetIDamageable() {
         return GetComponent<UnitHP>();
+    }
+
+    public UnitVisual GetUnitVisual() {
+        return unitVisual;
     }
 
     #endregion

@@ -13,11 +13,13 @@ MonoBehaviour:
   m_Name: Dragon
   m_EditorClassIdentifier: 
   unitTagList: 
-  HP: 10
+  unitTargetType: 0
+  HP: 100
   armor: 0
   mass: 60
   moveType: 0
   unitMoveSpeed: 80
-  mainAttackSO: {fileID: 11400000, guid: 385580abebce0f4498364c7ce3150c9e, type: 2}
-  sideAttackSO: {fileID: 11400000, guid: 1665b88c4be65264181bcc853277a35e, type: 2}
+  isGarrisonedUnit: 0
+  mainAttackSO: {fileID: 11400000, guid: b6ded733d3aa217488bbd42cde0fadce, type: 2}
+  sideAttackSO: {fileID: 0}
   specialAttackSO: {fileID: 0}

@@ -6,4 +6,6 @@ using UnityEngine;
 public class TroopSO : ScriptableObject {
     public GameObject troopPrefab;
     public GameObject unitPrefab;
+
+    public AttackSO mainTroopAttackSO;
 }

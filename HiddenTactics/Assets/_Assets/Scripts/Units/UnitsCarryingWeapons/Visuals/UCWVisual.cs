@@ -72,7 +72,7 @@ public class UCWVisual : UnitVisual
     }
 
     private void Ucw_OnUnitUpgraded(object sender, EventArgs e) {
-        ChangeSpriteRendererListMaterial(bodySpriteRendererList, upgradedBodyMaterial);
+        ChangeSpriteRendererListMaterial(allVisualsSpriteRendererList, upgradedBodyMaterial);
 
         if (upgradeReplacesBody) {
             activeBodyAnimator = upgradedBodyAnimator;

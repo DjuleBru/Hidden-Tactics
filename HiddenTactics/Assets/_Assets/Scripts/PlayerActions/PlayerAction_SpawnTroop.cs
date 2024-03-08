@@ -129,7 +129,7 @@ public class PlayerAction_SpawnTroop : NetworkBehaviour {
         if(buildingToSpawnSO.hasGarrisonedTroop) {
             // Spawn garrisoned troop
             int troopIndex = BattleDataManager.Instance.GetTroopSOIndex(buildingToSpawnSO.garrisonedTroopSO);
-            SpawnTroopServerRpc(troopIndex, NetworkManager.Singleton.LocalClientId);
+            SpawnTroopServerRpc(troopIndex, ownerClientId);
         }
 
     }
@@ -188,6 +188,9 @@ public class PlayerAction_SpawnTroop : NetworkBehaviour {
         if (isAdditionalUnit) {
             unitSpawned.SetUnitAsAdditionalUnit();
         }
+
+        // Set Unit AI to Idle
+        unitSpawned.GetComponent<UnitAI>().SetIdleState();
     }
 
     [ServerRpc(RequireOwnership = false)]
