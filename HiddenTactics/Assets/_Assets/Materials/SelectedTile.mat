@@ -45,7 +45,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _FadeTex:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: b2ae57e82cd4b4d4ebfa9986f7c77c83, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _GlowTex:
@@ -112,7 +112,7 @@ Material:
     - _FadeBurnGlow: 2
     - _FadeBurnTransition: 0.075
     - _FadeBurnWidth: 0.025
-    - _FishEyeUvAmount: 0.086
+    - _FishEyeUvAmount: 0.06
     - _FlickerAlpha: 0
     - _FlickerFreq: 0.2
     - _FlickerPercent: 0.05
@@ -121,11 +121,11 @@ Material:
     - _GhostTransparency: 0
     - _GlitchAmount: 3
     - _GlitchSize: 1
-    - _Glow: 0.05
-    - _GlowGlobal: 1
-    - _GradBlend: 0.204
-    - _GradBoostX: 0.24
-    - _GradBoostY: 1.2
+    - _Glow: 0
+    - _GlowGlobal: 1.1
+    - _GradBlend: 1
+    - _GradBoostX: 2.55
+    - _GradBoostY: 2.48
     - _GradIsRadial: 1
     - _GrassManualAnim: 1
     - _GrassManualToggle: 0
@@ -137,7 +137,7 @@ Material:
     - _GreyscaleOutline: 0
     - _HandDrawnAmount: 10
     - _HandDrawnSpeed: 5
-    - _HitEffectBlend: 1
+    - _HitEffectBlend: 0.022
     - _HitEffectGlow: 5
     - _HologramBlend: 1
     - _HologramMaxAlpha: 0.75
@@ -189,7 +189,7 @@ Material:
     - _RectSize: 1
     - _RotateUvAmount: 0
     - _RoundWaveSpeed: 2
-    - _RoundWaveStrength: 0.7
+    - _RoundWaveStrength: 0.018
     - _ShadowAlpha: 0.5
     - _ShadowX: 0.5
     - _ShadowY: -0.05
@@ -216,7 +216,7 @@ Material:
     - _WaveY: 0.5
     - _ZTestMode: 4
     - _ZWrite: 0
-    - _ZoomUvAmount: 1.05
+    - _ZoomUvAmount: 1.13
     m_Colors:
     - _AlphaOutlineColor: {r: 0, g: 0, b: 0, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
@@ -231,9 +231,9 @@ Material:
     - _ColorSwapRed: {r: 1, g: 1, b: 1, a: 1}
     - _FadeBurnColor: {r: 1, g: 1, b: 0, a: 1}
     - _GlowColor: {r: 1, g: 1, b: 1, a: 1}
-    - _GradBotLeftCol: {r: 1, g: 1, b: 1, a: 0}
+    - _GradBotLeftCol: {r: 0.047169805, g: 0.047169805, b: 0.047169805, a: 0}
     - _GradBotRightCol: {r: 0, g: 1, b: 0, a: 1}
-    - _GradTopLeftCol: {r: 0, g: 0, b: 0, a: 0}
+    - _GradTopLeftCol: {r: 1, g: 1, b: 1, a: 1}
     - _GradTopRightCol: {r: 1, g: 1, b: 0, a: 1}
     - _GreyscaleTintColor: {r: 1, g: 1, b: 1, a: 1}
     - _HitEffectColor: {r: 1, g: 1, b: 1, a: 1}

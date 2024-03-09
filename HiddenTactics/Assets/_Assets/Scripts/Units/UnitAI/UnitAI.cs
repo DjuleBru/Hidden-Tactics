@@ -60,7 +60,9 @@ public class UnitAI : NetworkBehaviour
 
         if (!unitActive | !unit.GetUnitIsBought() | state.Value == State.dead) return;
 
-        CheckConditionsBeforeSwitch();
+        if(state.Value != State.idle) {
+            CheckConditionsBeforeSwitch();
+        }
 
         switch (state.Value) {
             case State.idle:

@@ -21,45 +21,53 @@ public class PlayerAction_SelectTroop : NetworkBehaviour {
         if (PlayerActionsManager.LocalInstance.GetCurrentAction() != PlayerActionsManager.Action.Idle) return;
 
         if (Input.GetMouseButtonDown(1)) {
-            // Right click : cancel troop placement
-            if(selectedTroop != null) {
-                selectedTroop.GetTroopUI().HideTroopSelectedUI();
-                selectedTroop = null;
-            }
+            CancelTroopSelection();
         }
 
         if (Input.GetMouseButtonDown(0)) {
             if (!BattleGrid.Instance.IsValidGridPosition(MousePositionManager.Instance.GetMouseGridPosition())) return;
             // Player attempts click on valid grid position
+            HandleTroopSelection();
+        }
+    }
+
+    private void CancelTroopSelection() {
+        if (selectedTroop != null) {
+            selectedTroop.GetTroopUI().HideTroopSelectedUI();
+            selectedTroop = null;
+        }
+    }
+
+    private void HandleTroopSelection() {
+
+        if (selectedTroop != null) {
+            // Deselect previously selected troop
+            selectedTroop.GetTroopUI().HideTroopSelectedUI();
+        }
+
+        Troop newSelectedTroop = BattleGrid.Instance.GetTroopAtGridPosition(MousePositionManager.Instance.GetMouseGridPosition());
+        if (newSelectedTroop != null) {
+            // Player clicked on a valid troop
 
             if (selectedTroop != null) {
-                // Deselect previously selected troop
-                selectedTroop.GetTroopUI().HideTroopSelectedUI();
-            }
-
-            Troop newSelectedTroop = BattleGrid.Instance.GetTroopAtGridPosition(MousePositionManager.Instance.GetMouseGridPosition());
-            if(newSelectedTroop != null) {
-                // Player clicked on a valid troop
-
-                if(selectedTroop != null) {
-                    // There was already a troop selected
-                    if(selectedTroop == newSelectedTroop) {
-                        // Player clicked the same troop again to deselect
-                        selectedTroop.GetTroopUI().HideTroopSelectedUI();
-                        selectedTroop = null;
-                    } else {
-                        // Player clicked a new troop with a previous troop selected
-                        selectedTroop = newSelectedTroop;
-                        selectedTroop.GetTroopUI().ShowTroopSelectedUI();
-                    }
-                } else {
+                // There was already a troop selected
+                if (selectedTroop == newSelectedTroop) {
+                    // Player clicked the same troop again to deselect
+                    selectedTroop.GetTroopUI().HideTroopSelectedUI();
+                    selectedTroop = null;
+                }
+                else {
+                    // Player clicked a new troop with a previous troop selected
                     selectedTroop = newSelectedTroop;
                     selectedTroop.GetTroopUI().ShowTroopSelectedUI();
                 }
             }
+            else {
+                selectedTroop = newSelectedTroop;
+                selectedTroop.GetTroopUI().ShowTroopSelectedUI();
+            }
         }
     }
-
     private void BattleManager_OnStateChanged(object sender, System.EventArgs e) {
         // Deselect troop
     }

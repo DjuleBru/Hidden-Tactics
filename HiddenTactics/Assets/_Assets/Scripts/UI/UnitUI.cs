@@ -11,6 +11,12 @@ public class UnitUI : NetworkBehaviour
     [SerializeField] private GameObject unitHPBarGameObject;
     [SerializeField] private Image unitHPBarImage;
     [SerializeField] private Image unitHPBarDamageImage;
+    [SerializeField] private Image unitTargetImage;
+
+    [SerializeField] private Sprite meleeTargetSprite;
+    [SerializeField] private Sprite rangedTargetSprite;
+    [SerializeField] private Sprite healTargetSprite;
+    [SerializeField] private Sprite armorTargetSprite;
 
     private float damageBarUpdateTimer;
     private float damageBarUpdateRate = .8f;
@@ -18,6 +24,7 @@ public class UnitUI : NetworkBehaviour
     private float delayToUpdateDamageBar = .4f;
 
     private bool updateHPBarFinished;
+    private bool unitHPBarIsActive;
     private float updateHPBarDuration = 1f;
     private float updateHPBarTimer;
 
@@ -26,6 +33,7 @@ public class UnitUI : NetworkBehaviour
 
     private void Awake() {
         unitHPBarGameObject.SetActive(false);
+        unitTargetImage.gameObject.SetActive(false);
         hideHPBarTimer = hideHPBarDuration;
         damageBarUpdateTimer = delayToUpdateDamageBar;
 
@@ -56,9 +64,12 @@ public class UnitUI : NetworkBehaviour
             }
 
         } else {
+            if (!unitHPBarIsActive) return;
+
             hideHPBarTimer -= Time.deltaTime;
             if(hideHPBarDuration < 0) {
                 unitHPBarGameObject.SetActive(false);
+                unitHPBarIsActive = false;
             }
         }
     }
@@ -88,12 +99,14 @@ public class UnitUI : NetworkBehaviour
 
     private void UpdateUnitHPBar(float initialUnitHP, float newUnitHP) {
         unitHPBarGameObject.SetActive(true);
+        unitHPBarIsActive = true;
         updateHPBarFinished = false;
         hideHPBarTimer = hideHPBarDuration;
 
         damageBarUpdateTimer = delayToUpdateDamageBar;
 
         unitHPBarGameObject.SetActive(true);
+        unitHPBarIsActive = true;
         unitHPBarImage.fillAmount = newUnitHP / unitHP.GetMaxHP();
 
         if(updateHPBarTimer > 0) {
@@ -101,4 +114,29 @@ public class UnitUI : NetworkBehaviour
         }
     }
 
+    public void ShowUnitAsMeleeTarget() {
+        if (!unit.GetUnitIsBought() | unit.IsOwnedByPlayer()) return;
+        unitTargetImage.sprite = meleeTargetSprite;
+        unitTargetImage.gameObject.SetActive(true);
+    }
+    public void ShowUnitUIAsRangedTarget() {
+        if (!unit.GetUnitIsBought() | unit.IsOwnedByPlayer()) return;
+        unitTargetImage.sprite = rangedTargetSprite;
+        unitTargetImage.gameObject.SetActive(true);
+    }
+    public void ShowUnitAsHealTarget() {
+        if (!unit.GetUnitIsBought() | unit.IsOwnedByPlayer()) return;
+        unitTargetImage.sprite = healTargetSprite;
+        unitTargetImage.gameObject.SetActive(true);
+    }
+    public void ShowUnitAsArmorTarget() {
+        if (!unit.GetUnitIsBought() | unit.IsOwnedByPlayer()) return;
+        unitTargetImage.sprite = armorTargetSprite;
+        unitTargetImage.gameObject.SetActive(true);
+    }
+
+    public void HideUnitTargetUI() {
+        if (!unit.GetUnitIsBought() | unit.IsOwnedByPlayer()) return;
+        unitTargetImage.gameObject.SetActive(false);
+    }
 }

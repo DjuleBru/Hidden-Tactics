@@ -10,8 +10,6 @@ Material:
   m_Name: TargetTile
   m_Shader: {fileID: 4800000, guid: a36b7719ff0465b42ab1407d67672c5f, type: 3}
   m_ValidKeywords:
-  - GLOW_ON
-  - GRADIENT_ON
   - RADIALGRADIENT_ON
   m_InvalidKeywords:
   - _GRADISRADIAL_ON
@@ -74,7 +72,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Alpha: 1
+    - _Alpha: 0.604
     - _AlphaCutoffValue: 0.25
     - _AlphaOutlineBlend: 1
     - _AlphaOutlineGlow: 7.9
@@ -123,8 +121,8 @@ Material:
     - _GlitchSize: 1
     - _Glow: 0.05
     - _GlowGlobal: 1
-    - _GradBlend: 0.167
-    - _GradBoostX: 0.24
+    - _GradBlend: 0.188
+    - _GradBoostX: 1.37
     - _GradBoostY: 1.2
     - _GradIsRadial: 1
     - _GrassManualAnim: 1
@@ -219,7 +217,7 @@ Material:
     - _ZoomUvAmount: 1.05
     m_Colors:
     - _AlphaOutlineColor: {r: 0, g: 0, b: 0, a: 1}
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Color: {r: 0.6886792, g: 0, b: 0, a: 0.98039216}
     - _ColorChangeNewCol: {r: 1, g: 1, b: 0, a: 1}
     - _ColorChangeNewCol2: {r: 1, g: 1, b: 0, a: 1}
     - _ColorChangeNewCol3: {r: 1, g: 1, b: 0, a: 1}
@@ -231,9 +229,9 @@ Material:
     - _ColorSwapRed: {r: 1, g: 1, b: 1, a: 1}
     - _FadeBurnColor: {r: 1, g: 1, b: 0, a: 1}
     - _GlowColor: {r: 1, g: 1, b: 1, a: 1}
-    - _GradBotLeftCol: {r: 1, g: 1, b: 1, a: 0}
+    - _GradBotLeftCol: {r: 1, g: 0, b: 0, a: 1}
     - _GradBotRightCol: {r: 0, g: 1, b: 0, a: 1}
-    - _GradTopLeftCol: {r: 1, g: 0, b: 0, a: 1}
+    - _GradTopLeftCol: {r: 0, g: 0, b: 0, a: 0}
     - _GradTopRightCol: {r: 1, g: 1, b: 0, a: 1}
     - _GreyscaleTintColor: {r: 1, g: 1, b: 1, a: 1}
     - _HitEffectColor: {r: 1, g: 1, b: 1, a: 1}

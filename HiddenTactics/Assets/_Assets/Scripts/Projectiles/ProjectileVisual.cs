@@ -48,11 +48,8 @@ public class ProjectileVisual : MonoBehaviour
     private void UpdateProjectileRotation() {
         Vector3 projectileDir = projectile.GetProjectileMoveDir();
 
-        if(newPositionXNormalized < 0.75) {
-            bodyVisual.transform.rotation = LookAtTarget(projectileDir);
-            shadowVisual.transform.rotation = LookAtTarget(projectileDir);
-        }
-
+        bodyVisual.transform.rotation = LookAtTarget(projectileDir);
+        shadowVisual.transform.rotation = LookAtTarget(projectileDir);
     }
 
     private Quaternion LookAtTarget(Vector2 moveDir) {

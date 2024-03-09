@@ -16,7 +16,9 @@ public class GridObjectVisual : MonoBehaviour
     [SerializeField] GameObject debugCanvas;
 
     [SerializeField] SpriteRenderer gridSprite;
-    [SerializeField] GameObject attackTargetGameObject;
+    [SerializeField] SpriteRenderer overlayGridSprite;
+    [SerializeField] Sprite overlayGradientSprite;
+    [SerializeField] GameObject rangedAttackTargetGameObject;
 
     private Material cleanMaterial;
     [SerializeField] Material selectedMaterial;
@@ -30,6 +32,8 @@ public class GridObjectVisual : MonoBehaviour
         if(!showDebugInfo) {
             debugCanvas.SetActive(false);
         }
+
+        ResetVisual();
     }
 
     public void SetGridObject(GridObject gridObject) {
@@ -69,18 +73,23 @@ public class GridObjectVisual : MonoBehaviour
         }
     }
 
-    public void SetSelected() {
+    public void SetHovered() {
         gridSprite.material = selectedMaterial;
     }
 
     public void ResetVisual() {
         gridSprite.material = cleanMaterial;
-        attackTargetGameObject.SetActive(false);
+        overlayGridSprite.material = cleanMaterial;
+
+        rangedAttackTargetGameObject.SetActive(false);
+        overlayGridSprite.gameObject.SetActive(false);
     }
 
     public void SetAsAttackTargetTile() {
-        attackTargetGameObject.SetActive(true);
-        gridSprite.material = targetTileMaterial;
+        overlayGridSprite.sprite = overlayGradientSprite;
+        overlayGridSprite.material = targetTileMaterial;
+        overlayGridSprite.gameObject.SetActive(true);
+        rangedAttackTargetGameObject.SetActive(true);
     }
 
     public void SetGridSprite(List<Sprite> sprites) {

@@ -47,7 +47,7 @@ public class Projectile : NetworkBehaviour
     protected virtual void Update() {
         if (projectileHasHit) return;
 
-        if (newPositionXNormalized < 1) {
+        if (newPositionXNormalized < .95) {
             UpdateNewPosition();
         } else {
             projectileHasHit = true;

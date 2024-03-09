@@ -18,6 +18,7 @@ public class Unit : NetworkBehaviour, ITargetable {
 
     [SerializeField] private Transform projectileTarget;
     [SerializeField] private UnitVisual unitVisual;
+    [SerializeField] private UnitUI unitUI;
 
     public class OnUnitDazedEventArgs : EventArgs {
         public float dazedTime;
@@ -163,6 +164,10 @@ public class Unit : NetworkBehaviour, ITargetable {
 
     public UnitSO GetUnitSO() {
         return unitSO;
+    }
+
+    public UnitUI GetUnitUI() {
+        return unitUI;
     }
 
     public Troop GetParentTroop() {
