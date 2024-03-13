@@ -68,6 +68,21 @@ public class BattleGrid : MonoBehaviour
         return gridSystem.IsValidPlayerGridPosition(gridPosition);
     }
 
+    public List<IPlaceable> GetIPlaceableListAtGridPosition(GridPosition gridPosition) {
+        GridObject gridObject = gridSystem.GetGridObject(gridPosition);
+        return gridObject.GetIPlaceableList();
+    }
+
+    public IPlaceable GetIPlaceableSpawnedAtGridPosition(GridPosition gridPosition) {
+        GridObject gridObject = gridSystem.GetGridObject(gridPosition);
+        return gridObject.GetIPlaceableSpawned();
+    }
+
+    public void SetIPlaceableSpawnedAtGridPosition(IPlaceable iPlaceable, GridPosition gridPosition) {
+        GridObject gridObject = gridSystem.GetGridObject(gridPosition);
+        gridObject.SetIPlaceableAsSpawned(iPlaceable);
+    }
+
     #region TROOP
     public void AddIPlaceableAtGridPosition(GridPosition gridPosition, IPlaceable iPlaceable) {
             GridObject gridObject = gridSystem.GetGridObject(gridPosition);

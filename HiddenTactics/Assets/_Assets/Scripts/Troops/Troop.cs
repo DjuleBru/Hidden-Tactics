@@ -122,6 +122,9 @@ public class Troop : MonoBehaviour, IPlaceable {
         isPlaced = true;
 
         SetIPlaceableBattlefieldParent(currentGridPosition);
+
+        // Set placed troop on grid object
+        BattleGrid.Instance.SetIPlaceableSpawnedAtGridPosition(this, currentGridPosition);
     }
 
     public void SetIPlaceableGridPosition(GridPosition troopGridPosition) {

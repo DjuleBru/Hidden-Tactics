@@ -7,8 +7,14 @@ public class GridObject
     private GridSystem gridSystem;
     private GridPosition gridPosition;
     private List<IPlaceable> iPlaceableList;
-    private Troop troop;
-    private Building building;
+
+    private Troop troopAtGridPosition;
+    private Building buildingAtGridPosition;
+
+    private Troop troopSpawnedAtGridPosition;
+    private Building buildingSpawnedAtGridPosition;
+    private IPlaceable iPlaceableSpawnedAtGridPosition;
+
     private List<Unit> unitList;
     private GridObjectVisual gridObjectVisual;
 
@@ -27,11 +33,13 @@ public class GridObject
         iPlaceableList.Add(iPlaceable);
 
         if(iPlaceable is Troop) {
-            troop = iPlaceable as Troop;
+            if (troopAtGridPosition != null) return;
+            troopAtGridPosition = iPlaceable as Troop;
         }
 
         if (iPlaceable is Building) {
-            building = iPlaceable as Building;
+            if (buildingAtGridPosition != null) return;
+            buildingAtGridPosition = iPlaceable as Building;
         }
     }
 
@@ -39,20 +47,44 @@ public class GridObject
         iPlaceableList.Remove(iPlaceable);
 
         if (iPlaceable is Troop) {
-            troop = null;
+            if(iPlaceable as Troop == troopAtGridPosition) {
+                troopAtGridPosition = null;
+            }
         }
 
         if (iPlaceable is Building) {
-            building = null;
+            if (iPlaceable as Building == buildingAtGridPosition) {
+                buildingAtGridPosition = null;
+            }
         }
     }
 
+    public void SetIPlaceableAsSpawned(IPlaceable iPlaceable) {
+        if (iPlaceable is Troop) {
+            troopSpawnedAtGridPosition = iPlaceable as Troop;
+            iPlaceableSpawnedAtGridPosition = troopSpawnedAtGridPosition;
+        }
+
+        if (iPlaceable is Building) {
+            buildingSpawnedAtGridPosition = iPlaceable as Building;
+            iPlaceableSpawnedAtGridPosition = buildingSpawnedAtGridPosition;
+        }
+    }
+
+    public IPlaceable GetIPlaceableSpawned() {
+        return iPlaceableSpawnedAtGridPosition;
+    }
+
     public Troop GetTroop() {
-        return troop;
+        return troopAtGridPosition;
     }
 
     public Building GetBuilding() {
-        return building;
+        return buildingAtGridPosition;
+    }
+
+    public List<IPlaceable> GetIPlaceableList() {
+        return iPlaceableList;
     }
 
     public void AddUnit(Unit unit) {

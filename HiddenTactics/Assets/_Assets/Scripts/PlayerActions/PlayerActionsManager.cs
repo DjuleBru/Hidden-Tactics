@@ -39,7 +39,6 @@ public class PlayerActionsManager : NetworkBehaviour {
                     ChangeAction(Action.Idle);
                 }
                 break;
-
         }
     }
 

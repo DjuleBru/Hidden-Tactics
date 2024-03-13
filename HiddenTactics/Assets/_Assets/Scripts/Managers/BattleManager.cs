@@ -61,7 +61,10 @@ public class BattleManager : NetworkBehaviour
         switch (state.Value) {
 
             case State.WaitingToStart:
-            break;
+                if (!HiddenTacticsMultiplayer.Instance.IsMultiplayer()) {
+                    state.Value = State.PreparationPhase;
+                }
+                break;
 
             case State.BattlePhaseStarting:
             break;

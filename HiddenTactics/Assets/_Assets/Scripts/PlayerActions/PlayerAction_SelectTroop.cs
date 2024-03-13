@@ -19,14 +19,15 @@ public class PlayerAction_SelectTroop : NetworkBehaviour {
     private void Update() {
         // Do not allow troop selection is player is not in idle state
         if (PlayerActionsManager.LocalInstance.GetCurrentAction() != PlayerActionsManager.Action.Idle) return;
-
+        //Do not allow troop selection during another phase than the preparation phase
+        if (!BattleManager.Instance.IsPreparationPhase()) return;
         if (Input.GetMouseButtonDown(1)) {
             CancelTroopSelection();
         }
 
         if (Input.GetMouseButtonDown(0)) {
             if (!BattleGrid.Instance.IsValidGridPosition(MousePositionManager.Instance.GetMouseGridPosition())) return;
-            // Player attempts click on valid grid position
+
             HandleTroopSelection();
         }
     }
@@ -46,6 +47,7 @@ public class PlayerAction_SelectTroop : NetworkBehaviour {
         }
 
         Troop newSelectedTroop = BattleGrid.Instance.GetTroopAtGridPosition(MousePositionManager.Instance.GetMouseGridPosition());
+
         if (newSelectedTroop != null) {
             // Player clicked on a valid troop
 
@@ -70,6 +72,7 @@ public class PlayerAction_SelectTroop : NetworkBehaviour {
     }
     private void BattleManager_OnStateChanged(object sender, System.EventArgs e) {
         // Deselect troop
+        DeselectTroop();
     }
 
     public void DeselectTroop() {
@@ -77,5 +80,4 @@ public class PlayerAction_SelectTroop : NetworkBehaviour {
             selectedTroop.GetTroopUI().HideTroopSelectedUI();
         }
     }
-
 }

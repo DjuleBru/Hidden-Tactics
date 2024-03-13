@@ -105,6 +105,9 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
         if (!isOwnedByPlayer) {
             transform.localScale = new Vector3(-1,1,1);
         }
+
+        // Set placed troop on grid object
+        BattleGrid.Instance.SetIPlaceableSpawnedAtGridPosition(this, currentGridPosition);
     }
 
     public void SetIPlaceableOwnerClientId(ulong clientId) {

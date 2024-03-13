@@ -71,7 +71,11 @@ public class PlayerAction_SpawnTroop : NetworkBehaviour {
 
     public bool IsValidIPlaceableSpawningTarget() {
         GridPosition iPlaceableSpawnGridPosition = MousePositionManager.Instance.GetMouseGridPosition();
-        return BattleGrid.Instance.IsValidPlayerGridPosition(iPlaceableSpawnGridPosition);
+
+        Debug.Log(BattleGrid.Instance.GetIPlaceableSpawnedAtGridPosition(iPlaceableSpawnGridPosition) as MonoBehaviour);
+        Debug.Log("iplaceable here ? " + BattleGrid.Instance.GetIPlaceableSpawnedAtGridPosition(iPlaceableSpawnGridPosition) == null);
+        // If it is a player grid position AND nothing is on the grid position
+        return (BattleGrid.Instance.IsValidPlayerGridPosition(iPlaceableSpawnGridPosition) && BattleGrid.Instance.GetIPlaceableSpawnedAtGridPosition(iPlaceableSpawnGridPosition) == null);
     }
 
     public void PlaceIPlaceableList() {
@@ -210,7 +214,10 @@ public class PlayerAction_SpawnTroop : NetworkBehaviour {
             spawnedIPlaceableGridPosition = BattleGrid.Instance.TranslateOpponentGridPosition(spawnedIPlaceableGridPosition);
         }
 
+        // Set grid position on iPlaceable
         iPlaceableSpawned.SetIPlaceableGridPosition(spawnedIPlaceableGridPosition);
+
+        // Carry out placed logic on iPlaceable
         iPlaceableSpawned.PlaceIPlaceable();
     }
     #endregion
