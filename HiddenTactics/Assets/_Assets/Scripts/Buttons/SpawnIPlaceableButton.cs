@@ -4,7 +4,7 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class SpawnIPlaceableTestButton : MonoBehaviour
+public class SpawnIPlaceableButton : MonoBehaviour
 {
     [SerializeField] TroopSO troopToSpawnSO;
     [SerializeField] BuildingSO buildingToSpawnSO;

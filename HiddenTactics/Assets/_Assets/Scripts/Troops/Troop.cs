@@ -115,6 +115,18 @@ public class Troop : MonoBehaviour, IPlaceable {
         isOwnedByPlayer = (ownerClientId == NetworkManager.Singleton.LocalClientId);
     }
 
+    public void UpgradeTroop() {
+        foreach(Unit unit in unitsInTroop) {
+            unit.UpgradeUnit();
+        }
+    }
+
+    public void BuyAdditionalUnit() {
+        foreach (Unit unit in unitsInTroop) {
+            unit.BuyAdditionalUnit();
+        }
+    }
+
     public void PlaceIPlaceable() {
         OnTroopPlaced?.Invoke(this, null);
         currentGridPosition = BattleGrid.Instance.GetGridPosition(troopCenterPoint.position);

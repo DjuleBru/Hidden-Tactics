@@ -54,11 +54,13 @@ public class UCW : Unit {
     }
 
     public void SetLegendaryState(LegendaryState legendaryState) {
+        if (!unitIsBought) return;
         this.legendaryState = legendaryState;
         OnLegendaryStateChanged?.Invoke(this, new EventArgs());
     }
 
     public void SetMagicState(MagicState magicState) {
+        if (!unitIsBought) return;
         this.magicState = magicState;
         OnMagicStateChanged?.Invoke(this, new EventArgs());
     }

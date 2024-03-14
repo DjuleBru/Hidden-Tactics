@@ -107,8 +107,9 @@ GameObject:
   - component: {fileID: 1631562426849400937}
   - component: {fileID: 505331165834963854}
   - component: {fileID: 3196709892920038279}
+  - component: {fileID: 7478483890127651228}
   m_Layer: 0
-  m_Name: AddUnitsToTroopButton
+  m_Name: BuyAdditionalUnitsButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -217,6 +218,19 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &7478483890127651228
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2623498760794266404}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 047db7fe1d6fca94a94852bbe985a57b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  troop: {fileID: -7405699509265139040}
 --- !u!1 &2721904732506363477
 GameObject:
   m_ObjectHideFlags: 0
@@ -801,6 +815,7 @@ GameObject:
   - component: {fileID: 7962947880900229957}
   - component: {fileID: 6984546594593421140}
   - component: {fileID: 4687392971831044005}
+  - component: {fileID: 8846839239505875069}
   m_Layer: 0
   m_Name: UpgradeTroopButton
   m_TagString: Untagged
@@ -911,6 +926,19 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &8846839239505875069
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5338059086245083034}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c83773db114149748967640c1945b93f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  troop: {fileID: -7405699509265139040}
 --- !u!1 &5585552203517760635
 GameObject:
   m_ObjectHideFlags: 0

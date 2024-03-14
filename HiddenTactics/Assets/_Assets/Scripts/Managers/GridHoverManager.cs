@@ -55,11 +55,11 @@ public class GridHoverManager : MonoBehaviour
     private void HandleUnitHover() {
         List<Unit> previousHoveredUnitList = BattleGrid.Instance.GetUnitListAtGridPosition(previousHoveredGridPosition);
 
-        if(previousHoveredUnitList.Count > 0) {
-            foreach(Unit unit in previousHoveredUnitList) {
-                unit.GetUnitVisual().SetUnitHovered(false);
-            }
-        }
+        //if(previousHoveredUnitList.Count > 0) {
+        //    foreach(Unit unit in previousHoveredUnitList) {
+        //        unit.GetUnitVisual().SetUnitHovered(false);
+        //    }
+        //}
 
         List<Unit> newHoveredUnitList = BattleGrid.Instance.GetUnitListAtGridPosition(currentHoveredGridPosition);
         if (newHoveredUnitList.Count > 0) {
@@ -80,21 +80,34 @@ public class GridHoverManager : MonoBehaviour
         }
 
         if (newHoveredTroop != null) {
-            AttackSO mainTroopAttackSO = newHoveredTroop.GetTroopSO().mainTroopAttackSO;
+            AttackSO troopMainAttackSO = newHoveredTroop.GetTroopSO().unitPrefab.GetComponent<Unit>().GetUnitSO().mainAttackSO;
+            AttackSO troopSideAttackSO = newHoveredTroop.GetTroopSO().unitPrefab.GetComponent<Unit>().GetUnitSO().sideAttackSO;
 
-            if (mainTroopAttackSO.attackType != AttackSO.AttackType.ranged) return;
-            // Only show this if it is a ranged attack
+            if (troopMainAttackSO != null) {
+                if (troopMainAttackSO.attackType == AttackSO.AttackType.ranged) {
+                    ShowRangedAttackSOAttackTiles(troopMainAttackSO);
+                }
+            }
 
-            foreach(Vector2 gridPositionVector in mainTroopAttackSO.attackTargetTiles) {
-                GridPosition rangedAttackGridPosition = new GridPosition((int)gridPositionVector.x, (int)gridPositionVector.y);
-                rangedAttackGridPosition = rangedAttackGridPosition + currentHoveredGridPosition;
-
-                SetGridObjectVisualAsAttackTarget(rangedAttackGridPosition);
-                HandleSettingUnitsAsRangedAttackTarget(rangedAttackGridPosition);
+            if (troopSideAttackSO != null) {
+                if(troopSideAttackSO.attackType == AttackSO.AttackType.ranged) {
+                    ShowRangedAttackSOAttackTiles(troopSideAttackSO);
+                }
             }
         }
     }
 
+    private void ShowRangedAttackSOAttackTiles(AttackSO attackSO) {
+        // Only show this if it is a ranged attack
+
+        foreach (Vector2 gridPositionVector in attackSO.attackTargetTiles) {
+            GridPosition rangedAttackGridPosition = new GridPosition((int)gridPositionVector.x, (int)gridPositionVector.y);
+            rangedAttackGridPosition = rangedAttackGridPosition + currentHoveredGridPosition;
+
+            SetGridObjectVisualAsAttackTarget(rangedAttackGridPosition);
+            HandleSettingUnitsAsRangedAttackTarget(rangedAttackGridPosition);
+        }
+    }
     private void SetGridObjectVisualAsAttackTarget(GridPosition rangedAttackGridPosition) {
         GridObjectVisual targetGridPositionGridObjectVisual = BattleGrid.Instance.GetGridObjectVisual(rangedAttackGridPosition);
         attackTargetTilesGridObjectVisuals.Add(targetGridPositionGridObjectVisual);

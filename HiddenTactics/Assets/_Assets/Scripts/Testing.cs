@@ -1,20 +1,21 @@
 using Sirenix.OdinInspector;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEditor.Rendering;
 using UnityEngine;
 
 public class Testing : MonoBehaviour
 {
-    UCW[] ucws;
-    WeaponVisual[] weaponVisuals;
-    UCWAnimatorManager[] UCWAnimatorManagers;
+    [SerializeField] Troop troop;
+    List<UCW> ucws = new List<UCW>();
+    List<WeaponVisual> weaponVisuals = new List<WeaponVisual>();
+    List<UCWAnimatorManager> UCWAnimatorManagers = new List<UCWAnimatorManager>();
     UnitAnimatorManager[] unitAnimatorManagers;
     Mage[] mages;
-    Unit[] units;
+    List<Unit> units;
 
     [SerializeField] float unitSpeed;
-    private float statSpeedToGameSpeed = 6.25f;
 
     [OnValueChanged("MyCallback"), Range(-1, 1)]
     [SerializeField] private float X;
@@ -29,51 +30,8 @@ public class Testing : MonoBehaviour
     UCW.LegendaryState legendaryStateUpdated;
     UCW.MagicState magicStateUpdated;
 
-    bool walking;
-
-    BattlefieldAnimationTesting battlefieldAnimationManager;
-    Battlefield battlefieldParent;
-
-    private void Start() {
-        ucws = GetComponentsInChildren<UCW>();
-        weaponVisuals = GetComponentsInChildren<WeaponVisual>();
-        UCWAnimatorManagers = GetComponentsInChildren<UCWAnimatorManager>();
-        unitAnimatorManagers = GetComponentsInChildren<UnitAnimatorManager>();
-        mages = GetComponentsInChildren<Mage>();
-        units = GetComponentsInChildren<Unit>();
-
-        SetUnitWatchingDirection();
-
-        unitSpeed = units[0].GetUnitSO().unitMoveSpeed;
-
-        BattlefieldAnimationTesting.Instance.OnBattlefieldSlammed += Instance_OnBattlefieldSlammed;
-        battlefieldParent = GetComponentInParent<Battlefield>();
-    }
-
-    private void Instance_OnBattlefieldSlammed(object sender, System.EventArgs e) {
-        Invoke("SetWalkingSpeed", 1.5f);
-    }
-
-    private void Update() {
-        if (walking) {
-            foreach (var unit in units) {
-                if(battlefieldParent.playerNumber == 1) {
-                    unit.transform.position += new Vector3(1, 0, 0) * unitSpeed / statSpeedToGameSpeed * Time.deltaTime;
-                } else {
-                    unit.transform.position += new Vector3(-1, 0, 0) * unitSpeed / statSpeedToGameSpeed * Time.deltaTime;
-                }
-            }
-        }
-    }
 
     private void MyCallback() {
-        foreach (var weaponVisual in weaponVisuals) {
-            weaponVisual.SetXY(X, Y);
-        }
-
-        foreach (var UnitAnimatorManager in unitAnimatorManagers) {
-            UnitAnimatorManager.SetXY(X, Y);
-        }
 
         legendaryStateUpdated = legendaryState;
         magicStateUpdated = magicState;
@@ -81,9 +39,19 @@ public class Testing : MonoBehaviour
         SetLedengaryState();
     }
 
+    [Button]
+    public void InitializeTest() {
+
+        units = troop.GetUnitInTroopList();
+
+        foreach (Unit unit in units) {
+            ucws.Add(unit as UCW);
+            weaponVisuals.Add(unit.GetComponentInChildren<WeaponVisual>());
+            UCWAnimatorManagers.Add(unit.GetComponentInChildren<UCWAnimatorManager>());
+        }
+    }
+
     #region UNITS GENERAL
-
-
 
     [Button, TabGroup("Unit")]
     public void UpgradeUnits()

@@ -240,9 +240,19 @@ public class Unit : NetworkBehaviour, ITargetable {
     }
 
     public void BuyAdditionalUnit() {
+        BuyAdditionalUnitServerRpc();
+    }
+
+    [ServerRpc]
+    private void BuyAdditionalUnitServerRpc() {
+        BuyAdditionalUnitClientRpc();
+    }
+
+    [ClientRpc]
+    private void BuyAdditionalUnitClientRpc() {
         collider2d.enabled = true;
-        unitIsBought = true;
         OnAdditionalUnitBought?.Invoke(this, EventArgs.Empty);
+        unitIsBought = true;
     }
 
     public void DestroySelf() {

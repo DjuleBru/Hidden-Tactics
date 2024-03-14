@@ -306,13 +306,13 @@ public class WeaponVisual : NetworkBehaviour
     }
 
     protected void Ucw_OnUnitSetAsAdditionalUnit(object sender, System.EventArgs e) {
-        weaponVisualSpriteRenderer.material = invisibleMaterial;
+        weaponVisualSpriteRenderer.enabled = false;
     }
 
     private void Ucw_OnUnitPlaced(object sender, System.EventArgs e) {
         if (!ucw.GetUnitIsBought()) return;
 
-        weaponVisualSpriteRenderer.material = cleanMaterial;
+        weaponVisualSpriteRenderer.enabled = true;
     }
 
     private void Ucw_OnMagicStateChanged(object sender, System.EventArgs e) {

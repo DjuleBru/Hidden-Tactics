@@ -37,6 +37,7 @@ public class UnitVisual : NetworkBehaviour
 
     public override void OnNetworkSpawn() {
         unit.OnUnitUpgraded += Unit_OnUnitUpgraded;
+        unit.OnAdditionalUnitBought += Unit_OnAdditionalUnitBought;
         unit.OnUnitPlaced += Unit_OnUnitPlaced;
         unit.OnUnitSetAsAdditionalUnit += Unit_OnUnitSetAsAdditionalUnit;
     }
@@ -48,6 +49,7 @@ public class UnitVisual : NetworkBehaviour
 
     protected virtual void Unit_OnUnitUpgraded(object sender, System.EventArgs e) {
         if (!unit.GetUnitIsBought()) return;
+
         ChangeSpriteRendererListMaterial(allVisualsSpriteRendererList, upgradedBodyMaterial);
 
         if (upgradeReplacesBody)
@@ -56,6 +58,14 @@ public class UnitVisual : NetworkBehaviour
             bodyAnimator.runtimeAnimatorController = upgradedBodyAnimator;
         }
     }
+
+    protected void Unit_OnAdditionalUnitBought(object sender, System.EventArgs e) {
+        if (!unit.GetUnitIsBought()) {
+            //Only run this on previously un bought units
+            ChangeSpriteRendererListMaterial(allVisualsSpriteRendererList, cleanMaterial);
+        }
+    }
+
 
     protected virtual void Unit_OnUnitPlaced(object sender, System.EventArgs e) {
         if (!unit.GetUnitIsBought()) return;

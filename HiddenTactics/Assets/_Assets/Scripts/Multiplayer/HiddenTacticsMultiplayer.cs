@@ -27,6 +27,9 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
     private NetworkList<PlayerData> playerDataNetworkList;
 
     private void Awake() {
+
+        Application.targetFrameRate = 60;
+
         Instance = this;
 
         DontDestroyOnLoad(gameObject);

@@ -88,6 +88,7 @@ GameObject:
   - component: {fileID: 1025621657051939005}
   - component: {fileID: 130291786104264943}
   - component: {fileID: 4100115040996210145}
+  - component: {fileID: 1146704105607986406}
   m_Layer: 5
   m_Name: RecruitButton
   m_TagString: Untagged
@@ -199,6 +200,20 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &1146704105607986406
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 751209800342872268}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 257675a6e8aedfe41bd149f535ee435f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  troopToSpawnSO: {fileID: 0}
+  buildingToSpawnSO: {fileID: 0}
 --- !u!1 &2034374831507896722
 GameObject:
   m_ObjectHideFlags: 0
