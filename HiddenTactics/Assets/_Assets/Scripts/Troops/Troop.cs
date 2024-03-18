@@ -95,7 +95,7 @@ public class Troop : MonoBehaviour, IPlaceable {
     }
 
     public void HandleIPlaceablePosition() {
-        transform.position = battlefieldOwner.position + battlefieldOffset;
+        //transform.position = battlefieldOwner.position + battlefieldOffset;
     }
 
     private void BattleManager_OnStateChanged(object sender, EventArgs e) {
@@ -153,6 +153,9 @@ public class Troop : MonoBehaviour, IPlaceable {
         else {
             battlefieldOwner = BattleGrid.Instance.GetPlayerGridOrigin();
         }
+        
+        transform.SetParent(battlefieldOwner);
+
         battlefieldOffset = transform.position - battlefieldOwner.position;
     }
 

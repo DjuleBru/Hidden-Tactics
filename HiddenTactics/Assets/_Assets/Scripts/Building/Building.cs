@@ -37,7 +37,7 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
             HandleIPlaceablePositionDuringPlacement();
         }
         else {
-            HandleIPlaceablePosition();
+            //HandleIPlaceablePosition();
         }
     }
 
@@ -135,6 +135,8 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
         else {
             battlefieldOwner = BattleGrid.Instance.GetPlayerGridOrigin();
         }
+        transform.SetParent(battlefieldOwner);
+
         battlefieldOffset = transform.position - battlefieldOwner.position;
     }
 
