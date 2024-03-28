@@ -165,7 +165,7 @@ public class UnitTargetingSystem : NetworkBehaviour
             Building buildingAtTargetGridPosition = BattleGrid.Instance.GetBuildingAtGridPosition(targetGridPosition);
 
             foreach (Unit unit in unitListAtTargetGridPosition) {
-                if (unit.IsOwnedByPlayer() != this.unit.IsOwnedByPlayer() && !unit.GetIsDead() && unit.GetUnitIsBought() && attackSO.attackTargetTypes.Contains(unit.GetTargetType())) {
+                if (unit.IsOwnedByPlayer() != this.unit.IsOwnedByPlayer() && !unit.GetIsDead() && attackSO.attackTargetTypes.Contains(unit.GetTargetType())) {
                     // target unit is not from the same team AND Unit is not dead AND unit is bought AND unit is targetable (air vs ground)
                     targetItargetableList.Add(unit);
                 }

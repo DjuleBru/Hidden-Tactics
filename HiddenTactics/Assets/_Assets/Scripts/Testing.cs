@@ -33,6 +33,15 @@ public class Testing : MonoBehaviour
 
     private void MyCallback() {
 
+        foreach (var uCWAnimatorManagers in UCWAnimatorManagers) {
+            uCWAnimatorManagers.SetXY(X,Y);
+        }
+
+        foreach (var weaponVisual in weaponVisuals) {
+            weaponVisual.SetXY(X, Y);
+        }
+
+
         legendaryStateUpdated = legendaryState;
         magicStateUpdated = magicState;
         SetMagicState();

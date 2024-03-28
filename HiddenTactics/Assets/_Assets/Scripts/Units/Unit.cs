@@ -19,7 +19,6 @@ public class Unit : NetworkBehaviour, ITargetable {
     [SerializeField] private Transform projectileTarget;
     [SerializeField] private UnitVisual unitVisual;
     [SerializeField] private UnitUI unitUI;
-
     public class OnUnitDazedEventArgs : EventArgs {
         public float dazedTime;
     }
@@ -34,7 +33,9 @@ public class Unit : NetworkBehaviour, ITargetable {
     protected Rigidbody2D rb;
     protected Collider2D collider2d;
     protected bool unitIsDead;
-    protected bool unitIsBought;
+    protected bool unitIsPlaced;
+    protected bool isAdditionalUnit;
+
 
     protected virtual void Awake() {
         collider2d = GetComponent<Collider2D>();
@@ -42,7 +43,6 @@ public class Unit : NetworkBehaviour, ITargetable {
         collider2d.enabled = false;
 
         rb.mass = unitSO.mass;
-        unitIsBought = true;
     }
 
     protected virtual void Start() {
@@ -96,7 +96,11 @@ public class Unit : NetworkBehaviour, ITargetable {
     protected virtual void ParentTroop_OnTroopPlaced(object sender, System.EventArgs e) {
         OnUnitPlaced?.Invoke(this, EventArgs.Empty);
 
-        if(unitIsBought && !unitSO.isGarrisonedUnit) {
+        if(!isAdditionalUnit) {
+            unitIsPlaced = true;
+        }
+
+        if(!unitSO.isGarrisonedUnit) {
             collider2d.enabled = true;
         }
 
@@ -117,16 +121,14 @@ public class Unit : NetworkBehaviour, ITargetable {
     }
 
     public virtual void ResetUnit() {
-        if (unitIsBought) {
-            transform.localPosition = unitPositionInTroop;
-            unitIsDead = false;
+        transform.localPosition = unitPositionInTroop;
+        unitIsDead = false;
 
-            if(!unitSO.isGarrisonedUnit) {
-                collider2d.enabled = true;
-            }
-
-            OnUnitReset?.Invoke(this, EventArgs.Empty);
+        if(!unitSO.isGarrisonedUnit) {
+            collider2d.enabled = true;
         }
+
+        OnUnitReset?.Invoke(this, EventArgs.Empty);
     }
 
     public virtual void UpgradeUnit() {
@@ -158,8 +160,13 @@ public class Unit : NetworkBehaviour, ITargetable {
     public bool GetIsDead() {
         return unitIsDead;
     }
-    public bool GetUnitIsBought() {
-        return unitIsBought;
+
+    public bool GetUnitIsPlaced() {
+        return unitIsPlaced;
+    }
+
+    public bool GetUnitIsAdditionalUnit() {
+        return isAdditionalUnit;
     }
 
     public UnitSO GetUnitSO() {
@@ -202,10 +209,15 @@ public class Unit : NetworkBehaviour, ITargetable {
 
     #region SET PARAMETERS
 
-    public void SetParentTroop(Troop parentTroop) {
+    public void SetParentTroop(Troop parentTroop, bool isAdditionalUnit) {
         this.parentTroop = parentTroop;
         parentTroop.OnTroopPlaced += ParentTroop_OnTroopPlaced;
+
         parentTroop.AddUnitToUnitInTroopList(this);
+
+        if (isAdditionalUnit) {
+            parentTroop.AddUnitToAdditionalUnitsInTroopList(this);
+        }
     }
 
     public void SetPosition(Vector3 positionInTroop) {
@@ -223,11 +235,9 @@ public class Unit : NetworkBehaviour, ITargetable {
     }
 
     public void SetUnitAsAdditionalUnit() {
-        collider2d.enabled = false;
-        unitIsBought = false;
         OnUnitSetAsAdditionalUnit?.Invoke(this, EventArgs.Empty);
+        gameObject.SetActive(false);
     }
-
 
     #endregion
 
@@ -250,9 +260,7 @@ public class Unit : NetworkBehaviour, ITargetable {
 
     [ClientRpc]
     private void BuyAdditionalUnitClientRpc() {
-        collider2d.enabled = true;
         OnAdditionalUnitBought?.Invoke(this, EventArgs.Empty);
-        unitIsBought = true;
     }
 
     public void DestroySelf() {
@@ -261,8 +269,5 @@ public class Unit : NetworkBehaviour, ITargetable {
 
     public void DebugModeStartFunction() {
         OnUnitPlaced?.Invoke(this, EventArgs.Empty);
-        if (unitIsBought) {
-            collider2d.enabled = true;
-        }
     }
 }

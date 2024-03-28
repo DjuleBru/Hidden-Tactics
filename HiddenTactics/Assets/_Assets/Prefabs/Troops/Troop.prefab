@@ -1073,6 +1073,7 @@ GameObject:
   - component: {fileID: 3629647732347835077}
   - component: {fileID: -7405699509265139040}
   - component: {fileID: 7847842803751851929}
+  - component: {fileID: 4804510452189493147}
   m_Layer: 0
   m_Name: Troop
   m_TagString: Untagged
@@ -1111,6 +1112,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2c613185596c6b3409c633204b5daf91, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  troop: {fileID: -7405699509265139040}
   unitSpeed: 0
   X: 0
   Y: 0
@@ -1153,6 +1155,24 @@ MonoBehaviour:
   SceneMigrationSynchronization: 0
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
+--- !u!114 &4804510452189493147
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7704603315532921427}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c613185596c6b3409c633204b5daf91, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  troop: {fileID: -7405699509265139040}
+  unitSpeed: 0
+  X: 0
+  Y: 0
+  legendaryState: 0
+  magicState: 0
 --- !u!1 &8586642559861741358
 GameObject:
   m_ObjectHideFlags: 0

@@ -62,7 +62,6 @@ public class UCWVisual : UnitVisual
         ucw.GetComponent<UnitAI>().OnMainAttackActivated += UCWVisual_OnMainAttackActivated;
         ucw.GetComponent<UnitAI>().OnSideAttackActivated += UCWVisual_OnSideAttackActivated;
     }
-
     private void UCWVisual_OnSideAttackActivated(object sender, EventArgs e) {
         bodyAnimator.runtimeAnimatorController = bodySideWeaponAnimator;
     }
@@ -107,7 +106,7 @@ public class UCWVisual : UnitVisual
     protected override void Unit_OnUnitPlaced(object sender, System.EventArgs e) {
         base.Unit_OnUnitPlaced(sender, e);
 
-        if (ucw.GetIsMountedUnit() && unit.GetUnitIsBought()) {
+        if (ucw.GetIsMountedUnit()) {
             mountSpriteRenderer.material = cleanMaterial;
         }
     }

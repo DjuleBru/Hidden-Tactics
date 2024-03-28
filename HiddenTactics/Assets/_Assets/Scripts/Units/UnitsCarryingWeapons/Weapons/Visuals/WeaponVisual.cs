@@ -1,5 +1,6 @@
 using Sirenix.OdinInspector;
 using Sirenix.Serialization;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq.Expressions;
@@ -10,8 +11,6 @@ public class WeaponVisual : NetworkBehaviour
 {
     [FoldoutGroup("Base attributes")]
     [SerializeField] private Transform weaponHoldPoint;
-    [FoldoutGroup("Base attributes")]
-    [SerializeField] private Transform weaponSortingLayerTransform;
     [FoldoutGroup("Base attributes")]
     [SerializeField] private WeaponSO mainWeaponSO;
     [FoldoutGroup("Base attributes")]
@@ -53,6 +52,7 @@ public class WeaponVisual : NetworkBehaviour
 
     private float X;
     private float Y;
+    private bool unitDead;
 
     private UCW.MagicState magicState;
     private UCW.LegendaryState legendaryState;
@@ -83,6 +83,8 @@ public class WeaponVisual : NetworkBehaviour
 
         ucw.OnUnitPlaced += Ucw_OnUnitPlaced;
         ucw.OnUnitSetAsAdditionalUnit += Ucw_OnUnitSetAsAdditionalUnit;
+        ucw.OnUnitDied += Ucw_OnUnitDied;
+        ucw.OnUnitReset += Ucw_OnUnitReset;
 
         ucw.GetComponent<UnitAI>().OnStateChanged += UnitAI_OnStateChanged;
         ucwAnimatorManager.OnUcwAttack += UcwAnimatorManager_OnUcwAttack;
@@ -91,6 +93,7 @@ public class WeaponVisual : NetworkBehaviour
     }
 
     private void LateUpdate() {
+        if (unitDead) return;
         UpdateWeaponVisual();
     }
 
@@ -122,7 +125,6 @@ public class WeaponVisual : NetworkBehaviour
 
     private void HandleWeaponIdleVisual() {
         weaponVisualSpriteRenderer.enabled = true;
-        weaponSortingLayerTransform.localPosition = new Vector3(0,-0.1f,0);
 
         // Weapon is idle : Change weapon idle sprite
         if (legendaryState == UCW.LegendaryState.Base)
@@ -146,6 +148,8 @@ public class WeaponVisual : NetworkBehaviour
         {
             transform.localScale = new Vector3(weaponScale.x, weaponScale.y, weaponScale.z);
         }
+
+        HandleWeaponSpriteSortingLayerIdle();
     }
 
     private void HandleWeaponAttackingVisual() {
@@ -165,23 +169,31 @@ public class WeaponVisual : NetworkBehaviour
         }
 
         // change sorting layer if Y > 0 (only works with legendary weapons)
-        HandleWeaponSpriteSortingLayer();
+        HandleWeaponSpriteSortingLayerDuringAttacks();
     }
-
-    private void HandleWeaponSpriteSortingLayer(){
+    private void HandleWeaponSpriteSortingLayerIdle() {
+        if (Y > 0) {
+            weaponVisualSpriteRenderer.sortingOrder = -1;
+        } else {
+            weaponVisualSpriteRenderer.sortingOrder = 1;
+        }
+    }
+    private void HandleWeaponSpriteSortingLayerDuringAttacks(){
 
         if(orthogonalAnimations)
         {
-            if(Y > 0.5)
-            {
-                weaponSortingLayerTransform.localPosition = new Vector3(0, 0.1f, 0);
+            if(Y > 0.5) {
+                weaponVisualSpriteRenderer.sortingOrder = -1;
+            } else {
+                weaponVisualSpriteRenderer.sortingOrder = 1;
             }
         } else
         {
             if (Y > 0)
             {
-
-                weaponSortingLayerTransform.localPosition = new Vector3(0, 0.1f, 0);
+                weaponVisualSpriteRenderer.sortingOrder = -1;
+            } else {
+                weaponVisualSpriteRenderer.sortingOrder = 1;
             }
         }
 
@@ -298,7 +310,7 @@ public class WeaponVisual : NetworkBehaviour
             }
         }
         if(ucw.GetComponent<UnitAI>().IsDead()) {
-            weaponVisualSpriteRenderer.sortingOrder = -1;
+            weaponVisualSpriteRenderer.sortingOrder = -9;
         }
         if (ucw.GetComponent<UnitAI>().IsIdle()) {
             weaponVisualSpriteRenderer.sortingOrder = 0;
@@ -310,8 +322,6 @@ public class WeaponVisual : NetworkBehaviour
     }
 
     private void Ucw_OnUnitPlaced(object sender, System.EventArgs e) {
-        if (!ucw.GetUnitIsBought()) return;
-
         weaponVisualSpriteRenderer.enabled = true;
     }
 
@@ -331,6 +341,15 @@ public class WeaponVisual : NetworkBehaviour
 
     private void WeaponVisual_OnSideAttackActivated(object sender, System.EventArgs e) {
         SetSideWeaponActive();
+    }
+
+
+    private void Ucw_OnUnitReset(object sender, EventArgs e) {
+        unitDead = false;
+    }
+
+    private void Ucw_OnUnitDied(object sender, EventArgs e) {
+        unitDead = true;
     }
 
     public void SetXY(float xValue, float yValue) {

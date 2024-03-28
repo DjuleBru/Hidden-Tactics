@@ -40,16 +40,26 @@ public class UnitVisual : NetworkBehaviour
         unit.OnAdditionalUnitBought += Unit_OnAdditionalUnitBought;
         unit.OnUnitPlaced += Unit_OnUnitPlaced;
         unit.OnUnitSetAsAdditionalUnit += Unit_OnUnitSetAsAdditionalUnit;
+        unit.OnUnitDied += Unit_OnUnitDied;
+        unit.OnUnitReset += Unit_OnUnitReset;
     }
 
     protected virtual void Start() {
-        if (!unit.GetUnitIsBought()) return;
+        if (!unit.GetUnitIsAdditionalUnit()) return;
         ChangeSpriteRendererListMaterial(allVisualsSpriteRendererList, placingUnitMaterial);
     }
 
-    protected virtual void Unit_OnUnitUpgraded(object sender, System.EventArgs e) {
-        if (!unit.GetUnitIsBought()) return;
+    private void Unit_OnUnitReset(object sender, System.EventArgs e) {
+        ChangeSpriteRendererListMaterial(allVisualsSpriteRendererList, cleanMaterial);
+        ChangeSpriteRendererListSortingOrder(allVisualsSpriteRendererList, 0);
+    }
 
+    private void Unit_OnUnitDied(object sender, System.EventArgs e) {
+        ChangeSpriteRendererListMaterial(allVisualsSpriteRendererList, cleanMaterial);
+        ChangeSpriteRendererListSortingOrder(allVisualsSpriteRendererList, -10);
+    }
+
+    protected virtual void Unit_OnUnitUpgraded(object sender, System.EventArgs e) {
         ChangeSpriteRendererListMaterial(allVisualsSpriteRendererList, upgradedBodyMaterial);
 
         if (upgradeReplacesBody)
@@ -60,15 +70,17 @@ public class UnitVisual : NetworkBehaviour
     }
 
     protected void Unit_OnAdditionalUnitBought(object sender, System.EventArgs e) {
-        if (!unit.GetUnitIsBought()) {
-            //Only run this on previously un bought units
-            ChangeSpriteRendererListMaterial(allVisualsSpriteRendererList, cleanMaterial);
+        ChangeSpriteRendererListMaterial(allVisualsSpriteRendererList, cleanMaterial);
+
+        //Activate shadows
+        foreach (GameObject shadowGameObject in shadowGameObjectList) {
+            shadowGameObject.SetActive(true);
         }
     }
 
 
+
     protected virtual void Unit_OnUnitPlaced(object sender, System.EventArgs e) {
-        if (!unit.GetUnitIsBought()) return;
 
         ChangeSpriteRendererListMaterial(allVisualsSpriteRendererList, cleanMaterial);
     }
@@ -86,8 +98,13 @@ public class UnitVisual : NetworkBehaviour
         }
     }
 
+    protected virtual void ChangeSpriteRendererListSortingOrder(List<SpriteRenderer> spriteRendererList, int sortingOrder) {
+        foreach (SpriteRenderer spriteRenderer in spriteRendererList) {
+            spriteRenderer.sortingOrder = sortingOrder;
+        }
+    }
+
     public void SetUnitHovered(bool hovered) {
-        if (!unit.GetUnitIsBought()) return;
         if(hovered) {
             selectedUnitSpriteRenderer.material = placingUnitMaterial;
         } else {
@@ -96,7 +113,6 @@ public class UnitVisual : NetworkBehaviour
     }
 
     public void SetUnitSelected(bool selected) {
-        if (!unit.GetUnitIsBought()) return;
         if (selected) {
             selectedUnitSpriteRenderer.material = cleanMaterial;
         } else {

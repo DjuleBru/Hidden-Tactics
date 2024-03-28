@@ -18,7 +18,8 @@ public class Troop : MonoBehaviour, IPlaceable {
     [SerializeField] private Transform troopCenterPoint;
     [SerializeField] private TroopUI troopUI;
 
-    private List<Unit> unitsInTroop;
+    private List<Unit> allUnitsInTroop;
+    private List<Unit> additionalUnitsInTroop;
 
     [SerializeField] private List<Transform> baseUnitPositions = new List<Transform>();
     [SerializeField] private List<Transform> additionalUnitPositions = new List<Transform>();
@@ -28,7 +29,8 @@ public class Troop : MonoBehaviour, IPlaceable {
     private Vector3 battlefieldOffset;
 
     private void Awake() {
-        unitsInTroop = new List<Unit>();
+        allUnitsInTroop = new List<Unit>();
+        additionalUnitsInTroop = new List<Unit>();
 
         foreach (Transform position in baseUnitPositions) {
             position.gameObject.SetActive(false);
@@ -43,9 +45,10 @@ public class Troop : MonoBehaviour, IPlaceable {
             isOwnedByPlayer = false;
             PlaceIPlaceable();
             Unit[] unitArray = GetComponentsInChildren<Unit>();
+
             foreach (Unit unit in unitArray) {
                 //Set Parent Troop
-                unit.SetParentTroop(this);
+                unit.SetParentTroop(this, false);
 
                 //Set Unit Local Position
                 unit.SetPosition(unit.transform.position);
@@ -116,13 +119,16 @@ public class Troop : MonoBehaviour, IPlaceable {
     }
 
     public void UpgradeTroop() {
-        foreach(Unit unit in unitsInTroop) {
+        foreach(Unit unit in allUnitsInTroop) {
             unit.UpgradeUnit();
         }
     }
 
     public void BuyAdditionalUnit() {
-        foreach (Unit unit in unitsInTroop) {
+        foreach (Unit unit in additionalUnitsInTroop) {
+            unit.gameObject.SetActive(true);
+        }
+        foreach (Unit unit in additionalUnitsInTroop) {
             unit.BuyAdditionalUnit();
         }
     }
@@ -160,11 +166,22 @@ public class Troop : MonoBehaviour, IPlaceable {
     }
 
     public void AddUnitToUnitInTroopList(Unit unit) {
-        unitsInTroop.Add(unit);
+        allUnitsInTroop.Add(unit);
     }
 
     public List<Unit> GetUnitInTroopList() {
-        return unitsInTroop;
+        return allUnitsInTroop;
+    }
+
+    public void AddUnitToAdditionalUnitsInTroopList(Unit unit) {
+        additionalUnitsInTroop.Add(unit);
+
+        unit.SetUnitAsAdditionalUnit();
+
+    }
+
+    public List<Unit> GetUnitsInAdditionalUnitsInTroopList() {
+        return additionalUnitsInTroop;
     }
 
     public GridPosition GetIPlaceableGridPosition() {

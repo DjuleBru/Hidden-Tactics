@@ -324,6 +324,11 @@ MonoBehaviour:
   unitHPBarGameObject: {fileID: 1239429430629773935}
   unitHPBarImage: {fileID: 3523552392977486113}
   unitHPBarDamageImage: {fileID: 0}
+  unitTargetImage: {fileID: 0}
+  meleeTargetSprite: {fileID: 0}
+  rangedTargetSprite: {fileID: 0}
+  healTargetSprite: {fileID: 0}
+  armorTargetSprite: {fileID: 0}
 --- !u!1 &6220047560856617129
 GameObject:
   m_ObjectHideFlags: 0
@@ -394,7 +399,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   unit: {fileID: 6221209888615918512}
-  bodySpriteRendererList: []
+  allVisualsSpriteRendererList: []
+  selectedUnitSpriteRenderer: {fileID: 0}
   shadowGameObjectList: []
   cleanMaterial: {fileID: 2100000, guid: 5472c483cff72494e8e1f9233fc2308a, type: 2}
   invisibleMaterial: {fileID: 0}
@@ -505,6 +511,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   projectileTarget: {fileID: 0}
+  unitVisual: {fileID: 0}
+  unitUI: {fileID: 0}
   unitSO: {fileID: 0}
 --- !u!114 &3211761454528701912
 MonoBehaviour:
@@ -600,11 +608,11 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 0cd8f168e1f1a274c8411edc6c8401a4, type: 2}
     - target: {fileID: 3749963798599582322, guid: a3e3d85f4ceaeb142b56061e8aafdab8, type: 3}
       propertyPath: m_LocalScale.y
-      value: 4
+      value: 3.92
       objectReference: {fileID: 0}
     - target: {fileID: 3749963798599582322, guid: a3e3d85f4ceaeb142b56061e8aafdab8, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.059999943
+      value: 0.058799945
       objectReference: {fileID: 0}
     - target: {fileID: 3795492267734013098, guid: a3e3d85f4ceaeb142b56061e8aafdab8, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -664,23 +672,27 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6385856783148005521, guid: a3e3d85f4ceaeb142b56061e8aafdab8, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.7819229
+      value: 0.79623723
       objectReference: {fileID: 0}
     - target: {fileID: 6385856783148005521, guid: a3e3d85f4ceaeb142b56061e8aafdab8, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.5978252
+      value: 0.59783185
       objectReference: {fileID: 0}
     - target: {fileID: 6385856783148005521, guid: a3e3d85f4ceaeb142b56061e8aafdab8, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.10728668
+      value: -0.05569181
       objectReference: {fileID: 0}
     - target: {fileID: 6385856783148005521, guid: a3e3d85f4ceaeb142b56061e8aafdab8, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.14032513
+      value: 0.07417452
       objectReference: {fileID: 0}
     - target: {fileID: 6818549661563208811, guid: a3e3d85f4ceaeb142b56061e8aafdab8, type: 3}
       propertyPath: m_Name
       value: BodyVisual
+      objectReference: {fileID: 0}
+    - target: {fileID: 6830551438736010108, guid: a3e3d85f4ceaeb142b56061e8aafdab8, type: 3}
+      propertyPath: m_Layer
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 8594120475836149143, guid: a3e3d85f4ceaeb142b56061e8aafdab8, type: 3}
       propertyPath: m_IsActive

@@ -181,7 +181,7 @@ public class PlayerAction_SpawnTroop : NetworkBehaviour {
         Troop troopToSpawnTroop = troopToSpawnNetworkObject.GetComponent<Troop>();
 
         //Set Parent Troop
-        unitSpawned.SetParentTroop(troopToSpawnTroop);
+        unitSpawned.SetParentTroop(troopToSpawnTroop, isAdditionalUnit);
 
         //Set Unit Local Position
         unitSpawned.SetPosition(unitPosition);

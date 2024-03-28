@@ -58,7 +58,7 @@ public class UnitAI : NetworkBehaviour
         if (!IsServer) return;
         // AI runs only on server
 
-        if (!unitActive | !unit.GetUnitIsBought() | state.Value == State.dead) return;
+        if (!unitActive | state.Value == State.dead) return;
 
         if(state.Value != State.idle) {
             CheckConditionsBeforeSwitch();

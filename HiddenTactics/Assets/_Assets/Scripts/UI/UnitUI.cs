@@ -87,7 +87,6 @@ public class UnitUI : NetworkBehaviour
     }
 
     private void Unit_OnUnitReset(object sender, System.EventArgs e) {
-        if (!unit.GetUnitIsBought()) return;
         StartCoroutine(RefillHPBars());
     }
 
@@ -115,28 +114,28 @@ public class UnitUI : NetworkBehaviour
     }
 
     public void ShowUnitAsMeleeTarget() {
-        if (!unit.GetUnitIsBought() | unit.IsOwnedByPlayer()) return;
+        if (unit.IsOwnedByPlayer()) return;
         unitTargetImage.sprite = meleeTargetSprite;
         unitTargetImage.gameObject.SetActive(true);
     }
     public void ShowUnitUIAsRangedTarget() {
-        if (!unit.GetUnitIsBought() | unit.IsOwnedByPlayer()) return;
+        if (unit.IsOwnedByPlayer()) return;
         unitTargetImage.sprite = rangedTargetSprite;
         unitTargetImage.gameObject.SetActive(true);
     }
     public void ShowUnitAsHealTarget() {
-        if (!unit.GetUnitIsBought() | unit.IsOwnedByPlayer()) return;
+        if (unit.IsOwnedByPlayer()) return;
         unitTargetImage.sprite = healTargetSprite;
         unitTargetImage.gameObject.SetActive(true);
     }
     public void ShowUnitAsArmorTarget() {
-        if (!unit.GetUnitIsBought() | unit.IsOwnedByPlayer()) return;
+        if (unit.IsOwnedByPlayer()) return;
         unitTargetImage.sprite = armorTargetSprite;
         unitTargetImage.gameObject.SetActive(true);
     }
 
     public void HideUnitTargetUI() {
-        if (!unit.GetUnitIsBought() | unit.IsOwnedByPlayer()) return;
+        if (unit.IsOwnedByPlayer()) return;
         unitTargetImage.gameObject.SetActive(false);
     }
 }
