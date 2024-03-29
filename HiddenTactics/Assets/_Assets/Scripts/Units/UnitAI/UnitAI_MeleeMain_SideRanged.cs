@@ -53,6 +53,7 @@ public class UnitAI_MeleeMain_SideRanged : UnitAI
             if (unitTargetingSystem.GetMainAttackTarget() == null | !unitTargetingSystem.GetTargetUnitIsInRange(mainAttackSO)) {
                 // Unit has no attack targets or target attack unit is out of range
                 ChangeState(State.moveForwards);
+                return;
             }
 
             if (unitAttack.GetAttackTarget().GetIsDead() && unitTargetingSystem.GetMainAttackTarget() != null) {
@@ -66,6 +67,7 @@ public class UnitAI_MeleeMain_SideRanged : UnitAI
             if (unitTargetingSystem.GetSideAttackTarget() == null | ammoCount == 0) {
                 // Unit has no attack targets or has no more ammo
                 ChangeState(State.moveForwards);
+                return;
             }
 
             if (unitAttack.GetAttackTarget().GetIsDead() && unitTargetingSystem.GetSideAttackTarget() != null) {

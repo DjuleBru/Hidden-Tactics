@@ -97,8 +97,6 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
 
         isPlaced = true;
 
-        SetIPlaceableBattlefieldParent(currentGridPosition);
-
         BattleGrid.Instance.AddIPlaceableAtGridPosition(currentGridPosition, this);
 
         // Reverse X symmetry if not owned by player
@@ -114,7 +112,11 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
         ownerClientId = clientId;
         isOwnedByPlayer = (ownerClientId == NetworkManager.Singleton.LocalClientId);
     }
-
+    public void DeActivateOpponentIPlaceable() {
+        if (!isOwnedByPlayer) {
+            gameObject.SetActive(false);
+        }
+    }
     public void SetIPlaceableGridPosition(GridPosition iPlaceableGridPosition) {
         Vector3 buildingWorldPosition = BattleGrid.Instance.GetWorldPosition(iPlaceableGridPosition);
 
@@ -126,18 +128,6 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
         } else {
             transform.position = new Vector2(buildingWorldPosition.x + buildingCenterPoint.localPosition.x, buildingWorldPosition.y - buildingCenterPoint.localPosition.y);
         }
-    }
-
-    public void SetIPlaceableBattlefieldParent(GridPosition iPlaceableGridPosition) {
-        if (iPlaceableGridPosition.x >= 6) {
-            battlefieldOwner = BattleGrid.Instance.GetOpponentGridOrigin();
-        }
-        else {
-            battlefieldOwner = BattleGrid.Instance.GetPlayerGridOrigin();
-        }
-        transform.SetParent(battlefieldOwner);
-
-        battlefieldOffset = transform.position - battlefieldOwner.position;
     }
 
     public GridPosition GetIPlaceableGridPosition() {

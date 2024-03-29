@@ -108,7 +108,7 @@ GameObject:
   - component: {fileID: 505331165834963854}
   - component: {fileID: 3196709892920038279}
   - component: {fileID: 7478483890127651228}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: BuyAdditionalUnitsButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -133,7 +133,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -2.67, y: -5.01}
+  m_AnchoredPosition: {x: -2.67, y: -3.16}
   m_SizeDelta: {x: 2, y: 2}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1631562426849400937
@@ -662,7 +662,7 @@ GameObject:
   - component: {fileID: 3769763227396676412}
   - component: {fileID: 8182937444274022230}
   - component: {fileID: 1318707301322494659}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: ButtonIcon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -738,7 +738,7 @@ GameObject:
   - component: {fileID: 1215270515243395476}
   - component: {fileID: 5632403383455610129}
   - component: {fileID: 7648792880731760192}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: ButtonIcon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -816,7 +816,7 @@ GameObject:
   - component: {fileID: 6984546594593421140}
   - component: {fileID: 4687392971831044005}
   - component: {fileID: 8846839239505875069}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: UpgradeTroopButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -841,7 +841,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -5.390039}
+  m_AnchoredPosition: {x: 0, y: -3.16}
   m_SizeDelta: {x: 2, y: 2}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7962947880900229957
@@ -951,7 +951,7 @@ GameObject:
   - component: {fileID: 1853091512919812911}
   - component: {fileID: 5354501925048565718}
   - component: {fileID: 8823549876594239409}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: SellTroopButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -976,7 +976,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 2.54, y: -4.980039}
+  m_AnchoredPosition: {x: 2.54, y: -3.16}
   m_SizeDelta: {x: 2, y: 2}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1853091512919812911
@@ -1073,7 +1073,6 @@ GameObject:
   - component: {fileID: 3629647732347835077}
   - component: {fileID: -7405699509265139040}
   - component: {fileID: 7847842803751851929}
-  - component: {fileID: 4804510452189493147}
   m_Layer: 0
   m_Name: Troop
   m_TagString: Untagged
@@ -1155,24 +1154,6 @@ MonoBehaviour:
   SceneMigrationSynchronization: 0
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
---- !u!114 &4804510452189493147
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7704603315532921427}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2c613185596c6b3409c633204b5daf91, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  troop: {fileID: -7405699509265139040}
-  unitSpeed: 0
-  X: 0
-  Y: 0
-  legendaryState: 0
-  magicState: 0
 --- !u!1 &8586642559861741358
 GameObject:
   m_ObjectHideFlags: 0
@@ -1184,7 +1165,7 @@ GameObject:
   - component: {fileID: 6508620083044746315}
   - component: {fileID: 235757746820011274}
   - component: {fileID: 3479058072483310588}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: ButtonIcon
   m_TagString: Untagged
   m_Icon: {fileID: 0}

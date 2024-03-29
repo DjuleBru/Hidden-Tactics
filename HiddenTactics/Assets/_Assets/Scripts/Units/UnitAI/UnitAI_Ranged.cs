@@ -93,7 +93,6 @@ public class UnitAI_Ranged : UnitAI
         }
 
         if (!foundMeleeTarget) {
-            // Unit is attacking in ranged 
 
             if (unitTargetingSystem.GetMainAttackTarget() == null) {
                 // Unit has no more attack targets
@@ -113,7 +112,7 @@ public class UnitAI_Ranged : UnitAI
 
         }
         else {
-            // Unit is attacking in melee
+
             if (unitTargetingSystem.GetSideAttackTarget() == null | !unitTargetingSystem.GetTargetUnitIsInRange(sideAttackSO)) {
                 // Unit has no attack targets or target attack unit is out of range
                 ChangeState(State.moveForwards);
@@ -123,6 +122,7 @@ public class UnitAI_Ranged : UnitAI
             if (unitAttack.GetAttackTarget().GetIsDead() && unitTargetingSystem.GetSideAttackTarget() != null) {
                 // Unit attack target is dead and there are other target units!
                 unitAttack.SetAttackTarget(unitTargetingSystem.GetSideAttackTarget());
+                return;
             }
             else {
                 ChangeState(State.moveForwards);
@@ -137,14 +137,14 @@ public class UnitAI_Ranged : UnitAI
             // THERE IS A UNIT IN MELEE RANGE
             ActivateSideAttack();
             ChangeState(State.moveToMeleeTarget);
-        } else { 
-            foundMeleeTarget = false;
+            return;
         }
     }
 
     [ClientRpc]
     protected override void ChangeStateClientRpc() {
         base.ChangeStateClientRpc();
+
         if (state.Value == State.idle) {
             foundMeleeTarget = false;
         }

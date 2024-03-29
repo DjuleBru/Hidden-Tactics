@@ -25,8 +25,8 @@ public class UCWAnimatorManager : UnitAnimatorManager
         legendaryState = UCW.LegendaryState.Base;
     }
 
-    protected override void Start() {
-        base.Start();
+    public override void OnNetworkSpawn() {
+        base.OnNetworkSpawn();
         ucw.OnLegendaryStateChanged += Ucw_OnLegendaryStateChanged;
         ucw.OnMagicStateChanged += Ucw_OnMagicStateChanged;
 

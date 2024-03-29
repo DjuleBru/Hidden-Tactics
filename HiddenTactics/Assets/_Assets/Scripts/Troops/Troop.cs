@@ -4,14 +4,13 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
-public class Troop : MonoBehaviour, IPlaceable {
+public class Troop : NetworkBehaviour, IPlaceable {
     public event EventHandler OnTroopPlaced;
     private ulong ownerClientId;
 
     private bool isPlaced;
     private bool isOwnedByPlayer;
-
-    private bool isVisibleToOpponent;
+    private bool additionalUnitsHaveBeenBought;
 
     [SerializeField] private bool debugMode;
     [SerializeField] private TroopSO troopSO;
@@ -48,7 +47,7 @@ public class Troop : MonoBehaviour, IPlaceable {
 
             foreach (Unit unit in unitArray) {
                 //Set Parent Troop
-                unit.SetParentTroop(this, false);
+                unit.SetParentTroop(this);
 
                 //Set Unit Local Position
                 unit.SetPosition(unit.transform.position);
@@ -57,12 +56,23 @@ public class Troop : MonoBehaviour, IPlaceable {
         }
     }
 
+    public override void OnNetworkSpawn() {
+        BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
+    }
+
+
     private void Update() {
         if(!isPlaced) {
             HandlePositioningOnGrid();
             HandleIPlaceablePositionDuringPlacement();
         } else {
             HandleIPlaceablePosition();
+        }
+    }
+
+    private void BattleManager_OnStateChanged(object sender, EventArgs e) {
+        if(BattleManager.Instance.IsBattlePhaseStarting()) {
+            UpdateTroopServerRpc();
         }
     }
 
@@ -98,24 +108,25 @@ public class Troop : MonoBehaviour, IPlaceable {
     }
 
     public void HandleIPlaceablePosition() {
-        //transform.position = battlefieldOwner.position + battlefieldOffset;
-    }
-
-    private void BattleManager_OnStateChanged(object sender, EventArgs e) {
-        if (!HiddenTacticsMultiplayer.Instance.IsMultiplayer()) return;
-
-        if (BattleManager.Instance.IsBattlePhase()) {
-            if (!isVisibleToOpponent) {
-                // Make troop visible to opponent
-                OnTroopPlaced?.Invoke(this, null);
-            }
-            isVisibleToOpponent = true;
-        }
+        //transform.position = BattleGrid.Instance.GetWorldPosition(currentGridPosition) - troopCenterPoint.transform.localPosition;
+        transform.position = battlefieldOwner.transform.position + battlefieldOffset;
     }
 
     public void SetIPlaceableOwnerClientId(ulong clientId) {
         ownerClientId = clientId;
         isOwnedByPlayer = (ownerClientId == NetworkManager.Singleton.LocalClientId);
+
+        if(isOwnedByPlayer) {
+            battlefieldOwner = BattleGrid.Instance.GetPlayerGridOrigin();
+        } else {
+            battlefieldOwner = BattleGrid.Instance.GetOpponentGridOrigin();
+        }
+    }
+
+    public void DeActivateOpponentIPlaceable() {
+        if (!isOwnedByPlayer) {
+            gameObject.SetActive(false);
+        }
     }
 
     public void UpgradeTroop() {
@@ -124,25 +135,46 @@ public class Troop : MonoBehaviour, IPlaceable {
         }
     }
 
-    public void BuyAdditionalUnit() {
+
+    public void BuyAdditionalUnitsLocally() {
         foreach (Unit unit in additionalUnitsInTroop) {
-            unit.gameObject.SetActive(true);
+            unit.ActivateAdditionalUnit();
         }
-        foreach (Unit unit in additionalUnitsInTroop) {
-            unit.BuyAdditionalUnit();
+
+        additionalUnitsInTroop.Clear();
+        additionalUnitsHaveBeenBought = true;
+    }
+
+    [ServerRpc(RequireOwnership =false)]
+    private void UpdateTroopServerRpc() {
+        if(additionalUnitsHaveBeenBought) {
+            BuyAdditionalUnitsClientRpc();
+        }
+    }
+
+    [ClientRpc]
+    private void BuyAdditionalUnitsClientRpc() {
+        if(!isOwnedByPlayer) {
+            foreach (Unit unit in additionalUnitsInTroop) {
+                unit.ActivateAdditionalUnit();
+            }
+            additionalUnitsInTroop.Clear();
         }
     }
 
     public void PlaceIPlaceable() {
+        if (!isOwnedByPlayer) {
+            gameObject.SetActive(true);
+        }
+
         OnTroopPlaced?.Invoke(this, null);
-        currentGridPosition = BattleGrid.Instance.GetGridPosition(troopCenterPoint.position);
-
         isPlaced = true;
-
-        SetIPlaceableBattlefieldParent(currentGridPosition);
 
         // Set placed troop on grid object
         BattleGrid.Instance.SetIPlaceableSpawnedAtGridPosition(this, currentGridPosition);
+        SetIPlaceableGridPosition(currentGridPosition);
+
+        battlefieldOffset = transform.position - battlefieldOwner.transform.position;
     }
 
     public void SetIPlaceableGridPosition(GridPosition troopGridPosition) {
@@ -150,21 +182,8 @@ public class Troop : MonoBehaviour, IPlaceable {
 
         currentGridPosition = troopGridPosition;
         transform.position = troopWorldPosition - troopCenterPoint.localPosition;
+
     }
-
-    public void SetIPlaceableBattlefieldParent(GridPosition troopGridPosition) {
-        if (troopGridPosition.x >= 6) {
-            battlefieldOwner = BattleGrid.Instance.GetOpponentGridOrigin();
-        }
-        else {
-            battlefieldOwner = BattleGrid.Instance.GetPlayerGridOrigin();
-        }
-        
-        transform.SetParent(battlefieldOwner);
-
-        battlefieldOffset = transform.position - battlefieldOwner.position;
-    }
-
     public void AddUnitToUnitInTroopList(Unit unit) {
         allUnitsInTroop.Add(unit);
     }
@@ -175,9 +194,6 @@ public class Troop : MonoBehaviour, IPlaceable {
 
     public void AddUnitToAdditionalUnitsInTroopList(Unit unit) {
         additionalUnitsInTroop.Add(unit);
-
-        unit.SetUnitAsAdditionalUnit();
-
     }
 
     public List<Unit> GetUnitsInAdditionalUnitsInTroopList() {
@@ -214,5 +230,9 @@ public class Troop : MonoBehaviour, IPlaceable {
 
     public List<Transform> GetAdditionalUnitPositions() {
         return additionalUnitPositions;
+    }
+
+    public override void OnDestroy() {
+        BattleManager.Instance.OnStateChanged -= BattleManager_OnStateChanged;
     }
 }

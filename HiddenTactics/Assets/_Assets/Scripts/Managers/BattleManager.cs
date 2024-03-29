@@ -31,7 +31,7 @@ public class BattleManager : NetworkBehaviour
         BattlePhaseEnding,
     }
 
-    private NetworkVariable<State> state = new NetworkVariable<State>(State.WaitingToStart);
+    private NetworkVariable<State> state = new NetworkVariable<State>();
 
     private void Awake() {
         Instance = this;
@@ -46,6 +46,7 @@ public class BattleManager : NetworkBehaviour
 
         if (IsServer) {
             NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += SceneManager_OnLoadEventCompleted;
+            state.Value = State.WaitingToStart;
         }
 
         battlePhaseTimer.Value = battlePhaseMaxTime;

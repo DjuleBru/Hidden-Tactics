@@ -32,12 +32,12 @@ public class UnitVisual : NetworkBehaviour
         bodyAnimator = GetComponent<Animator>();
         activeBodyAnimator = bodyAnimator.runtimeAnimatorController;
     
-        allVisualsSpriteRendererList.Add(selectedUnitSpriteRenderer);
+        selectedUnitSpriteRenderer.enabled = false;
     }
 
     public override void OnNetworkSpawn() {
         unit.OnUnitUpgraded += Unit_OnUnitUpgraded;
-        unit.OnAdditionalUnitBought += Unit_OnAdditionalUnitBought;
+        unit.OnAdditionalUnitActivated += Unit_OnAdditionalUnitBought;
         unit.OnUnitPlaced += Unit_OnUnitPlaced;
         unit.OnUnitSetAsAdditionalUnit += Unit_OnUnitSetAsAdditionalUnit;
         unit.OnUnitDied += Unit_OnUnitDied;
@@ -45,7 +45,7 @@ public class UnitVisual : NetworkBehaviour
     }
 
     protected virtual void Start() {
-        if (!unit.GetUnitIsAdditionalUnit()) return;
+        //if (!unit.GetUnitIsAdditionalUnit()) return;
         ChangeSpriteRendererListMaterial(allVisualsSpriteRendererList, placingUnitMaterial);
     }
 
@@ -78,10 +78,7 @@ public class UnitVisual : NetworkBehaviour
         }
     }
 
-
-
     protected virtual void Unit_OnUnitPlaced(object sender, System.EventArgs e) {
-
         ChangeSpriteRendererListMaterial(allVisualsSpriteRendererList, cleanMaterial);
     }
 
@@ -105,18 +102,20 @@ public class UnitVisual : NetworkBehaviour
     }
 
     public void SetUnitHovered(bool hovered) {
-        if(hovered) {
+        if (hovered) {
+            selectedUnitSpriteRenderer.enabled = true;
             selectedUnitSpriteRenderer.material = placingUnitMaterial;
         } else {
-            selectedUnitSpriteRenderer.material = invisibleMaterial;
+            selectedUnitSpriteRenderer.enabled = false;
         }
     }
 
     public void SetUnitSelected(bool selected) {
         if (selected) {
+            selectedUnitSpriteRenderer.enabled = true;
             selectedUnitSpriteRenderer.material = cleanMaterial;
         } else {
-            selectedUnitSpriteRenderer.material = invisibleMaterial;
+            selectedUnitSpriteRenderer.enabled = false;
         }
     }
 

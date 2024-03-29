@@ -14,7 +14,7 @@ public class Unit : NetworkBehaviour, ITargetable {
     public event EventHandler OnUnitReset;
     public event EventHandler<OnUnitDazedEventArgs> OnUnitDazed;
     public event EventHandler OnUnitSetAsAdditionalUnit;
-    public event EventHandler OnAdditionalUnitBought;
+    public event EventHandler OnAdditionalUnitActivated;
 
     [SerializeField] private Transform projectileTarget;
     [SerializeField] private UnitVisual unitVisual;
@@ -35,6 +35,7 @@ public class Unit : NetworkBehaviour, ITargetable {
     protected bool unitIsDead;
     protected bool unitIsPlaced;
     protected bool isAdditionalUnit;
+    protected bool unitIsBought;
 
 
     protected virtual void Awake() {
@@ -96,15 +97,13 @@ public class Unit : NetworkBehaviour, ITargetable {
     protected virtual void ParentTroop_OnTroopPlaced(object sender, System.EventArgs e) {
         OnUnitPlaced?.Invoke(this, EventArgs.Empty);
 
-        if(!isAdditionalUnit) {
+        if (!isAdditionalUnit) {
             unitIsPlaced = true;
-        }
-
-        if(!unitSO.isGarrisonedUnit) {
             collider2d.enabled = true;
         }
 
         if(unitSO.isGarrisonedUnit) {
+            collider2d.enabled = false;
             SetParentBuilding();
         }
     }
@@ -124,7 +123,7 @@ public class Unit : NetworkBehaviour, ITargetable {
         transform.localPosition = unitPositionInTroop;
         unitIsDead = false;
 
-        if(!unitSO.isGarrisonedUnit) {
+        if(!unitSO.isGarrisonedUnit && unitIsBought) {
             collider2d.enabled = true;
         }
 
@@ -209,15 +208,11 @@ public class Unit : NetworkBehaviour, ITargetable {
 
     #region SET PARAMETERS
 
-    public void SetParentTroop(Troop parentTroop, bool isAdditionalUnit) {
+    public void SetParentTroop(Troop parentTroop) {
         this.parentTroop = parentTroop;
         parentTroop.OnTroopPlaced += ParentTroop_OnTroopPlaced;
 
         parentTroop.AddUnitToUnitInTroopList(this);
-
-        if (isAdditionalUnit) {
-            parentTroop.AddUnitToAdditionalUnitsInTroopList(this);
-        }
     }
 
     public void SetPosition(Vector3 positionInTroop) {
@@ -235,8 +230,18 @@ public class Unit : NetworkBehaviour, ITargetable {
     }
 
     public void SetUnitAsAdditionalUnit() {
+        isAdditionalUnit = true;
+        parentTroop.AddUnitToAdditionalUnitsInTroopList(this);
+
         OnUnitSetAsAdditionalUnit?.Invoke(this, EventArgs.Empty);
-        gameObject.SetActive(false);
+        
+        unitVisual.gameObject.SetActive(false);
+        GetComponent<Collider2D>().enabled = false;
+        GetComponent<UnitMovement>().enabled = false;
+        GetComponent<UnitAI>().enabled = false;
+        GetComponent<UnitAttack>().enabled = false;
+        GetComponent<UnitTargetingSystem>().enabled = false;
+        GetComponent<UnitHP>().enabled = false;
     }
 
     #endregion
@@ -249,18 +254,27 @@ public class Unit : NetworkBehaviour, ITargetable {
         OnUnitReset?.Invoke(this, EventArgs.Empty);
     }
 
-    public void BuyAdditionalUnit() {
-        BuyAdditionalUnitServerRpc();
+    public void ActivateAdditionalUnit() {
+        ActivateAdditionalUnitServerRpc();
     }
 
-    [ServerRpc]
-    private void BuyAdditionalUnitServerRpc() {
-        BuyAdditionalUnitClientRpc();
+    [ServerRpc(RequireOwnership = false)]
+    private void ActivateAdditionalUnitServerRpc() {
+        ActivateAdditionalUnitClientRpc();
     }
 
     [ClientRpc]
-    private void BuyAdditionalUnitClientRpc() {
-        OnAdditionalUnitBought?.Invoke(this, EventArgs.Empty);
+    private void ActivateAdditionalUnitClientRpc() {
+        unitIsBought = true;
+        OnAdditionalUnitActivated?.Invoke(this, EventArgs.Empty);
+
+        unitVisual.gameObject.SetActive(true);
+        GetComponent<Collider2D>().enabled = true;
+        GetComponent<UnitMovement>().enabled = true;
+        GetComponent<UnitAI>().enabled = true;
+        GetComponent<UnitAttack>().enabled = true;
+        GetComponent<UnitTargetingSystem>().enabled = true;
+        GetComponent<UnitHP>().enabled = true;
     }
 
     public void DestroySelf() {
@@ -269,5 +283,10 @@ public class Unit : NetworkBehaviour, ITargetable {
 
     public void DebugModeStartFunction() {
         OnUnitPlaced?.Invoke(this, EventArgs.Empty);
+    }
+
+    public override void OnDestroy() {
+        base.OnDestroy();
+        BattleManager.Instance.OnStateChanged -= BattleManager_OnStateChanged;
     }
 }

@@ -25,7 +25,7 @@ public class UnitMovement : NetworkBehaviour {
         moveSpeed = unit.GetUnitSO().unitMoveSpeed;
     }
 
-    private void Start() {
+    public override void OnNetworkSpawn() {
         unit.OnUnitPlaced += Unit_OnUnitPlaced;
     }
 
@@ -112,6 +112,7 @@ public class UnitMovement : NetworkBehaviour {
     }
 
     private void Unit_OnUnitPlaced(object sender, EventArgs e) {
+
         if (unit.GetParentTroop().IsOwnedByPlayer()) {
             moveDirMultiplier = 1;
         }

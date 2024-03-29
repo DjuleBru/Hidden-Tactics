@@ -418,4 +418,10 @@ public class UnitAttack : NetworkBehaviour
         return attackDamage;
     }
     #endregion
+
+    public override void OnDestroy() {
+        base.OnDestroy();
+
+        BattleManager.Instance.OnStateChanged -= BattleManager_OnStateChanged;
+    }
 }

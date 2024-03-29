@@ -55,15 +55,20 @@ public class GridHoverManager : MonoBehaviour
     private void HandleUnitHover() {
         List<Unit> previousHoveredUnitList = BattleGrid.Instance.GetUnitListAtGridPosition(previousHoveredGridPosition);
 
-        //if(previousHoveredUnitList.Count > 0) {
-        //    foreach(Unit unit in previousHoveredUnitList) {
-        //        unit.GetUnitVisual().SetUnitHovered(false);
-        //    }
-        //}
+        if (previousHoveredUnitList.Count > 0) {
+            foreach (Unit unit in previousHoveredUnitList) {
+                // Do not change hovered visual on selected troop
+                if (PlayerAction_SelectTroop.LocalInstance.IsTroopSelected(unit.GetParentTroop())) continue;
+                
+                unit.GetUnitVisual().SetUnitHovered(false);
+            }
+        }
 
         List<Unit> newHoveredUnitList = BattleGrid.Instance.GetUnitListAtGridPosition(currentHoveredGridPosition);
         if (newHoveredUnitList.Count > 0) {
             foreach (Unit unit in newHoveredUnitList) {
+                // Do not change hovered visual on selected troop
+                if (PlayerAction_SelectTroop.LocalInstance.IsTroopSelected(unit.GetParentTroop())) continue;
                 unit.GetUnitVisual().SetUnitHovered(true);
             }
         }

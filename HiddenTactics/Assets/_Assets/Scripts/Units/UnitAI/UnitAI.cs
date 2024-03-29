@@ -29,7 +29,7 @@ public class UnitAI : NetworkBehaviour
         dead,
     }
 
-    protected NetworkVariable<State> state = new NetworkVariable<State>(State.idle);
+    protected NetworkVariable<State> state = new NetworkVariable<State>();
     public event EventHandler OnStateChanged;
 
     protected virtual void Awake() {
@@ -44,6 +44,7 @@ public class UnitAI : NetworkBehaviour
 
     public override void OnNetworkSpawn() {
         state.OnValueChanged += State_OnValueChanged;
+        state.Value = State.idle;
 
         unit.OnUnitDied += Unit_OnUnitDied;
         unit.OnUnitDazed += Unit_OnUnitDazed;
@@ -205,7 +206,7 @@ public class UnitAI : NetworkBehaviour
 
     #region EVENT RESPONSES
     protected virtual void BattleManager_OnStateChanged(object sender, System.EventArgs e) {
-        if (!IsServer) return; 
+        if (!IsServer) return;
 
         unitActive = BattleManager.Instance.IsBattlePhase();
 
@@ -331,4 +332,9 @@ public class UnitAI : NetworkBehaviour
         OnSideAttackActivated?.Invoke(this, EventArgs.Empty);
     }
     #endregion
+
+    public override void OnDestroy() {
+        base.OnDestroy();
+        BattleManager.Instance.OnStateChanged -= BattleManager_OnStateChanged;
+    }
 }

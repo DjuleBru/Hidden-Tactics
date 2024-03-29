@@ -1,10 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
+using Unity.Netcode;
 using UnityEngine;
 using static UCW;
 
-public class UnitAnimatorManager : MonoBehaviour
+public class UnitAnimatorManager : NetworkBehaviour
 {
 
     protected Animator unitAnimator;
@@ -34,7 +35,7 @@ public class UnitAnimatorManager : MonoBehaviour
         unitAttack = GetComponentInParent<UnitAttack>();
     }
 
-    protected virtual void Start() {
+    public override void OnNetworkSpawn() {
         // Randomize Idle animation starting frame
         float randomOffset = Random.Range(0f, 1f);
         unitAnimator.Play("Idle", 0, randomOffset);

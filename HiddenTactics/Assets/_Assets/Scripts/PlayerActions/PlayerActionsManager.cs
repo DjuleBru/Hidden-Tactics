@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -36,10 +37,16 @@ public class PlayerActionsManager : NetworkBehaviour {
                 }
 
                 if (Input.GetMouseButtonDown(1)) {
-                    ChangeAction(Action.Idle);
+
+                    ChangeActionAtFrameEnd(Action.Idle);
                 }
                 break;
         }
+    }
+
+    private IEnumerator ChangeActionAtFrameEnd(Action action) {
+        yield return new WaitForEndOfFrame();
+        ChangeAction(action);
     }
 
     private void ChangeAction(Action newAction) {
