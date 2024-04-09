@@ -66,9 +66,9 @@ public class UnitAttack : NetworkBehaviour
 
     protected void Update() {
 
-        if (attackTarget != null) {
-            unitMovement.SetWatchDir((attackTarget as MonoBehaviour).transform);
-        }
+        if (attackTarget == null) return;
+
+        unitMovement.SetWatchDir((attackTarget as MonoBehaviour).transform);
 
         if (attacking && !dazed) {
             if (!attackDecomposition) {

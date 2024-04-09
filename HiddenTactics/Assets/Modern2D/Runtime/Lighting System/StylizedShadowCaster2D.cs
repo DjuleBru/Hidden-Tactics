@@ -96,6 +96,7 @@ namespace Modern2D
             }
 
 #if UNITY_EDITOR
+            if(!Layers.LayerExists(LightingSystem.shadowsLayer)) Layers.CreateLayer(LightingSystem.shadowsLayer);
             _shadowData.shadow.shadow.gameObject.layer = Layers.FindLayerIndex(LightingSystem.shadowsLayer);
 #endif
         }

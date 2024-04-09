@@ -45,7 +45,6 @@ public class UnitVisual : NetworkBehaviour
     }
 
     protected virtual void Start() {
-        //if (!unit.GetUnitIsAdditionalUnit()) return;
         ChangeSpriteRendererListMaterial(allVisualsSpriteRendererList, placingUnitMaterial);
     }
 

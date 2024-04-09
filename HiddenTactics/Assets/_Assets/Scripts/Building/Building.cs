@@ -11,27 +11,27 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
     public event EventHandler OnBuildingPlaced;
     public event EventHandler OnBuildingDestroyed;
     
-    private ulong ownerClientId;
+    protected ulong ownerClientId;
 
-    [SerializeField] private Transform buildingCenterPoint;
-    [SerializeField] private List<Transform> projectileTargetList;
-    [SerializeField] private BuildingSO buildingSO;
+    [SerializeField] protected Transform buildingCenterPoint;
+    [SerializeField] protected List<Transform> projectileTargetList;
+    [SerializeField] protected BuildingSO buildingSO;
 
-    private bool isOwnedByPlayer;
-    private bool isPlaced;
-    private bool isDestroyed;
+    protected bool isOwnedByPlayer;
+    protected bool isPlaced;
+    protected bool isDestroyed;
 
-    private GridPosition currentGridPosition;
-    private Transform battlefieldOwner;
-    private Vector3 battlefieldOffset;
+    protected GridPosition currentGridPosition;
+    protected Transform battlefieldOwner;
+    protected Vector3 battlefieldOffset;
 
-    private void Awake() {
+    protected void Awake() {
         if(buildingSO.buildingBlocksUnitMovement) {
             GetComponent<Collider2D>().enabled = true;
         }
     }
 
-    private void Update() {
+    protected void Update() {
         if (!isPlaced) {
             HandlePositioningOnGrid();
             HandleIPlaceablePositionDuringPlacement();
@@ -77,7 +77,7 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
         StartCoroutine(DieCoroutine());
     }
 
-    private IEnumerator DieCoroutine() {
+    protected IEnumerator DieCoroutine() {
         GetComponent<Collider2D>().enabled = false;
         OnBuildingDestroyed?.Invoke(this, EventArgs.Empty);
         BattleGrid.Instance.RemoveIPlaceableAtGridPosition(BattleGrid.Instance.GetGridPosition(transform.position), this);
@@ -87,7 +87,7 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
         HiddenTacticsMultiplayer.Instance.DestroyIPlaceable(this.GetComponent<NetworkObject>());
     }
 
-    public void HandleIPlaceablePosition() {
+    public virtual void HandleIPlaceablePosition() {
         transform.position = battlefieldOwner.position + battlefieldOffset;
     }
 

@@ -6,8 +6,8 @@ public class GridSystem
 {
     private int playerBattlefieldWidth;
 
-    private int width;
-    private int height;
+    public int width;
+    public int height;
     private float cellSize;
     private float interBattlefieldSpacing;
     private Vector3 gridOrigin;
@@ -82,12 +82,12 @@ public class GridSystem
                 // first and last sprites = settlements
                 if(x == 0) {
                     gridObjectVisual.SetGridSprite(playerSettlementSprites);
-                    gridObjectVisual.SetVillageSprites(playerVillageSprites);
+                    //gridObjectVisual.SetVillageSprites(playerVillageSprites);
                     continue;
                 }
                 if(x == width -1) {
                     gridObjectVisual.SetGridSprite(opponentSettlementSprites);
-                    gridObjectVisual.SetVillageSprites(opponentVillageSprites);
+                    //gridObjectVisual.SetVillageSprites(opponentVillageSprites);
                     continue;
                 }
 

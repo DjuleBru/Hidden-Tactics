@@ -23,6 +23,10 @@ public class PlayerAction_SelectTroop : NetworkBehaviour {
 
         if (PlayerActionsManager.LocalInstance == null) return;
 
+        if (Input.GetMouseButtonDown(1)) {
+            DeselectTroop();
+        }
+
         // Do not allow troop selection is player is not in idle state
         if (PlayerActionsManager.LocalInstance.GetCurrentAction() != PlayerActionsManager.Action.Idle) return;
 
@@ -31,14 +35,7 @@ public class PlayerAction_SelectTroop : NetworkBehaviour {
 
         //Do not allow troop selection if pointer is over a UI game object
         if (EventSystem.current.IsPointerOverGameObject()) {
-
-            
             if(PointerIsOverUIElement()) return;
-
-        }
-
-        if (Input.GetMouseButtonDown(1)) {
-            DeselectTroop();
         }
 
         if (Input.GetMouseButtonDown(0)) {
@@ -54,8 +51,10 @@ public class PlayerAction_SelectTroop : NetworkBehaviour {
 
         if (newSelectedTroop != null) {
             // Player clicked on a valid troop
+
             if (selectedTroop != null) {
                 // There was already a troop selected
+
                 if (selectedTroop == newSelectedTroop) {
                     // Player clicked the same troop again to deselect
                     DeselectTroop();

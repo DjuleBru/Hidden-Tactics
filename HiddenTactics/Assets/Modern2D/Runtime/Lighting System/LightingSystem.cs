@@ -3,7 +3,6 @@ using UnityEngine;
 using UnityEngine.Profiling;
 using System.Linq;
 using UnityEngine.Rendering.Universal;
-using LeafUtils;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -24,7 +23,6 @@ namespace Modern2D
         {
             SetCallbacks();
 			SetCollidersCallbacks();
-			CreateShadowMaskCamera(); 
             SetWaterTexture();
             OnShadowSettingsChanged();
         }
@@ -240,8 +238,6 @@ namespace Modern2D
 
 		[Tooltip("Material that determines how the shadows are rendered")]
 		public const string shadowsLayer = "ModernShadows";
-        [SerializeField] [HideInInspector] private Camera _shadowMaskCamera;
-        [SerializeField] [HideInInspector] private RenderTexture _shadowMaskTexture;
         [SerializeField] [HideInInspector] private Material _shadowsMaterial;
         [SerializeField] [HideInInspector] private Material _dropShadowDefaultMaterial;
 
@@ -257,11 +253,6 @@ namespace Modern2D
 			set { _dropShadowDefaultMaterial = value; }
 		}
 
-		[SerializeField] public Camera shadowMaskCamera
-		{ 
-			get { if (_shadowMaskCamera == null) CreateShadowMaskCamera(); return _shadowMaskCamera; }
-			set { _shadowMaskCamera = value; }
-		}
 
         [Tooltip("Treshold for omitting transparent elements on sprites")]
 		[SerializeField] [HideInInspector] int pivotDetectionAlphaTreshold = 122;
@@ -514,6 +505,9 @@ namespace Modern2D
 
 					}
 
+
+					shadow.shadowPivot.rotation = Quaternion.Euler( shadow.shadowPivot.eulerAngles.x, 0,  shadow.shadowPivot.eulerAngles.z);
+
                     //gate to more fps consuming operations
                     if (!extendedUpdateThisFrame)
 						continue;
@@ -521,6 +515,7 @@ namespace Modern2D
 
 					//update shadow rotation
 					shadow.shadowPivot.rotation = Quaternion.AngleAxis(AngleToLightSource(shadow.shadowPivot.position), Vector3.forward);
+					
 
                     //update shadow angle
                     if (shadow.shadowPivot.transform.rotation.eulerAngles.x != _shadowAngle.value)
@@ -962,51 +957,8 @@ namespace Modern2D
 
         #endregion
 
-        #region ShadowMask
 
-        private void CreateShadowMaskCamera()
-		{
-			if(_shadowMaskCamera!=null) DestroyUtils.DestroyAlways(_shadowMaskCamera.gameObject);
-			GameObject shadowMaskCamObj = new GameObject("ShadowMaskCamera");
-			_shadowMaskCamera = shadowMaskCamObj.AddComponent<Camera>();
-
-			shadowMaskCamObj.transform.parent = Camera.main.transform;
-			shadowMaskCamObj.transform.localScale = Vector3.one;
-			shadowMaskCamObj.transform.rotation = Quaternion.identity;
-			shadowMaskCamObj.transform.localPosition = Vector3.zero;
-
-			CreateTexture();
-            CpyCamSettings();
-        }
-
-		private void CreateTexture() 
-		{
-			if (_shadowMaskTexture != null) _shadowMaskTexture.Release();
-			_shadowMaskTexture = new RenderTexture( ScreenUtils.ScreenResolution().x, ScreenUtils.ScreenResolution().y,0,RenderTextureFormat.ARGB32,0);
-			_shadowMaskTexture.filterMode = FilterMode.Point;
-			_shadowMaskTexture.Create();
-			Shader.SetGlobalTexture("_ModernShadowMask", _shadowMaskTexture);
-        }
-
-		private void CpyCamSettings() 
-		{
-			int mask = _shadowMaskCamera.cullingMask;
-			_shadowMaskCamera.CopyFrom(Camera.main);
-			_shadowMaskCamera.cullingMask = mask;
-			_shadowMaskCamera.backgroundColor = Color.clear;
-			_shadowMaskCamera.targetTexture = _shadowMaskTexture;
-			_shadowMaskCamera.depth = Camera.main.depth - 1;
-
-#if UNITY_EDITOR
-            if (!Layers.LayerExists(shadowsLayer)) Layers.CreateLayer(shadowsLayer);
-#endif
-
-#if UNITY_EDITOR
-            _shadowMaskCamera.cullingMask = (1 << Layers.FindLayerIndex(shadowsLayer));
-#endif
-        }
-
-        #endregion
+    
     }
 
 }

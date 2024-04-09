@@ -83,6 +83,7 @@ public class BattleGrid : MonoBehaviour
         gridObject.SetIPlaceableAsSpawned(iPlaceable);
     }
 
+
     #region TROOP
     public void AddIPlaceableAtGridPosition(GridPosition gridPosition, IPlaceable iPlaceable) {
             GridObject gridObject = gridSystem.GetGridObject(gridPosition);

@@ -58,6 +58,7 @@ public class Troop : NetworkBehaviour, IPlaceable {
 
     public override void OnNetworkSpawn() {
         BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
+
     }
 
 
@@ -139,26 +140,43 @@ public class Troop : NetworkBehaviour, IPlaceable {
         }
     }
 
+    public void Test() {
+        Debug.Log("testing");
+    }
 
-    public void BuyAdditionalUnitsLocally() {
-        foreach (Unit unit in additionalUnitsInTroop) {
-            unit.ActivateAdditionalUnit();
+    public void BuyAdditionalUnits() {
+        Debug.Log("BuyAdditionalUnitsServerRpc server RPC");
+        BuyAdditionalUnitsServerRpc();
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void BuyAdditionalUnitsServerRpc() {
+        Debug.Log("additionalUnitsHaveBeenBought server RPC");
+        BuyAdditionalUnitsClientRpc();
+    }
+
+    [ClientRpc]
+    private void BuyAdditionalUnitsClientRpc() {
+        Debug.Log("additionalUnitsHaveBeenBought client RPC");
+        if (isOwnedByPlayer) {
+            foreach (Unit unit in additionalUnitsInTroop) {
+                unit.ActivateAdditionalUnit();
+            }
+            additionalUnitsInTroop.Clear();
         }
 
-        additionalUnitsInTroop.Clear();
         additionalUnitsHaveBeenBought = true;
     }
 
     [ServerRpc(RequireOwnership =false)]
     private void UpdateTroopServerRpc() {
-        if(additionalUnitsHaveBeenBought) {
-            BuyAdditionalUnitsClientRpc();
-        }
+        UpdateTroopClientRpc();
+        
     }
 
     [ClientRpc]
-    private void BuyAdditionalUnitsClientRpc() {
-        if(!isOwnedByPlayer) {
+    private void UpdateTroopClientRpc() {
+        if (!isOwnedByPlayer && additionalUnitsHaveBeenBought == true) {
             foreach (Unit unit in additionalUnitsInTroop) {
                 unit.ActivateAdditionalUnit();
             }

@@ -9,8 +9,6 @@ public class BuyAdditionalUnitsButton : MonoBehaviour, IPointerEnterHandler, IPo
 
     [SerializeField] Troop troop;
 
-    private Button buyAdditionalUnitsButton;
-
     public void OnPointerEnter(PointerEventData eventData) {
         foreach (Unit unit in troop.GetUnitsInAdditionalUnitsInTroopList()) {
             unit.GetUnitVisual().gameObject.SetActive(true);
@@ -22,13 +20,5 @@ public class BuyAdditionalUnitsButton : MonoBehaviour, IPointerEnterHandler, IPo
         foreach (Unit unit in troop.GetUnitsInAdditionalUnitsInTroopList()) {
             unit.GetUnitVisual().gameObject.SetActive(false);
         }
-    }
-
-    private void Awake() {
-        buyAdditionalUnitsButton = GetComponent<Button>();
-
-        buyAdditionalUnitsButton.onClick.AddListener(() => {
-            troop.BuyAdditionalUnitsLocally();
-        });
     }
 }

@@ -164,6 +164,10 @@ public class Unit : NetworkBehaviour, ITargetable {
         return unitIsPlaced;
     }
 
+    public bool GetUnitIsBought() {
+        return unitIsBought;
+    }
+
     public bool GetUnitIsAdditionalUnit() {
         return isAdditionalUnit;
     }

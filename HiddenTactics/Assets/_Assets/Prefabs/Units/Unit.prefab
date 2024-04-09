@@ -963,6 +963,7 @@ GameObject:
   - component: {fileID: 1945086570058195385}
   - component: {fileID: -8097156484951236332}
   - component: {fileID: 7605315189400509567}
+  - component: {fileID: 3946721418048361259}
   m_Layer: 6
   m_Name: Unit
   m_TagString: Untagged
@@ -1004,7 +1005,7 @@ Rigidbody2D:
   m_LinearDrag: 5
   m_AngularDrag: 0.05
   m_GravityScale: 0
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 7a8767e62a2457b4190f60c610a2200a, type: 2}
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
@@ -1053,6 +1054,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 268577f0eec5b8445a3e9e8aee09a036, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  nextWaypointDistance: 0.5
 --- !u!114 &6830934254262187191
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1110,6 +1112,34 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ad0a9271ef8481489aeb7229461f261, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &3946721418048361259
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8883300417249960126}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 373b52eb9bf8c40f785bb6947a1aee66, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 1
+  drawGizmos: 1
+  detailedGizmos: 0
+  startEndModifier:
+    addPoints: 0
+    exactStartPoint: 3
+    exactEndPoint: 3
+    useRaycasting: 0
+    mask:
+      serializedVersion: 2
+      m_Bits: 4294967295
+    useGraphRaycasting: 0
+  traversableTags: -1
+  tagPenalties: 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+  graphMask:
+    value: -1
 --- !u!1001 &769170229685668158
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1227,7 +1257,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6830551438736010108, guid: a3e3d85f4ceaeb142b56061e8aafdab8, type: 3}
       propertyPath: m_Layer
-      value: 6
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 8594120475836149143, guid: a3e3d85f4ceaeb142b56061e8aafdab8, type: 3}
       propertyPath: m_Layer

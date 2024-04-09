@@ -17,6 +17,7 @@ Shader "2DStylizedShadows"
         _edgeColor("edgeColor", Color) = (0.9716981, 0.6551973, 0.3529281, 0)
         _colorMlpRGB("colorMlpRGB", Vector) = (1, 1, 1, 0)
         _directional("_directional", Float) = 1
+        [MainTexture][NoScaleOffset]_MainTex("_MainTex", 2D) = "white" {}
         [ToggleUI]_sceneLighten("_sceneLighten", Float) = 0
         [NoScaleOffset]_RenderText("RenderText", 2D) = "white" {}
         [ToggleUI]_enableBlur("enableBlur", Float) = 0
@@ -40,14 +41,14 @@ Shader "2DStylizedShadows"
         Tags
         {
             "RenderPipeline"="UniversalPipeline"
-          	"RenderType" = "TransparentCutout"
+            "RenderType"="Transparent"
             "UniversalMaterialType" = "Lit"
             "Queue"="Transparent"
             "ShaderGraphShader"="true"
             "ShaderGraphTargetId"=""
         }
 
-           Stencil {
+         Stencil {
 		        Ref 4
 		        Comp NotEqual
 		        Pass Replace
@@ -63,7 +64,6 @@ Shader "2DStylizedShadows"
         
             // Render State
             Cull Off
-
         Blend SrcAlpha OneMinusSrcAlpha, One OneMinusSrcAlpha
         ZTest LEqual
         ZWrite Off
@@ -264,6 +264,7 @@ Shader "2DStylizedShadows"
         float4 _SampleTexture2D_5a55d9f116964d80bcb18095c620b968_Texture_1_TexelSize;
         float4 _SampleTexture2D_77f75e44f2544760b42279aead10266c_Texture_1_TexelSize;
         float4 _SampleTexture2D_c90f6420c2914f638a9d93cd2bf70063_Texture_1_TexelSize;
+        float4 _MainTex_TexelSize;
         float _shadowBaseAlpha;
         float _shadowReflectiveness;
         float _shadowNarrowing;
@@ -319,7 +320,6 @@ Shader "2DStylizedShadows"
         float4 _ShapeLightTexture3_TexelSize;
         TEXTURE2D(_MainTex);
         SAMPLER(sampler_MainTex);
-        float4 _MainTex_TexelSize;
         TEXTURE2D(_shadowTex);
         SAMPLER(sampler_shadowTex);
         float2 _distMinMax;
@@ -1164,8 +1164,11 @@ Shader "2DStylizedShadows"
             surface.BaseColor = _Saturate_c4375e7e98c549c1adaed9e32ff3586a_Out_1;
             surface.Alpha = (_ShowInURP2DLight_4593bb73716a4325be24b28c9a733f99_OutVector4_1).x;
             surface.SpriteMask = IsGammaSpace() ? float4(1, 1, 1, 1) : float4 (SRGBToLinear(float3(1, 1, 1)), 1);
-            if (surface.Alpha < 0.01)
-					discard;
+            if(surface.Alpha<0.05)
+            {
+                discard;
+            }
+            
             return surface;
         }
         
@@ -1427,6 +1430,7 @@ Shader "2DStylizedShadows"
         float4 _SampleTexture2D_5a55d9f116964d80bcb18095c620b968_Texture_1_TexelSize;
         float4 _SampleTexture2D_77f75e44f2544760b42279aead10266c_Texture_1_TexelSize;
         float4 _SampleTexture2D_c90f6420c2914f638a9d93cd2bf70063_Texture_1_TexelSize;
+        float4 _MainTex_TexelSize;
         float _shadowBaseAlpha;
         float _shadowReflectiveness;
         float _shadowNarrowing;
@@ -1482,7 +1486,6 @@ Shader "2DStylizedShadows"
         float4 _ShapeLightTexture3_TexelSize;
         TEXTURE2D(_MainTex);
         SAMPLER(sampler_MainTex);
-        float4 _MainTex_TexelSize;
         TEXTURE2D(_shadowTex);
         SAMPLER(sampler_shadowTex);
         float2 _distMinMax;
@@ -2481,6 +2484,7 @@ Shader "2DStylizedShadows"
         float4 _SampleTexture2D_5a55d9f116964d80bcb18095c620b968_Texture_1_TexelSize;
         float4 _SampleTexture2D_77f75e44f2544760b42279aead10266c_Texture_1_TexelSize;
         float4 _SampleTexture2D_c90f6420c2914f638a9d93cd2bf70063_Texture_1_TexelSize;
+        float4 _MainTex_TexelSize;
         float _shadowBaseAlpha;
         float _shadowReflectiveness;
         float _shadowNarrowing;
@@ -2536,7 +2540,6 @@ Shader "2DStylizedShadows"
         float4 _ShapeLightTexture3_TexelSize;
         TEXTURE2D(_MainTex);
         SAMPLER(sampler_MainTex);
-        float4 _MainTex_TexelSize;
         TEXTURE2D(_shadowTex);
         SAMPLER(sampler_shadowTex);
         float2 _distMinMax;
@@ -3538,6 +3541,7 @@ Shader "2DStylizedShadows"
         float4 _SampleTexture2D_5a55d9f116964d80bcb18095c620b968_Texture_1_TexelSize;
         float4 _SampleTexture2D_77f75e44f2544760b42279aead10266c_Texture_1_TexelSize;
         float4 _SampleTexture2D_c90f6420c2914f638a9d93cd2bf70063_Texture_1_TexelSize;
+        float4 _MainTex_TexelSize;
         float _shadowBaseAlpha;
         float _shadowReflectiveness;
         float _shadowNarrowing;
@@ -3593,7 +3597,6 @@ Shader "2DStylizedShadows"
         float4 _ShapeLightTexture3_TexelSize;
         TEXTURE2D(_MainTex);
         SAMPLER(sampler_MainTex);
-        float4 _MainTex_TexelSize;
         TEXTURE2D(_shadowTex);
         SAMPLER(sampler_shadowTex);
         float2 _distMinMax;
@@ -4604,6 +4607,7 @@ Shader "2DStylizedShadows"
         float4 _SampleTexture2D_5a55d9f116964d80bcb18095c620b968_Texture_1_TexelSize;
         float4 _SampleTexture2D_77f75e44f2544760b42279aead10266c_Texture_1_TexelSize;
         float4 _SampleTexture2D_c90f6420c2914f638a9d93cd2bf70063_Texture_1_TexelSize;
+        float4 _MainTex_TexelSize;
         float _shadowBaseAlpha;
         float _shadowReflectiveness;
         float _shadowNarrowing;
@@ -4659,7 +4663,6 @@ Shader "2DStylizedShadows"
         float4 _ShapeLightTexture3_TexelSize;
         TEXTURE2D(_MainTex);
         SAMPLER(sampler_MainTex);
-        float4 _MainTex_TexelSize;
         TEXTURE2D(_shadowTex);
         SAMPLER(sampler_shadowTex);
         float2 _distMinMax;

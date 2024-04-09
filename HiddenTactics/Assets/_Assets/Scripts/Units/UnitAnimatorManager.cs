@@ -89,7 +89,7 @@ public class UnitAnimatorManager : NetworkBehaviour
     }
 
     protected void Unit_OnUnitReset(object sender, System.EventArgs e) {
-        if (!unit.GetUnitIsPlaced()) return;
+        if (!unit.GetUnitIsBought()) return;
 
         dead = false;
         unitAnimator.speed = 1;
