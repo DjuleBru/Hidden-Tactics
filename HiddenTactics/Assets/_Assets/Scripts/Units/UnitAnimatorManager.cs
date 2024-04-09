@@ -89,6 +89,8 @@ public class UnitAnimatorManager : NetworkBehaviour
     }
 
     protected void Unit_OnUnitReset(object sender, System.EventArgs e) {
+        if (!unit.GetUnitIsPlaced()) return;
+
         dead = false;
         unitAnimator.speed = 1;
         ResetAnimatorParameters();

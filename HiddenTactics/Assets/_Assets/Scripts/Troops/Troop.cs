@@ -83,9 +83,10 @@ public class Troop : NetworkBehaviour, IPlaceable {
 
         // Grid position is not a valid position
         if (!BattleGrid.Instance.IsValidPlayerGridPosition(newGridPosition)) return;
+        if (!PlayerAction_SpawnTroop.LocalInstance.IsValidIPlaceableSpawningTarget()) return;
 
         // Troop was not set at a grid position yet
-        if(currentGridPosition == null) {
+        if (currentGridPosition == null) {
             currentGridPosition = MousePositionManager.Instance.GetMouseGridPosition();
             BattleGrid.Instance.AddIPlaceableAtGridPosition(currentGridPosition, this);
         }
@@ -109,16 +110,19 @@ public class Troop : NetworkBehaviour, IPlaceable {
 
     public void HandleIPlaceablePosition() {
         //transform.position = BattleGrid.Instance.GetWorldPosition(currentGridPosition) - troopCenterPoint.transform.localPosition;
-        transform.position = battlefieldOwner.transform.position + battlefieldOffset;
+        transform.position = battlefieldOwner.position + battlefieldOffset;
     }
 
     public void SetIPlaceableOwnerClientId(ulong clientId) {
         ownerClientId = clientId;
         isOwnedByPlayer = (ownerClientId == NetworkManager.Singleton.LocalClientId);
+    }
 
-        if(isOwnedByPlayer) {
+    public void SetIPlaceableBattlefieldOwner() {
+        if (isOwnedByPlayer) {
             battlefieldOwner = BattleGrid.Instance.GetPlayerGridOrigin();
-        } else {
+        }
+        else {
             battlefieldOwner = BattleGrid.Instance.GetOpponentGridOrigin();
         }
     }
@@ -173,8 +177,14 @@ public class Troop : NetworkBehaviour, IPlaceable {
         // Set placed troop on grid object
         BattleGrid.Instance.SetIPlaceableSpawnedAtGridPosition(this, currentGridPosition);
         SetIPlaceableGridPosition(currentGridPosition);
-
         battlefieldOffset = transform.position - battlefieldOwner.transform.position;
+
+        // Set base units as bought (not in additionalUnitsInTroop)
+        foreach(Unit unit in allUnitsInTroop) {
+            if(!additionalUnitsInTroop.Contains(unit)) {
+                unit.ActivateAdditionalUnit();
+            }
+        }
     }
 
     public void SetIPlaceableGridPosition(GridPosition troopGridPosition) {

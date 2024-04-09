@@ -37,7 +37,7 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
             HandleIPlaceablePositionDuringPlacement();
         }
         else {
-            //HandleIPlaceablePosition();
+            HandleIPlaceablePosition();
         }
     }
 
@@ -48,6 +48,7 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
 
         // Grid position is not a valid position
         if (!BattleGrid.Instance.IsValidPlayerGridPosition(newGridPosition)) return;
+        if (!PlayerAction_SpawnTroop.LocalInstance.IsValidIPlaceableSpawningTarget()) return;
 
         // building was not set at a grid position yet
         if (currentGridPosition == null) {
@@ -96,7 +97,6 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
         currentGridPosition = BattleGrid.Instance.GetGridPosition(buildingCenterPoint.position);
 
         isPlaced = true;
-
         BattleGrid.Instance.AddIPlaceableAtGridPosition(currentGridPosition, this);
 
         // Reverse X symmetry if not owned by player
@@ -106,11 +106,22 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
 
         // Set placed troop on grid object
         BattleGrid.Instance.SetIPlaceableSpawnedAtGridPosition(this, currentGridPosition);
+        SetIPlaceableGridPosition(currentGridPosition);
+        battlefieldOffset = transform.position - battlefieldOwner.transform.position;
     }
 
     public void SetIPlaceableOwnerClientId(ulong clientId) {
         ownerClientId = clientId;
         isOwnedByPlayer = (ownerClientId == NetworkManager.Singleton.LocalClientId);
+    }
+
+    public void SetIPlaceableBattlefieldOwner() {
+        if (isOwnedByPlayer) {
+            battlefieldOwner = BattleGrid.Instance.GetPlayerGridOrigin();
+        }
+        else {
+            battlefieldOwner = BattleGrid.Instance.GetOpponentGridOrigin();
+        }
     }
     public void DeActivateOpponentIPlaceable() {
         if (!isOwnedByPlayer) {

@@ -14,6 +14,7 @@ public interface IPlaceable {
     void PlaceIPlaceable();
 
     void SetIPlaceableOwnerClientId(ulong clientId);
+    void SetIPlaceableBattlefieldOwner();
     void DeActivateOpponentIPlaceable();
     void SetIPlaceableGridPosition(GridPosition iPlaceableGridPosition);
 

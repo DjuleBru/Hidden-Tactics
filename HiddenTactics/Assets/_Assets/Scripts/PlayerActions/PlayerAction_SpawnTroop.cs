@@ -149,6 +149,8 @@ public class PlayerAction_SpawnTroop : NetworkBehaviour {
         }
         // Set Owner
         iPlaceableToSpawn.SetIPlaceableOwnerClientId(ownerClientId);
+        iPlaceableToSpawn.SetIPlaceableBattlefieldOwner();
+
     }
 
     [ClientRpc]

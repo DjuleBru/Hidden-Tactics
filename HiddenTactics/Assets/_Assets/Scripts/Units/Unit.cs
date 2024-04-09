@@ -123,7 +123,7 @@ public class Unit : NetworkBehaviour, ITargetable {
         transform.localPosition = unitPositionInTroop;
         unitIsDead = false;
 
-        if(!unitSO.isGarrisonedUnit && unitIsBought) {
+        if (!unitSO.isGarrisonedUnit & unitIsBought) {
             collider2d.enabled = true;
         }
 

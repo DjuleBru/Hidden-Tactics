@@ -37,7 +37,7 @@ public class PlayerActionsManager : NetworkBehaviour {
                 }
 
                 if (Input.GetMouseButtonDown(1)) {
-
+                    PlayerAction_SpawnTroop.LocalInstance.CancelIPlaceablePlacement();
                     ChangeActionAtFrameEnd(Action.Idle);
                 }
                 break;
