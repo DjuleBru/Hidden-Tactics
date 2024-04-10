@@ -1,25 +1,29 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
-public class VillageManager : NetworkBehaviour
-{
+public class VillageManager : NetworkBehaviour {
+    public static VillageManager Instance { get; private set; }
     [SerializeField] private Transform villagePrefab;
-
+    [SerializeField] private Transform playerGridOrigin;
+    [SerializeField] private Transform opponentGridOrigin;
     [SerializeField] private List<Vector2> villagePositionInGridObject;
 
-    private void Start() {
-        GenerateVillages();
+    private void Awake() {
+        Instance = this;
     }
 
-    private void GenerateVillages() {
+    [ServerRpc(RequireOwnership =false)]
+    public void GeneratePlayerVillagesServerRpc(ulong clientId) {
         GridSystem battleGrid = BattleGrid.Instance.GetGridSystem();
 
         for (int x = 0; x < battleGrid.width; x++) {
             for (int y = 0; y < battleGrid.height; y++) {
-
-                GridPosition pos = new GridPosition(x, y);
+                Vector2Int villageGridPositionVector = new Vector2Int(x, y);
+                GridPosition pos = new GridPosition(villageGridPositionVector.x, villageGridPositionVector.y);
                 GridObjectVisual gridObjectVisual = battleGrid.GetGridObject(pos).GetGridObjectVisual();
 
                 // first and last sprites = settlements
@@ -27,31 +31,42 @@ public class VillageManager : NetworkBehaviour
                     foreach(Vector2 villagePosition in villagePositionInGridObject) {
 
                         Vector3 villageOffset = new Vector3(villagePosition.x, villagePosition.y, 0);
-                        Vector3 villagePositionWorld = gridObjectVisual.transform.position + villageOffset;
-                        Village village = Instantiate(villagePrefab, villagePositionWorld, Quaternion.identity).GetComponent<Village>();
+                        Village village = Instantiate(villagePrefab).GetComponent<Village>();
+                        
+                        NetworkObject villageNetworkObject = village.gameObject.GetComponent<NetworkObject>();
+                        villageNetworkObject.Spawn(true);
 
-                        village.SetVillageOffset(villageOffset);
-                        village.SetIPlaceableOwnerClientId(NetworkManager.Singleton.LocalClientId);
-                        village.SetIPlaceableBattlefieldOwner();
-                        village.SetIPlaceableGridPosition(pos);
-                        village.PlaceIPlaceable();
-                    }
-                    continue;
-                }
-
-                if (x == battleGrid.width - 1) {
-                    foreach (Vector2 villagePosition in villagePositionInGridObject) {
-                        Vector3 villagePositionWorld = gridObjectVisual.transform.position + new Vector3(villagePosition.x, villagePosition.y, 0);
-                        Village village = Instantiate(villagePrefab, villagePositionWorld, Quaternion.identity).GetComponent<Village>();
-
-                        village.SetIPlaceableOwnerClientId(NetworkManager.Singleton.LocalClientId);
-                        village.SetIPlaceableBattlefieldOwner();
-                        village.SetIPlaceableGridPosition(pos);
-                        village.PlaceIPlaceable();
+                        SetVillageDataClientRpc(villageNetworkObject, clientId, villageGridPositionVector, villageOffset);
                     }
                     continue;
                 }
             }
         }
+    }
+
+    [ClientRpc]
+    private void SetVillageDataClientRpc(NetworkObjectReference villageNetworkObjectReference, ulong clientID, Vector2Int villageGridPosition, Vector3 villageOffset) {
+
+        GridPosition pos = new GridPosition(villageGridPosition.x, villageGridPosition.y);
+
+        // Reverse X symmetry 
+        if(clientID != NetworkManager.Singleton.LocalClientId) {
+            pos = BattleGrid.Instance.TranslateOpponentGridPosition(pos);
+
+            if(villageOffset.x == -4) {
+                villageOffset.x = .25f;
+            } else {
+                villageOffset.x = -4;
+            }
+        }
+
+        villageNetworkObjectReference.TryGet(out NetworkObject villageNetworkObject);
+        Village village = villageNetworkObject.GetComponent<Village>();
+
+        village.SetVillageOffset(villageOffset);
+        village.SetIPlaceableOwnerClientId(clientID);
+        village.SetIPlaceableBattlefieldOwner();
+        village.SetIPlaceableGridPosition(pos);
+        village.PlaceIPlaceable();
     }
 }

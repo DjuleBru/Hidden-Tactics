@@ -55,8 +55,10 @@ public class GridObjectVisual : MonoBehaviour
             troopDebugText.text = "";
         }
 
-        if (gridObject.GetBuilding() != null) {
-            buildingDebugText.text = gridObject.GetBuilding().ToString();
+        if (gridObject.GetBuildingList() != null) {
+            foreach (Building building in gridObject.GetBuildingList()) {
+                buildingDebugText.text += building.ToString() + "\n";
+            }
         }
         else {
             buildingDebugText.text = "";

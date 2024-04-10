@@ -162,7 +162,7 @@ public class UnitTargetingSystem : NetworkBehaviour
             }
 
             List<Unit> unitListAtTargetGridPosition = BattleGrid.Instance.GetUnitListAtGridPosition(targetGridPosition);
-            Building buildingAtTargetGridPosition = BattleGrid.Instance.GetBuildingAtGridPosition(targetGridPosition);
+            List<Building> buildingListAtTargetGridPosition = BattleGrid.Instance.GetBuildingListAtGridPosition(targetGridPosition);
 
             foreach (Unit unit in unitListAtTargetGridPosition) {
                 if (unit.IsOwnedByPlayer() != this.unit.IsOwnedByPlayer() && !unit.GetIsDead() && unit.GetUnitIsBought() && attackSO.attackTargetTypes.Contains(unit.GetTargetType())) {
@@ -171,14 +171,13 @@ public class UnitTargetingSystem : NetworkBehaviour
                 }
             }
 
-            if(buildingAtTargetGridPosition != null) {
-                // There is a building on the target grid position
+            foreach(Building buildingAtTargetGridPosition in buildingListAtTargetGridPosition) {
                 if (buildingAtTargetGridPosition.IsOwnedByPlayer() != unit.IsOwnedByPlayer() && attackSO.attackTargetTypes.Contains(buildingAtTargetGridPosition.GetTargetType())) {
                     // target building is not from the same team AND building is targetable
                     targetItargetableList.Add(buildingAtTargetGridPosition);
                 }
             }
-
+            
             index++;
         }
         return targetItargetableList;

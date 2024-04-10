@@ -110,7 +110,7 @@ public class Unit : NetworkBehaviour, ITargetable {
 
     public void SetParentBuilding() {
         GridPosition parentTroopCenterPointGridPosition = BattleGrid.Instance.GetGridPosition(parentTroop.GetTroopCenterPoint());
-        Building parentBuilding = BattleGrid.Instance.GetBuildingAtGridPosition(parentTroopCenterPointGridPosition);
+        Building parentBuilding = BattleGrid.Instance.GetBuildingListAtGridPosition(parentTroopCenterPointGridPosition)[0];
         this.parentBuilding = parentBuilding;
         parentBuilding.OnBuildingDestroyed += ParentBuilding_OnBuildingDestroyed;
     }

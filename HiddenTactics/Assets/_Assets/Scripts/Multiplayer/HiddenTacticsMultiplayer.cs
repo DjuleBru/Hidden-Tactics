@@ -202,6 +202,7 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
         playerData.playerId = playerId;
 
         playerDataNetworkList[playerDataIndex] = playerData;
+        Debug.Log("player ID = " + playerId);
     }
 
 

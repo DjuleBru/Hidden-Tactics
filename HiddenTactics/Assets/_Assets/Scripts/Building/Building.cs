@@ -31,7 +31,7 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
         }
     }
 
-    protected void Update() {
+    protected virtual void Update() {
         if (!isPlaced) {
             HandlePositioningOnGrid();
             HandleIPlaceablePositionDuringPlacement();
@@ -72,7 +72,7 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
             transform.position = BattleGrid.Instance.GetWorldPosition(currentGridPosition) - buildingCenterPoint.localPosition;
         }
     }
-    public void Die() {
+    public virtual void Die() {
         isDestroyed = true;
         StartCoroutine(DieCoroutine());
     }
@@ -91,7 +91,7 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
         transform.position = battlefieldOwner.position + battlefieldOffset;
     }
 
-    public void PlaceIPlaceable() {
+    public virtual void PlaceIPlaceable() {
         OnBuildingPlaced?.Invoke(this, EventArgs.Empty);
 
         currentGridPosition = BattleGrid.Instance.GetGridPosition(buildingCenterPoint.position);
@@ -128,7 +128,7 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
             gameObject.SetActive(false);
         }
     }
-    public void SetIPlaceableGridPosition(GridPosition iPlaceableGridPosition) {
+    public virtual void SetIPlaceableGridPosition(GridPosition iPlaceableGridPosition) {
         Vector3 buildingWorldPosition = BattleGrid.Instance.GetWorldPosition(iPlaceableGridPosition);
 
         currentGridPosition = iPlaceableGridPosition;

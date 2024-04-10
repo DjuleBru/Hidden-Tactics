@@ -138,9 +138,9 @@ public class BattleGrid : MonoBehaviour
         gridObject.AddIPlaceable(building);
     }
 
-    public Building GetBuildingAtGridPosition(GridPosition gridPosition) {
+    public List<Building> GetBuildingListAtGridPosition(GridPosition gridPosition) {
         GridObject gridObject = gridSystem.GetGridObject(gridPosition);
-        return gridObject.GetBuilding();
+        return gridObject.GetBuildingList();
     }
 
     #endregion

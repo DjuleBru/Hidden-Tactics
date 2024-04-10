@@ -196,22 +196,37 @@ public class UnitAttack : NetworkBehaviour
     }
 
     protected virtual void PerformAllDamageActions(ITargetable target, Vector3 damageHitPosition) {
-
         IDamageable targetIDamageable = target.GetIDamageable();
-        targetIDamageable.TakeDamage(attackDamage);
 
-        if(target is Unit) {
-            if (attackKnockback != 0) {
-                Vector2 incomingDamageDirection = new Vector2((target as Unit).transform.position.x - damageHitPosition.x, (target as Unit).transform.position.y - damageHitPosition.y);
-                Vector2 force = incomingDamageDirection * attackKnockback;
-
-                (target as Unit).TakeKnockBack(force);
-            }
-
-            if (attackDazedTime != 0) {
-                (target as Unit).TakeDazed(attackDazedTime);
-            }
+        //If attacking village:die
+        if (target is Village) {
+            PerformDamageActionOnVillage(targetIDamageable);
+            return;
         }
+
+        if (target is Unit) {
+            PerformDamageActionOnUnit(target, damageHitPosition);
+        }
+
+        targetIDamageable.TakeDamage(attackDamage);
+    }
+
+    protected virtual void PerformDamageActionOnUnit(ITargetable target, Vector3 damageHitPosition) {
+        if (attackKnockback != 0) {
+            Vector2 incomingDamageDirection = new Vector2((target as Unit).transform.position.x - damageHitPosition.x, (target as Unit).transform.position.y - damageHitPosition.y);
+            Vector2 force = incomingDamageDirection * attackKnockback;
+
+            (target as Unit).TakeKnockBack(force);
+        }
+
+        if (attackDazedTime != 0) {
+            (target as Unit).TakeDazed(attackDazedTime);
+        }
+    }
+
+    protected virtual void PerformDamageActionOnVillage(IDamageable targetIDamageable) {
+        GetComponent<UnitHP>().TakeDamage(unit.GetUnitSO().HP);
+        targetIDamageable.TakeDamage(unit.GetUnitSO().damageToVillages);
     }
 
     protected List<Unit> FindAOEAttackTargets(Vector3 targetPosition) {

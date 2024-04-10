@@ -31,4 +31,6 @@ public class UnitSO : ScriptableObject {
     public AttackSO mainAttackSO;
     public AttackSO sideAttackSO;
     public AttackSO specialAttackSO;
+
+    public int damageToVillages;
 }

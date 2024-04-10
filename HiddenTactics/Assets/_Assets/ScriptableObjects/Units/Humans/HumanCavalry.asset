@@ -13,11 +13,14 @@ MonoBehaviour:
   m_Name: HumanCavalry
   m_EditorClassIdentifier: 
   unitTagList: 00000000
+  unitTargetType: 0
   HP: 30
   armor: 0
   mass: 500
   moveType: 0
   unitMoveSpeed: 100
+  isGarrisonedUnit: 0
   mainAttackSO: {fileID: 11400000, guid: 710047540ad1161409524e0f29942285, type: 2}
   sideAttackSO: {fileID: 0}
   specialAttackSO: {fileID: 0}
+  damageToVillages: 2

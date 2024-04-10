@@ -28,7 +28,7 @@ public class UnitAI_Ranged : UnitAI
 
         if (BattleGrid.Instance.IsValidGridPosition(nextGridPosition)) {
             // This GridPosition is a valid grid position
-            Building building = BattleGrid.Instance.GetBuildingAtGridPosition(nextGridPosition);
+            List<Building> buildingList = BattleGrid.Instance.GetBuildingListAtGridPosition(nextGridPosition);
 
             if(state.Value != State.attacking) {
 
@@ -36,8 +36,9 @@ public class UnitAI_Ranged : UnitAI
                 if (state.Value != State.blockedByBuilding) {
                     // This ranged unit is not blocked by building yet
 
-                    if (building != null) {
+                    if (buildingList.Count > 0) {
                         // There is a building that blocks the unit
+                        Building building = buildingList[0];
 
                         if (building.GetBuildingSO().buildingBlocksUnitMovement) {
                             ChangeState(State.blockedByBuilding);
@@ -46,7 +47,7 @@ public class UnitAI_Ranged : UnitAI
                 }
                 else {
                     // This ranged unit is blocked by building
-                    if (building == null) {
+                    if (buildingList.Count == 0) {
                         ChangeState(State.moveForwards);
                     }
                 }
