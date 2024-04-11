@@ -80,7 +80,6 @@ public class UCWAnimatorManager : UnitAnimatorManager
 
         unitAnimator.SetTrigger("BaseAttack");
     }
-
     protected override void UnitAttack_OnUnitAttackStarted(object sender, System.EventArgs e) {
         base.UnitAttack_OnUnitAttackStarted(sender, e);
         OnUcwAttackStart?.Invoke(this, EventArgs.Empty);

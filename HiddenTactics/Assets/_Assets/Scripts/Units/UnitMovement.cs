@@ -21,7 +21,7 @@ public class UnitMovement : NetworkBehaviour {
     // Length of the path
     protected int theGScoreToStopAt = 6000;
 
-    [SerializeField] protected float nextWaypointDistance = 1.5f;
+    [SerializeField] protected float nextWaypointDistance = .5f;
 
     protected int currentWaypoint = 0;
     protected bool reachedEndOfPath;
@@ -38,11 +38,13 @@ public class UnitMovement : NetworkBehaviour {
 
     private bool dazed;
     private bool canMove;
+    private bool inFormation;
     private float moveSpeed;
 
     private Vector3 destinationPoint;
     private Vector3 moveDir;
     private Vector3 watchDir;
+    private Vector3 moveForwardsPoint;
 
     private void Awake() {
         rb = GetComponent<Rigidbody2D>();
@@ -53,15 +55,20 @@ public class UnitMovement : NetworkBehaviour {
         moveSpeed = unit.GetUnitSO().unitMoveSpeed;
     }
 
-
     public override void OnNetworkSpawn() {
         unit.OnUnitPlaced += Unit_OnUnitPlaced;
+        unit.OnUnitReset += Unit_OnUnitReset;
     }
 
+
     private void Update() {
-        if (!canMove) return;
 
         pathCalculationTimer -= Time.deltaTime;
+        if (pathCalculationTimer < 0) {
+            CheckUnitsInFormation();
+        }
+
+        if (!canMove) return;
 
         if (pathCalculationTimer < 0) {
             Vector3 direction = (destinationPoint - unit.transform.position).normalized;
@@ -82,6 +89,19 @@ public class UnitMovement : NetworkBehaviour {
             if (!dazed) {
                 MoveServerRpc(moveDir);
             }
+        }
+    }
+
+    private void CheckUnitsInFormation() {
+        if (Vector3.Distance(transform.position, moveForwardsPoint) < 1.5f) {
+
+            if (!inFormation) {
+                inFormation = true;
+                SetMoveForwardsPoint();
+            }
+        }
+        else {
+            inFormation = false;
         }
     }
 
@@ -132,7 +152,7 @@ public class UnitMovement : NetworkBehaviour {
 
     public void MoveForwards() {
         canMove = true;
-        destinationPoint = transform.position + new Vector3(moveDirMultiplier * 50, 0, 0);
+        destinationPoint = moveForwardsPoint;
     }
 
     public void MoveToTarget(Vector3 targetPosition) {
@@ -142,6 +162,9 @@ public class UnitMovement : NetworkBehaviour {
         destinationPoint = targetPosition;
     }
 
+    private void SetMoveForwardsPoint() {
+        moveForwardsPoint = BattleGrid.Instance.GetMoveForwardsNextGridPosition(unit);
+    }
 
     [ServerRpc(RequireOwnership = false)]
     private void MoveServerRpc(Vector3 moveDir3DNormalized) {
@@ -162,6 +185,10 @@ public class UnitMovement : NetworkBehaviour {
     public void StopMoving() {
         canMove = false;
         moveDir = Vector3.zero;
+    }
+
+    public void ResetSpeed() {
+        rb.velocity = Vector3.zero;
     }
 
     public void SetDazed(bool dazed) {
@@ -217,6 +244,12 @@ public class UnitMovement : NetworkBehaviour {
         else {
             moveDirMultiplier = -1;
         }
+        SetMoveForwardsPoint();
     }
 
+    private void Unit_OnUnitReset(object sender, EventArgs e) {
+        ResetSpeed();
+
+        moveForwardsPoint = BattleGrid.Instance.GetMoveForwardsCustomGridPosition(this.unit, unit.GetInitialUnitGridPosition());
+    }
 }

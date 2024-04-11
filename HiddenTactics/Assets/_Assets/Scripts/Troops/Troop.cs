@@ -61,7 +61,6 @@ public class Troop : NetworkBehaviour, IPlaceable {
 
     }
 
-
     private void Update() {
         if(!isPlaced) {
             HandlePositioningOnGrid();
@@ -140,10 +139,6 @@ public class Troop : NetworkBehaviour, IPlaceable {
         }
     }
 
-    public void Test() {
-        Debug.Log("testing");
-    }
-
     public void BuyAdditionalUnits() {
         BuyAdditionalUnitsServerRpc();
     }
@@ -157,7 +152,7 @@ public class Troop : NetworkBehaviour, IPlaceable {
     private void BuyAdditionalUnitsClientRpc() {
         if (isOwnedByPlayer) {
             foreach (Unit unit in additionalUnitsInTroop) {
-                unit.ActivateAdditionalUnit();
+                unit.ActivateAdditionalUnit(); 
             }
             additionalUnitsInTroop.Clear();
         }
@@ -186,20 +181,22 @@ public class Troop : NetworkBehaviour, IPlaceable {
             gameObject.SetActive(true);
         }
 
-        OnTroopPlaced?.Invoke(this, null);
-        isPlaced = true;
-
         // Set placed troop on grid object
         BattleGrid.Instance.SetIPlaceableSpawnedAtGridPosition(this, currentGridPosition);
         SetIPlaceableGridPosition(currentGridPosition);
         battlefieldOffset = transform.position - battlefieldOwner.transform.position;
 
-        // Set base units as bought (not in additionalUnitsInTroop)
+        // Set base units as bought (not in additionalUnitsInTroop) AND Set unit initial grid positions
         foreach(Unit unit in allUnitsInTroop) {
-            if(!additionalUnitsInTroop.Contains(unit)) {
+            unit.SetInitialGridPosition(currentGridPosition);
+
+            if (!additionalUnitsInTroop.Contains(unit)) {
                 unit.ActivateAdditionalUnit();
             }
         }
+
+        OnTroopPlaced?.Invoke(this, null);
+        isPlaced = true;
     }
 
     public void SetIPlaceableGridPosition(GridPosition troopGridPosition) {

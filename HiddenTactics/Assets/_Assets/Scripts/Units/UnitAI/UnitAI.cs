@@ -27,6 +27,7 @@ public class UnitAI : NetworkBehaviour
         moveToMeleeTarget,
         attacking,
         dead,
+        fallen,
     }
 
     protected NetworkVariable<State> state = new NetworkVariable<State>();
@@ -47,6 +48,7 @@ public class UnitAI : NetworkBehaviour
         state.Value = State.idle;
 
         unit.OnUnitDied += Unit_OnUnitDied;
+        unit.OnUnitFell += Unit_OnUnitFell;
         unit.OnUnitDazed += Unit_OnUnitDazed;
         unitAttack.OnUnitAttack += UnitAttack_OnUnitAttack;
         unitAttack.OnUnitAttackEnded += UnitAttack_OnUnitAttackEnded;
@@ -54,6 +56,7 @@ public class UnitAI : NetworkBehaviour
 
         BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
     }
+
 
     protected virtual void Update() {
         if (!IsServer) return;
@@ -231,6 +234,11 @@ public class UnitAI : NetworkBehaviour
         ChangeState(State.dead);
     }
 
+    protected void Unit_OnUnitFell(object sender, EventArgs e) {
+        if (!IsServer) return;
+        ChangeState(State.fallen);
+    }
+
     protected virtual void UnitAttack_OnUnitAttack(object sender, EventArgs e) {
 
     }
@@ -298,6 +306,10 @@ public class UnitAI : NetworkBehaviour
     }
     public bool IsMovingToTarget() {
         return state.Value == State.moveToMeleeTarget;
+    }
+
+    public bool IsFallen() {
+        return state.Value == State.fallen;
     }
     #endregion
 

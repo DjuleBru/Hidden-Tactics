@@ -51,6 +51,71 @@ public class BattleGrid : MonoBehaviour
         return gridSystem.GetWorldPosition(gridPosition);
     }
 
+    public Vector3 GetMoveForwardsNextGridPosition(Unit unit) {
+        // Recompose where the unit should be : current grid position for X, initial grid position for Y
+        GridPosition unitGridPosition = new GridPosition (unit.GetCurrentGridPosition().x, unit.GetInitialUnitGridPosition().y);
+
+        GridPosition nextGridPosition = new GridPosition(0, 0);
+        Vector3 nextWorldPosition = Vector3.zero;
+
+        if(unit.IsOwnedByPlayer()) {
+            nextGridPosition = new GridPosition(unitGridPosition.x + 1, unitGridPosition.y);
+
+
+            //Unit reached end on battlefield
+            if (nextGridPosition.x == 12) {
+                nextGridPosition = new GridPosition(11, nextGridPosition.y);
+                nextWorldPosition = gridSystem.GetWorldPosition(nextGridPosition);
+                nextWorldPosition.x += gridCellSize * 3;
+                nextWorldPosition.y += unit.GetUnitPositionInTroop().y - gridCellSize / 2;
+            } else {
+                nextWorldPosition = gridSystem.GetWorldPosition(nextGridPosition);
+                nextWorldPosition.y += unit.GetUnitPositionInTroop().y - gridCellSize / 2;
+                nextWorldPosition.x += unit.GetUnitPositionInTroop().x - gridCellSize / 2;
+            }
+        } else {
+
+            nextGridPosition = new GridPosition(unitGridPosition.x - 1, unitGridPosition.y);
+
+            //Unit reached end on battlefield
+            if (nextGridPosition.x == -1) {
+                nextGridPosition = new GridPosition(0, nextGridPosition.y);
+                nextWorldPosition = gridSystem.GetWorldPosition(nextGridPosition);
+                nextWorldPosition.x -= gridCellSize * 3;
+                nextWorldPosition.y += unit.GetUnitPositionInTroop().y - gridCellSize / 2;
+            } else {
+                nextWorldPosition = gridSystem.GetWorldPosition(nextGridPosition);
+                nextWorldPosition.y += unit.GetUnitPositionInTroop().y - gridCellSize / 2;
+                nextWorldPosition.x += unit.GetUnitPositionInTroop().x - gridCellSize / 2;
+            }
+        }
+        return nextWorldPosition;
+    }
+
+    public Vector3 GetMoveForwardsCustomGridPosition(Unit unit, GridPosition gridPosition) {
+
+        GridPosition nextGridPosition = new GridPosition(0, 0);
+        Vector3 nextWorldPosition = Vector3.zero;
+
+        if (unit.IsOwnedByPlayer()) {
+            nextGridPosition = new GridPosition(gridPosition.x + 1, gridPosition.y);
+
+            nextWorldPosition = gridSystem.GetWorldPosition(nextGridPosition);
+            nextWorldPosition.y += unit.GetUnitPositionInTroop().y - gridCellSize / 2;
+            nextWorldPosition.x += unit.GetUnitPositionInTroop().x - gridCellSize / 2;
+        }
+        else {
+
+            nextGridPosition = new GridPosition(gridPosition.x - 1, gridPosition.y);
+
+            nextWorldPosition = gridSystem.GetWorldPosition(nextGridPosition);
+            nextWorldPosition.y += unit.GetUnitPositionInTroop().y - gridCellSize / 2;
+            nextWorldPosition.x += unit.GetUnitPositionInTroop().x - gridCellSize / 2;
+        }
+
+        return nextWorldPosition;
+    }
+
     public GridPosition TranslateOpponentGridPosition(GridPosition gridPosition) {
         GridPosition translatedGridPosition = gridPosition;
 

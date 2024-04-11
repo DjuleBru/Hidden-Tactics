@@ -12,6 +12,7 @@ public class Unit : NetworkBehaviour, ITargetable {
     public event EventHandler OnUnitPlaced;
     public event EventHandler OnUnitDied;
     public event EventHandler OnUnitReset;
+    public event EventHandler OnUnitFell;
     public event EventHandler<OnUnitDazedEventArgs> OnUnitDazed;
     public event EventHandler OnUnitSetAsAdditionalUnit;
     public event EventHandler OnAdditionalUnitActivated;
@@ -27,6 +28,7 @@ public class Unit : NetworkBehaviour, ITargetable {
     protected Troop parentTroop;
     protected Building parentBuilding;
 
+    protected GridPosition initialUnitGridPosition;
     protected GridPosition currentGridPosition;
     protected Vector3 unitPositionInTroop;
 
@@ -78,6 +80,7 @@ public class Unit : NetworkBehaviour, ITargetable {
 
         // Unit was not set at a grid position yet
         if (currentGridPosition == null) {
+
             currentGridPosition = BattleGrid.Instance.GetGridPosition(transform.position);
             BattleGrid.Instance.AddUnitAtGridPosition(currentGridPosition, this);
         }
@@ -95,7 +98,6 @@ public class Unit : NetworkBehaviour, ITargetable {
         }
     }
     protected virtual void ParentTroop_OnTroopPlaced(object sender, System.EventArgs e) {
-        OnUnitPlaced?.Invoke(this, EventArgs.Empty);
 
         if (!isAdditionalUnit) {
             unitIsPlaced = true;
@@ -106,6 +108,8 @@ public class Unit : NetworkBehaviour, ITargetable {
             collider2d.enabled = false;
             SetParentBuilding();
         }
+
+        OnUnitPlaced?.Invoke(this, EventArgs.Empty);
     }
 
     public void SetParentBuilding() {
@@ -126,7 +130,6 @@ public class Unit : NetworkBehaviour, ITargetable {
         if (!unitSO.isGarrisonedUnit & unitIsBought) {
             collider2d.enabled = true;
         }
-
         OnUnitReset?.Invoke(this, EventArgs.Empty);
     }
 
@@ -156,6 +159,13 @@ public class Unit : NetworkBehaviour, ITargetable {
         RemoveUnitFromBattlePhaseUnitList();
     }
 
+    public void Fall() {
+        OnUnitFell?.Invoke(this, EventArgs.Empty);
+        unitIsDead = true;
+        collider2d.enabled = false;
+        RemoveUnitFromBattlePhaseUnitList();
+    }
+
     public void RemoveUnitFromBattlePhaseUnitList() {
         if (IsServer) {
             StartCoroutine(RemoveUnitFromBattlePhaseUnitListCoroutine());
@@ -169,6 +179,9 @@ public class Unit : NetworkBehaviour, ITargetable {
 
     #region GET PARAMETERS
 
+    public Vector3 GetUnitPositionInTroop() {
+        return unitPositionInTroop;
+    }
     public bool GetIsDead() {
         return unitIsDead;
     }
@@ -209,6 +222,10 @@ public class Unit : NetworkBehaviour, ITargetable {
         return currentGridPosition;
     }
 
+    public GridPosition GetInitialUnitGridPosition() {
+        return initialUnitGridPosition;
+    }
+
     public bool IsOwnedByPlayer() {
         return parentTroop.IsOwnedByPlayer();
     }
@@ -244,6 +261,10 @@ public class Unit : NetworkBehaviour, ITargetable {
         }
 
         transform.position = unitPositionInTroop;
+    }
+
+    public void SetInitialGridPosition(GridPosition gridPosition) {
+        initialUnitGridPosition = gridPosition;
     }
 
     public void SetUnitAsAdditionalUnit() {

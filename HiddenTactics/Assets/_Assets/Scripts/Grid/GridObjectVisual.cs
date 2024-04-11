@@ -43,6 +43,7 @@ public class GridObjectVisual : MonoBehaviour
 
 
     private void Update() {
+        if (!showDebugInfo) return;
         gridPositionDebugText.text = gridObject.ToString();
 
         string troopString = "";

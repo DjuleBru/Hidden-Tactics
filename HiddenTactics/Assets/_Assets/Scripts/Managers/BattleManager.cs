@@ -156,6 +156,10 @@ public class BattleManager : NetworkBehaviour
         OnStateChanged?.Invoke(this, EventArgs.Empty);
 
         if (IsServer) {
+            if(state.Value == State.PreparationPhase) {
+                AStarRecalculation.Instance.RecalculateGraph();
+            }
+
             if (state.Value == State.BattlePhase) {
                 //Manage unit lists
                 unitsStillInBattle.Clear();

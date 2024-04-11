@@ -52,13 +52,6 @@ public class UnitAnimatorManager : NetworkBehaviour
     }
 
     protected virtual void Update() {
-        if (dead) {
-            if (unitAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime > .95) {
-                // Unit animator has finished playing die animation
-                unitAnimator.speed = 0;
-            }
-            return;
-        }
 
         if (unitAIStateHasChanged) {
             if(unitAnimator.GetCurrentAnimatorStateInfo(0).IsName("Idle") | unitAnimator.GetCurrentAnimatorStateInfo(0).IsName("Walk") | unitAnimator.GetCurrentAnimatorStateInfo(0).IsName("Attack_Start")) {
@@ -93,6 +86,8 @@ public class UnitAnimatorManager : NetworkBehaviour
 
         dead = false;
         unitAnimator.speed = 1;
+        transform.localScale = Vector3.one;
+        transform.localPosition = Vector3.zero;
         ResetAnimatorParameters();
     }
 
@@ -101,7 +96,7 @@ public class UnitAnimatorManager : NetworkBehaviour
     }
 
     protected void UnitAI_OnStateChanged(object sender, System.EventArgs e) {
-        if (unitAI.IsDead()) {
+        if (unitAI.IsDead() | unitAI.IsFallen()) {
             UpdateAnimatorParameters();
             return;
         }
@@ -189,6 +184,14 @@ public class UnitAnimatorManager : NetworkBehaviour
             walking = false;
             idle = true;
             attacking = true;
+        }
+
+        if (unitAI.IsFallen()) {
+            unitAnimator.SetTrigger("Fall");
+            dead = true;
+            walking = false;
+            idle = false;
+            attacking = false;
         }
 
         unitAnimator.SetBool("Walking", walking);
