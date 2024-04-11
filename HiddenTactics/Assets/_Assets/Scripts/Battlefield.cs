@@ -1,10 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Netcode;
 
-public class Battlefield : MonoBehaviour
+public class Battlefield : NetworkBehaviour
 {
     [SerializeField] public int playerNumber;
+    [SerializeField] private Collider2D battlefieldBorderCollider;
     private BattlefieldAnimatorManager battlefieldAnimatorManager;
 
     private void Awake() {

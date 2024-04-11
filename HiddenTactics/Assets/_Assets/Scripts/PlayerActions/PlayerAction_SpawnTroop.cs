@@ -119,7 +119,6 @@ public class PlayerAction_SpawnTroop : NetworkBehaviour {
         DeActivateOpponentIPlaceableClientRpc(troopNetworkObject);
     }
 
-
     [ServerRpc(RequireOwnership = false)]
     private void SpawnBuildingServerRpc(int buildingSOIndex, ulong ownerClientId) {
 

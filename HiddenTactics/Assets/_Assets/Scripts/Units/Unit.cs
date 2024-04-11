@@ -152,6 +152,19 @@ public class Unit : NetworkBehaviour, ITargetable {
         OnUnitDied?.Invoke(this, EventArgs.Empty);
         unitIsDead = true;
         collider2d.enabled = false;
+
+        RemoveUnitFromBattlePhaseUnitList();
+    }
+
+    public void RemoveUnitFromBattlePhaseUnitList() {
+        if (IsServer) {
+            StartCoroutine(RemoveUnitFromBattlePhaseUnitListCoroutine());
+        }
+    }
+
+    private IEnumerator RemoveUnitFromBattlePhaseUnitListCoroutine() {
+        yield return new WaitForSeconds(2f);
+        BattleManager.Instance.RemoveUnitFromUnitsStillInBattleList(this);
     }
 
     #region GET PARAMETERS
@@ -259,6 +272,13 @@ public class Unit : NetworkBehaviour, ITargetable {
     }
 
     public void ActivateAdditionalUnit() {
+
+        if(IsServer) {
+            if (!BattleManager.Instance.GetUnitsInBattlefieldList().Contains(this)) {
+                BattleManager.Instance.AddUnitToUnitListInBattlefield(this);
+            }
+        }
+
         ActivateAdditionalUnitServerRpc();
     }
 
@@ -291,6 +311,8 @@ public class Unit : NetworkBehaviour, ITargetable {
 
     public override void OnDestroy() {
         base.OnDestroy();
+
+        BattleManager.Instance.RemoveUnitFromUnitListInBattlefield(this);
         BattleManager.Instance.OnStateChanged -= BattleManager_OnStateChanged;
     }
 }

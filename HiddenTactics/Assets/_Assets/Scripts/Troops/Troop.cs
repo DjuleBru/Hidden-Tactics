@@ -145,19 +145,16 @@ public class Troop : NetworkBehaviour, IPlaceable {
     }
 
     public void BuyAdditionalUnits() {
-        Debug.Log("BuyAdditionalUnitsServerRpc server RPC");
         BuyAdditionalUnitsServerRpc();
     }
 
     [ServerRpc(RequireOwnership = false)]
     private void BuyAdditionalUnitsServerRpc() {
-        Debug.Log("additionalUnitsHaveBeenBought server RPC");
         BuyAdditionalUnitsClientRpc();
     }
 
     [ClientRpc]
     private void BuyAdditionalUnitsClientRpc() {
-        Debug.Log("additionalUnitsHaveBeenBought client RPC");
         if (isOwnedByPlayer) {
             foreach (Unit unit in additionalUnitsInTroop) {
                 unit.ActivateAdditionalUnit();

@@ -23,6 +23,9 @@ public class BattleManager : NetworkBehaviour
     private NetworkVariable<float> battlePhaseTimer = new NetworkVariable<float>(0f);
     private NetworkVariable<float> preparationPhaseTimer = new NetworkVariable<float>(0f);
 
+    private List<Unit> unitsOnBattlefieldList = new List<Unit>();
+    private List<Unit> unitsStillInBattle = new List<Unit>();
+
     private enum State {
         WaitingToStart,
         PreparationPhase,
@@ -83,12 +86,15 @@ public class BattleManager : NetworkBehaviour
             break;
 
             case State.BattlePhase:
-                preparationPhaseTimer.Value = preparationPhaseMaxTime;
+                // Timer
                 battlePhaseTimer.Value -= Time.deltaTime;
 
+                // Battle phase timer ends
                 if (battlePhaseTimer.Value < 0) {
+                    preparationPhaseTimer.Value = preparationPhaseMaxTime;
                     state.Value = State.BattlePhaseEnding;
                 }
+
                 break;
 
             case State.BattlePhaseEnding:
@@ -120,7 +126,6 @@ public class BattleManager : NetworkBehaviour
         SetPlayersLoadedServerRpc();
     }
 
-
     private void BattleFieldAnimatorControllingPhases_OnBattlefieldsSlammed(object sender, EventArgs e) {
         if (!IsServer) {
             return;
@@ -149,6 +154,47 @@ public class BattleManager : NetworkBehaviour
 
     private void State_OnValueChanged(State previousValue, State newValue) {
         OnStateChanged?.Invoke(this, EventArgs.Empty);
+
+        if (IsServer) {
+            if (state.Value == State.BattlePhase) {
+                //Manage unit lists
+                unitsStillInBattle.Clear();
+                foreach (Unit unit in unitsOnBattlefieldList) {
+                    AddUnitToUnitsStillInBattleList(unit);
+                }
+            }
+        }
+    }
+
+    #region SET PARAMETERS
+
+    public void AddUnitToUnitListInBattlefield(Unit unit) {
+        unitsOnBattlefieldList.Add(unit);
+    }
+
+    public void RemoveUnitFromUnitListInBattlefield(Unit unit) {
+        unitsOnBattlefieldList.Remove(unit);
+    }
+
+    public void AddUnitToUnitsStillInBattleList(Unit unit) {
+        unitsStillInBattle.Add(unit);
+    }
+
+    public void RemoveUnitFromUnitsStillInBattleList(Unit unit) {
+        unitsStillInBattle.Remove(unit);
+
+        if(unitsStillInBattle.Count == 0) {
+            state.Value = State.BattlePhaseEnding;
+        }
+    }
+
+    #endregion
+
+
+    #region GET PARAMETERS
+
+    public List<Unit> GetUnitsInBattlefieldList() {
+        return unitsOnBattlefieldList;
     }
 
     public float GetBattlePhaseTimerNormalized() {
@@ -178,5 +224,5 @@ public class BattleManager : NetworkBehaviour
     public bool IsWaitingToStart() {
         return state.Value == State.WaitingToStart;
     }
-
+    #endregion
 }
