@@ -23,6 +23,7 @@ public class GridObjectVisual : MonoBehaviour
     private Material cleanMaterial;
     [SerializeField] Material selectedMaterial;
     [SerializeField] Material targetTileMaterial;
+    [SerializeField] Material destroyedVillageMaterial;
 
     [SerializeField] List<SpriteRenderer> villageSpriteRenderers;
 
@@ -39,7 +40,6 @@ public class GridObjectVisual : MonoBehaviour
     public void SetGridObject(GridObject gridObject) {
         this.gridObject = gridObject;
     }
-
 
 
     private void Update() {
@@ -99,14 +99,6 @@ public class GridObjectVisual : MonoBehaviour
         Sprite sprite = sprites[Random.Range(0, sprites.Count)];
 
         gridSprite.sprite = sprite;
-    }
-
-    public void SetVillageSprites(List<Sprite> villageSprites) {
-        foreach(SpriteRenderer villageSpriteRenderer in villageSpriteRenderers) {
-            Sprite sprite = villageSprites[Random.Range(0, villageSprites.Count)];
-
-            villageSpriteRenderer.sprite = sprite;
-        }
     }
 
 }

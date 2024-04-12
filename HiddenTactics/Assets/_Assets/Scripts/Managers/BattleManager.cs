@@ -14,9 +14,13 @@ public class BattleManager : NetworkBehaviour
     public event EventHandler OnStateChanged;
     public event EventHandler OnAllPlayersLoaded;
 
+    public event EventHandler OnSpeedUpButtonActivation;
+    private bool speedUpButtonActive;
+
     [SerializeField] private float preparationPhaseMaxTime;
     [SerializeField] private float battlePhaseMaxTime;
     [SerializeField] private float battlePhaseActivationDelay;
+    [SerializeField] private float battlePhaseSpeedUpButtonActivationDelay;
 
     [SerializeField] private Transform playerPrefab;
 
@@ -43,6 +47,7 @@ public class BattleManager : NetworkBehaviour
     public override void OnNetworkSpawn() {
         state.OnValueChanged += State_OnValueChanged;
         PlayerReadyManager.Instance.OnAllPlayersReady += PlayersReadyManager_OnAllPlayersReady;
+        PlayerReadyManager.Instance.OnAllPlayersWantToSpeedUp += PlayersReadyManager_OnAllPlayersWantToSpeedUp;
 
         battleFieldAnimatorControllingPhases.OnBattlefieldsSlammed += BattleFieldAnimatorControllingPhases_OnBattlefieldsSlammed;
         battleFieldAnimatorControllingPhases.OnBattlefieldsSplit += BattleFieldAnimatorControllingPhases_OnBattlefieldsSplit;
@@ -55,6 +60,7 @@ public class BattleManager : NetworkBehaviour
         battlePhaseTimer.Value = battlePhaseMaxTime;
         preparationPhaseTimer.Value = preparationPhaseMaxTime;
     }
+
 
     private void Update() {
 
@@ -89,7 +95,11 @@ public class BattleManager : NetworkBehaviour
                 // Timer
                 battlePhaseTimer.Value -= Time.deltaTime;
 
-                // Battle phase timer ends
+                // Battle phase timer 
+                if(!speedUpButtonActive && battlePhaseTimer.Value < (battlePhaseMaxTime - battlePhaseSpeedUpButtonActivationDelay)) {
+                    SetSpeedUpButtonActiveServerRpc();
+                }
+
                 if (battlePhaseTimer.Value < 0) {
                     preparationPhaseTimer.Value = preparationPhaseMaxTime;
                     state.Value = State.BattlePhaseEnding;
@@ -104,6 +114,10 @@ public class BattleManager : NetworkBehaviour
 
     private void PlayersReadyManager_OnAllPlayersReady(object sender, EventArgs e) {
         state.Value = State.BattlePhaseStarting;
+    }
+
+    private void PlayersReadyManager_OnAllPlayersWantToSpeedUp(object sender, EventArgs e) {
+        Time.timeScale = 1.75f;
     }
 
     [ServerRpc(RequireOwnership =false)]
@@ -154,6 +168,7 @@ public class BattleManager : NetworkBehaviour
 
     private void State_OnValueChanged(State previousValue, State newValue) {
         OnStateChanged?.Invoke(this, EventArgs.Empty);
+        Time.timeScale = 1f;
 
         if (IsServer) {
             if(state.Value == State.PreparationPhase) {
@@ -168,6 +183,19 @@ public class BattleManager : NetworkBehaviour
                 }
             }
         }
+
+        speedUpButtonActive = false;
+    }
+
+    [ServerRpc] 
+    private void SetSpeedUpButtonActiveServerRpc() {
+        SetSpeedUpButtonActiveClientRpc();
+        speedUpButtonActive = true;
+    }
+
+    [ClientRpc]
+    private void SetSpeedUpButtonActiveClientRpc() {
+        OnSpeedUpButtonActivation?.Invoke(this, EventArgs.Empty);
     }
 
     #region SET PARAMETERS

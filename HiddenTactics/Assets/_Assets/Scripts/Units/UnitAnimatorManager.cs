@@ -52,7 +52,6 @@ public class UnitAnimatorManager : NetworkBehaviour
     }
 
     protected virtual void Update() {
-
         if (unitAIStateHasChanged) {
             if(unitAnimator.GetCurrentAnimatorStateInfo(0).IsName("Idle") | unitAnimator.GetCurrentAnimatorStateInfo(0).IsName("Walk") | unitAnimator.GetCurrentAnimatorStateInfo(0).IsName("Attack_Start")) {
                 UpdateAnimatorParameters();
@@ -98,6 +97,10 @@ public class UnitAnimatorManager : NetworkBehaviour
     protected void UnitAI_OnStateChanged(object sender, System.EventArgs e) {
         if (unitAI.IsDead() | unitAI.IsFallen()) {
             UpdateAnimatorParameters();
+            if(unitAI.IsFallen()) {
+                SetUnitWatchDirectionBasedOnGridPosition();
+            }
+            movingForwards = false;
             return;
         }
 

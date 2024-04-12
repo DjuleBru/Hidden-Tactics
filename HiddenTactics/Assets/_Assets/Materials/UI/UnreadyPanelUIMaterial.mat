@@ -7,10 +7,11 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: DestroyedVillageVisual
+  m_Name: UnreadyPanelUIMaterial
   m_Shader: {fileID: 4800000, guid: a36b7719ff0465b42ab1407d67672c5f, type: 3}
   m_ValidKeywords:
-  - GREYSCALE_ON
+  - GRADIENT_ON
+  - INNEROUTLINE_ON
   m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -99,16 +100,16 @@ Material:
     - _ColorSwapBlueLuminosity: 0.5
     - _ColorSwapGreenLuminosity: 0.5
     - _ColorSwapRedLuminosity: 0.5
-    - _Contrast: 1
+    - _Contrast: 0
     - _CullingOption: 0
     - _DistortAmount: 0.5
     - _DistortTexXSpeed: 5
     - _DistortTexYSpeed: 5
     - _EditorDrawers: 6
-    - _FadeAmount: -0.085
+    - _FadeAmount: -0.1
     - _FadeBurnGlow: 2
     - _FadeBurnTransition: 0.075
-    - _FadeBurnWidth: 0
+    - _FadeBurnWidth: 0.025
     - _FishEyeUvAmount: 0.35
     - _FlickerAlpha: 0
     - _FlickerFreq: 0.2
@@ -116,13 +117,13 @@ Material:
     - _GhostBlend: 1
     - _GhostColorBoost: 1
     - _GhostTransparency: 0
-    - _GlitchAmount: 3
+    - _GlitchAmount: 12.3
     - _GlitchSize: 1
     - _Glow: 10
     - _GlowGlobal: 1
     - _GradBlend: 1
-    - _GradBoostX: 1.2
-    - _GradBoostY: 1.2
+    - _GradBoostX: 0.46
+    - _GradBoostY: 0.28
     - _GradIsRadial: 0
     - _GrassManualAnim: 1
     - _GrassManualToggle: 0
@@ -130,12 +131,12 @@ Material:
     - _GrassSpeed: 2
     - _GrassWind: 20
     - _GreyscaleBlend: 1
-    - _GreyscaleLuminosity: 0.01
+    - _GreyscaleLuminosity: 0
     - _GreyscaleOutline: 0
     - _HandDrawnAmount: 10
     - _HandDrawnSpeed: 5
-    - _HitEffectBlend: 1
-    - _HitEffectGlow: 5
+    - _HitEffectBlend: 0.107
+    - _HitEffectGlow: 1
     - _HologramBlend: 1
     - _HologramMaxAlpha: 0.75
     - _HologramMinAlpha: 0.1
@@ -144,10 +145,10 @@ Material:
     - _HologramUnmodAmount: 0
     - _HsvBright: 1
     - _HsvSaturation: 1
-    - _HsvShift: 180
-    - _InnerOutlineAlpha: 1
-    - _InnerOutlineGlow: 4
-    - _InnerOutlineThickness: 1
+    - _HsvShift: 0
+    - _InnerOutlineAlpha: 0.499
+    - _InnerOutlineGlow: 1
+    - _InnerOutlineThickness: 1.73
     - _MaxXUV: 1
     - _MaxYUV: 1
     - _MinXUV: 0
@@ -169,11 +170,11 @@ Material:
     - _OutlinePixelWidth: 1
     - _OutlineTexXSpeed: 10
     - _OutlineTexYSpeed: 0
-    - _OutlineWidth: 0.004
+    - _OutlineWidth: 0.02
     - _OverlayBlend: 1
-    - _OverlayGlow: 0
-    - _OverlayTextureScrollXSpeed: 0.25
-    - _OverlayTextureScrollYSpeed: 0.25
+    - _OverlayGlow: 1
+    - _OverlayTextureScrollXSpeed: 0
+    - _OverlayTextureScrollYSpeed: 0
     - _PinchUvAmount: 0.35
     - _PixelateSize: 32
     - _PosterizeGamma: 0.75
@@ -194,7 +195,7 @@ Material:
     - _ShakeUvX: 1.5
     - _ShakeUvY: 1
     - _ShineGlow: 1
-    - _ShineLocation: 0.5
+    - _ShineLocation: 0.531
     - _ShineRotate: 0
     - _ShineWidth: 0.1
     - _TextureScrollXSpeed: 1
@@ -228,14 +229,14 @@ Material:
     - _ColorSwapRed: {r: 1, g: 1, b: 1, a: 1}
     - _FadeBurnColor: {r: 1, g: 1, b: 0, a: 1}
     - _GlowColor: {r: 1, g: 1, b: 1, a: 1}
-    - _GradBotLeftCol: {r: 0, g: 0, b: 1, a: 1}
-    - _GradBotRightCol: {r: 0, g: 1, b: 0, a: 1}
-    - _GradTopLeftCol: {r: 1, g: 0, b: 0, a: 1}
-    - _GradTopRightCol: {r: 1, g: 1, b: 0, a: 1}
+    - _GradBotLeftCol: {r: 0.2264151, g: 0.2264151, b: 0.2264151, a: 1}
+    - _GradBotRightCol: {r: 0.31132078, g: 0.31132078, b: 0.31132078, a: 1}
+    - _GradTopLeftCol: {r: 0.7735849, g: 0.7735849, b: 0.7735849, a: 1}
+    - _GradTopRightCol: {r: 0.18431373, g: 0.28235295, b: 0.34509805, a: 1}
     - _GreyscaleTintColor: {r: 1, g: 1, b: 1, a: 1}
     - _HitEffectColor: {r: 1, g: 1, b: 1, a: 1}
     - _HologramStripeColor: {r: 0, g: 1, b: 1, a: 1}
-    - _InnerOutlineColor: {r: 0, g: 0, b: 0, a: 1}
+    - _InnerOutlineColor: {r: 0.05952382, g: 1, b: 0, a: 1}
     - _OutlineColor: {r: 1, g: 1, b: 1, a: 1}
     - _OverlayColor: {r: 1, g: 1, b: 1, a: 1}
     - _ShadowColor: {r: 0, g: 0, b: 0, a: 1}

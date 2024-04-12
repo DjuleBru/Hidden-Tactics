@@ -10,6 +10,7 @@ public class Player : NetworkBehaviour
     public static Player LocalInstance;
 
     private bool isReady;
+    private bool wantsToSpeedUp;
 
     public override void OnNetworkSpawn() {
         if (IsOwner) {
@@ -28,11 +29,22 @@ public class Player : NetworkBehaviour
         PlayerReadyManager.Instance.SetPlayerReadyOrUnready(isReady);
     }
 
+    public bool GetPlayerReady() { return isReady; }
+
+    public bool GetPlayerWantsToSpeedUp() { return wantsToSpeedUp; }
+
+    public void SetPlayerWantsToSpeedUp() {
+        wantsToSpeedUp = !wantsToSpeedUp;
+        PlayerReadyManager.Instance.TogglePlayerWantsToSpeedUp(wantsToSpeedUp);
+    }
+
     private void BattleManager_OnStateChanged(object sender, EventArgs e) {
         if (BattleManager.Instance.IsPreparationPhase()) {
             isReady = false;
+            wantsToSpeedUp = false;
 
             PlayerReadyManager.Instance.SetPlayerReadyOrUnready(isReady);
+            PlayerReadyManager.Instance.TogglePlayerWantsToSpeedUp(wantsToSpeedUp);
         }
     }
 }

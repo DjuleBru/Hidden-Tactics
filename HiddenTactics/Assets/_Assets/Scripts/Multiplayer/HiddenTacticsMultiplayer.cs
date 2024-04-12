@@ -124,6 +124,7 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
         return default;
     }
 
+
     public int GetPlayerDataIndexFromClientId(ulong clientId) {
         for (int i = 0; i < playerDataNetworkList.Count; i++) {
             if (playerDataNetworkList[i].clientId == clientId) {
@@ -135,6 +136,15 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
 
     public PlayerData GetPlayerData() {
         return GetPlayerDataFromClientId(NetworkManager.Singleton.LocalClientId);
+    }
+
+    public PlayerData GetOpponentData() {
+        foreach (PlayerData playerData in playerDataNetworkList) {
+            if (playerData.clientId != NetworkManager.Singleton.LocalClientId) {
+                return playerData;
+            }
+        }
+        return default;
     }
 
     public PlayerData GetPlayerDataFromPlayerIndex(int playerIndex) {

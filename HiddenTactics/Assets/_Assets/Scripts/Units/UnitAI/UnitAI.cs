@@ -282,6 +282,10 @@ public class UnitAI : NetworkBehaviour
     }
 
     #region GET PARAMETERS
+
+    public State GetState() {
+        return state.Value;
+    }
     public virtual bool IsWalking() {
         return state.Value == State.moveForwards;
     }

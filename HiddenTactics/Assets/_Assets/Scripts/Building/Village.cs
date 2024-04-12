@@ -36,5 +36,6 @@ public class Village : Building {
         isDestroyed = true;
         GetComponent<Collider2D>().enabled = false;
         BattleGrid.Instance.RemoveIPlaceableAtGridPosition(BattleGrid.Instance.GetGridPosition(transform.position), this);
+
     }
 }

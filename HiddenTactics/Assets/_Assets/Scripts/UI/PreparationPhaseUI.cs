@@ -12,6 +12,7 @@ public class PreparationPhaseUI : MonoBehaviour
     private void Awake() {
         playerReadyButton.onClick.AddListener(() => {
             Player.LocalInstance.SetPlayerReadyOrUnready();
+            playerReadyButton.GetComponent<ReadyPanelButtonUI>().HandleButtonClickVisual();
         });
     }
 
@@ -26,7 +27,7 @@ public class PreparationPhaseUI : MonoBehaviour
     }
 
     private void BattleManager_OnStateChanged(object sender, System.EventArgs e) {
-        if (BattleManager.Instance.IsPreparationPhase()) {;
+        if (BattleManager.Instance.IsPreparationPhase()) {
             Show();
             return;
         }
