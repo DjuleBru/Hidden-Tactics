@@ -178,4 +178,6 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
     public IDamageable GetIDamageable() {
         return GetComponent<BuildingHP>();
     }
+
+
 }

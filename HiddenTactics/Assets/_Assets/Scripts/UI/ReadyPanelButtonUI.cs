@@ -8,6 +8,7 @@ public class ReadyPanelButtonUI : MonoBehaviour, IPointerEnterHandler, IPointerE
 
     private Button button;
     [SerializeField] Image buttonOutlineImage;
+    [SerializeField] Animator buttonAnimator;
 
     [SerializeField] Material readyMaterial;
     [SerializeField] Material unreadyMaterial;
@@ -42,7 +43,7 @@ public class ReadyPanelButtonUI : MonoBehaviour, IPointerEnterHandler, IPointerE
     }
 
     public void OnPointerEnter(PointerEventData eventData) {
-
+        buttonAnimator.SetTrigger("Hovered");
     }
 
     public void OnPointerExit(PointerEventData eventData) {

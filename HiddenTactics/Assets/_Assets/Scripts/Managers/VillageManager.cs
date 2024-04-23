@@ -7,6 +7,13 @@ using UnityEngine.SceneManagement;
 
 public class VillageManager : NetworkBehaviour {
     public static VillageManager Instance { get; private set; }
+
+    private int playerVillageNumber = 20;
+    private int opponentVillageNumber = 20;
+
+    public event EventHandler OnPlayerVillageDestroyed;
+    public event EventHandler OnOpponentVillageDestroyed;
+
     [SerializeField] private Transform villagePrefab;
     [SerializeField] private Transform playerGridOrigin;
     [SerializeField] private Transform opponentGridOrigin;
@@ -68,5 +75,24 @@ public class VillageManager : NetworkBehaviour {
         village.SetIPlaceableBattlefieldOwner();
         village.SetIPlaceableGridPosition(pos);
         village.PlaceIPlaceable();
+    }
+
+
+    public void SetVillageDestroyed(ulong clientID) {
+        if(clientID == NetworkManager.Singleton.LocalClientId) {
+            playerVillageNumber--;
+            OnPlayerVillageDestroyed?.Invoke(this, EventArgs.Empty);
+        } else {
+            opponentVillageNumber--;
+            OnOpponentVillageDestroyed.Invoke(this, EventArgs.Empty);
+        }
+    }
+
+    public int GetPlayerVillageNumber() {
+        return playerVillageNumber;
+    }
+
+    public int GetOpponentVillageNumber() {
+        return opponentVillageNumber;
     }
 }

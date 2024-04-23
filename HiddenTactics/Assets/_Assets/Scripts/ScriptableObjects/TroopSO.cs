@@ -8,4 +8,9 @@ public class TroopSO : ScriptableObject {
     public GameObject unitPrefab;
 
     public AttackSO mainTroopAttackSO;
+
+    public int spawnTroopCost;
+    public int upgradeTroopCost;
+    public int buyAdditionalUnitsCost;
+
 }

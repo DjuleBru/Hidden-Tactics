@@ -116,8 +116,10 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
     }
 
     public PlayerData GetPlayerDataFromClientId(ulong clientId) {
+        Debug.Log("asking player data");
         foreach (PlayerData playerData in playerDataNetworkList) {
             if(playerData.clientId == clientId) {
+                Debug.Log("found player data");
                 return playerData;
             }
         }

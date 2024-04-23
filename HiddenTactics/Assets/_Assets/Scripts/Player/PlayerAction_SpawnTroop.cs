@@ -58,6 +58,8 @@ public class PlayerAction_SpawnTroop : NetworkBehaviour {
             CancelIPlaceablePlacement();
         };
 
+        TroopSO troopToSpawnSO = BattleDataManager.Instance.GetTroopSOFromIndex(troopListSOIndex);
+        PlayerStateUI.Instance.SetPlayerGoldChangingUI(troopToSpawnSO.spawnTroopCost);
 
         SpawnTroopServerRpc(troopListSOIndex, NetworkManager.Singleton.LocalClientId);
     }
@@ -66,6 +68,9 @@ public class PlayerAction_SpawnTroop : NetworkBehaviour {
         if (iPlaceableToSpawnList != null) {
             CancelIPlaceablePlacement();
         };
+
+        BuildingSO buildingToSpawnSO = BattleDataManager.Instance.GetBuildingSOFromIndex(buildingListSOIndex);
+        PlayerStateUI.Instance.SetPlayerGoldChangingUI(buildingToSpawnSO.spawnBuildingCost);
 
         SpawnBuildingServerRpc(buildingListSOIndex, NetworkManager.Singleton.LocalClientId);
     }
@@ -79,12 +84,22 @@ public class PlayerAction_SpawnTroop : NetworkBehaviour {
 
     public void PlaceIPlaceableList() {
         foreach(IPlaceable iPlaceable in iPlaceableToSpawnList) {
-
             iPlaceable.PlaceIPlaceable();
             spawnedIPlaceablesDictionary.Add(troopDictionaryInt, iPlaceable);
             spawnedIPlaceableGridPositions.Add(troopDictionaryInt, iPlaceable.GetIPlaceableGridPosition());
             troopDictionaryInt++;
+
+            if(iPlaceable is Building) {
+                Building buildingSpawned = (Building)iPlaceable;
+                PlayerGoldManager.Instance.SpendGold(buildingSpawned.GetBuildingSO().spawnBuildingCost, NetworkManager.Singleton.LocalClientId);
+            }
+
+            if (iPlaceable is Troop) {
+                Troop troopSpawned = (Troop)iPlaceable;
+                PlayerGoldManager.Instance.SpendGold(troopSpawned.GetTroopSO().spawnTroopCost, NetworkManager.Singleton.LocalClientId);
+            }
         }
+
         iPlaceableToSpawnList = new List<IPlaceable>();
     }
 
@@ -94,6 +109,8 @@ public class PlayerAction_SpawnTroop : NetworkBehaviour {
             HiddenTacticsMultiplayer.Instance.DestroyIPlaceable(iPlaceableNetworkObjectReference);
         }
         iPlaceableToSpawnList = new List<IPlaceable>();
+
+        PlayerStateUI.Instance.ResetPlayerGoldChangingUI();
     }
 
     #region SPAWN TROOPS, UNITS AND BUILDINGS

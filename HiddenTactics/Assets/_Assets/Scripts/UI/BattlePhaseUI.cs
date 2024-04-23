@@ -11,7 +11,6 @@ public class BattlePhaseUI : MonoBehaviour
 
     private void Awake() {
         playerSpeedUpButton.onClick.AddListener(() => {
-            Debug.Log("buttonclick");
             Player.LocalInstance.SetPlayerWantsToSpeedUp();
             playerSpeedUpButton.GetComponent<ReadyPanelButtonUI>().HandleButtonClickVisual();
         });

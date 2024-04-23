@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Netcode;
 
 public class Village : Building {
     private Vector3 villageOffset;
@@ -35,7 +36,7 @@ public class Village : Building {
     public override void Die() {
         isDestroyed = true;
         GetComponent<Collider2D>().enabled = false;
+        VillageManager.Instance.SetVillageDestroyed(NetworkManager.Singleton.LocalClientId);
         BattleGrid.Instance.RemoveIPlaceableAtGridPosition(BattleGrid.Instance.GetGridPosition(transform.position), this);
-
     }
 }

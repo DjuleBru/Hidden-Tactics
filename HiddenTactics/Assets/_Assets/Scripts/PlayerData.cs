@@ -12,6 +12,7 @@ public struct PlayerData : IEquatable<PlayerData>, INetworkSerializable {
     public int iconSpriteId;
     public FixedString64Bytes playerName;
     public FixedString64Bytes playerId;
+    public int playerGold;
 
     public bool Equals(PlayerData other) {
         return clientId == other.clientId && 
@@ -26,5 +27,6 @@ public struct PlayerData : IEquatable<PlayerData>, INetworkSerializable {
         serializer.SerializeValue(ref iconSpriteId);
         serializer.SerializeValue(ref playerName);
         serializer.SerializeValue(ref playerId);
+        serializer.SerializeValue(ref playerGold);
     }
 }

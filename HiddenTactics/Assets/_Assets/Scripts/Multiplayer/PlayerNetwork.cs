@@ -46,7 +46,7 @@ public class PlayerNetwork : NetworkBehaviour
     }
 
     void Update() {
-        if (!IsOwner) return;
+        if (!IsServer) return;
 
         if((Input.GetKeyDown(KeyCode.T))) {
             spawnedObjectTransform = Instantiate(spawnedObjectPrefab);
