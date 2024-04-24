@@ -9,26 +9,45 @@ public class PlayerGoldManager : NetworkBehaviour {
     public static PlayerGoldManager Instance;
 
     [SerializeField] private const int playerInitialGold = 20;
-    [SerializeField] private int playerBaseIncome = 10;
-    [SerializeField] private int playerVillageDestroyedBonusIncome = 1;
-    [SerializeField] private float playerSavingsRevenue = .1f;
+    [SerializeField] private const int playerBaseIncome = 10;
+    [SerializeField] private const int playerVillageDestroyedBonusIncome = 1;
+    [SerializeField] private const float playerSavingsRevenue = .1f;
 
-    [SerializeField] private int opponentVillageDestroyedBoostGold = 2;
-    [SerializeField] private int playerUnitJumpedBonusGold = 1;
-
-    public event EventHandler OnPlayerGoldChanged;
+    [SerializeField] private const int opponentVillageDestroyedBoostGold = 2;
+    [SerializeField] private const int playerUnitJumpedBonusGold = 1;
     
     private void Awake() {
         Instance = this;
-        //PlayerStateUI.Instance.RefreshPlayerGoldUI(0, playerGold.Value);
     }
 
     private void Start() {
-        if (!IsServer) return;
         BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
+
+        PlayerStateUI.Instance.RefreshPlayerGoldUI(0, playerInitialGold);
+        PlayerStateUI.Instance.RefreshPlayerRevenueUI(playerBaseIncome);
+
+        VillageManager.Instance.OnPlayerVillageDestroyed += VillageManager_OnPlayerVillageDestroyed;
+        VillageManager.Instance.OnOpponentVillageDestroyed += VillageManager_OnOpponentVillageDestroyed;
+
+        HiddenTacticsMultiplayer.Instance.OnPlayerGoldChanged += HiddenTacticsMultiplayer_OnPlayerGoldChanged;
+        HiddenTacticsMultiplayer.Instance.OnPlayerRevenueChanged += HiddenTacticsMultiplayer_OnPlayerRevenueChanged;
+    }
+
+    private void HiddenTacticsMultiplayer_OnPlayerGoldChanged(object sender, HiddenTacticsMultiplayer.OnPlayerGoldChangedEventArgs e) {
+        if (e.clientId == NetworkManager.Singleton.LocalClientId) {
+            PlayerStateUI.Instance.RefreshPlayerGoldUI(e.previousGold, e.newGold);
+        }
+    }
+
+    private void HiddenTacticsMultiplayer_OnPlayerRevenueChanged(object sender, HiddenTacticsMultiplayer.OnPlayerRevenueChangedEventArgs e) {
+        if (e.clientId == NetworkManager.Singleton.LocalClientId) {
+            PlayerStateUI.Instance.RefreshPlayerRevenueUI(e.newRevenue);
+        }
     }
 
     private void BattleManager_OnStateChanged(object sender, System.EventArgs e) {
+        if (BattleManager.Instance.IsFirstPreparationPhase()) return;
+
         if(BattleManager.Instance.IsPreparationPhase()) {
             EarnRevenueServerRpc(NetworkManager.Singleton.LocalClientId);
         }
@@ -36,20 +55,20 @@ public class PlayerGoldManager : NetworkBehaviour {
 
     [ServerRpc(RequireOwnership =false)]
     private void EarnRevenueServerRpc(ulong clientID) {
+        int revenue = HiddenTacticsMultiplayer.Instance.GetPlayerDataFromClientId(clientID).playerRevenue;
+        int playerGold = HiddenTacticsMultiplayer.Instance.GetPlayerDataFromClientId(clientID).playerGold;
 
-        int revenue = playerBaseIncome;
-        PlayerData playerData = HiddenTacticsMultiplayer.Instance.GetPlayerDataFromClientId(clientID);
-        playerData.playerGold += revenue;
-
-        EarnRevenueClientRpc(revenue, clientID);
+        HiddenTacticsMultiplayer.Instance.DistributePlayerRevenue();
     }
 
-    [ClientRpc]
-    private void EarnRevenueClientRpc(int revenue, ulong clientID) {
+    [ServerRpc(RequireOwnership = false)]
+    private void EarnGoldServerRpc(ulong clientID, int goldAmount) {
+        HiddenTacticsMultiplayer.Instance.ChangePlayerGoldServerRpc(clientID, goldAmount);
     }
 
     public bool CanSpendGold(int goldAmount, ulong clientID) {
         PlayerData playerData = HiddenTacticsMultiplayer.Instance.GetPlayerDataFromClientId(clientID);
+
         return playerData.playerGold >= goldAmount;
     }
 
@@ -59,26 +78,40 @@ public class PlayerGoldManager : NetworkBehaviour {
 
     [ServerRpc(RequireOwnership = false)]
     private void SpendGoldServerRpc(int goldAmount, ulong clientID) {
-        PlayerData playerData = HiddenTacticsMultiplayer.Instance.GetPlayerDataFromClientId(clientID);
-        playerData.playerGold -= goldAmount;
-
-        SpendGoldClientRpc(goldAmount, clientID);
+        HiddenTacticsMultiplayer.Instance.ChangePlayerGoldServerRpc(clientID, -goldAmount);
     }
 
-    [ClientRpc]
-    private void SpendGoldClientRpc(int goldAmount, ulong clientID) {
+
+    private void VillageManager_OnOpponentVillageDestroyed(object sender, EventArgs e) {
+        EarnGoldServerRpc(NetworkManager.Singleton.LocalClientId, opponentVillageDestroyedBoostGold);
     }
 
-    public void AddGold(int goldAmount) {
-    } 
-
-    private void PlayerGold_OnValueChanged() {
-        //PlayerStateUI.Instance.RefreshPlayerGoldUI(previous, current);
+    private void VillageManager_OnPlayerVillageDestroyed(object sender, EventArgs e) {
     }
 
     public int GetPlayerGold(ulong clientID) {
         PlayerData playerData = HiddenTacticsMultiplayer.Instance.GetPlayerDataFromClientId(clientID);
         return playerData.playerGold;
+    }
+
+    public int GetPlayerBaseIncome() {
+        return playerBaseIncome;
+    }
+
+    public int GetPlayerInitialgGold() {
+        return playerInitialGold;
+    }
+
+    public int GetPlayerVillageDestroyedBonusIncome() {
+        return playerVillageDestroyedBonusIncome;
+    }
+
+    public int GetOpponentVillageDestroyedBoostGold() {
+        return opponentVillageDestroyedBoostGold;
+    }
+
+    public int GetPlayerUnitJumpedBonusGold() {
+        return playerUnitJumpedBonusGold;
     }
 
 }

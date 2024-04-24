@@ -13,6 +13,8 @@ public struct PlayerData : IEquatable<PlayerData>, INetworkSerializable {
     public FixedString64Bytes playerName;
     public FixedString64Bytes playerId;
     public int playerGold;
+    public int playerVillagesRemaining;
+    public int playerRevenue;
 
     public bool Equals(PlayerData other) {
         return clientId == other.clientId && 

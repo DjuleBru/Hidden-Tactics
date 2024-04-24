@@ -14,8 +14,11 @@ public class BuyAdditionalUnitsButton : MonoBehaviour, IPointerEnterHandler, IPo
         buyAdditionalUnitsButton = GetComponent<Button>();
 
         buyAdditionalUnitsButton.onClick.AddListener(() => {
-            PlayerGoldManager.Instance.SpendGold(troop.GetTroopSO().buyAdditionalUnitsCost, NetworkManager.Singleton.LocalClientId);
-            troop.BuyAdditionalUnits();
+            int goldCost = troop.GetTroopSO().buyAdditionalUnitsCost;
+            if ((PlayerGoldManager.Instance.CanSpendGold(goldCost, NetworkManager.Singleton.LocalClientId))) {
+                PlayerGoldManager.Instance.SpendGold(troop.GetTroopSO().buyAdditionalUnitsCost, NetworkManager.Singleton.LocalClientId);
+                troop.BuyAdditionalUnits();
+            }
         });
     }
 

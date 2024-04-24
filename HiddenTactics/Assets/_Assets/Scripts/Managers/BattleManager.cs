@@ -13,6 +13,8 @@ public class BattleManager : NetworkBehaviour
     [SerializeField] private BattlefieldAnimatorManager battleFieldAnimatorControllingPhases;
     public event EventHandler OnStateChanged;
     public event EventHandler OnAllPlayersLoaded;
+    public bool allPlayersLoaded;
+    public bool isFirstPreparationPhase = true;
 
     public event EventHandler OnSpeedUpButtonActivation;
     private bool speedUpButtonActive;
@@ -80,6 +82,7 @@ public class BattleManager : NetworkBehaviour
             break;
 
             case State.PreparationPhase:
+                isFirstPreparationPhase = false;
                 battlePhaseTimer.Value = battlePhaseMaxTime;
                 if (!HiddenTacticsMultiplayer.Instance.IsMultiplayer()) {
                     return;
@@ -128,6 +131,7 @@ public class BattleManager : NetworkBehaviour
 
     [ClientRpc]
     private void SetPlayersLoadedClientRpc() {
+        allPlayersLoaded = true;
         OnAllPlayersLoaded?.Invoke(this, EventArgs.Empty);
     }
 
@@ -136,6 +140,7 @@ public class BattleManager : NetworkBehaviour
         foreach (ulong clientId in NetworkManager.Singleton.ConnectedClientsIds) {
             Transform playerTransform = Instantiate(playerPrefab);
             playerTransform.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId, true);
+            HiddenTacticsMultiplayer.Instance.SetPlayerInitialConditionsServerRpc(clientId);
         }
         SetPlayersLoadedServerRpc();
     }
@@ -255,6 +260,14 @@ public class BattleManager : NetworkBehaviour
 
     public bool IsWaitingToStart() {
         return state.Value == State.WaitingToStart;
+    }
+
+    public bool AllPlayersLoaded() {
+        return allPlayersLoaded;
+    }
+
+    public bool IsFirstPreparationPhase() {
+        return isFirstPreparationPhase;
     }
     #endregion
 }

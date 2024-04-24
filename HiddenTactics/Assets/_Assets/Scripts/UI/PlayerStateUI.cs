@@ -22,6 +22,9 @@ public class PlayerStateUI : MonoBehaviour {
     [SerializeField] private GameObject playerReadyGameObject;
     [SerializeField] private TextMeshProUGUI playerNameText;
 
+    [SerializeField] private ParticleSystem spendGoldPS;
+    [SerializeField] private ParticleSystem earnGoldPS;
+
     private void Awake() {
         playerReadyGameObject.gameObject.SetActive(false);
         Instance = this;
@@ -38,6 +41,7 @@ public class PlayerStateUI : MonoBehaviour {
         VillageManager.Instance.OnPlayerVillageDestroyed += VillageManager_OnPlayerVillageDestroyed;
         VillageManager.Instance.OnOpponentVillageDestroyed += VillageManager_OnOpponentVillageDestroyed;
     }
+
 
     private void VillageManager_OnOpponentVillageDestroyed(object sender, System.EventArgs e) {
         if (isOpponentPanel) {
@@ -62,9 +66,9 @@ public class PlayerStateUI : MonoBehaviour {
         PlayerData playerData = new PlayerData();
 
         if (!isOpponentPanel) {
-            playerData = HiddenTacticsMultiplayer.Instance.GetPlayerData();
+            playerData = HiddenTacticsMultiplayer.Instance.GetLocalPlayerData();
         } else {
-            playerData = HiddenTacticsMultiplayer.Instance.GetOpponentData();
+            playerData = HiddenTacticsMultiplayer.Instance.GetLocalOpponentData();
         }
 
         playerReadyGameObject.SetActive(PlayerReadyManager.Instance.IsPlayerReady(playerData.clientId));
@@ -75,15 +79,14 @@ public class PlayerStateUI : MonoBehaviour {
         PlayerData playerData = new PlayerData();
 
         if (!isOpponentPanel) {
-            playerData = HiddenTacticsMultiplayer.Instance.GetPlayerData();
+            playerData = HiddenTacticsMultiplayer.Instance.GetLocalPlayerData();
         }
         else {
-            playerData = HiddenTacticsMultiplayer.Instance.GetOpponentData();
+            playerData = HiddenTacticsMultiplayer.Instance.GetLocalOpponentData();
         }
 
         playerReadyGameObject.SetActive(PlayerReadyManager.Instance.PlayerWantingToSpeedUp(playerData.clientId));
     }
-
 
     public void RefreshPlayerGoldUI(int previousGold, int newGold) {
         playerGoldChangingText.gameObject.SetActive(false);
@@ -91,6 +94,27 @@ public class PlayerStateUI : MonoBehaviour {
 
         playerGoldText.gameObject.SetActive(true);
         playerGoldText.text = newGold.ToString();
+
+        if(previousGold < newGold) {
+            //Player earned gold
+            earnGoldPS.Stop();
+
+            var main = earnGoldPS.main;
+            main.duration = ((float)newGold - (float)previousGold) / (float)10;
+
+            earnGoldPS.Play();
+        } else {
+            //Player spent gold
+            spendGoldPS.Stop();
+            int goldSpent = previousGold - newGold;
+            ParticleSystem.Burst burst = new ParticleSystem.Burst(0, goldSpent);
+            spendGoldPS.emission.SetBurst(0, burst);
+            spendGoldPS.Play();
+        }
+    }
+
+    public void RefreshPlayerRevenueUI(int newRevenue) {
+        playerRevenueText.text = newRevenue.ToString();
     }
 
     public void SetPlayerGoldChangingUI(int goldChangeAmount) {

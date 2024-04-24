@@ -1,3 +1,4 @@
+using Sirenix.OdinInspector;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -8,11 +9,11 @@ using UnityEngine.SceneManagement;
 public class VillageManager : NetworkBehaviour {
     public static VillageManager Instance { get; private set; }
 
-    private int playerVillageNumber = 20;
-    private int opponentVillageNumber = 20;
-
     public event EventHandler OnPlayerVillageDestroyed;
     public event EventHandler OnOpponentVillageDestroyed;
+
+    private int playerVillages = 20;
+    private int opponentVillages = 20;
 
     [SerializeField] private Transform villagePrefab;
     [SerializeField] private Transform playerGridOrigin;
@@ -79,20 +80,35 @@ public class VillageManager : NetworkBehaviour {
 
 
     public void SetVillageDestroyed(ulong clientID) {
+        if (!IsServer) return;
+        SetVillageDestroyedServerRpc(clientID);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void SetVillageDestroyedServerRpc(ulong clientID) {
+        HiddenTacticsMultiplayer.Instance.RemoveOnePlayerVillage(clientID);
+
+        SetVillageDestroyedClientRpc(clientID);
+    }
+
+    [ClientRpc]
+    public void SetVillageDestroyedClientRpc(ulong clientID) {
         if(clientID == NetworkManager.Singleton.LocalClientId) {
-            playerVillageNumber--;
+            playerVillages--;
             OnPlayerVillageDestroyed?.Invoke(this, EventArgs.Empty);
+
         } else {
-            opponentVillageNumber--;
+            opponentVillages--;
             OnOpponentVillageDestroyed.Invoke(this, EventArgs.Empty);
         }
+
     }
 
     public int GetPlayerVillageNumber() {
-        return playerVillageNumber;
+        return playerVillages;
     }
 
     public int GetOpponentVillageNumber() {
-        return opponentVillageNumber;
+        return opponentVillages;
     }
 }

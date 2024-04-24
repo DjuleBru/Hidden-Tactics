@@ -36,7 +36,7 @@ public class Village : Building {
     public override void Die() {
         isDestroyed = true;
         GetComponent<Collider2D>().enabled = false;
-        VillageManager.Instance.SetVillageDestroyed(NetworkManager.Singleton.LocalClientId);
+        VillageManager.Instance.SetVillageDestroyed(ownerClientId);
         BattleGrid.Instance.RemoveIPlaceableAtGridPosition(BattleGrid.Instance.GetGridPosition(transform.position), this);
     }
 }
