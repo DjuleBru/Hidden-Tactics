@@ -101,7 +101,6 @@ public class VillageManager : NetworkBehaviour {
             opponentVillages--;
             OnOpponentVillageDestroyed.Invoke(this, EventArgs.Empty);
         }
-
     }
 
     public int GetPlayerVillageNumber() {

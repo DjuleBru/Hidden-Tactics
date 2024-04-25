@@ -12,6 +12,7 @@ public class VillageVisual : MonoBehaviour
     [SerializeField] private SpriteRenderer villageCleanRenderer;
     [SerializeField] private SpriteRenderer villageBurningRenderer;
     [SerializeField] Material villageDestroyedMaterial;
+    [SerializeField] private ParticleSystem villageDestroyedPS;
 
     private bool villageDestroyed;
 
@@ -103,6 +104,10 @@ public class VillageVisual : MonoBehaviour
 
         if(e.newHealth <= 0) {
             villageDestroyed = true;
+
+            if(!village.IsOwnedByPlayer()) {
+                villageDestroyedPS.Play();
+            }
         }
     }
 

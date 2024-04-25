@@ -963,6 +963,7 @@ GameObject:
   - component: {fileID: 1853091512919812911}
   - component: {fileID: 5354501925048565718}
   - component: {fileID: 8823549876594239409}
+  - component: {fileID: 3813719044012169256}
   m_Layer: 5
   m_Name: SellTroopButton
   m_TagString: Untagged
@@ -1073,6 +1074,19 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &3813719044012169256
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5585552203517760635}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d61c1f7f4c920d4baa199eb99c307f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  troop: {fileID: -7405699509265139040}
 --- !u!1 &7704603315532921427
 GameObject:
   m_ObjectHideFlags: 0

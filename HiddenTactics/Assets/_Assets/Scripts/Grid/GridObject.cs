@@ -68,6 +68,11 @@ public class GridObject
         }
     }
 
+    public void ResetIPlaceableSpawned() {
+        iPlaceableSpawnedAtGridPosition = null;
+        iPlaceableSpawnedAtGridPosition = null;
+    }
+
     public IPlaceable GetIPlaceableSpawned() {
         return iPlaceableSpawnedAtGridPosition;
     }

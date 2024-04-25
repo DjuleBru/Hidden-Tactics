@@ -27,6 +27,8 @@ public class Troop : NetworkBehaviour, IPlaceable {
     private Transform battlefieldOwner;
     private Vector3 battlefieldOffset;
 
+    private bool troopWasPlacedThisPreparationPhase = true;
+
     private void Awake() {
         allUnitsInTroop = new List<Unit>();
         additionalUnitsInTroop = new List<Unit>();
@@ -73,6 +75,7 @@ public class Troop : NetworkBehaviour, IPlaceable {
     private void BattleManager_OnStateChanged(object sender, EventArgs e) {
         if(BattleManager.Instance.IsBattlePhaseStarting()) {
             UpdateTroopServerRpc();
+            troopWasPlacedThisPreparationPhase = false;
         }
     }
 
@@ -163,7 +166,6 @@ public class Troop : NetworkBehaviour, IPlaceable {
     [ServerRpc(RequireOwnership =false)]
     private void UpdateTroopServerRpc() {
         UpdateTroopClientRpc();
-        
     }
 
     [ClientRpc]
@@ -174,6 +176,25 @@ public class Troop : NetworkBehaviour, IPlaceable {
             }
             additionalUnitsInTroop.Clear();
         }
+    }
+
+    public void SellTroop() {
+        StartCoroutine(SellTroopCoroutine());
+    }
+
+    private IEnumerator SellTroopCoroutine() {
+
+        foreach (Unit unit in additionalUnitsInTroop) {
+            unit.SellUnit();
+        }
+
+        BattleGrid.Instance.RemoveIPlaceableAtGridPosition(currentGridPosition, this);
+        BattleGrid.Instance.ResetIPlaceableSpawnedAtGridPosition(currentGridPosition);
+
+        yield return new WaitForSeconds(.1f);
+
+        NetworkObject networkObject = GetComponent<NetworkObject>();
+        HiddenTacticsMultiplayer.Instance.DestroyIPlaceable(networkObject);
     }
 
     public void PlaceIPlaceable() {
@@ -236,6 +257,10 @@ public class Troop : NetworkBehaviour, IPlaceable {
          
     public bool IsOwnedByPlayer() {
         return isOwnedByPlayer;
+    }
+
+    public bool TroopWasPlacedThisPreparationPhase() {
+        return troopWasPlacedThisPreparationPhase;
     }
 
     public TroopSO GetTroopSO() {

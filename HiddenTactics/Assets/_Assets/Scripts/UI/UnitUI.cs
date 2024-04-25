@@ -17,6 +17,7 @@ public class UnitUI : NetworkBehaviour
     [SerializeField] private Sprite rangedTargetSprite;
     [SerializeField] private Sprite healTargetSprite;
     [SerializeField] private Sprite armorTargetSprite;
+    [SerializeField] private Sprite coinSprite;
 
     private float damageBarUpdateTimer;
     private float damageBarUpdateRate = .8f;
@@ -135,8 +136,12 @@ public class UnitUI : NetworkBehaviour
         unitTargetImage.gameObject.SetActive(true);
     }
 
+    public void ShowUnitAsSellingUnit() {
+        unitTargetImage.sprite = coinSprite;
+        unitTargetImage.gameObject.SetActive(true);
+    }
+
     public void HideUnitTargetUI() {
-        if (unit.IsOwnedByPlayer()) return;
         unitTargetImage.gameObject.SetActive(false);
     }
 }

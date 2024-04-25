@@ -350,13 +350,10 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
         int playerDataIndex = GetPlayerDataIndexFromClientId(clientId);
         PlayerData playerData = playerDataNetworkList[playerDataIndex];
 
-        Debug.Log("initial revenue " + playerDataNetworkList[playerDataIndex].playerRevenue);
-
         playerData.playerRevenue += revenueAmount;
 
         playerDataNetworkList[playerDataIndex] = playerData;
 
-        Debug.Log("adding " + revenueAmount + "new player revenue " + playerDataNetworkList[playerDataIndex].playerRevenue);
         ChangePlayerRevenueClientRpc(clientId, playerDataNetworkList[playerDataIndex].playerRevenue);
     }
 

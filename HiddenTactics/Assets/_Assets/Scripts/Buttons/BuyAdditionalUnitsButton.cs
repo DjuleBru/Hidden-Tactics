@@ -25,7 +25,7 @@ public class BuyAdditionalUnitsButton : MonoBehaviour, IPointerEnterHandler, IPo
     public void OnPointerEnter(PointerEventData eventData) {
         foreach (Unit unit in troop.GetUnitsInAdditionalUnitsInTroopList()) {
             unit.GetUnitVisual().gameObject.SetActive(true);
-            PlayerStateUI.Instance.SetPlayerGoldChangingUI(troop.GetTroopSO().buyAdditionalUnitsCost);
+            PlayerStateUI.Instance.SetPlayerGoldChangingUI(-troop.GetTroopSO().buyAdditionalUnitsCost);
         }
 
     }

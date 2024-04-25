@@ -25,9 +25,29 @@ public class PlayerStateUI : MonoBehaviour {
     [SerializeField] private ParticleSystem spendGoldPS;
     [SerializeField] private ParticleSystem earnGoldPS;
 
+    [SerializeField] private Color goldChangingNegativelyColor;
+    [SerializeField] private Color goldChangingPositivelyColor;
+
+    private int goldToEarn;
+    private float goldEarningPSRate = .15f;
+    private float goldEarningPSTimer;
+
     private void Awake() {
         playerReadyGameObject.gameObject.SetActive(false);
         Instance = this;
+    }
+
+    private void Update() {
+        if (goldToEarn > 0) {
+
+            goldEarningPSTimer += Time.deltaTime;
+
+            if (goldEarningPSTimer > goldEarningPSRate) {
+                earnGoldPS.Play();
+                goldEarningPSTimer = 0f; 
+                goldToEarn--;
+            }
+        }
     }
 
     private void Start() {
@@ -95,14 +115,9 @@ public class PlayerStateUI : MonoBehaviour {
         playerGoldText.gameObject.SetActive(true);
         playerGoldText.text = newGold.ToString();
 
-        if(previousGold < newGold) {
+        if (previousGold < newGold) {
             //Player earned gold
-            earnGoldPS.Stop();
-
-            var main = earnGoldPS.main;
-            main.duration = ((float)newGold - (float)previousGold) / (float)10;
-
-            earnGoldPS.Play();
+            goldToEarn = newGold - previousGold;
         } else {
             //Player spent gold
             spendGoldPS.Stop();
@@ -118,12 +133,20 @@ public class PlayerStateUI : MonoBehaviour {
     }
 
     public void SetPlayerGoldChangingUI(int goldChangeAmount) {
+
         playerGoldText.gameObject.SetActive(false);
         playerGoldChangingText.gameObject.SetActive(true);
         playerGoldChangingValueText.gameObject.SetActive(true);
-
         playerGoldChangingText.text = playerGoldText.text;
-        playerGoldChangingValueText.text = "-" + goldChangeAmount.ToString();
+
+        if (goldChangeAmount > 0) {
+            playerGoldChangingValueText.text = "+" + goldChangeAmount.ToString();
+            playerGoldChangingValueText.color = goldChangingPositivelyColor;
+        } else {
+            playerGoldChangingValueText.text = goldChangeAmount.ToString();
+            playerGoldChangingValueText.color = goldChangingNegativelyColor;
+        }
+
     }
 
     public void ResetPlayerGoldChangingUI() {

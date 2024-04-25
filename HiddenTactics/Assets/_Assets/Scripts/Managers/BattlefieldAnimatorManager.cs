@@ -3,9 +3,10 @@ using Sirenix.OdinInspector;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-public class BattlefieldAnimatorManager : MonoBehaviour {
+public class BattlefieldAnimatorManager : NetworkBehaviour {
 
     Animator battlefieldAnimator;
     private bool slammed;
@@ -29,8 +30,7 @@ public class BattlefieldAnimatorManager : MonoBehaviour {
     }
 
     private void Update() {
-
-        if(slammedOrdered & !slammed) {
+        if (slammedOrdered & !slammed) {
             if(AnimatorIsPlaying("Battlefield_Slam") & !slamming) {
                 slamming = true;
                 battlefieldAnimator.speed = 1;

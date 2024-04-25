@@ -59,7 +59,7 @@ public class PlayerAction_SpawnTroop : NetworkBehaviour {
         };
 
         TroopSO troopToSpawnSO = BattleDataManager.Instance.GetTroopSOFromIndex(troopListSOIndex);
-        PlayerStateUI.Instance.SetPlayerGoldChangingUI(troopToSpawnSO.spawnTroopCost);
+        PlayerStateUI.Instance.SetPlayerGoldChangingUI(-troopToSpawnSO.spawnTroopCost);
 
         SpawnTroopServerRpc(troopListSOIndex, NetworkManager.Singleton.LocalClientId);
     }
@@ -70,7 +70,7 @@ public class PlayerAction_SpawnTroop : NetworkBehaviour {
         };
 
         BuildingSO buildingToSpawnSO = BattleDataManager.Instance.GetBuildingSOFromIndex(buildingListSOIndex);
-        PlayerStateUI.Instance.SetPlayerGoldChangingUI(buildingToSpawnSO.spawnBuildingCost);
+        PlayerStateUI.Instance.SetPlayerGoldChangingUI(-buildingToSpawnSO.spawnBuildingCost);
 
         SpawnBuildingServerRpc(buildingListSOIndex, NetworkManager.Singleton.LocalClientId);
     }

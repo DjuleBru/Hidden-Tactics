@@ -13,6 +13,7 @@ public class Unit : NetworkBehaviour, ITargetable {
     public event EventHandler OnUnitDied;
     public event EventHandler OnUnitReset;
     public event EventHandler OnUnitFell;
+    public event EventHandler OnUnitSold;
     public event EventHandler<OnUnitDazedEventArgs> OnUnitDazed;
     public event EventHandler OnUnitSetAsAdditionalUnit;
     public event EventHandler OnAdditionalUnitActivated;
@@ -164,6 +165,10 @@ public class Unit : NetworkBehaviour, ITargetable {
         unitIsDead = true;
         collider2d.enabled = false;
         RemoveUnitFromBattlePhaseUnitList();
+    }
+
+    public void SellUnit() {
+        OnUnitSold?.Invoke(this, EventArgs.Empty);
     }
 
     public void RemoveUnitFromBattlePhaseUnitList() {

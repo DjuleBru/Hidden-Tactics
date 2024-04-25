@@ -30,7 +30,7 @@ public class SpawnIPlaceableButton : MonoBehaviour
     private void SpawnTroopButton() {
         if(!CheckSpawnConditions()) return;
         int troopIndex = BattleDataManager.Instance.GetTroopSOIndex(troopToSpawnSO);
-        PlayerStateUI.Instance.SetPlayerGoldChangingUI(troopToSpawnSO.spawnTroopCost);
+        PlayerStateUI.Instance.SetPlayerGoldChangingUI(-troopToSpawnSO.spawnTroopCost);
 
         PlayerActionsManager.LocalInstance.SelectTroopToSpawn(troopIndex);
     }

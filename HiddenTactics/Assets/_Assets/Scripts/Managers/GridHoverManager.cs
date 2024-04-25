@@ -15,13 +15,23 @@ public class GridHoverManager : MonoBehaviour
         // Only allow grid hovering on preparation phase
 
         if (!BattleGrid.Instance.IsValidGridPosition(MousePositionManager.Instance.GetMouseGridPosition())) {
-            if(currentHoveredGridPosition != null) {
+            // Player is not hovering a valid gridposition
+            if (currentHoveredGridPosition != null) {
                 GridObjectVisual currentHoveredGridObjectVisual = BattleGrid.Instance.GetGridObjectVisual(currentHoveredGridPosition);
                 currentHoveredGridObjectVisual.ResetVisual();
             }
             return;
         }
-        // Player is not hovering a valid gridposition
+
+        if (MousePositionManager.Instance.IsPointerOverUIElement()) {
+            // Player is hovering UI
+            if (currentHoveredGridPosition != null) {
+                GridObjectVisual currentHoveredGridObjectVisual = BattleGrid.Instance.GetGridObjectVisual(currentHoveredGridPosition);
+                currentHoveredGridObjectVisual.ResetVisual();
+            }
+            return;
+        }
+
 
         HandleHoveredGridPositionChange();
     }
@@ -145,4 +155,6 @@ public class GridHoverManager : MonoBehaviour
         }
         unitSetAsTargetList.Clear();
     }
+
+
 }

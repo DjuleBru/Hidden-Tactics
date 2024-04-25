@@ -15,6 +15,8 @@ public class UnitVisual : NetworkBehaviour
     [SerializeField] protected Material invisibleMaterial;
     [SerializeField] protected Material placingUnitMaterial;
 
+    [SerializeField] protected ParticleSystem unitGoldBurstPS;
+
     [FoldoutGroup("Visual Components")]
     protected Animator bodyAnimator;
     protected RuntimeAnimatorController activeBodyAnimator;
@@ -41,7 +43,17 @@ public class UnitVisual : NetworkBehaviour
         unit.OnUnitPlaced += Unit_OnUnitPlaced;
         unit.OnUnitSetAsAdditionalUnit += Unit_OnUnitSetAsAdditionalUnit;
         unit.OnUnitDied += Unit_OnUnitDied;
+        unit.OnUnitFell += Unit_OnUnitFell;
         unit.OnUnitReset += Unit_OnUnitReset;
+    }
+
+    private void Unit_OnUnitFell(object sender, System.EventArgs e) {
+        unitGoldBurstPS.Play();
+        unitGoldBurstPS.Stop();
+        ParticleSystem.Burst burst = new ParticleSystem.Burst(0, unit.GetUnitSO().damageToVillages * PlayerGoldManager.Instance.GetPlayerUnitJumpedBonusGold());
+        unitGoldBurstPS.emission.SetBurst(0, burst);
+        unitGoldBurstPS.Play();
+
     }
 
     protected virtual void Start() {
