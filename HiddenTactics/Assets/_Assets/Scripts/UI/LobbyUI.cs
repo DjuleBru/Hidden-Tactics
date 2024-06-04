@@ -45,7 +45,7 @@ public class LobbyUI : MonoBehaviour
         });
         mainMenuButton.onClick.AddListener(() => {
             HiddenTacticsLobby.Instance.LeaveLobby();
-            SceneLoader.Load(SceneLoader.Scene.MainMenuScene);
+            SceneLoader.Load(SceneLoader.Scene.MultiplayerCleanupScene);
         });
         joinPrivateLobbyButton.onClick.AddListener(() => {
             HiddenTacticsLobby.Instance.JoinWithCode(joinCodeInputField.text);

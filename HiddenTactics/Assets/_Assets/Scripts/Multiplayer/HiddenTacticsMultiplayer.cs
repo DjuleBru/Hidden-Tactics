@@ -51,6 +51,7 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
         playerDataNetworkList.OnListChanged += PlayerDataNetworkList_OnListChanged;
 
         playerName = ES3.Load(PlayerSaveConstString.PLAYER_NAME_MULTIPLAYER, defaultValue: "Player#" + UnityEngine.Random.Range(0, 1000));
+        playerIconSpriteId = ES3.Load(PlayerSaveConstString.PLAYER_ICON_SPRITE_MULTIPLAYER, defaultValue: 0);
     }
 
     private void Start() {
@@ -59,21 +60,17 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
         }
     }
 
-    private void PlayerDataNetworkList_OnListChanged(NetworkListEvent<PlayerData> changeEvent) {
-        OnPlayerDataNetworkListChanged?.Invoke(this, EventArgs.Empty);
-    }
-
+    #region HOST
     public void StartHost() {
         NetworkManager.Singleton.ConnectionApprovalCallback += NetworkManager_Server_ConnectionApprovalCallback;
         NetworkManager.Singleton.OnClientConnectedCallback += NetworkManager_Server_OnClientConnectedCallback;
         NetworkManager.Singleton.OnClientDisconnectCallback += NetworkManager_Server_OnClientDisconnectCallback;
         NetworkManager.Singleton.StartHost();
     }
-
     private void NetworkManager_Server_OnClientDisconnectCallback(ulong clientId) {
         for (int i = 0; i < playerDataNetworkList.Count; i++) {
             PlayerData playerData = playerDataNetworkList[i];
-            if(playerData.clientId == clientId) {
+            if (playerData.clientId == clientId) {
                 // Disconnected!
                 playerDataNetworkList.RemoveAt(i);
             }
@@ -82,6 +79,7 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
     }
 
     private void NetworkManager_Server_OnClientConnectedCallback(ulong clientId) {
+        Debug.Log("SERVER client connected :" + clientId);
         playerDataNetworkList.Add(new PlayerData {
             clientId = clientId,
         });
@@ -91,6 +89,7 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
         playerData.truePlayerNumber = playerDataNetworkList.Count;
 
         SetPlayerNameServerRpc(GetPlayerName());
+        SetPlayerIconSpriteServerRpc(GetPlayerIconSpriteId());
         SetPlayerIdServerRpc(AuthenticationService.Instance.PlayerId);
     }
 
@@ -102,7 +101,7 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
             return;
         }
 
-        if(NetworkManager.Singleton.ConnectedClientsIds.Count >= MAX_PLAYER_AMOUNT) {
+        if (NetworkManager.Singleton.ConnectedClientsIds.Count >= MAX_PLAYER_AMOUNT) {
             connectionApprovalResponse.Approved = false;
             connectionApprovalResponse.Reason = "Game is full";
             return;
@@ -111,6 +110,9 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
         connectionApprovalResponse.Approved = true;
     }
 
+    #endregion
+
+    #region CLIENT
     public void StartClient() {
         OnTryingToJoinGame?.Invoke(this, EventArgs.Empty);
 
@@ -120,13 +122,44 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
     }
 
     private void NetworkManager_Client_OnClientConnectedCallback(ulong clientId) {
-        if (!IsServer) return;
+        Debug.Log("CLIENT client connected " + clientId);
+
         SetPlayerIdServerRpc(AuthenticationService.Instance.PlayerId);
         SetPlayerNameServerRpc(GetPlayerName());
+        SetPlayerIconSpriteServerRpc(GetPlayerIconSpriteId());
     }
 
     private void NetworkManager_Client_OnClientDisconnectCallback(ulong clientId) {
         OnFailedToJoinGame?.Invoke(this, EventArgs.Empty);
+    }
+    #endregion
+
+    private void PlayerDataNetworkList_OnListChanged(NetworkListEvent<PlayerData> changeEvent) {
+        OnPlayerDataNetworkListChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void SetPlayerNameServerRpc(string playerName, ServerRpcParams serverRpcParams = default) {
+        int playerDataIndex = GetPlayerDataIndexFromClientId(serverRpcParams.Receive.SenderClientId);
+
+        PlayerData playerData = playerDataNetworkList[playerDataIndex];
+
+        playerData.playerName = playerName;
+
+        playerDataNetworkList[playerDataIndex] = playerData;
+
+        Debug.Log("set player " + serverRpcParams.Receive.SenderClientId + " name to " + playerName);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void SetPlayerIdServerRpc(string playerId, ServerRpcParams serverRpcParams = default) {
+        int playerDataIndex = GetPlayerDataIndexFromClientId(serverRpcParams.Receive.SenderClientId);
+
+        PlayerData playerData = playerDataNetworkList[playerDataIndex];
+
+        playerData.playerId = playerId;
+
+        playerDataNetworkList[playerDataIndex] = playerData;
     }
 
     public PlayerData GetPlayerDataFromClientId(ulong clientId) {
@@ -138,7 +171,6 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
         Debug.Log("player data not found");
         return default;
     }
-
 
     public int GetPlayerDataIndexFromClientId(ulong clientId) {
         for (int i = 0; i < playerDataNetworkList.Count; i++) {
@@ -191,19 +223,24 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
         return playerName;
     }
 
+    public int GetPlayerIconSpriteId() {
+        return playerIconSpriteId;
+    }
+
     public void SetPlayerName(string playerName) {
         this.playerName = playerName;
-
         ES3.Save(PlayerSaveConstString.PLAYER_NAME_MULTIPLAYER, playerName);
     }
 
-    public Sprite GetPlayerSprite(int iconSpriteId) {
+    public Sprite GetPlayerIconSpriteFromSpriteId(int iconSpriteId) {
         return playerIconSpriteList[iconSpriteId];
     }
 
     public void SetPlayerIconSprite(int iconSpriteId) {
+        Debug.Log("setting player icon sprite to " + iconSpriteId);
+
         playerIconSpriteId = iconSpriteId;
-        SetPlayerIconSpriteServerRpc(iconSpriteId);
+        ES3.Save(PlayerSaveConstString.PLAYER_ICON_SPRITE_MULTIPLAYER, iconSpriteId);
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -217,30 +254,6 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
 
         playerDataNetworkList[playerDataIndex] = playerData;
     }
-
-
-    [ServerRpc(RequireOwnership = false)]
-    private void SetPlayerNameServerRpc(string playerName, ServerRpcParams serverRpcParams = default) {
-        int playerDataIndex = GetPlayerDataIndexFromClientId(serverRpcParams.Receive.SenderClientId);
-
-        PlayerData playerData = playerDataNetworkList[playerDataIndex];
-
-        playerData.playerName = playerName;
-
-        playerDataNetworkList[playerDataIndex] = playerData;
-    }
-
-    [ServerRpc(RequireOwnership = false)]
-    private void SetPlayerIdServerRpc(string playerId, ServerRpcParams serverRpcParams = default) {
-        int playerDataIndex = GetPlayerDataIndexFromClientId(serverRpcParams.Receive.SenderClientId);
-
-        PlayerData playerData = playerDataNetworkList[playerDataIndex];
-
-        playerData.playerId = playerId;
-
-        playerDataNetworkList[playerDataIndex] = playerData;
-    }
-
 
     public void DestroyIPlaceable(NetworkObjectReference iPlaceableNetworkObjectReference) {
         DestroyIPlaceableServerRpc(iPlaceableNetworkObjectReference);
@@ -291,7 +304,6 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
 
     [ServerRpc(RequireOwnership = false)]
     public void SetPlayerInitialConditionsServerRpc(ulong clientId) {
-        Debug.Log("setting player initial conditions");
         int initialPlayerGold = PlayerGoldManager.Instance.GetPlayerInitialgGold();
         int initialPlayerVillages = 20;
         int initialPlayerRevenue = PlayerGoldManager.Instance.GetPlayerBaseIncome();
@@ -365,12 +377,11 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
         });
     }
 
-    #endregion
-
     public void CheckPlayerConditions(ulong clientID) {
-
         int playerDataIndex = GetPlayerDataIndexFromClientId(clientID);
         PlayerData playerData = playerDataNetworkList[playerDataIndex];
-        Debug.Log("player gold " + playerData.playerGold + " player villages " + playerData.playerVillagesRemaining +  " player revenue " + playerData.playerRevenue);
+        Debug.Log("player gold " + playerData.playerGold + " player villages " + playerData.playerVillagesRemaining + " player revenue " + playerData.playerRevenue);
     }
+    #endregion
+
 }

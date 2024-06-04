@@ -7,7 +7,7 @@ using Unity.Netcode;
 public static class SceneLoader
 {
     public enum Scene {
-        MainMenuScene,
+        MultiplayerCleanupScene,
         BattleScene,
         LoadingScene,
         LobbyScene,

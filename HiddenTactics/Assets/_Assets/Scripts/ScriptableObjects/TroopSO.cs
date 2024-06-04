@@ -4,6 +4,10 @@ using UnityEngine;
 
 [CreateAssetMenu()]
 public class TroopSO : ScriptableObject {
+
+    public Sprite troopIllustrationSlotSprite;
+    public Sprite troopDescriptionSlotSprite;
+
     public GameObject troopPrefab;
     public GameObject unitPrefab;
 

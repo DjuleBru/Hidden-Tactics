@@ -28,8 +28,11 @@ public class CustomizationUI : MonoBehaviour
             HiddenTacticsMultiplayer.Instance.SetPlayerName(newText);
         });
 
-        Hide();
+        string playerNameId = PlayerSaveConstString.PLAYER_NAME_MULTIPLAYER;
 
+        string playerName = ES3.Load(playerNameId, defaultValue: "Player Name ...");
+
+        playerNameInputField.text = playerName;
     }
 
     public void Show() {

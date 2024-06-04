@@ -12,8 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85abc532579c0ec4d839a1a1bcb04732, type: 3}
   m_Name: GreenskinsArcherTower
   m_EditorClassIdentifier: 
+  buildingIllustrationSlotSprite: {fileID: 21300000, guid: 79fec136e9a5dd949adfbad2fd5f7d01, type: 3}
+  buildingDescriptionSlotSprite: {fileID: 0}
   buildingPrefab: {fileID: 4388312461342439320, guid: b6cedce0b6ddcb347889a266b3f19a78, type: 3}
   buildingHP: 100
   buildingBlocksUnitMovement: 0
   hasGarrisonedTroop: 1
   garrisonedTroopSO: {fileID: 11400000, guid: 7be61ca8fb965484bba4d5c326868419, type: 2}
+  spawnBuildingCost: 0
+  upgradeBuildingCost: 0

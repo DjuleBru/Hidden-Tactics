@@ -15,6 +15,6 @@ public class MainMenuCleanup : MonoBehaviour
         if(HiddenTacticsMultiplayer.Instance != null) {
             Destroy(HiddenTacticsMultiplayer.Instance.gameObject);
         }
-
+        SceneLoader.Load(SceneLoader.Scene.LobbyScene);
     }
 }

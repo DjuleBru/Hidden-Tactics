@@ -10,7 +10,7 @@ public class HostDisconnectUI : MonoBehaviour
 
     private void Awake() {
         mainMenuButton.onClick.AddListener(() => {
-            SceneLoader.Load(SceneLoader.Scene.MainMenuScene);
+            SceneLoader.Load(SceneLoader.Scene.MultiplayerCleanupScene);
         });
     }
 

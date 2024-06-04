@@ -16,16 +16,16 @@ public class DeckSelectReady : NetworkBehaviour {
         Instance = this;
 
         playerReadyDictionary = new Dictionary<ulong, bool>();
-
     }
 
     //TMP 
     private void Start() {
-        SetPlayerReady();
+        //SetPlayerReady();
     }
     //TMP
 
     public void SetPlayerReady() {
+        Debug.Log("set player ready");
         SetPlayerReadyServerRpc();
     }
 

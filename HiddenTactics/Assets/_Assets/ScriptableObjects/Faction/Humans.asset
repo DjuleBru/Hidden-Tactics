@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94ea46ef78865b74bb8e414907951874, type: 3}
+  m_Name: Humans
+  m_EditorClassIdentifier: 
+  factionSprite: {fileID: 21300000, guid: e896a75138a8faa4d8454fb71455f68f, type: 3}
+  troopsInFaction:
+  - {fileID: 11400000, guid: fea130cce7551ee4d9f54264b243ac0a, type: 2}
+  - {fileID: 11400000, guid: 0e834b0ac5dc8c149b4d94ce0c7c852b, type: 2}
+  - {fileID: 11400000, guid: 8982decaa369386489a71918ac2ec436, type: 2}
+  - {fileID: 11400000, guid: c417b8e2a1575384ba5253a70f7c698b, type: 2}
+  - {fileID: 11400000, guid: b2406b183d0dfa24a9e41976b89fddec, type: 2}
+  - {fileID: 11400000, guid: 6ab492f275762974e9024ccc8818b045, type: 2}
+  - {fileID: 11400000, guid: 30c30fd0f50c44b42b439115dc40b5c4, type: 2}
+  - {fileID: 11400000, guid: db4bb05d0e2a26646aff8cc81ffc681e, type: 2}
+  - {fileID: 11400000, guid: 149e37ff8259e63478c0b05295d40707, type: 2}
+  - {fileID: 11400000, guid: 25c624dea8b263c4c8b430cbd6ecbdd7, type: 2}
+  buildingsInFaction:
+  - {fileID: 11400000, guid: c9498bd4828aa144ea3ce2ab294e4b17, type: 2}
+  - {fileID: 11400000, guid: 8e82f15a952fbbe47bf30ef9f9cbc200, type: 2}
+  - {fileID: 11400000, guid: 2d1e49d36eb578648929752c59c87285, type: 2}
+  - {fileID: 11400000, guid: 1371ce9a81806f54182318d872845a55, type: 2}
+  - {fileID: 11400000, guid: 71e1b86971ae28f4181af32df56b0885, type: 2}

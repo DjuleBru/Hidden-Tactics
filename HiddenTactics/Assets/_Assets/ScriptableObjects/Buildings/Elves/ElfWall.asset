@@ -12,6 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85abc532579c0ec4d839a1a1bcb04732, type: 3}
   m_Name: ElfWall
   m_EditorClassIdentifier: 
+  buildingIllustrationSlotSprite: {fileID: 21300000, guid: 732e4e3f422a3034fa145eead1421ca2, type: 3}
+  buildingDescriptionSlotSprite: {fileID: 0}
   buildingPrefab: {fileID: 539002622979983450, guid: 7afdb1f690fc66548b84d52e31523dd5, type: 3}
   buildingHP: 100
   buildingBlocksUnitMovement: 1
+  hasGarrisonedTroop: 0
+  garrisonedTroopSO: {fileID: 0}
+  spawnBuildingCost: 0
+  upgradeBuildingCost: 0

@@ -12,6 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85abc532579c0ec4d839a1a1bcb04732, type: 3}
   m_Name: HumanTradingPost
   m_EditorClassIdentifier: 
+  buildingIllustrationSlotSprite: {fileID: 21300000, guid: 2a1d70b610825fa46888f42990858155, type: 3}
+  buildingDescriptionSlotSprite: {fileID: 0}
   buildingPrefab: {fileID: 4430704242475223434, guid: 3d8921d1d1fa665419911a2794c60894, type: 3}
   buildingHP: 100
   buildingBlocksUnitMovement: 0
+  hasGarrisonedTroop: 0
+  garrisonedTroopSO: {fileID: 0}
+  spawnBuildingCost: 0
+  upgradeBuildingCost: 0

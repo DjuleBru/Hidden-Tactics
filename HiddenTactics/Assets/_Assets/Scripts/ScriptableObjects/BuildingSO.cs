@@ -5,6 +5,9 @@ using UnityEngine;
 [CreateAssetMenu()]
 public class BuildingSO : ScriptableObject
 {
+    public Sprite buildingIllustrationSlotSprite;
+    public Sprite buildingDescriptionSlotSprite;
+
     public GameObject buildingPrefab;
     public float buildingHP;
     public bool buildingBlocksUnitMovement;

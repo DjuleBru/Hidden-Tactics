@@ -17,8 +17,9 @@ public class DeckSelectUI : MonoBehaviour
         mainMenuButton.onClick.AddListener(() => {
             HiddenTacticsLobby.Instance.LeaveLobby();
             NetworkManager.Singleton.Shutdown();
-            SceneLoader.Load(SceneLoader.Scene.MainMenuScene);
+            SceneLoader.Load(SceneLoader.Scene.MultiplayerCleanupScene);
         });
+
         readyButton.onClick.AddListener(() => {
             DeckSelectReady.Instance.SetPlayerReady();
         });

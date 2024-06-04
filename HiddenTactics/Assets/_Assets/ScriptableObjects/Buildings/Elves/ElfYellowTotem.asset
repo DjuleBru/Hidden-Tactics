@@ -12,6 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85abc532579c0ec4d839a1a1bcb04732, type: 3}
   m_Name: ElfYellowTotem
   m_EditorClassIdentifier: 
+  buildingIllustrationSlotSprite: {fileID: 21300000, guid: c0b6f09aece78384b8f9ff37ca0391e3, type: 3}
+  buildingDescriptionSlotSprite: {fileID: 0}
   buildingPrefab: {fileID: 539002622979983450, guid: 67ce8fec2558bae468666d8599a8575e, type: 3}
   buildingHP: 100
   buildingBlocksUnitMovement: 0
+  hasGarrisonedTroop: 0
+  garrisonedTroopSO: {fileID: 0}
+  spawnBuildingCost: 0
+  upgradeBuildingCost: 0
