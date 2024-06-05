@@ -1,0 +1,66 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &289038816974520030
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 289038816974520028}
+  - component: {fileID: 289038816974520031}
+  m_Layer: 0
+  m_Name: PlayerCustomizationData
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &289038816974520028
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 289038816974520030}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &289038816974520031
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 289038816974520030}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ecfb04e34a2bf0b44a3066ae0c183235, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerIconSOList:
+  - {fileID: 11400000, guid: c2534d19e9ee621428d45d788f297b1c, type: 2}
+  - {fileID: 11400000, guid: b7a1b2f3d531a5f49ab9bf5a8e26a977, type: 2}
+  - {fileID: 11400000, guid: 7fdd5a4eb8fba334b8876a5537f09afd, type: 2}
+  - {fileID: 11400000, guid: 1872f377952b9ab4db00ea50f27af21f, type: 2}
+  playerIconSpriteList:
+  - {fileID: 1063518027, guid: c1f55cfeee753a942b7b40c2de1edbbe, type: 3}
+  - {fileID: 391316695, guid: 19d890bdcfb539f4cb3ddf53cdfef218, type: 3}
+  - {fileID: 28983028, guid: 5a6b213a219e1434dae278c8ec17102e, type: 3}
+  - {fileID: -795137782, guid: 88534b7e8ae76bb4aa6becfd7592e044, type: 3}
+  gridTileVisualSOList:
+  - {fileID: 11400000, guid: c7f82bb1884bfc140bb8017a0e613c8e, type: 2}
+  - {fileID: 11400000, guid: 3f5cb5ca9bb6844449646c975f1c1e98, type: 2}
+  - {fileID: 11400000, guid: 60af851b58e93984f9641693f007a5f4, type: 2}
+  - {fileID: 11400000, guid: eec49c43e765afc4889d3a02ee2f533e, type: 2}
+  - {fileID: 11400000, guid: 63e44287f6225f84591de7a62e6d3a3e, type: 2}
+  battlefieldBaseSpriteList:
+  - {fileID: 21300000, guid: a48aa2b33509149449f512e215dd4ea4, type: 3}
+  - {fileID: 21300000, guid: 2991797744531e44fac5ae62489d203d, type: 3}
+  - {fileID: 21300000, guid: 590f8759a06a85847988f3a4affe3fab, type: 3}

@@ -13,6 +13,7 @@ public class BattlefieldVisualGridTemplate : MonoBehaviour
     private void Awake() {
         button = GetComponent<Button>();
         button.onClick.AddListener(() => {
+            HiddenTacticsMultiplayer.Instance.SetPlayerGridVisualSO(PlayerCustomizationData.Instance.GetGridTileVisualSOID(gridTileVisualSO));
             SetBattlefieldVisualGridTile();
         });
     }

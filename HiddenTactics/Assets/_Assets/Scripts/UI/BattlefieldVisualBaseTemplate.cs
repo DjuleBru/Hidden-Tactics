@@ -12,6 +12,7 @@ public class BattlefieldVisualBaseTemplate : MonoBehaviour
     private void Awake() {
         button = GetComponent<Button>();
         button.onClick.AddListener(() => {
+            HiddenTacticsMultiplayer.Instance.SetPlayerBattlefieldBaseSprite(PlayerCustomizationData.Instance.GetBattlefieldBaseSpriteListID(battlefieldBaseSprite));
             BattlefieldVisual.Instance.SetBattlefieldBaseSprite(battlefieldBaseSprite);
         });
     }

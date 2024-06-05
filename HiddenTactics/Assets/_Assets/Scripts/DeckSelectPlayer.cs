@@ -55,7 +55,7 @@ public class DeckSelectPlayer : MonoBehaviour
             PlayerData playerData = HiddenTacticsMultiplayer.Instance.GetPlayerDataFromPlayerIndex(playerIndex);
 
 
-            playerVisual.SetPlayerIcon(HiddenTacticsMultiplayer.Instance.GetPlayerIconSpriteFromSpriteId(playerData.iconSpriteId));
+            playerVisual.SetPlayerIcon(PlayerCustomizationData.Instance.GetPlayerIconSpriteFromSpriteId(playerData.iconSpriteId));
 
             playerNameText.text = playerData.playerName.ToString();
 

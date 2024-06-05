@@ -9,7 +9,11 @@ public struct PlayerData : IEquatable<PlayerData>, INetworkSerializable {
 
     public ulong clientId;
     public int truePlayerNumber;
+
     public int iconSpriteId;
+    public int battlefieldBaseSpriteId;
+    public int gridVisualSOId;
+
     public FixedString64Bytes playerName;
     public FixedString64Bytes playerId;
     public int playerGold;

@@ -25,7 +25,6 @@ public class DeckSelectReady : NetworkBehaviour {
     //TMP
 
     public void SetPlayerReady() {
-        Debug.Log("set player ready");
         SetPlayerReadyServerRpc();
     }
 

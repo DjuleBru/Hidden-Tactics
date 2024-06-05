@@ -22,7 +22,7 @@ public class PlayerIconSelectSingleUI : MonoBehaviour
     private void Start() {
         customizationUI = GetComponentInParent<PlayerCustomizationUI>();
 
-        image.sprite = HiddenTacticsMultiplayer.Instance.GetPlayerIconSpriteFromSpriteId(iconSpriteId);
+        image.sprite = PlayerCustomizationData.Instance.GetPlayerIconSpriteFromSpriteId(iconSpriteId);
 
         if(iconSpriteId == HiddenTacticsMultiplayer.Instance.GetPlayerIconSpriteId()) {
             selectedGameObject.SetActive(true);

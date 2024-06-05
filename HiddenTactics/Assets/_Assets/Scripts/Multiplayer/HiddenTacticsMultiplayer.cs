@@ -14,10 +14,10 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
 
     [SerializeField] private bool isMultiplayer;
 
-    [SerializeField] private List<Sprite> playerIconSpriteList;
-
     private string playerName;
     private int playerIconSpriteId;
+    private int playerGridVisualSOId;
+    private int playerBattlefieldBaseSpriteId;
 
     public const int MAX_PLAYER_AMOUNT = 2;
 
@@ -50,8 +50,7 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
         playerDataNetworkList = new NetworkList<PlayerData>();
         playerDataNetworkList.OnListChanged += PlayerDataNetworkList_OnListChanged;
 
-        playerName = ES3.Load(PlayerSaveConstString.PLAYER_NAME_MULTIPLAYER, defaultValue: "Player#" + UnityEngine.Random.Range(0, 1000));
-        playerIconSpriteId = ES3.Load(PlayerSaveConstString.PLAYER_ICON_SPRITE_MULTIPLAYER, defaultValue: 0);
+        LoadPlayerCustomizationData();
     }
 
     private void Start() {
@@ -90,6 +89,9 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
 
         SetPlayerNameServerRpc(GetPlayerName());
         SetPlayerIconSpriteServerRpc(GetPlayerIconSpriteId());
+        SetPlayerBattlefieldBaseSpriteServerRpc(GetPlayerBattlefieldBaseSpriteId());
+        SetPlayerGridVisualSOServerRpc(GetPlayerGridVisualSOId());
+
         SetPlayerIdServerRpc(AuthenticationService.Instance.PlayerId);
     }
 
@@ -127,12 +129,21 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
         SetPlayerIdServerRpc(AuthenticationService.Instance.PlayerId);
         SetPlayerNameServerRpc(GetPlayerName());
         SetPlayerIconSpriteServerRpc(GetPlayerIconSpriteId());
+        SetPlayerBattlefieldBaseSpriteServerRpc(GetPlayerBattlefieldBaseSpriteId());
+        SetPlayerGridVisualSOServerRpc(GetPlayerGridVisualSOId());
     }
 
     private void NetworkManager_Client_OnClientDisconnectCallback(ulong clientId) {
         OnFailedToJoinGame?.Invoke(this, EventArgs.Empty);
     }
     #endregion
+
+    private void LoadPlayerCustomizationData() {
+        playerName = ES3.Load(PlayerSaveConstString.PLAYER_NAME_MULTIPLAYER, defaultValue: "Player#" + UnityEngine.Random.Range(0, 1000));
+        playerIconSpriteId = ES3.Load(PlayerSaveConstString.PLAYER_ICON_SPRITE_MULTIPLAYER, defaultValue: 0);
+        playerGridVisualSOId = ES3.Load(PlayerSaveConstString.PLAYER_BATTLEFIELD_GRIDTILEVISUAL_MULTIPLAYER, 0);
+        playerBattlefieldBaseSpriteId = ES3.Load(PlayerSaveConstString.PLAYER_BATTLEFIELD_BASE_MULTIPLAYER, 0);
+    }
 
     private void PlayerDataNetworkList_OnListChanged(NetworkListEvent<PlayerData> changeEvent) {
         OnPlayerDataNetworkListChanged?.Invoke(this, EventArgs.Empty);
@@ -337,6 +348,48 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
 
     #region PLAYER CUSTOMIZATION
 
+    public string GetPlayerName() {
+        return playerName;
+    }
+
+    public int GetPlayerIconSpriteId() {
+        return playerIconSpriteId;
+    }
+
+    public int GetPlayerGridVisualSOId() {
+        return playerGridVisualSOId;
+    }
+
+    public int GetPlayerBattlefieldBaseSpriteId() {
+        return playerBattlefieldBaseSpriteId;
+    }
+
+    public void SetPlayerName(string playerName) {
+        this.playerName = playerName;
+        ES3.Save(PlayerSaveConstString.PLAYER_NAME_MULTIPLAYER, playerName);
+    }
+
+    public void SetPlayerIconSprite(int iconSpriteId) {
+        Debug.Log("setting player icon sprite to " + iconSpriteId);
+
+        playerIconSpriteId = iconSpriteId;
+        ES3.Save(PlayerSaveConstString.PLAYER_ICON_SPRITE_MULTIPLAYER, iconSpriteId);
+    }
+
+    public void SetPlayerGridVisualSO(int gridVisualSOId) {
+        Debug.Log("setting player grid visual SO ID to " + gridVisualSOId);
+
+        playerGridVisualSOId = gridVisualSOId;
+        ES3.Save(PlayerSaveConstString.PLAYER_BATTLEFIELD_GRIDTILEVISUAL_MULTIPLAYER, gridVisualSOId);
+    }
+
+    public void SetPlayerBattlefieldBaseSprite(int battlefieldBaseSpriteId) {
+        Debug.Log("setting player battlefield base sprite to " + battlefieldBaseSpriteId);
+
+        playerBattlefieldBaseSpriteId = battlefieldBaseSpriteId;
+        ES3.Save(PlayerSaveConstString.PLAYER_BATTLEFIELD_BASE_MULTIPLAYER, battlefieldBaseSpriteId);
+    }
+
     [ServerRpc(RequireOwnership = false)]
     private void SetPlayerNameServerRpc(string playerName, ServerRpcParams serverRpcParams = default) {
         int playerDataIndex = GetPlayerDataIndexFromClientId(serverRpcParams.Receive.SenderClientId);
@@ -349,29 +402,6 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
 
         Debug.Log("set player " + serverRpcParams.Receive.SenderClientId + " name to " + playerName);
     }
-    public string GetPlayerName() {
-        return playerName;
-    }
-
-    public int GetPlayerIconSpriteId() {
-        return playerIconSpriteId;
-    }
-
-    public void SetPlayerName(string playerName) {
-        this.playerName = playerName;
-        ES3.Save(PlayerSaveConstString.PLAYER_NAME_MULTIPLAYER, playerName);
-    }
-
-    public Sprite GetPlayerIconSpriteFromSpriteId(int iconSpriteId) {
-        return playerIconSpriteList[iconSpriteId];
-    }
-
-    public void SetPlayerIconSprite(int iconSpriteId) {
-        Debug.Log("setting player icon sprite to " + iconSpriteId);
-
-        playerIconSpriteId = iconSpriteId;
-        ES3.Save(PlayerSaveConstString.PLAYER_ICON_SPRITE_MULTIPLAYER, iconSpriteId);
-    }
 
     [ServerRpc(RequireOwnership = false)]
     private void SetPlayerIconSpriteServerRpc(int iconSpriteId, ServerRpcParams serverRpcParams = default) {
@@ -381,6 +411,30 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
         PlayerData playerData = playerDataNetworkList[playerDataIndex];
 
         playerData.iconSpriteId = iconSpriteId;
+
+        playerDataNetworkList[playerDataIndex] = playerData;
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void SetPlayerBattlefieldBaseSpriteServerRpc(int battlefieldBaseSpriteId, ServerRpcParams serverRpcParams = default) {
+        Debug.Log("SettingBattlefieldBaseSprite to " + battlefieldBaseSpriteId);
+        int playerDataIndex = GetPlayerDataIndexFromClientId(serverRpcParams.Receive.SenderClientId);
+
+        PlayerData playerData = playerDataNetworkList[playerDataIndex];
+
+        playerData.battlefieldBaseSpriteId = battlefieldBaseSpriteId;
+
+        playerDataNetworkList[playerDataIndex] = playerData;
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void SetPlayerGridVisualSOServerRpc(int gridVisualSOId, ServerRpcParams serverRpcParams = default) {
+        Debug.Log("SettingGridVisualSOId to " + gridVisualSOId);
+        int playerDataIndex = GetPlayerDataIndexFromClientId(serverRpcParams.Receive.SenderClientId);
+
+        PlayerData playerData = playerDataNetworkList[playerDataIndex];
+
+        playerData.gridVisualSOId = gridVisualSOId;
 
         playerDataNetworkList[playerDataIndex] = playerData;
     }

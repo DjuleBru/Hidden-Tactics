@@ -133,8 +133,6 @@ public class BattleManager : NetworkBehaviour
     private void SetPlayersLoadedClientRpc() {
         allPlayersLoaded = true;
         OnAllPlayersLoaded?.Invoke(this, EventArgs.Empty);
-
-        Debug.Log("all players loadad");
     }
 
     private void SceneManager_OnLoadEventCompleted(string sceneName, UnityEngine.SceneManagement.LoadSceneMode loadSceneMode, List<ulong> clientsCompleted, List<ulong> clientsTimedOut) {

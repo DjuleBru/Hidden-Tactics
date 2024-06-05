@@ -6,14 +6,17 @@ using UnityEngine.Rendering;
 public class BattlefieldVisual_Opponent : MonoBehaviour
 {
 
-    [SerializeField] private SpriteRenderer battlefieldOutlineSpriteRenderer;
     [SerializeField] private SpriteRenderer battlefieldBaseSpriteRenderer;
-    [SerializeField] private Sprite battlefieldBaseDefaultSprite;
+    [SerializeField] private SpriteRenderer battlefieldOutlineSpriteRenderer;
 
     private void Start() {
         PlayerData opponentData = HiddenTacticsMultiplayer.Instance.GetLocalOpponentData();
 
+        Sprite opponentBattlefieldBaseSprite = PlayerCustomizationData.Instance.GetBattlefieldBaseSpriteFromId(opponentData.battlefieldBaseSpriteId);
+        battlefieldBaseSpriteRenderer.sprite = opponentBattlefieldBaseSprite;
 
+        GridTileVisualSO opponentGridTileVisualSO = PlayerCustomizationData.Instance.GetPlayerGridTileVisualSOFromId(opponentData.gridVisualSOId);
+        battlefieldOutlineSpriteRenderer.sprite = opponentGridTileVisualSO.battlefieldOutlineSprite;
     }
 
 }

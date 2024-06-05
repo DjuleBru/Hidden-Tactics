@@ -7,14 +7,14 @@ public class BattleGridVisual : MonoBehaviour
 
     public static BattleGridVisual Instance { get; private set; }
 
-    [SerializeField] List<Sprite> playerGridSprites;
-    [SerializeField] List<Sprite> opponentGridSprites;
+    List<Sprite> playerGridSprites;
+    List<Sprite> opponentGridSprites;
 
     [SerializeField] List<Sprite> playerVillageSprites;
     [SerializeField] List<Sprite> opponentVillageSprites;
 
-    [SerializeField] List<Sprite> playerSettlementSprites;
-    [SerializeField] List<Sprite> opponentSettlementSprites;
+    List<Sprite> playerSettlementSprites;
+    List<Sprite> opponentSettlementSprites;
 
     [SerializeField] private bool isLobbyScene;
 
@@ -26,19 +26,17 @@ public class BattleGridVisual : MonoBehaviour
     }
 
     private void Start() {
-
-        if (BattleManager.Instance != null) {
-            // Battle scene : create grid for both player AND opponent
-            battleGrid.GetGridSystem().SetGridObjectVisualSprites(playerGridSprites, opponentGridSprites, playerSettlementSprites, opponentSettlementSprites, playerVillageSprites, opponentVillageSprites);
-        } else {
-            // Lobby scene : create grid for only player
-            battleGrid.GetGridSystem().SetGridObjectVisualSprites(playerGridSprites, playerSettlementSprites, playerVillageSprites);
-        }
-
         DeckManager.LocalInstance.OnDeckChanged += DeckManager_OnDeckChanged;
     }
 
     private void DeckManager_OnDeckChanged(object sender, DeckManager.OnDeckChangedEventArgs e) {
+
+        if (BattleManager.Instance != null) {
+            // Battle scene : create grid for both player AND opponent
+            SetOpponentSprites();
+            battleGrid.GetGridSystem().SetGridObjectVisualSprites(playerGridSprites, opponentGridSprites, playerSettlementSprites, opponentSettlementSprites, playerVillageSprites, opponentVillageSprites);
+        }
+
         string factionGridTilesSpriteKey = e.selectedDeck.deckFactionSO.ToString() + "_battlefieldGridTiles";
         List<Sprite> defaultFactionGridTilesSpriteList = e.selectedDeck.deckFactionSO.factionDefaultGridTileVisualSO.gridSpriteList;
 
@@ -49,6 +47,11 @@ public class BattleGridVisual : MonoBehaviour
         playerSettlementSprites = ES3.Load(factionSettlementSpriteKey, defaultValue: defaultFactionSettlementSpriteList);
 
         RefreshPlayerBattlefieldVisualSprites();
+    }
+
+    private void SetOpponentSprites() {
+        opponentGridSprites = PlayerCustomizationData.Instance.GetPlayerGridTileVisualSOFromId(HiddenTacticsMultiplayer.Instance.GetLocalOpponentData().gridVisualSOId).gridSpriteList;
+        playerVillageSprites = PlayerCustomizationData.Instance.GetPlayerGridTileVisualSOFromId(HiddenTacticsMultiplayer.Instance.GetLocalOpponentData().gridVisualSOId).settlementSpriteList;
     }
 
     public void SetPlayerGridTileSprites(List<Sprite> playerGridTileSprites) {

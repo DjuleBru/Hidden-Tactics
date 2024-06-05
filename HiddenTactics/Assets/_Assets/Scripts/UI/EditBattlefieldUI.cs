@@ -13,9 +13,6 @@ public class EditBattlefieldUI : MonoBehaviour
     [SerializeField] private Transform battlefieldVisualBaseContainer;
     [SerializeField] private Transform battlefieldVisualBaseTemplate;
 
-    [SerializeField] private List<GridTileVisualSO> allGridTiles;
-    [SerializeField] private List<Sprite> allBattlefieldBaseSprites;
-
     private void Awake() {
         battlefieldCustomizationUI.SetActive(false);
         battlefieldVisualGridContainer.gameObject.SetActive(false);
@@ -67,10 +64,12 @@ public class EditBattlefieldUI : MonoBehaviour
             Destroy(child.gameObject);
         }
 
-        foreach(GridTileVisualSO tileSO in allGridTiles) {
+        int id = 0;
+        foreach(GridTileVisualSO tileSO in PlayerCustomizationData.Instance.GetGridTileVisualSOList()) {
             if(tileSO.gridFactionSO != factionSO) continue;
             Transform visualGridTemplateInstantiated = Instantiate(battlefieldVisualGridTemplate, battlefieldVisualGridContainer);
             visualGridTemplateInstantiated.GetComponent<BattlefieldVisualGridTemplate>().SetGridTileVisualSO(tileSO);
+            id++;
         }
 
         battlefieldVisualGridTemplate.gameObject.SetActive(false);
@@ -84,7 +83,7 @@ public class EditBattlefieldUI : MonoBehaviour
             Destroy(child.gameObject);
         }
 
-        foreach (Sprite battlefieldBaseSprite in allBattlefieldBaseSprites) {
+        foreach (Sprite battlefieldBaseSprite in PlayerCustomizationData.Instance.GetBattlefieldBaseSpriteList()) {
             Transform battlefieldBaseVisualInstantiated = Instantiate(battlefieldVisualBaseTemplate, battlefieldVisualBaseContainer);
             battlefieldBaseVisualInstantiated.GetComponent<BattlefieldVisualBaseTemplate>().SetBattlefieldBaseImage(battlefieldBaseSprite);
         }

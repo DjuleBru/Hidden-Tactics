@@ -29,8 +29,6 @@ public class DeckManager : MonoBehaviour
         deckSelected = ES3.Load("DeckSelected", defaultDeckOnStartup);
 
         deckNumber = deckSelected.deckNumber;
-        Debug.Log("deck loaded faction " + deckSelected.deckFactionSO.ToString());
-        Debug.Log("deck loaded number " + deckNumber);
 
         OnDeckChanged?.Invoke(this, new OnDeckChangedEventArgs {
             selectedDeck = deckSelected,
