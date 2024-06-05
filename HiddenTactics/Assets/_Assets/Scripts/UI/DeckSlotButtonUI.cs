@@ -11,7 +11,7 @@ public class DeckSlotButtonUI : MonoBehaviour
     private void Awake() {
         button = GetComponent<Button>();
         button.onClick.AddListener(() => {
-            DeckManager.Instance.SetDeckSelected(deckSlotNumber);
+            DeckManager.LocalInstance.SetDeckSelected(deckSlotNumber);
         });
     }
 }

@@ -5,4 +5,5 @@ using UnityEngine;
 public class PlayerCustomizationData : MonoBehaviour
 {
     [SerializeField] List<PlayerIconSO> playerIconSOList;
+
 }

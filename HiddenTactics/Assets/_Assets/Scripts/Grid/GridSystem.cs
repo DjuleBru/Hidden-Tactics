@@ -73,6 +73,22 @@ public class GridSystem
             }
         }
     }
+    public void CreateGridObjectVisuals(Transform visualPrefab, Transform playerParentTransform) {
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                if (x < width / 2) {
+                    GridPosition gridPosition = new GridPosition(x, y);
+                    Transform visualTransform = GameObject.Instantiate(visualPrefab, GetWorldPosition(gridPosition) - new Vector3(cellSize / 2, cellSize / 2, 0), Quaternion.identity);
+
+                    visualTransform.SetParent(playerParentTransform);
+                    GridObjectVisual gridObjectVisual = visualTransform.GetComponent<GridObjectVisual>();
+                    gridObjectVisual.SetGridObject(GetGridObject(gridPosition));
+                    GetGridObject(gridPosition).SetGridObjectVisual(gridObjectVisual);
+                    gridObjectVisualArray[x, y] = gridObjectVisual;
+                }
+            }
+        }
+    }
 
     public void SetGridObjectVisualSprites(List<Sprite> playerGridSprites, List<Sprite> opponentGridSprites, List<Sprite> playerSettlementSprites, List<Sprite> opponentSettlementSprites, List<Sprite> playerVillageSprites, List<Sprite> opponentVillageSprites) {
         for (int x = 0; x < width; x++) {
@@ -96,6 +112,31 @@ public class GridSystem
                 }
                 else {
                     gridObjectVisual.SetGridSprite(opponentGridSprites);
+                }
+            }
+        }
+    }
+    
+    public void SetGridObjectVisualSprites(List<Sprite> playerGridSprites, List<Sprite> playerSettlementSprites, List<Sprite> playerVillageSprites) {
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                GridObjectVisual gridObjectVisual = gridObjectVisualArray[x, y];
+
+                // first and last sprites = settlements
+                if (x == 0) {
+                    gridObjectVisual.SetGridSprite(playerSettlementSprites);
+                    //gridObjectVisual.SetVillageSprites(playerVillageSprites);
+                    continue;
+                }
+                if (x == width - 1) {
+                    continue;
+                }
+
+                if (x < width / 2) {
+                    gridObjectVisual.SetGridSprite(playerGridSprites);
+                }
+                else {
+                    continue;
                 }
             }
         }

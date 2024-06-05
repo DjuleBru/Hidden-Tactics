@@ -9,6 +9,7 @@ public class Player : NetworkBehaviour
 
     public static Player LocalInstance;
 
+    private Deck playerDeck;
     private bool isReady;
     private bool wantsToSpeedUp;
 
@@ -22,7 +23,6 @@ public class Player : NetworkBehaviour
     private void Start() {
         BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
     }
-
 
     public void SetPlayerReadyOrUnready() {
         isReady = !isReady;
@@ -47,4 +47,5 @@ public class Player : NetworkBehaviour
             PlayerReadyManager.Instance.TogglePlayerWantsToSpeedUp(wantsToSpeedUp);
         }
     }
+
 }

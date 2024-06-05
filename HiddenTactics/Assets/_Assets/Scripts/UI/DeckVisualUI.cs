@@ -35,7 +35,7 @@ public class DeckVisualUI : MonoBehaviour
     }
 
     private void Start() {
-        DeckManager.Instance.OnDeckChanged += DeckManager_OnDeckChanged;
+        DeckManager.LocalInstance.OnDeckChanged += DeckManager_OnDeckChanged;
         deckNameInputField.onValueChanged.AddListener(delegate { deckNameInputField_OnValueChanged(); });
     }
 
@@ -45,7 +45,7 @@ public class DeckVisualUI : MonoBehaviour
         deckFactionChangeButton.SetFactionSO(deckSelected.deckFactionSO);
 
         // Deck Name
-        deckNameInputField.text = DeckManager.Instance.GetDeckSelected().deckName;
+        deckNameInputField.text = DeckManager.LocalInstance.GetDeckSelected().deckName;
 
         // Set all images transparent
         Color invisibleColor = new Color(0, 0, 0, 0);
@@ -84,7 +84,7 @@ public class DeckVisualUI : MonoBehaviour
         }
     }
     private void deckNameInputField_OnValueChanged() {
-        DeckManager.Instance.SetDeckName(deckNameInputField.text);
+        DeckManager.LocalInstance.SetDeckName(deckNameInputField.text);
     }
 
     private void DeckManager_OnDeckChanged(object sender, DeckManager.OnDeckChangedEventArgs e) {
@@ -104,8 +104,8 @@ public class DeckVisualUI : MonoBehaviour
             Destroy(child.gameObject);
         }
 
-        foreach(FactionSO factionSO in DeckManager.Instance.GetFactionSOList()) {
-            if (factionSO == DeckManager.Instance.GetDeckSelected().deckFactionSO) continue;
+        foreach(FactionSO factionSO in DeckManager.LocalInstance.GetFactionSOList()) {
+            if (factionSO == DeckManager.LocalInstance.GetDeckSelected().deckFactionSO) continue;
 
             Transform changeDeckFactionTemplateInstantiated = Instantiate(changeDeckFactionTemplate, changeDeckFactionContainer);
             FactionSelectionButtonUI factionSelectionButton = changeDeckFactionTemplateInstantiated.GetComponent<FactionSelectionButtonUI>();

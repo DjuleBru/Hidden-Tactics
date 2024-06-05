@@ -24,11 +24,21 @@ public class BattleGrid : MonoBehaviour
         Instance = this;
 
         gridSystem = new GridSystem(gridWidth, gridHeight, gridCellSize, playerGridOrigin.position, interBattlefieldSpacing_Preparation);
-        gridSystem.CreateGridObjectVisuals(gridObjectVisualPrefab, playerGridOrigin, opponentGridOrigin);
+
+        if(BattleManager.Instance != null) {
+            // Battle scene : create grid for both player AND opponent
+            gridSystem.CreateGridObjectVisuals(gridObjectVisualPrefab, playerGridOrigin, opponentGridOrigin);
+
+        } else {
+            // Lobby scene : create grid for only player
+            gridSystem.CreateGridObjectVisuals(gridObjectVisualPrefab, playerGridOrigin);
+        }
     }
 
     private void Start() {
-        BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
+        if(BattleManager.Instance != null) {
+            BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
+        }
     }
 
     private void BattleManager_OnStateChanged(object sender, System.EventArgs e) {
@@ -40,6 +50,9 @@ public class BattleGrid : MonoBehaviour
     }
 
     private void Update() {
+        if (playerGridOrigin == null) return;
+        //Fix required because on scene change, player grid origin would be destroyed thus leading to nullrefexception ?
+
         gridSystem.SetGridOrigin(playerGridOrigin.position);
     }
 

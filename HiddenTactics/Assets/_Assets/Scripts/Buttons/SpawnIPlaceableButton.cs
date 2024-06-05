@@ -6,25 +6,13 @@ using UnityEngine.UI;
 
 public class SpawnIPlaceableButton : MonoBehaviour
 {
-    [SerializeField] TroopSO troopToSpawnSO;
-    [SerializeField] BuildingSO buildingToSpawnSO;
+    TroopSO troopToSpawnSO;
+    BuildingSO buildingToSpawnSO;
 
     private Button spawnIPlaceableButton;
 
     private void Awake() {
         spawnIPlaceableButton = GetComponent<Button>();
-
-        if(troopToSpawnSO != null ) {
-            spawnIPlaceableButton.onClick.AddListener(() => {
-                SpawnTroopButton();
-            });
-        }
-
-        if(buildingToSpawnSO != null ) {
-            spawnIPlaceableButton.onClick.AddListener(() => {
-                SpawnBuildingButton();
-            });
-        }
     }
 
     private void SpawnTroopButton() {
@@ -62,5 +50,21 @@ public class SpawnIPlaceableButton : MonoBehaviour
             }
         }
         return false;
+    }
+
+    public void SetTroopToSpawn(TroopSO troopSO) {
+        troopToSpawnSO = troopSO;
+
+        spawnIPlaceableButton.onClick.AddListener(() => {
+            SpawnTroopButton();
+        });
+    }
+
+    public void SetBuildingToSpawn(BuildingSO buildingSO) {
+        buildingToSpawnSO = buildingSO;
+
+        spawnIPlaceableButton.onClick.AddListener(() => {
+            SpawnBuildingButton();
+        });
     }
 }

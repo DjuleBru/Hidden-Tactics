@@ -51,7 +51,7 @@ public class LobbyUI : MonoBehaviour
             HiddenTacticsLobby.Instance.JoinWithCode(joinCodeInputField.text);
         });
         customizeButton.onClick.AddListener(() => {
-            CustomizationUI.Instance.Show();
+            PlayerCustomizationUI.Instance.Show();
         });
     }
 

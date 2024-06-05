@@ -14,7 +14,7 @@ public class FactionSelectionButtonUI : MonoBehaviour
 
         button.onClick.AddListener(() => {
             DeckVisualUI.Instance.CloseChangeDeckFactionContainer();
-            DeckManager.Instance.SetDeckSelected(factionSO);
+            DeckManager.LocalInstance.SetDeckSelected(factionSO);
             ChangeDeckFactionButtonUI.Instance.SetSelected(false);
         });
 

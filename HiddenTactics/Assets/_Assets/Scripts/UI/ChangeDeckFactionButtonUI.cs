@@ -19,7 +19,6 @@ public class ChangeDeckFactionButtonUI : MonoBehaviour
 
         button = GetComponent<Button>();
         button.onClick.AddListener(() => {
-            Debug.Log(selected);
             if (!selected) {
                 DeckVisualUI.Instance.OpenChangeDeckFactionContainer();
                 selected = true;

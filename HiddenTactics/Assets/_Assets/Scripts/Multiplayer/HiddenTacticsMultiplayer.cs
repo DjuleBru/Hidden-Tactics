@@ -138,18 +138,6 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
         OnPlayerDataNetworkListChanged?.Invoke(this, EventArgs.Empty);
     }
 
-    [ServerRpc(RequireOwnership = false)]
-    private void SetPlayerNameServerRpc(string playerName, ServerRpcParams serverRpcParams = default) {
-        int playerDataIndex = GetPlayerDataIndexFromClientId(serverRpcParams.Receive.SenderClientId);
-
-        PlayerData playerData = playerDataNetworkList[playerDataIndex];
-
-        playerData.playerName = playerName;
-
-        playerDataNetworkList[playerDataIndex] = playerData;
-
-        Debug.Log("set player " + serverRpcParams.Receive.SenderClientId + " name to " + playerName);
-    }
 
     [ServerRpc(RequireOwnership = false)]
     private void SetPlayerIdServerRpc(string playerId, ServerRpcParams serverRpcParams = default) {
@@ -190,7 +178,6 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
         return -1;
     }
 
-
     [Button]
     public PlayerData GetLocalPlayerData() {
         return GetPlayerDataFromClientId(NetworkManager.Singleton.LocalClientId);
@@ -217,42 +204,6 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
     public void KickPlayer(ulong clientId) {
         NetworkManager.Singleton.DisconnectClient(clientId);
         NetworkManager_Server_OnClientDisconnectCallback(clientId);
-    }
-
-    public string GetPlayerName() {
-        return playerName;
-    }
-
-    public int GetPlayerIconSpriteId() {
-        return playerIconSpriteId;
-    }
-
-    public void SetPlayerName(string playerName) {
-        this.playerName = playerName;
-        ES3.Save(PlayerSaveConstString.PLAYER_NAME_MULTIPLAYER, playerName);
-    }
-
-    public Sprite GetPlayerIconSpriteFromSpriteId(int iconSpriteId) {
-        return playerIconSpriteList[iconSpriteId];
-    }
-
-    public void SetPlayerIconSprite(int iconSpriteId) {
-        Debug.Log("setting player icon sprite to " + iconSpriteId);
-
-        playerIconSpriteId = iconSpriteId;
-        ES3.Save(PlayerSaveConstString.PLAYER_ICON_SPRITE_MULTIPLAYER, iconSpriteId);
-    }
-
-    [ServerRpc(RequireOwnership = false)]
-    private void SetPlayerIconSpriteServerRpc(int iconSpriteId, ServerRpcParams serverRpcParams = default) {
-        Debug.Log("SettingPlayerIconSprite to " + iconSpriteId);
-        int playerDataIndex = GetPlayerDataIndexFromClientId(serverRpcParams.Receive.SenderClientId);
-
-        PlayerData playerData = playerDataNetworkList[playerDataIndex];
-
-        playerData.iconSpriteId = iconSpriteId;
-
-        playerDataNetworkList[playerDataIndex] = playerData;
     }
 
     public void DestroyIPlaceable(NetworkObjectReference iPlaceableNetworkObjectReference) {
@@ -384,4 +335,55 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
     }
     #endregion
 
+    #region PLAYER CUSTOMIZATION
+
+    [ServerRpc(RequireOwnership = false)]
+    private void SetPlayerNameServerRpc(string playerName, ServerRpcParams serverRpcParams = default) {
+        int playerDataIndex = GetPlayerDataIndexFromClientId(serverRpcParams.Receive.SenderClientId);
+
+        PlayerData playerData = playerDataNetworkList[playerDataIndex];
+
+        playerData.playerName = playerName;
+
+        playerDataNetworkList[playerDataIndex] = playerData;
+
+        Debug.Log("set player " + serverRpcParams.Receive.SenderClientId + " name to " + playerName);
+    }
+    public string GetPlayerName() {
+        return playerName;
+    }
+
+    public int GetPlayerIconSpriteId() {
+        return playerIconSpriteId;
+    }
+
+    public void SetPlayerName(string playerName) {
+        this.playerName = playerName;
+        ES3.Save(PlayerSaveConstString.PLAYER_NAME_MULTIPLAYER, playerName);
+    }
+
+    public Sprite GetPlayerIconSpriteFromSpriteId(int iconSpriteId) {
+        return playerIconSpriteList[iconSpriteId];
+    }
+
+    public void SetPlayerIconSprite(int iconSpriteId) {
+        Debug.Log("setting player icon sprite to " + iconSpriteId);
+
+        playerIconSpriteId = iconSpriteId;
+        ES3.Save(PlayerSaveConstString.PLAYER_ICON_SPRITE_MULTIPLAYER, iconSpriteId);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void SetPlayerIconSpriteServerRpc(int iconSpriteId, ServerRpcParams serverRpcParams = default) {
+        Debug.Log("SettingPlayerIconSprite to " + iconSpriteId);
+        int playerDataIndex = GetPlayerDataIndexFromClientId(serverRpcParams.Receive.SenderClientId);
+
+        PlayerData playerData = playerDataNetworkList[playerDataIndex];
+
+        playerData.iconSpriteId = iconSpriteId;
+
+        playerDataNetworkList[playerDataIndex] = playerData;
+    }
+
+    #endregion
 }

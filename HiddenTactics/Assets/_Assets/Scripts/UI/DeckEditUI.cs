@@ -36,16 +36,17 @@ public class DeckEditUI : MonoBehaviour
     }
 
     private void Start() {
-        DeckManager.Instance.OnDeckChanged += DeckManager_OnDeckChanged;
+        DeckManager.LocalInstance.OnDeckChanged += DeckManager_OnDeckChanged;
     }
 
     private void DeckManager_OnDeckChanged(object sender, DeckManager.OnDeckChangedEventArgs e) {
         deckSelected = e.selectedDeck;
-        factionSelected = e.selectedDeck.deckFactionSO;
         RefreshAllSelectionMenus();
     }
 
     private void RefreshAllSelectionMenus() {
+        factionSelected = deckSelected.deckFactionSO;
+
         heroSelectionSlotTemplate.gameObject.SetActive(true);
         unitSelectionSlotTemplate.gameObject.SetActive(true);
         buildingSelectionSlotTemplate.gameObject.SetActive(true);
@@ -55,7 +56,6 @@ public class DeckEditUI : MonoBehaviour
         RefreshUnitsMenu();
         RefreshBuildingsMenu();
         RefreshSpellsMenu();
-
 
         heroSelectionSlotTemplate.gameObject.SetActive(false);
         unitSelectionSlotTemplate.gameObject.SetActive(false);
@@ -119,7 +119,7 @@ public class DeckEditUI : MonoBehaviour
     }
 
     public void OnEnable() {
-        deckSelected = DeckManager.Instance.GetDeckSelected();
+        deckSelected = DeckManager.LocalInstance.GetDeckSelected();
         RefreshAllSelectionMenus();
     }
 }

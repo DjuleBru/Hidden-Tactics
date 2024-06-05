@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class SelectionSlotTemplateUI : ItemTemplateVisualUI
+public class SelectionSlotTemplateUI : ItemTemplateUI
 {
 
     [SerializeField] protected Color unSelectedColor;
@@ -26,11 +26,11 @@ public class SelectionSlotTemplateUI : ItemTemplateVisualUI
 
     public void TryAddOrRemoveTroopToDeck() {
         if (selected) {
-            DeckManager.Instance.RemoveTroopFromDeckSelected(troopSO);
+            DeckManager.LocalInstance.RemoveTroopFromDeckSelected(troopSO);
         } else {
 
-            if(DeckManager.Instance.GetDeckSelected().troopsInDeck.Count < 4) {
-                DeckManager.Instance.AddTroopToDeckSelected(troopSO);
+            if(DeckManager.LocalInstance.GetDeckSelected().troopsInDeck.Count < 4) {
+                DeckManager.LocalInstance.AddTroopToDeckSelected(troopSO);
             } else {
                 // There are no more slots available in deck
                 return;
@@ -40,12 +40,12 @@ public class SelectionSlotTemplateUI : ItemTemplateVisualUI
 
     public void TryAddOrRemoveBuildingToDeck() {
         if (selected) {
-            DeckManager.Instance.RemoveBuildingFromDeckSelected(buildingSO);
+            DeckManager.LocalInstance.RemoveBuildingFromDeckSelected(buildingSO);
         }
 
         else {
-            if (DeckManager.Instance.GetDeckSelected().buildingsInDeck.Count < 1) {
-                DeckManager.Instance.AddBuildingToDeckSelected(buildingSO);
+            if (DeckManager.LocalInstance.GetDeckSelected().buildingsInDeck.Count < 1) {
+                DeckManager.LocalInstance.AddBuildingToDeckSelected(buildingSO);
             }
             else {
                 // There are no more slots available in deck

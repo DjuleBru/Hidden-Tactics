@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class MergeBattlefieldShadows : MonoBehaviour
 {
+    public static MergeBattlefieldShadows Instance { get; private set; }
 
     public SpriteRenderer spriteRenderer;// assumes you've dragged a reference into this
     public Transform mergeInput;// a transform with a bunch of SpriteRenderers you want to merge
@@ -12,8 +13,20 @@ public class MergeBattlefieldShadows : MonoBehaviour
     [SerializeField] private float pivotX;
     [SerializeField] private float pivotY;
 
+    private void Awake() {
+        Instance = this;
+    }
+
     // Use this for initialization
     void Start() {
+        BattlefieldVisual.Instance.OnBattlefieldBaseChanged += BattlefieldVisual_OnBattlefieldBaseChanged;
+    }
+
+    private void BattlefieldVisual_OnBattlefieldBaseChanged(object sender, System.EventArgs e) {
+        RefreshBattlefieldShadow();
+    }
+
+    public void RefreshBattlefieldShadow() {
         spriteRenderer.sprite = Create(new Vector2Int(4096, 2048), mergeInput);
     }
 

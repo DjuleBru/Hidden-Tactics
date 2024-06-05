@@ -1,0 +1,51 @@
+using Cinemachine;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class MainMenuCameraManager : MonoBehaviour
+{
+    public static MainMenuCameraManager Instance { get; private set; }
+
+    [SerializeField] private CinemachineVirtualCamera mainMenuCamera;
+    [SerializeField] private CinemachineVirtualCamera editBattlefieldGridTilesCamera;
+    [SerializeField] private CinemachineVirtualCamera editBattlefieldVillagesCamera;
+    [SerializeField] private CinemachineVirtualCamera editBattlefieldBaseCamera;
+    [SerializeField] private CinemachineVirtualCamera editDeckCamera;
+
+    private void Awake() {
+        Instance = this;
+
+        SetBaseCamera();
+    }
+
+    public void SetEditBattlefieldGridTilesCamera() {
+        mainMenuCamera.enabled = false;
+        editBattlefieldGridTilesCamera.enabled = true;
+        editBattlefieldVillagesCamera.enabled = false;
+        editBattlefieldBaseCamera.enabled = false;
+        editDeckCamera.enabled = false;
+    }
+    public void SetEditBattlefieldVillagesCamera() {
+        mainMenuCamera.enabled = false;
+        editBattlefieldGridTilesCamera.enabled = false;
+        editBattlefieldVillagesCamera.enabled = true;
+        editBattlefieldBaseCamera.enabled = false;
+        editDeckCamera.enabled = false;
+    }
+    public void SetEditBattlefieldCamera() {
+        mainMenuCamera.enabled = false;
+        editBattlefieldGridTilesCamera.enabled = false;
+        editBattlefieldVillagesCamera.enabled = false;
+        editBattlefieldBaseCamera.enabled = true;
+        editDeckCamera.enabled = false;
+    }
+
+    public void SetBaseCamera() {
+        mainMenuCamera.enabled = true;
+        editBattlefieldGridTilesCamera.enabled = false;
+        editBattlefieldVillagesCamera.enabled = false;
+        editBattlefieldBaseCamera.enabled = false;
+        editDeckCamera.enabled = false;
+    }
+}

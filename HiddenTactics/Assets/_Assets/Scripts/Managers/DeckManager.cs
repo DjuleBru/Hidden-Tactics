@@ -6,7 +6,7 @@ using UnityEngine;
 public class DeckManager : MonoBehaviour
 {
 
-    public static DeckManager Instance;
+    public static DeckManager LocalInstance;
     private Deck deckSelected;
 
     [SerializeField] private FactionSO defaultDeckFactionSO;
@@ -20,7 +20,7 @@ public class DeckManager : MonoBehaviour
     }
 
     private void Awake() {
-        Instance = this;
+        LocalInstance = this;
     }
 
     private void Start() {
