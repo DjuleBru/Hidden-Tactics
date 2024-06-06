@@ -30,7 +30,7 @@ public class PlayerCustomizationData : MonoBehaviour
         return gridTileVisualSOList.IndexOf(gridTileVisualSO);
     }
 
-    public int GetBattlefieldBaseSpriteListID(Sprite battlefieldBaseSprite) {
+    public int GetBattlefieldBaseSpriteID(Sprite battlefieldBaseSprite) {
         return battlefieldBaseSpriteList.IndexOf(battlefieldBaseSprite);
     }
 

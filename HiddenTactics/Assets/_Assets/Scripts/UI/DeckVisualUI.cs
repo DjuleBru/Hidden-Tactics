@@ -35,7 +35,7 @@ public class DeckVisualUI : MonoBehaviour
     }
 
     private void Start() {
-        DeckManager.LocalInstance.OnDeckChanged += DeckManager_OnDeckChanged;
+        DeckManager.LocalInstance.OnDeckModified += DeckManager_OnDeckModified;
         deckNameInputField.onValueChanged.AddListener(delegate { deckNameInputField_OnValueChanged(); });
     }
 
@@ -87,7 +87,7 @@ public class DeckVisualUI : MonoBehaviour
         DeckManager.LocalInstance.SetDeckName(deckNameInputField.text);
     }
 
-    private void DeckManager_OnDeckChanged(object sender, DeckManager.OnDeckChangedEventArgs e) {
+    private void DeckManager_OnDeckModified(object sender, DeckManager.OnDeckChangedEventArgs e) {
         RefreshDeckVisual(e.selectedDeck);
     }
 

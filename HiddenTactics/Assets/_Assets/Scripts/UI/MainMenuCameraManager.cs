@@ -26,6 +26,7 @@ public class MainMenuCameraManager : MonoBehaviour
         editBattlefieldBaseCamera.enabled = false;
         editDeckCamera.enabled = false;
     }
+
     public void SetEditBattlefieldVillagesCamera() {
         mainMenuCamera.enabled = false;
         editBattlefieldGridTilesCamera.enabled = false;
@@ -33,7 +34,8 @@ public class MainMenuCameraManager : MonoBehaviour
         editBattlefieldBaseCamera.enabled = false;
         editDeckCamera.enabled = false;
     }
-    public void SetEditBattlefieldCamera() {
+
+    public void SetEditBattlefieldBaseCamera() {
         mainMenuCamera.enabled = false;
         editBattlefieldGridTilesCamera.enabled = false;
         editBattlefieldVillagesCamera.enabled = false;

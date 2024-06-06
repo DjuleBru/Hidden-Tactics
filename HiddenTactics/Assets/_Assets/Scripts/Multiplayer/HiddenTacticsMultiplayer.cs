@@ -139,16 +139,15 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
     #endregion
 
     private void LoadPlayerCustomizationData() {
-        playerName = ES3.Load(PlayerSaveConstString.PLAYER_NAME_MULTIPLAYER, defaultValue: "Player#" + UnityEngine.Random.Range(0, 1000));
-        playerIconSpriteId = ES3.Load(PlayerSaveConstString.PLAYER_ICON_SPRITE_MULTIPLAYER, defaultValue: 0);
-        playerGridVisualSOId = ES3.Load(PlayerSaveConstString.PLAYER_BATTLEFIELD_GRIDTILEVISUAL_MULTIPLAYER, 0);
-        playerBattlefieldBaseSpriteId = ES3.Load(PlayerSaveConstString.PLAYER_BATTLEFIELD_BASE_MULTIPLAYER, 0);
+        playerName = SavingManager.Instance.LoadPlayerName();
+        playerIconSpriteId = SavingManager.Instance.LoadPlayerIconSpriteId();
+        playerGridVisualSOId = SavingManager.Instance.LoadPlayerGridVisualSOId();
+        playerBattlefieldBaseSpriteId = SavingManager.Instance.LoadPlayerBattlefieldBaseSpriteId();
     }
 
     private void PlayerDataNetworkList_OnListChanged(NetworkListEvent<PlayerData> changeEvent) {
         OnPlayerDataNetworkListChanged?.Invoke(this, EventArgs.Empty);
     }
-
 
     [ServerRpc(RequireOwnership = false)]
     private void SetPlayerIdServerRpc(string playerId, ServerRpcParams serverRpcParams = default) {
@@ -161,9 +160,65 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
         playerDataNetworkList[playerDataIndex] = playerData;
     }
 
+    public bool IsPlayerIndexConnected(int playerIndex) {
+        return playerIndex < playerDataNetworkList.Count;
+    }
+
+    public void KickPlayer(ulong clientId) {
+        NetworkManager.Singleton.DisconnectClient(clientId);
+        NetworkManager_Server_OnClientDisconnectCallback(clientId);
+    }
+    public bool IsMultiplayer() {
+        return isMultiplayer;
+    }
+
+    #region HANDLE IPLACEABLES
+    public void DestroyIPlaceable(NetworkObjectReference iPlaceableNetworkObjectReference) {
+        DestroyIPlaceableServerRpc(iPlaceableNetworkObjectReference);
+    }
+
+    [ServerRpc(RequireOwnership =false)]
+    private void DestroyIPlaceableServerRpc(NetworkObjectReference iPlaceableNetworkObjectReference) {
+        iPlaceableNetworkObjectReference.TryGet(out NetworkObject iPlaceableNetworkObject);
+
+        RemoveIPlaceableFromGridClientRpc(iPlaceableNetworkObject);
+
+        // IF IPLACEABLE IS TROOP : DESTROY UNITS IN TROOP
+        if(iPlaceableNetworkObject.TryGetComponent<Troop>(out Troop troop)) {
+            foreach (Unit unit in troop.GetUnitInTroopList()) {
+                NetworkObject unitNetworkObject = unit.GetComponent<NetworkObject>();
+                RemoveUnitFromGridClientRpc(unitNetworkObject);
+                unit.DestroySelf();
+            }
+        }
+
+        IPlaceable iPlaceable = iPlaceableNetworkObject.GetComponent<IPlaceable>();
+        iPlaceable.DestroySelf();
+    }
+
+    [ClientRpc]
+    public void RemoveUnitFromGridClientRpc(NetworkObjectReference unitNetworkObjectReference) {
+        unitNetworkObjectReference.TryGet(out NetworkObject unitNetworkObject);
+        Unit unit = unitNetworkObject.GetComponent<Unit>();
+
+        GridPosition unitGridPosition = unit.GetCurrentGridPosition();
+        BattleGrid.Instance.RemoveUnitAtGridPosition(unitGridPosition, unit);
+    }
+
+    [ClientRpc]
+    public void RemoveIPlaceableFromGridClientRpc(NetworkObjectReference iPlaceableNetworkObjectReference) {
+        iPlaceableNetworkObjectReference.TryGet(out NetworkObject iPlaceableNetworkObject);
+        IPlaceable iPlaceable = iPlaceableNetworkObject.GetComponent<IPlaceable>();
+
+        GridPosition iPlaceableGridPosition = iPlaceable.GetIPlaceableGridPosition();
+        BattleGrid.Instance.RemoveIPlaceableAtGridPosition(iPlaceableGridPosition, iPlaceable);
+    }
+    #endregion
+
+    #region GET PLAYER DATA
     public PlayerData GetPlayerDataFromClientId(ulong clientId) {
         foreach (PlayerData playerData in playerDataNetworkList) {
-            if(playerData.clientId == clientId) {
+            if (playerData.clientId == clientId) {
                 return playerData;
             }
         }
@@ -207,60 +262,7 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
     public PlayerData GetPlayerDataFromPlayerIndex(int playerIndex) {
         return playerDataNetworkList[playerIndex];
     }
-
-    public bool IsPlayerIndexConnected(int playerIndex) {
-        return playerIndex < playerDataNetworkList.Count;
-    }
-
-    public void KickPlayer(ulong clientId) {
-        NetworkManager.Singleton.DisconnectClient(clientId);
-        NetworkManager_Server_OnClientDisconnectCallback(clientId);
-    }
-
-    public void DestroyIPlaceable(NetworkObjectReference iPlaceableNetworkObjectReference) {
-        DestroyIPlaceableServerRpc(iPlaceableNetworkObjectReference);
-    }
-
-    [ServerRpc(RequireOwnership =false)]
-    private void DestroyIPlaceableServerRpc(NetworkObjectReference iPlaceableNetworkObjectReference) {
-        iPlaceableNetworkObjectReference.TryGet(out NetworkObject iPlaceableNetworkObject);
-
-        RemoveIPlaceableFromGridClientRpc(iPlaceableNetworkObject);
-
-        // IF IPLACEABLE IS TROOP : DESTROY UNITS IN TROOP
-        if(iPlaceableNetworkObject.TryGetComponent<Troop>(out Troop troop)) {
-            foreach (Unit unit in troop.GetUnitInTroopList()) {
-                NetworkObject unitNetworkObject = unit.GetComponent<NetworkObject>();
-                RemoveUnitFromGridClientRpc(unitNetworkObject);
-                unit.DestroySelf();
-            }
-        }
-
-        IPlaceable iPlaceable = iPlaceableNetworkObject.GetComponent<IPlaceable>();
-        iPlaceable.DestroySelf();
-    }
-
-    [ClientRpc]
-    public void RemoveUnitFromGridClientRpc(NetworkObjectReference unitNetworkObjectReference) {
-        unitNetworkObjectReference.TryGet(out NetworkObject unitNetworkObject);
-        Unit unit = unitNetworkObject.GetComponent<Unit>();
-
-        GridPosition unitGridPosition = unit.GetCurrentGridPosition();
-        BattleGrid.Instance.RemoveUnitAtGridPosition(unitGridPosition, unit);
-    }
-
-    [ClientRpc]
-    public void RemoveIPlaceableFromGridClientRpc(NetworkObjectReference iPlaceableNetworkObjectReference) {
-        iPlaceableNetworkObjectReference.TryGet(out NetworkObject iPlaceableNetworkObject);
-        IPlaceable iPlaceable = iPlaceableNetworkObject.GetComponent<IPlaceable>();
-
-        GridPosition iPlaceableGridPosition = iPlaceable.GetIPlaceableGridPosition();
-        BattleGrid.Instance.RemoveIPlaceableAtGridPosition(iPlaceableGridPosition, iPlaceable);
-    }
-
-    public bool IsMultiplayer() {
-        return isMultiplayer;
-    }
+    #endregion
 
     #region GOLD&VILLAGES
 
@@ -338,12 +340,6 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
             newRevenue = newRevenue
         });
     }
-
-    public void CheckPlayerConditions(ulong clientID) {
-        int playerDataIndex = GetPlayerDataIndexFromClientId(clientID);
-        PlayerData playerData = playerDataNetworkList[playerDataIndex];
-        Debug.Log("player gold " + playerData.playerGold + " player villages " + playerData.playerVillagesRemaining + " player revenue " + playerData.playerRevenue);
-    }
     #endregion
 
     #region PLAYER CUSTOMIZATION
@@ -366,28 +362,22 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
 
     public void SetPlayerName(string playerName) {
         this.playerName = playerName;
-        ES3.Save(PlayerSaveConstString.PLAYER_NAME_MULTIPLAYER, playerName);
+        SavingManager.Instance.SavePlayerName(playerName);
     }
 
     public void SetPlayerIconSprite(int iconSpriteId) {
-        Debug.Log("setting player icon sprite to " + iconSpriteId);
-
         playerIconSpriteId = iconSpriteId;
-        ES3.Save(PlayerSaveConstString.PLAYER_ICON_SPRITE_MULTIPLAYER, iconSpriteId);
+        SavingManager.Instance.SavePlayerIconSpriteId(iconSpriteId);
     }
 
     public void SetPlayerGridVisualSO(int gridVisualSOId) {
-        Debug.Log("setting player grid visual SO ID to " + gridVisualSOId);
-
         playerGridVisualSOId = gridVisualSOId;
-        ES3.Save(PlayerSaveConstString.PLAYER_BATTLEFIELD_GRIDTILEVISUAL_MULTIPLAYER, gridVisualSOId);
+        SavingManager.Instance.SavePlayerGridVisualSOId(gridVisualSOId);
     }
 
     public void SetPlayerBattlefieldBaseSprite(int battlefieldBaseSpriteId) {
-        Debug.Log("setting player battlefield base sprite to " + battlefieldBaseSpriteId);
-
         playerBattlefieldBaseSpriteId = battlefieldBaseSpriteId;
-        ES3.Save(PlayerSaveConstString.PLAYER_BATTLEFIELD_BASE_MULTIPLAYER, battlefieldBaseSpriteId);
+        SavingManager.Instance.SavePlayerBattlefieldBaseSpriteId(battlefieldBaseSpriteId);
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -400,7 +390,7 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
 
         playerDataNetworkList[playerDataIndex] = playerData;
 
-        Debug.Log("set player " + serverRpcParams.Receive.SenderClientId + " name to " + playerName);
+        //Debug.Log("set player " + serverRpcParams.Receive.SenderClientId + " name to " + playerName);
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -413,11 +403,13 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
         playerData.iconSpriteId = iconSpriteId;
 
         playerDataNetworkList[playerDataIndex] = playerData;
+
+        Debug.Log("player " + playerDataNetworkList[playerDataIndex].clientId + " icon sprite set to " + playerDataNetworkList[playerDataIndex].iconSpriteId);
     }
 
     [ServerRpc(RequireOwnership = false)]
     private void SetPlayerBattlefieldBaseSpriteServerRpc(int battlefieldBaseSpriteId, ServerRpcParams serverRpcParams = default) {
-        Debug.Log("SettingBattlefieldBaseSprite to " + battlefieldBaseSpriteId);
+        //Debug.Log("SettingBattlefieldBaseSprite to " + battlefieldBaseSpriteId);
         int playerDataIndex = GetPlayerDataIndexFromClientId(serverRpcParams.Receive.SenderClientId);
 
         PlayerData playerData = playerDataNetworkList[playerDataIndex];
@@ -437,6 +429,8 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
         playerData.gridVisualSOId = gridVisualSOId;
 
         playerDataNetworkList[playerDataIndex] = playerData;
+
+        Debug.Log("player " + playerDataNetworkList[playerDataIndex].clientId + " grid visual set to " + playerDataNetworkList[playerDataIndex].gridVisualSOId);
     }
 
     #endregion

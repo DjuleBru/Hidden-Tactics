@@ -26,50 +26,67 @@ public class BattleGridVisual : MonoBehaviour
     }
 
     private void Start() {
-        DeckManager.LocalInstance.OnDeckChanged += DeckManager_OnDeckChanged;
-    }
-
-    private void DeckManager_OnDeckChanged(object sender, DeckManager.OnDeckChangedEventArgs e) {
+        DeckManager.LocalInstance.OnDeckModified += DeckManager_OnDeckModified;
 
         if (BattleManager.Instance != null) {
             // Battle scene : create grid for both player AND opponent
-            SetOpponentSprites();
+            LoadOpponentSprites();
+            LoadPlayerSprites();
             battleGrid.GetGridSystem().SetGridObjectVisualSprites(playerGridSprites, opponentGridSprites, playerSettlementSprites, opponentSettlementSprites, playerVillageSprites, opponentVillageSprites);
         }
-
-        string factionGridTilesSpriteKey = e.selectedDeck.deckFactionSO.ToString() + "_battlefieldGridTiles";
-        List<Sprite> defaultFactionGridTilesSpriteList = e.selectedDeck.deckFactionSO.factionDefaultGridTileVisualSO.gridSpriteList;
-
-        string factionSettlementSpriteKey = e.selectedDeck.deckFactionSO.ToString() + "_battlefieldSettlements";
-        List<Sprite> defaultFactionSettlementSpriteList = e.selectedDeck.deckFactionSO.factionDefaultGridTileVisualSO.settlementSpriteList;
-
-        playerGridSprites = ES3.Load(factionGridTilesSpriteKey, defaultValue: defaultFactionGridTilesSpriteList);
-        playerSettlementSprites = ES3.Load(factionSettlementSpriteKey, defaultValue: defaultFactionSettlementSpriteList);
-
-        RefreshPlayerBattlefieldVisualSprites();
     }
 
-    private void SetOpponentSprites() {
-        opponentGridSprites = PlayerCustomizationData.Instance.GetPlayerGridTileVisualSOFromId(HiddenTacticsMultiplayer.Instance.GetLocalOpponentData().gridVisualSOId).gridSpriteList;
-        playerVillageSprites = PlayerCustomizationData.Instance.GetPlayerGridTileVisualSOFromId(HiddenTacticsMultiplayer.Instance.GetLocalOpponentData().gridVisualSOId).settlementSpriteList;
+    private void DeckManager_OnDeckModified(object sender, DeckManager.OnDeckChangedEventArgs e) {
+
+        if (BattleManager.Instance == null) {
+            // Lobby scene : create grid only for player 
+
+            LoadPlayerBattleGridSprites(e);
+            RefreshPlayerBattlefieldVisualSprites();
+
+        }
     }
 
-    public void SetPlayerGridTileSprites(List<Sprite> playerGridTileSprites) {
-        playerGridSprites = playerGridTileSprites;
+    private void LoadPlayerBattleGridSprites(DeckManager.OnDeckChangedEventArgs e) {
+        // Load player grid tile SO  from selected deck (local machine)
+        Deck selectedDeck = DeckManager.LocalInstance.GetDeckSelected();
+        GridTileVisualSO playerGridTileVisualSO = SavingManager.Instance.LoadGridTileVisualSO(selectedDeck);
+
+        playerGridSprites = playerGridTileVisualSO.gridSpriteList;
+        playerSettlementSprites = playerGridTileVisualSO.settlementSpriteList;
+
+        //Save GridTiles To PlayerData
+        HiddenTacticsMultiplayer.Instance.SetPlayerGridVisualSO(PlayerCustomizationData.Instance.GetGridTileVisualSOID(playerGridTileVisualSO));
+    }
+
+    private void LoadOpponentSprites() {
+        PlayerData opponentData = HiddenTacticsMultiplayer.Instance.GetLocalOpponentData();
+
+        Debug.Log("opponent gridSO id " + opponentData.gridVisualSOId);
+        opponentGridSprites = PlayerCustomizationData.Instance.GetPlayerGridTileVisualSOFromId(opponentData.gridVisualSOId).gridSpriteList;
+        opponentSettlementSprites = PlayerCustomizationData.Instance.GetPlayerGridTileVisualSOFromId(opponentData.gridVisualSOId).settlementSpriteList;
+    }
+
+    private void LoadPlayerSprites() {
+        PlayerData playerData = HiddenTacticsMultiplayer.Instance.GetLocalPlayerData();
+
+        Debug.Log("player gridSO id " + playerData.gridVisualSOId);
+
+        playerGridSprites = PlayerCustomizationData.Instance.GetPlayerGridTileVisualSOFromId(playerData.gridVisualSOId).gridSpriteList;
+        playerSettlementSprites = PlayerCustomizationData.Instance.GetPlayerGridTileVisualSOFromId(playerData.gridVisualSOId).settlementSpriteList;
+    }
+
+    public void SetPlayerGridTileVisualSO(GridTileVisualSO gridTileVisualSO) {
+        playerGridSprites = gridTileVisualSO.gridSpriteList;
+        playerSettlementSprites = gridTileVisualSO.settlementSpriteList;
+
+        // Save GridTileVisualSO To Local Machine
+        SavingManager.Instance.SavePlayerGridTileVisualSO(gridTileVisualSO);
 
         RefreshPlayerBattlefieldVisualSprites();
 
-        string factionGridTilesSpriteKey = DeckManager.LocalInstance.GetDeckSelected().deckFactionSO.ToString() + "_battlefieldGridTiles";
-        ES3.Save(factionGridTilesSpriteKey, playerGridSprites);
-    }
-
-    public void SetPlayerSettlementSprites(List<Sprite> playerSettlementSprites) {
-        this.playerSettlementSprites = playerSettlementSprites;
-
-        RefreshPlayerBattlefieldVisualSprites();
-
-        string factionSettlementSpriteKey = DeckManager.LocalInstance.GetDeckSelected().deckFactionSO.ToString() + "_battlefieldSettlements";
-        ES3.Save(factionSettlementSpriteKey, playerSettlementSprites);
+        //Set GridTiles To PlayerData
+        HiddenTacticsMultiplayer.Instance.SetPlayerGridVisualSO(PlayerCustomizationData.Instance.GetGridTileVisualSOID(gridTileVisualSO));
     }
 
     public void SetPlayerVillageSprites(List<Sprite> playerVillageSprites) {
@@ -88,4 +105,5 @@ public class BattleGridVisual : MonoBehaviour
     public Sprite GetRandomOpponentVillageSprite() {
         return opponentVillageSprites[Random.Range(0, playerVillageSprites.Count)];
     }
+
 }

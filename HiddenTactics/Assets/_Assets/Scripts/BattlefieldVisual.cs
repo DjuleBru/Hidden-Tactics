@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SocialPlatforms;
 
 public class BattlefieldVisual : MonoBehaviour
 {
@@ -18,34 +19,45 @@ public class BattlefieldVisual : MonoBehaviour
     }
 
     private void Start() {
-        DeckManager.LocalInstance.OnDeckChanged += DeckManager_OnDeckChanged;
+        DeckManager.LocalInstance.OnSelectedDeckChanged += DeckManager_OnSelectedDeckChanged;
+        RefreshPlayerBattlefieldSprites();
     }
 
-    private void DeckManager_OnDeckChanged(object sender, DeckManager.OnDeckChangedEventArgs e) {
-        string factionBattlefieldOutlineSpriteKey = e.selectedDeck.deckFactionSO.ToString() + "_battlefieldOutlineSprite";
-        Sprite defaultFactionBattlefieldOutlineSprite = e.selectedDeck.deckFactionSO.factionDefaultGridTileVisualSO.battlefieldOutlineSprite;
-        Sprite factionBattlefieldOutlineSprite = ES3.Load(factionBattlefieldOutlineSpriteKey, defaultValue: defaultFactionBattlefieldOutlineSprite);
+    private void RefreshPlayerBattlefieldSprites() {
+        // Load sprites from local machine
+        Deck selectedDeck = DeckManager.LocalInstance.GetDeckSelected();
 
-        string battlefieldBaseSpriteKey = e.selectedDeck.deckFactionSO.ToString() + "_battlefieldBaseSprite";
-        Sprite battlefieldBaseSprite = ES3.Load(battlefieldBaseSpriteKey, defaultValue: battlefieldBaseDefaultSprite);
+        GridTileVisualSO playerGridTileVisualSO = SavingManager.Instance.LoadGridTileVisualSO(selectedDeck);
 
-        SetBattlefieldOutlineSprite(factionBattlefieldOutlineSprite);
-        SetBattlefieldBaseSprite(battlefieldBaseSprite);
+        Sprite loadedBattlefieldOutlineSprite = playerGridTileVisualSO.battlefieldOutlineSprite;
+
+        Sprite loadeBattlefieldBaseSprite = SavingManager.Instance.LoadBattlefieldBaseSprite(selectedDeck);
+
+        // Save sprites to local machine
+        SetBattlefieldOutlineSprite(loadedBattlefieldOutlineSprite);
+        SetBattlefieldBaseSprite(loadeBattlefieldBaseSprite);
+
+        // Save sprites to player data
+        SaveBattlefieldBaseSpriteInPlayerData(loadeBattlefieldBaseSprite);
+    }
+
+    private void DeckManager_OnSelectedDeckChanged(object sender, DeckManager.OnDeckChangedEventArgs e) {
+        RefreshPlayerBattlefieldSprites();
     }
 
     public void SetBattlefieldOutlineSprite(Sprite battlefieldOutlineSprite) {
-        string battlefieldOutlineSpriteKey = DeckManager.LocalInstance.GetDeckSelected().deckFactionSO.ToString() + "_battlefieldOutlineSprite";
-        ES3.Save(battlefieldOutlineSpriteKey, battlefieldOutlineSprite);
-
         battlefieldOutlineSpriteRenderer.sprite = battlefieldOutlineSprite;
     }
 
     public void SetBattlefieldBaseSprite(Sprite battlefieldBaseSprite) {
-        string battlefieldBaseSpriteKey = DeckManager.LocalInstance.GetDeckSelected().deckFactionSO.ToString() + "_battlefieldBaseSprite";
-        ES3.Save(battlefieldBaseSpriteKey, battlefieldBaseSprite);
-
         battlefieldBaseSpriteRenderer.sprite = battlefieldBaseSprite;
 
+        SavingManager.Instance.SaveBattlefieldBaseSprite(battlefieldBaseSprite);
+
         OnBattlefieldBaseChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    private void SaveBattlefieldBaseSpriteInPlayerData(Sprite battlefieldBaseSprite) {
+        HiddenTacticsMultiplayer.Instance.SetPlayerBattlefieldBaseSprite(PlayerCustomizationData.Instance.GetBattlefieldBaseSpriteID(battlefieldBaseSprite));
     }
 }

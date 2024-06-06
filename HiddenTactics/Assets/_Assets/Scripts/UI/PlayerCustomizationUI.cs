@@ -28,9 +28,7 @@ public class PlayerCustomizationUI : MonoBehaviour
             HiddenTacticsMultiplayer.Instance.SetPlayerName(newText);
         });
 
-        string playerNameId = PlayerSaveConstString.PLAYER_NAME_MULTIPLAYER;
-
-        string playerName = ES3.Load(playerNameId, defaultValue: "Player Name ...");
+        string playerName = SavingManager.Instance.LoadPlayerName();
 
         playerNameInputField.text = playerName;
     }

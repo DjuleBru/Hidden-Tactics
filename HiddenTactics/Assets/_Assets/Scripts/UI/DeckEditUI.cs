@@ -9,7 +9,6 @@ public class DeckEditUI : MonoBehaviour
 
     private Deck deckSelected;
     private FactionSO factionSelected;
-    [SerializeField] private FactionSO defaultFactionSO;
 
     [SerializeField] Button backToMenuButton;
     [SerializeField] Button saveDeckButton;
@@ -26,7 +25,7 @@ public class DeckEditUI : MonoBehaviour
     private void Awake() {
         Instance = this;
 
-        factionSelected = ES3.Load("DeckFactionSelected", defaultValue: defaultFactionSO);
+        factionSelected = SavingManager.Instance.LoadFactionSO();
 
         backToMenuButton.onClick.AddListener(() => {
             CloseEditDeckMenu();
@@ -36,10 +35,10 @@ public class DeckEditUI : MonoBehaviour
     }
 
     private void Start() {
-        DeckManager.LocalInstance.OnDeckChanged += DeckManager_OnDeckChanged;
+        DeckManager.LocalInstance.OnDeckModified += DeckManager_OnDeckModified;
     }
 
-    private void DeckManager_OnDeckChanged(object sender, DeckManager.OnDeckChangedEventArgs e) {
+    private void DeckManager_OnDeckModified(object sender, DeckManager.OnDeckChangedEventArgs e) {
         deckSelected = e.selectedDeck;
         RefreshAllSelectionMenus();
     }
@@ -114,7 +113,7 @@ public class DeckEditUI : MonoBehaviour
 
     public void SetFactionSelected(FactionSO factionSO) {
         factionSelected = factionSO;
-        ES3.Save("DeckFactionSelected", factionSO);
+        SavingManager.Instance.SaveFactionSO(factionSO);
         RefreshAllSelectionMenus();
     }
 

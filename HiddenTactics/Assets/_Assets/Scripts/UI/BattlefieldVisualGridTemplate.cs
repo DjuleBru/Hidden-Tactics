@@ -13,14 +13,12 @@ public class BattlefieldVisualGridTemplate : MonoBehaviour
     private void Awake() {
         button = GetComponent<Button>();
         button.onClick.AddListener(() => {
-            HiddenTacticsMultiplayer.Instance.SetPlayerGridVisualSO(PlayerCustomizationData.Instance.GetGridTileVisualSOID(gridTileVisualSO));
             SetBattlefieldVisualGridTile();
         });
     }
 
     private void SetBattlefieldVisualGridTile() {
-        BattleGridVisual.Instance.SetPlayerGridTileSprites(gridTileVisualSO.gridSpriteList);
-        BattleGridVisual.Instance.SetPlayerSettlementSprites(gridTileVisualSO.settlementSpriteList);
+        BattleGridVisual.Instance.SetPlayerGridTileVisualSO(gridTileVisualSO);
         BattlefieldVisual.Instance.SetBattlefieldOutlineSprite(gridTileVisualSO.battlefieldOutlineSprite);
     }
 

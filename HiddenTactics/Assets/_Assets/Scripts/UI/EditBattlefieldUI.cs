@@ -22,10 +22,10 @@ public class EditBattlefieldUI : MonoBehaviour
     }
 
     private void Start() {
-        DeckManager.LocalInstance.OnDeckChanged += DeckManager_OnDeckChanged;
+        DeckManager.LocalInstance.OnDeckModified += DeckManager_OnDeckModified;
     }
 
-    private void DeckManager_OnDeckChanged(object sender, DeckManager.OnDeckChangedEventArgs e) {
+    private void DeckManager_OnDeckModified(object sender, DeckManager.OnDeckChangedEventArgs e) {
         RefreshBattlefieldVisualGridContainer(e.selectedDeck.deckFactionSO);
     }
 
@@ -53,7 +53,7 @@ public class EditBattlefieldUI : MonoBehaviour
 
         RefreshBattlefieldVisualBaseContainer();
 
-        MainMenuCameraManager.Instance.SetBaseCamera();
+        MainMenuCameraManager.Instance.SetEditBattlefieldBaseCamera();
     }
 
     private void RefreshBattlefieldVisualGridContainer(FactionSO factionSO) {

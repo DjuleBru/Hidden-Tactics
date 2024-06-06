@@ -32,7 +32,7 @@ public class DeckSelectPlayer : MonoBehaviour
         DeckSelectReady.Instance.OnReadyChanged += DeckSelectReady_OnReadyChanged;
 
         if(playerIndex == 1) {
-            //Opponent game object
+            //Opponent kick only if is server
             kickButton.gameObject.SetActive(NetworkManager.Singleton.IsServer);
         }
 
@@ -53,7 +53,6 @@ public class DeckSelectPlayer : MonoBehaviour
             Show();
 
             PlayerData playerData = HiddenTacticsMultiplayer.Instance.GetPlayerDataFromPlayerIndex(playerIndex);
-
 
             playerVisual.SetPlayerIcon(PlayerCustomizationData.Instance.GetPlayerIconSpriteFromSpriteId(playerData.iconSpriteId));
 

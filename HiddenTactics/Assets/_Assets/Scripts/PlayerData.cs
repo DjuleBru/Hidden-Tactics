@@ -31,6 +31,8 @@ public struct PlayerData : IEquatable<PlayerData>, INetworkSerializable {
         serializer.SerializeValue(ref clientId);
         serializer.SerializeValue(ref truePlayerNumber);
         serializer.SerializeValue(ref iconSpriteId);
+        serializer.SerializeValue(ref battlefieldBaseSpriteId);
+        serializer.SerializeValue(ref gridVisualSOId);
         serializer.SerializeValue(ref playerName);
         serializer.SerializeValue(ref playerId);
         serializer.SerializeValue(ref playerGold);
