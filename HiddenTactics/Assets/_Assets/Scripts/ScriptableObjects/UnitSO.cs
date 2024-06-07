@@ -28,6 +28,7 @@ public class UnitSO : ScriptableObject {
 
     public bool isGarrisonedUnit;
 
+    public WeaponSO mainWeaponSO;
     public AttackSO mainAttackSO;
     public AttackSO sideAttackSO;
     public AttackSO specialAttackSO;

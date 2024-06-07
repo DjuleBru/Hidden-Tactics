@@ -28,7 +28,7 @@ public class DeckSelectPlayer : MonoBehaviour
     }
 
     private void Start() {
-        HiddenTacticsMultiplayer.Instance.OnPlayerDataNetworkListChanged += HiddenTactics_OnPlayerDataNetworkListChanged;
+        HiddenTacticsMultiplayer.Instance.OnPlayerCustomizationDataNetworkListChanged += HiddenTactics_OnPlayerCustomizationDataNetworkListChanged;
         DeckSelectReady.Instance.OnReadyChanged += DeckSelectReady_OnReadyChanged;
 
         if(playerIndex == 1) {
@@ -43,7 +43,7 @@ public class DeckSelectPlayer : MonoBehaviour
         UpdatePlayer();
     }
 
-    private void HiddenTactics_OnPlayerDataNetworkListChanged(object sender, System.EventArgs e) {
+    private void HiddenTactics_OnPlayerCustomizationDataNetworkListChanged(object sender, System.EventArgs e) {
         UpdatePlayer();
     }
 
@@ -52,13 +52,13 @@ public class DeckSelectPlayer : MonoBehaviour
         if(HiddenTacticsMultiplayer.Instance.IsPlayerIndexConnected(playerIndex)) {
             Show();
 
-            PlayerData playerData = HiddenTacticsMultiplayer.Instance.GetPlayerDataFromPlayerIndex(playerIndex);
+            PlayerCustomizationData playerCustomizationData = HiddenTacticsMultiplayer.Instance.GetPlayerCustomizationDataFromPlayerIndex(playerIndex);
 
-            playerVisual.SetPlayerIcon(PlayerCustomizationData.Instance.GetPlayerIconSpriteFromSpriteId(playerData.iconSpriteId));
+            playerVisual.SetPlayerIcon(PlayerCustomizationDataManager.Instance.GetPlayerIconSpriteFromSpriteId(playerCustomizationData.iconSpriteId));
 
-            playerNameText.text = playerData.playerName.ToString();
+            playerNameText.text = playerCustomizationData.playerName.ToString();
 
-            if (DeckSelectReady.Instance.IsPlayerReady(playerData.clientId)) {
+            if (DeckSelectReady.Instance.IsPlayerReady(playerCustomizationData.clientId)) {
                 readyIcon.sprite = readySprite;
             } else {
                 readyIcon.sprite = unreadySprite;
@@ -77,6 +77,6 @@ public class DeckSelectPlayer : MonoBehaviour
     }
 
     private void OnDestroy() {
-        HiddenTacticsMultiplayer.Instance.OnPlayerDataNetworkListChanged -= HiddenTactics_OnPlayerDataNetworkListChanged;
+        HiddenTacticsMultiplayer.Instance.OnPlayerDataNetworkListChanged -= HiddenTactics_OnPlayerCustomizationDataNetworkListChanged;
     }
 }

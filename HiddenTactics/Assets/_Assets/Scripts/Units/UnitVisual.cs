@@ -1,4 +1,5 @@
 using Sirenix.OdinInspector;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
@@ -29,6 +30,8 @@ public class UnitVisual : NetworkBehaviour
     [FoldoutGroup("Upgrade visual attributes"), ShowIf("upgradeReplacesBody"), ShowIf("upgradeReplacesBody")]
     [SerializeField] protected AnimatorOverrideController upgradedBodyAnimator;
 
+    public event EventHandler OnUnitVisualPlacingMaterialSet;
+
     protected virtual void Awake() {
         unit = GetComponentInParent<Unit>();
         bodyAnimator = GetComponent<Animator>();
@@ -58,6 +61,8 @@ public class UnitVisual : NetworkBehaviour
 
     protected virtual void Start() {
         ChangeSpriteRendererListMaterial(allVisualsSpriteRendererList, placingUnitMaterial);
+        OnUnitVisualPlacingMaterialSet?.Invoke(this, EventArgs.Empty);
+        Debug.Log("sent");
     }
 
     private void Unit_OnUnitReset(object sender, System.EventArgs e) {
@@ -100,8 +105,14 @@ public class UnitVisual : NetworkBehaviour
         }
     }
 
+    public void SetSpritesAsCleanMaterial() {
+        ChangeSpriteRendererListMaterial(allVisualsSpriteRendererList, cleanMaterial);
+    }
+
     protected virtual void ChangeSpriteRendererListMaterial(List<SpriteRenderer> spriteRendererList, Material material) {
-        foreach(SpriteRenderer spriteRenderer in spriteRendererList) {
+        foreach (SpriteRenderer spriteRenderer in spriteRendererList) {
+
+            Debug.Log("setting " + spriteRenderer +" material to " + material);
             spriteRenderer.material = material;
         }
     }

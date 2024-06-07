@@ -58,6 +58,6 @@ public class BattlefieldVisual : MonoBehaviour
     }
 
     private void SaveBattlefieldBaseSpriteInPlayerData(Sprite battlefieldBaseSprite) {
-        HiddenTacticsMultiplayer.Instance.SetPlayerBattlefieldBaseSprite(PlayerCustomizationData.Instance.GetBattlefieldBaseSpriteID(battlefieldBaseSprite));
+        HiddenTacticsMultiplayer.Instance.SetPlayerBattlefieldBaseSprite(PlayerCustomizationDataManager.Instance.GetBattlefieldBaseSpriteID(battlefieldBaseSprite));
     }
 }

@@ -13,46 +13,55 @@ public class DebugButtons : MonoBehaviour
     private void Start() {
         HiddenTacticsMultiplayer.Instance.OnPlayerDataNetworkListChanged += HiddenTacticsMultiplayer_OnPlayerDataNetworkListChanged;
 
-        ShowPlayerDataDebugInfo();
-        ShowOpponentDataDebugInfo();
+        //ShowPlayerDataDebugInfo();
+        //ShowOpponentDataDebugInfo();
     }
 
     private void HiddenTacticsMultiplayer_OnPlayerDataNetworkListChanged(object sender, System.EventArgs e) {
-        playerIconSpriteId = HiddenTacticsMultiplayer.Instance.GetLocalPlayerData().iconSpriteId;
-        opponentIconSpriteId = HiddenTacticsMultiplayer.Instance.GetLocalOpponentData().iconSpriteId;
+        playerIconSpriteId = HiddenTacticsMultiplayer.Instance.GetLocalPlayerCustomizationData().iconSpriteId;
+        opponentIconSpriteId = HiddenTacticsMultiplayer.Instance.GetLocalOpponentCustomizationData().iconSpriteId;
 
-        playerGridVisualSOId = HiddenTacticsMultiplayer.Instance.GetLocalPlayerData().gridVisualSOId;
-        opponentGridVisualSOId = HiddenTacticsMultiplayer.Instance.GetLocalOpponentData().gridVisualSOId;
+        playerGridVisualSOId = HiddenTacticsMultiplayer.Instance.GetLocalPlayerCustomizationData().gridVisualSOId;
+        opponentGridVisualSOId = HiddenTacticsMultiplayer.Instance.GetLocalOpponentCustomizationData().gridVisualSOId;
     }
 
     [Button]
     private void ShowPlayerDataDebugInfo() {
-        PlayerData playerData = HiddenTacticsMultiplayer.Instance.GetLocalPlayerData();
+        PlayerCustomizationData playerData = HiddenTacticsMultiplayer.Instance.GetLocalPlayerCustomizationData();
 
-        Debug.Log("player id " + playerData.playerId);
-        Debug.Log("player gold " + playerData.playerGold);
         Debug.Log("player icon sprite id " + playerData.iconSpriteId);
         Debug.Log("player grid sprite id " + playerData.gridVisualSOId);
         Debug.Log("player battlefield base id " + playerData.battlefieldBaseSpriteId);
+        Debug.Log("player village sprite count " + playerData.villageSpriteNumber);
+        Debug.Log("player village sprite id 0 " + playerData.villageSprite0Id);
+        Debug.Log("player village sprite id 1 " + playerData.villageSprite1Id);
+        Debug.Log("player village sprite id 2 " + playerData.villageSprite2Id);
+        Debug.Log("player village sprite id 3 " + playerData.villageSprite3Id);
+        Debug.Log("player village sprite id 4 " + playerData.villageSprite4Id);
+        Debug.Log("player village sprite id 5 " + playerData.villageSprite5Id);
     }
 
     [Button]
     private void ShowOpponentDataDebugInfo() {
-        PlayerData opponentData = HiddenTacticsMultiplayer.Instance.GetLocalOpponentData();
+        PlayerCustomizationData opponentData = HiddenTacticsMultiplayer.Instance.GetLocalOpponentCustomizationData();
 
-        Debug.Log("opponent id " + opponentData.playerId);
-        Debug.Log("opponent gold " + opponentData.playerGold);
         Debug.Log("opponent icon sprite id " + opponentData.iconSpriteId);
         Debug.Log("opponent grid sprite id " + opponentData.gridVisualSOId);
         Debug.Log("opponent battlefield base id " + opponentData.battlefieldBaseSpriteId);
+        Debug.Log("opponent village sprite count " + opponentData.villageSpriteNumber);
+        Debug.Log("opponent village sprite id 0 " + opponentData.villageSprite0Id);
+        Debug.Log("opponent village sprite id 1 " + opponentData.villageSprite1Id);
+        Debug.Log("opponent village sprite id 2 " + opponentData.villageSprite2Id);
+        Debug.Log("opponent village sprite id 3 " + opponentData.villageSprite3Id);
+        Debug.Log("opponent village sprite id 4 " + opponentData.villageSprite4Id);
+        Debug.Log("opponent village sprite id 5 " + opponentData.villageSprite5Id);
     }
 
     [Button]
     private void ShowPlayer0DataDebugInfo() {
-        PlayerData playerData = HiddenTacticsMultiplayer.Instance.GetPlayerDataFromPlayerIndex(0);
+        PlayerCustomizationData playerData = HiddenTacticsMultiplayer.Instance.GetPlayerCustomizationDataFromPlayerIndex(0);
 
         Debug.Log("player 1 id " + playerData.playerId);
-        Debug.Log("player 1 gold " + playerData.playerGold);
         Debug.Log("player 1 icon sprite id " + playerData.iconSpriteId);
         Debug.Log("player 1 grid sprite id " + playerData.gridVisualSOId);
         Debug.Log("player 1 battlefield base id " + playerData.battlefieldBaseSpriteId);
@@ -60,10 +69,9 @@ public class DebugButtons : MonoBehaviour
 
     [Button]
     private void ShowPlayer1DataDebugInfo() {
-        PlayerData opponentData = HiddenTacticsMultiplayer.Instance.GetPlayerDataFromPlayerIndex(1);
+        PlayerCustomizationData opponentData = HiddenTacticsMultiplayer.Instance.GetPlayerCustomizationDataFromPlayerIndex(1);
 
         Debug.Log("player 2 id " + opponentData.playerId);
-        Debug.Log("player 2 gold " + opponentData.playerGold);
         Debug.Log("player 2 icon sprite id " + opponentData.iconSpriteId);
         Debug.Log("player 2 grid sprite id " + opponentData.gridVisualSOId);
         Debug.Log("player 2 battlefield base id " + opponentData.battlefieldBaseSpriteId);

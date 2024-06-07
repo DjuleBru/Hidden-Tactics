@@ -1,44 +1,51 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Collections;
+using Unity.Netcode;
 using UnityEngine;
 
-public class PlayerCustomizationData : MonoBehaviour
-{
+public struct PlayerCustomizationData : IEquatable<PlayerCustomizationData>, INetworkSerializable {
 
-    public static PlayerCustomizationData Instance { get; private set; }
+    public ulong clientId;
 
-    [SerializeField] List<PlayerIconSO> playerIconSOList;
+    public int iconSpriteId;
+    public int battlefieldBaseSpriteId;
+    public int gridVisualSOId;
 
-    [SerializeField] private List<Sprite> playerIconSpriteList;
-    [SerializeField] private List<GridTileVisualSO> gridTileVisualSOList;
-    [SerializeField] private List<Sprite> battlefieldBaseSpriteList;
+    public int villageSpriteNumber;
+    public int villageSprite0Id;
+    public int villageSprite1Id;
+    public int villageSprite2Id;
+    public int villageSprite3Id;
+    public int villageSprite4Id;
+    public int villageSprite5Id;
 
+    public FixedString64Bytes playerName;
+    public FixedString64Bytes playerId;
 
-    private void Awake() {
-        Instance = this;
+    public bool Equals(PlayerCustomizationData other) {
+        return clientId == other.clientId &&
+            playerName == other.playerName &&
+            playerId == other.playerId;
     }
 
-    public Sprite GetPlayerIconSpriteFromSpriteId(int iconSpriteId) {
-        return playerIconSpriteList[iconSpriteId];
-    }
+    public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter {
+        serializer.SerializeValue(ref clientId);
+        serializer.SerializeValue(ref playerName);
+        serializer.SerializeValue(ref playerId);
 
-    public GridTileVisualSO GetPlayerGridTileVisualSOFromId(int gridTileId) {
-        return gridTileVisualSOList[gridTileId];
-    }
+        serializer.SerializeValue(ref villageSpriteNumber);
+        serializer.SerializeValue(ref villageSprite0Id);
+        serializer.SerializeValue(ref villageSprite1Id);
+        serializer.SerializeValue(ref villageSprite2Id);
+        serializer.SerializeValue(ref villageSprite3Id);
+        serializer.SerializeValue(ref villageSprite4Id);
+        serializer.SerializeValue(ref villageSprite5Id);
 
-    public int GetGridTileVisualSOID(GridTileVisualSO gridTileVisualSO) {
-        return gridTileVisualSOList.IndexOf(gridTileVisualSO);
+        serializer.SerializeValue(ref iconSpriteId);
+        serializer.SerializeValue(ref battlefieldBaseSpriteId);
+        serializer.SerializeValue(ref gridVisualSOId);
     }
-
-    public int GetBattlefieldBaseSpriteID(Sprite battlefieldBaseSprite) {
-        return battlefieldBaseSpriteList.IndexOf(battlefieldBaseSprite);
-    }
-
-    public Sprite GetBattlefieldBaseSpriteFromId(int battlefieldBaseSpriteId) {
-        return battlefieldBaseSpriteList[battlefieldBaseSpriteId];
-    }
-
-    public List<GridTileVisualSO> GetGridTileVisualSOList() { return gridTileVisualSOList; }
-    public List<Sprite> GetBattlefieldBaseSpriteList() {  return battlefieldBaseSpriteList; }
 
 }

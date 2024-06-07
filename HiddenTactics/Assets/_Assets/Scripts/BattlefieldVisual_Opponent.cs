@@ -10,12 +10,12 @@ public class BattlefieldVisual_Opponent : MonoBehaviour
     [SerializeField] private SpriteRenderer battlefieldOutlineSpriteRenderer;
 
     private void Start() {
-        PlayerData opponentData = HiddenTacticsMultiplayer.Instance.GetLocalOpponentData();
+        PlayerCustomizationData opponentCustomizationData = HiddenTacticsMultiplayer.Instance.GetLocalOpponentCustomizationData();
 
-        Sprite opponentBattlefieldBaseSprite = PlayerCustomizationData.Instance.GetBattlefieldBaseSpriteFromId(opponentData.battlefieldBaseSpriteId);
+        Sprite opponentBattlefieldBaseSprite = PlayerCustomizationDataManager.Instance.GetBattlefieldBaseSpriteFromId(opponentCustomizationData.battlefieldBaseSpriteId);
         battlefieldBaseSpriteRenderer.sprite = opponentBattlefieldBaseSprite;
 
-        GridTileVisualSO opponentGridTileVisualSO = PlayerCustomizationData.Instance.GetPlayerGridTileVisualSOFromId(opponentData.gridVisualSOId);
+        GridTileVisualSO opponentGridTileVisualSO = PlayerCustomizationDataManager.Instance.GetPlayerGridTileVisualSOFromId(opponentCustomizationData.gridVisualSOId);
         battlefieldOutlineSpriteRenderer.sprite = opponentGridTileVisualSO.battlefieldOutlineSprite;
     }
 

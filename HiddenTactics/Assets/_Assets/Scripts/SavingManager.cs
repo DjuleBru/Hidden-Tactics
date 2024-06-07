@@ -35,6 +35,10 @@ public class SavingManager : MonoBehaviour
         ES3.Save(saveSlot.ToString() + PlayerSaveConstString.PLAYER_BATTLEFIELD_BASE_MULTIPLAYER, playerBattlefieldBaseSpriteId);
     }
 
+    public void SavePlayerVillagesSpriteIdList(List<int> playerBattlefieldVillageSpriteIdList) {
+        ES3.Save(saveSlot.ToString() + PlayerSaveConstString.PLAYER_VILLAGES_MULTIPLAYER, playerBattlefieldVillageSpriteIdList);
+    }
+
     public void SavePlayerGridTileVisualSO(GridTileVisualSO gridTileVisualSO) {
         // Save GridTileVisualSO To Local Machine
 
@@ -46,6 +50,13 @@ public class SavingManager : MonoBehaviour
         string battlefieldBaseSpriteKey = saveSlot.ToString() + DeckManager.LocalInstance.GetDeckSelected().deckFactionSO.ToString() + "_battlefieldBaseSprite";
         ES3.Save(battlefieldBaseSpriteKey, battlefieldBaseSprite);
     }
+
+    public void SaveVillageSprites(List<Sprite> villageSpriteList) {
+        string villageSpriteListKey = saveSlot.ToString() + DeckManager.LocalInstance.GetDeckSelected().deckFactionSO.ToString() + "_villageSpriteList";
+        ES3.Save(villageSpriteListKey, villageSpriteList);
+    }
+
+
     #endregion
 
     #region SAVE PLAYER DECKS
@@ -69,6 +80,16 @@ public class SavingManager : MonoBehaviour
         string battlefieldBaseSpriteKey = saveSlot.ToString() + deck.deckFactionSO.ToString() + "_battlefieldBaseSprite";
 
         return ES3.Load(battlefieldBaseSpriteKey, defaultValue: battlefieldBaseDefaultSprite);
+    }
+
+    public List<Sprite> LoadVillageSpriteList(Deck deck) {
+        string villageListKey = saveSlot.ToString() + deck.deckFactionSO.ToString() + "_villageSpriteList";
+
+        Sprite defaultFactionVillageSprite = deck.deckFactionSO.factionDefaultGridTileVisualSO.defaultVillageSprite;
+        List<Sprite> defaultFactionVillageSpriteList = new List<Sprite>();
+        defaultFactionVillageSpriteList.Add(defaultFactionVillageSprite);
+
+        return ES3.Load(villageListKey, defaultValue: defaultFactionVillageSpriteList);
     }
 
     public GridTileVisualSO LoadGridTileVisualSO(Deck deck) {
@@ -97,6 +118,14 @@ public class SavingManager : MonoBehaviour
     public int LoadPlayerBattlefieldBaseSpriteId() {
         return ES3.Load(saveSlot.ToString() + PlayerSaveConstString.PLAYER_BATTLEFIELD_BASE_MULTIPLAYER, 0);
     }
+
+    public List<int> LoadPlayerVillageSpriteIdList() {
+        List<int> defaultFactionVillageSpriteIdList = new List<int>();
+        defaultFactionVillageSpriteIdList.Add(0);
+
+        return ES3.Load(saveSlot.ToString() + PlayerSaveConstString.PLAYER_VILLAGES_MULTIPLAYER, defaultFactionVillageSpriteIdList);
+    }
+
     #endregion
 
     #region LOAD PLAYER DECKS

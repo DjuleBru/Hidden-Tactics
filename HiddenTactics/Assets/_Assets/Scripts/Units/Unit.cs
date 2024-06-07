@@ -289,7 +289,7 @@ public class Unit : NetworkBehaviour, ITargetable {
 
     #endregion
 
-    protected void InvokeOnUnitPlaced() {
+    public void InvokeOnUnitPlaced() {
         OnUnitPlaced?.Invoke(this, EventArgs.Empty);
     }
 

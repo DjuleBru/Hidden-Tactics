@@ -60,7 +60,6 @@ public class Troop : NetworkBehaviour, IPlaceable {
 
     public override void OnNetworkSpawn() {
         BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
-
     }
 
     private void Update() {

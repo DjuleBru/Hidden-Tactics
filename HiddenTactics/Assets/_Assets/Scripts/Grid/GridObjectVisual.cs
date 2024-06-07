@@ -101,4 +101,10 @@ public class GridObjectVisual : MonoBehaviour
         gridSprite.sprite = sprite;
     }
 
+    public void SetVillageSprites(List<Sprite> sprites) {
+        foreach(SpriteRenderer spriteRenderer in villageSpriteRenderers) {
+            spriteRenderer.sprite = sprites[Random.Range(0, sprites.Count)];
+        }
+    }
+
 }

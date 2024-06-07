@@ -17,6 +17,7 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
     private string playerName;
     private int playerIconSpriteId;
     private int playerGridVisualSOId;
+    private List<int> villageSpriteIdList;
     private int playerBattlefieldBaseSpriteId;
 
     public const int MAX_PLAYER_AMOUNT = 2;
@@ -24,6 +25,7 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
     public event EventHandler OnTryingToJoinGame;
     public event EventHandler OnFailedToJoinGame;
     public event EventHandler OnPlayerDataNetworkListChanged;
+    public event EventHandler OnPlayerCustomizationDataNetworkListChanged;
 
     public event EventHandler<OnPlayerGoldChangedEventArgs> OnPlayerGoldChanged;
     public event EventHandler<OnPlayerRevenueChangedEventArgs> OnPlayerRevenueChanged;
@@ -38,6 +40,7 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
     }
 
     private NetworkList<PlayerData> playerDataNetworkList;
+    private NetworkList<PlayerCustomizationData> playerCustomizationDataNetworkList;
 
     private void Awake() {
 
@@ -49,6 +52,9 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
 
         playerDataNetworkList = new NetworkList<PlayerData>();
         playerDataNetworkList.OnListChanged += PlayerDataNetworkList_OnListChanged;
+
+        playerCustomizationDataNetworkList = new NetworkList<PlayerCustomizationData>();
+        playerCustomizationDataNetworkList.OnListChanged += PlayerCustomizationDataNetworkList_OnListChanged;
 
         LoadPlayerCustomizationData();
     }
@@ -74,12 +80,25 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
                 playerDataNetworkList.RemoveAt(i);
             }
         }
+
+        for (int i = 0; i < playerCustomizationDataNetworkList.Count; i++) {
+            PlayerCustomizationData playerCustomizationData = playerCustomizationDataNetworkList[i];
+            if (playerCustomizationData.clientId == clientId) {
+                // Disconnected!
+                playerCustomizationDataNetworkList.RemoveAt(i);
+            }
+        }
+
         OnFailedToJoinGame?.Invoke(this, EventArgs.Empty);
     }
 
     private void NetworkManager_Server_OnClientConnectedCallback(ulong clientId) {
         Debug.Log("SERVER client connected :" + clientId);
         playerDataNetworkList.Add(new PlayerData {
+            clientId = clientId,
+        });
+
+        playerCustomizationDataNetworkList.Add(new PlayerCustomizationData {
             clientId = clientId,
         });
 
@@ -91,6 +110,7 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
         SetPlayerIconSpriteServerRpc(GetPlayerIconSpriteId());
         SetPlayerBattlefieldBaseSpriteServerRpc(GetPlayerBattlefieldBaseSpriteId());
         SetPlayerGridVisualSOServerRpc(GetPlayerGridVisualSOId());
+        SetPlayerVillageSpritesServerRpc(GetPlayerVillageSpriteIdList().ToArray());
 
         SetPlayerIdServerRpc(AuthenticationService.Instance.PlayerId);
     }
@@ -131,6 +151,7 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
         SetPlayerIconSpriteServerRpc(GetPlayerIconSpriteId());
         SetPlayerBattlefieldBaseSpriteServerRpc(GetPlayerBattlefieldBaseSpriteId());
         SetPlayerGridVisualSOServerRpc(GetPlayerGridVisualSOId());
+        SetPlayerVillageSpritesServerRpc(GetPlayerVillageSpriteIdList().ToArray());
     }
 
     private void NetworkManager_Client_OnClientDisconnectCallback(ulong clientId) {
@@ -143,10 +164,15 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
         playerIconSpriteId = SavingManager.Instance.LoadPlayerIconSpriteId();
         playerGridVisualSOId = SavingManager.Instance.LoadPlayerGridVisualSOId();
         playerBattlefieldBaseSpriteId = SavingManager.Instance.LoadPlayerBattlefieldBaseSpriteId();
+        villageSpriteIdList = SavingManager.Instance.LoadPlayerVillageSpriteIdList();
     }
 
     private void PlayerDataNetworkList_OnListChanged(NetworkListEvent<PlayerData> changeEvent) {
         OnPlayerDataNetworkListChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    private void PlayerCustomizationDataNetworkList_OnListChanged(NetworkListEvent<PlayerCustomizationData> changeEvent) {
+        OnPlayerCustomizationDataNetworkListChanged?.Invoke(this, EventArgs.Empty);
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -264,6 +290,55 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
     }
     #endregion
 
+    #region GET PLAYER CUSTOMIZATION DATA
+    public PlayerCustomizationData GetPlayerCustomizationDataFromClientId(ulong clientId) {
+        foreach (PlayerCustomizationData playerCustomizationData in playerCustomizationDataNetworkList) {
+            if (playerCustomizationData.clientId == clientId) {
+                return playerCustomizationData;
+            }
+        }
+        Debug.Log("player customization data not found");
+        return default;
+    }
+
+    public int GetPlayerCustomizationDataIndexFromClientId(ulong clientId) {
+        for (int i = 0; i < playerCustomizationDataNetworkList.Count; i++) {
+            if (playerCustomizationDataNetworkList[i].clientId == clientId) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public int GetOtherPlayerCustomizationDataIndexFromClientId(ulong clientId) {
+        for (int i = 0; i < playerCustomizationDataNetworkList.Count; i++) {
+            if (playerCustomizationDataNetworkList[i].clientId != clientId) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    [Button]
+    public PlayerCustomizationData GetLocalPlayerCustomizationData() {
+        return GetPlayerCustomizationDataFromClientId(NetworkManager.Singleton.LocalClientId);
+    }
+
+    [Button]
+    public PlayerCustomizationData GetLocalOpponentCustomizationData() {
+        foreach (PlayerCustomizationData playerCustomizationData in playerCustomizationDataNetworkList) {
+            if (playerCustomizationData.clientId != NetworkManager.Singleton.LocalClientId) {
+                return playerCustomizationData;
+            }
+        }
+        return default;
+    }
+
+    public PlayerCustomizationData GetPlayerCustomizationDataFromPlayerIndex(int playerIndex) {
+        return playerCustomizationDataNetworkList[playerIndex];
+    }
+    #endregion
+
     #region GOLD&VILLAGES
 
     [ServerRpc(RequireOwnership = false)]
@@ -360,6 +435,10 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
         return playerBattlefieldBaseSpriteId;
     }
 
+    public List<int> GetPlayerVillageSpriteIdList() {
+        return villageSpriteIdList;
+    }
+
     public void SetPlayerName(string playerName) {
         this.playerName = playerName;
         SavingManager.Instance.SavePlayerName(playerName);
@@ -380,57 +459,87 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
         SavingManager.Instance.SavePlayerBattlefieldBaseSpriteId(battlefieldBaseSpriteId);
     }
 
+    public void SetPlayerVillageSprites(List<int> villageSpriteIdList) {
+        this.villageSpriteIdList = villageSpriteIdList;
+        SavingManager.Instance.SavePlayerVillagesSpriteIdList(villageSpriteIdList);
+    }
+
     [ServerRpc(RequireOwnership = false)]
     private void SetPlayerNameServerRpc(string playerName, ServerRpcParams serverRpcParams = default) {
-        int playerDataIndex = GetPlayerDataIndexFromClientId(serverRpcParams.Receive.SenderClientId);
+        int playerCustomizationDataIndex = GetPlayerCustomizationDataIndexFromClientId(serverRpcParams.Receive.SenderClientId);
 
-        PlayerData playerData = playerDataNetworkList[playerDataIndex];
+        PlayerCustomizationData playerCustomizationData = playerCustomizationDataNetworkList[playerCustomizationDataIndex];
 
-        playerData.playerName = playerName;
+        playerCustomizationData.playerName = playerName;
 
-        playerDataNetworkList[playerDataIndex] = playerData;
-
-        //Debug.Log("set player " + serverRpcParams.Receive.SenderClientId + " name to " + playerName);
+        playerCustomizationDataNetworkList[playerCustomizationDataIndex] = playerCustomizationData;
     }
 
     [ServerRpc(RequireOwnership = false)]
     private void SetPlayerIconSpriteServerRpc(int iconSpriteId, ServerRpcParams serverRpcParams = default) {
-        Debug.Log("SettingPlayerIconSprite to " + iconSpriteId);
-        int playerDataIndex = GetPlayerDataIndexFromClientId(serverRpcParams.Receive.SenderClientId);
+        int playerCustomizationDataIndex = GetPlayerCustomizationDataIndexFromClientId(serverRpcParams.Receive.SenderClientId);
 
-        PlayerData playerData = playerDataNetworkList[playerDataIndex];
+        PlayerCustomizationData playerCustomizationData = playerCustomizationDataNetworkList[playerCustomizationDataIndex];
 
-        playerData.iconSpriteId = iconSpriteId;
+        playerCustomizationData.iconSpriteId = iconSpriteId;
 
-        playerDataNetworkList[playerDataIndex] = playerData;
-
-        Debug.Log("player " + playerDataNetworkList[playerDataIndex].clientId + " icon sprite set to " + playerDataNetworkList[playerDataIndex].iconSpriteId);
+        playerCustomizationDataNetworkList[playerCustomizationDataIndex] = playerCustomizationData;
     }
 
     [ServerRpc(RequireOwnership = false)]
     private void SetPlayerBattlefieldBaseSpriteServerRpc(int battlefieldBaseSpriteId, ServerRpcParams serverRpcParams = default) {
-        //Debug.Log("SettingBattlefieldBaseSprite to " + battlefieldBaseSpriteId);
-        int playerDataIndex = GetPlayerDataIndexFromClientId(serverRpcParams.Receive.SenderClientId);
+        int playerCustomizationDataIndex = GetPlayerCustomizationDataIndexFromClientId(serverRpcParams.Receive.SenderClientId);
 
-        PlayerData playerData = playerDataNetworkList[playerDataIndex];
+        PlayerCustomizationData playerCustomizationData = playerCustomizationDataNetworkList[playerCustomizationDataIndex];
 
-        playerData.battlefieldBaseSpriteId = battlefieldBaseSpriteId;
+        playerCustomizationData.battlefieldBaseSpriteId = battlefieldBaseSpriteId;
 
-        playerDataNetworkList[playerDataIndex] = playerData;
+        playerCustomizationDataNetworkList[playerCustomizationDataIndex] = playerCustomizationData;
     }
 
     [ServerRpc(RequireOwnership = false)]
     private void SetPlayerGridVisualSOServerRpc(int gridVisualSOId, ServerRpcParams serverRpcParams = default) {
-        Debug.Log("SettingGridVisualSOId to " + gridVisualSOId);
-        int playerDataIndex = GetPlayerDataIndexFromClientId(serverRpcParams.Receive.SenderClientId);
+        int playerCustomizationDataIndex = GetPlayerCustomizationDataIndexFromClientId(serverRpcParams.Receive.SenderClientId);
 
-        PlayerData playerData = playerDataNetworkList[playerDataIndex];
+        PlayerCustomizationData playerCustomizationData = playerCustomizationDataNetworkList[playerCustomizationDataIndex];
 
-        playerData.gridVisualSOId = gridVisualSOId;
+        playerCustomizationData.gridVisualSOId = gridVisualSOId;
 
-        playerDataNetworkList[playerDataIndex] = playerData;
+        playerCustomizationDataNetworkList[playerCustomizationDataIndex] = playerCustomizationData;
+    }
 
-        Debug.Log("player " + playerDataNetworkList[playerDataIndex].clientId + " grid visual set to " + playerDataNetworkList[playerDataIndex].gridVisualSOId);
+    [ServerRpc(RequireOwnership = false)]
+    private void SetPlayerVillageSpritesServerRpc(int[] villageSpriteIdList, ServerRpcParams serverRpcParams = default) {
+        int playerCustomizationDataIndex = GetPlayerCustomizationDataIndexFromClientId(serverRpcParams.Receive.SenderClientId);
+
+        PlayerCustomizationData playerCustomizationData = playerCustomizationDataNetworkList[playerCustomizationDataIndex];
+        playerCustomizationData.villageSpriteNumber = villageSpriteIdList.Length;
+
+        if (villageSpriteIdList.Length >= 1) {
+            playerCustomizationData.villageSprite0Id = villageSpriteIdList[0];
+        }
+
+        if (villageSpriteIdList.Length >= 2) {
+            playerCustomizationData.villageSprite1Id = villageSpriteIdList[1];
+        }
+
+        if (villageSpriteIdList.Length >= 3) {
+            playerCustomizationData.villageSprite2Id = villageSpriteIdList[2];
+        }
+
+        if (villageSpriteIdList.Length >= 4) {
+            playerCustomizationData.villageSprite3Id = villageSpriteIdList[3];
+        }
+
+        if (villageSpriteIdList.Length >= 5) {
+            playerCustomizationData.villageSprite4Id = villageSpriteIdList[4];
+        }
+
+        if (villageSpriteIdList.Length >= 6) {
+            playerCustomizationData.villageSprite5Id = villageSpriteIdList[5];
+        }
+
+        playerCustomizationDataNetworkList[playerCustomizationDataIndex] = playerCustomizationData;
     }
 
     #endregion

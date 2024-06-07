@@ -51,22 +51,7 @@ public class DeckVisualUI : MonoBehaviour
         Color invisibleColor = new Color(0, 0, 0, 0);
         heroImage.sprite = null;
         heroImage.color = invisibleColor;
-
-        foreach (Image image in troopsInDeckImageList) {
-            image.sprite = null;
-            image.color = invisibleColor;
-        }
-
-        foreach (Image image in buildingsInDeckImageList) {
-            image.sprite = null;
-            image.color = invisibleColor;
-        }
-
-        foreach (Image image in spellsInDeckImageList) {
-            image.sprite = null;
-            image.color = invisibleColor;
-        }
-
+        
         int i = 0;
         // Set deck troops in visual images
         foreach (TroopSO troopSO in deckSelected.troopsInDeck) {

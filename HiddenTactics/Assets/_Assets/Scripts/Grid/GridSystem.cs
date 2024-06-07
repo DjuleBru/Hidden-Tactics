@@ -90,7 +90,7 @@ public class GridSystem
         }
     }
 
-    public void SetGridObjectVisualSprites(List<Sprite> playerGridSprites, List<Sprite> opponentGridSprites, List<Sprite> playerSettlementSprites, List<Sprite> opponentSettlementSprites, List<Sprite> playerVillageSprites, List<Sprite> opponentVillageSprites) {
+    public void SetGridObjectVisualSprites(List<Sprite> playerGridSprites, List<Sprite> opponentGridSprites, List<Sprite> playerSettlementSprites, List<Sprite> opponentSettlementSprites) {
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 GridObjectVisual gridObjectVisual = gridObjectVisualArray[x, y];
@@ -98,12 +98,10 @@ public class GridSystem
                 // first and last sprites = settlements
                 if(x == 0) {
                     gridObjectVisual.SetGridSprite(playerSettlementSprites);
-                    //gridObjectVisual.SetVillageSprites(playerVillageSprites);
                     continue;
                 }
                 if(x == width -1) {
                     gridObjectVisual.SetGridSprite(opponentSettlementSprites);
-                    //gridObjectVisual.SetVillageSprites(opponentVillageSprites);
                     continue;
                 }
 
@@ -125,7 +123,7 @@ public class GridSystem
                 // first and last sprites = settlements
                 if (x == 0) {
                     gridObjectVisual.SetGridSprite(playerSettlementSprites);
-                    //gridObjectVisual.SetVillageSprites(playerVillageSprites);
+                    gridObjectVisual.SetVillageSprites(playerVillageSprites);
                     continue;
                 }
                 if (x == width - 1) {
