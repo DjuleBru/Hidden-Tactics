@@ -13,11 +13,15 @@ MonoBehaviour:
   m_Name: ElfBow
   m_EditorClassIdentifier: 
   unitTagList: 
+  unitTargetType: 0
   HP: 10
   armor: 0
   mass: 80
   moveType: 0
   unitMoveSpeed: 80
+  isGarrisonedUnit: 0
+  mainWeaponSO: {fileID: 11400000, guid: 1221645990cf7d74ab26c7f045d05ddc, type: 2}
   mainAttackSO: {fileID: 11400000, guid: 13bc8884bb8389549b0383ec528330d2, type: 2}
   sideAttackSO: {fileID: 11400000, guid: c21ef32afc2c2e74b8ae69cde27b2236, type: 2}
   specialAttackSO: {fileID: 0}
+  damageToVillages: 0

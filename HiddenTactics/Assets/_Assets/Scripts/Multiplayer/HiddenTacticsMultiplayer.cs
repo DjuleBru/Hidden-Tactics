@@ -415,6 +415,44 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
             newRevenue = newRevenue
         });
     }
+
+    public bool PlayerWon(ulong clientId) {
+        int playerDataIndex = GetPlayerDataIndexFromClientId(clientId);
+        PlayerData playerData = playerDataNetworkList[playerDataIndex];
+
+        int opponentDataIndex = GetOtherPlayerDataIndexFromClientId(clientId);
+        PlayerData opponentPlayerData = playerDataNetworkList[opponentDataIndex];
+
+        if(playerData.playerVillagesRemaining > opponentPlayerData.playerVillagesRemaining) {
+            // Player won
+            return true;
+        }
+
+        if(playerData.playerVillagesRemaining == opponentPlayerData.playerVillagesRemaining) {
+            // Tie on villages : 
+        }
+
+        // Opponent won
+        return false;
+    }
+
+    public bool PlayerTie(ulong clientId) {
+        int playerDataIndex = GetPlayerDataIndexFromClientId(clientId);
+        PlayerData playerData = playerDataNetworkList[playerDataIndex];
+
+        int opponentDataIndex = GetOtherPlayerDataIndexFromClientId(clientId);
+        PlayerData opponentPlayerData = playerDataNetworkList[opponentDataIndex];
+
+        if (playerData.playerVillagesRemaining == opponentPlayerData.playerVillagesRemaining) {
+            // Tie on villages 
+            return true;
+        }
+
+        // Opponent won
+        return false;
+    }
+
+
     #endregion
 
     #region PLAYER CUSTOMIZATION

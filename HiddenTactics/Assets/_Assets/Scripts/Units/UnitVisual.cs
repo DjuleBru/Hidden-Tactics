@@ -62,7 +62,6 @@ public class UnitVisual : NetworkBehaviour
     protected virtual void Start() {
         ChangeSpriteRendererListMaterial(allVisualsSpriteRendererList, placingUnitMaterial);
         OnUnitVisualPlacingMaterialSet?.Invoke(this, EventArgs.Empty);
-        Debug.Log("sent");
     }
 
     private void Unit_OnUnitReset(object sender, System.EventArgs e) {
@@ -112,7 +111,6 @@ public class UnitVisual : NetworkBehaviour
     protected virtual void ChangeSpriteRendererListMaterial(List<SpriteRenderer> spriteRendererList, Material material) {
         foreach (SpriteRenderer spriteRenderer in spriteRendererList) {
 
-            Debug.Log("setting " + spriteRenderer +" material to " + material);
             spriteRenderer.material = material;
         }
     }

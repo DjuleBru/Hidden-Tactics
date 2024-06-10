@@ -102,10 +102,6 @@ public class BattleGridVisual : MonoBehaviour
             Sprite villageSprite = PlayerCustomizationDataManager.Instance.GetVillageSpriteFromSpriteId(opponentCustomizationData.villageSprite5Id);
             opponentVillageSprites.Add(villageSprite);
         }
-
-        foreach(Sprite sprite in opponentVillageSprites) {
-            Debug.Log(sprite);
-        }
     }
 
     private void LoadPlayerSprites() {

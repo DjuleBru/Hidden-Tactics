@@ -13,6 +13,7 @@ public class BattleManager : NetworkBehaviour
     [SerializeField] private BattlefieldAnimatorManager battleFieldAnimatorControllingPhases;
     public event EventHandler OnStateChanged;
     public event EventHandler OnAllPlayersLoaded;
+    public event EventHandler OnGameEnded;
     public bool allPlayersLoaded;
     public bool isFirstPreparationPhase = true;
 
@@ -31,6 +32,9 @@ public class BattleManager : NetworkBehaviour
 
     private List<Unit> unitsOnBattlefieldList = new List<Unit>();
     private List<Unit> unitsStillInBattle = new List<Unit>();
+
+    private int turnNumber;
+    private int maxTurnNumber = 2;
 
     private enum State {
         WaitingToStart,
@@ -152,13 +156,6 @@ public class BattleManager : NetworkBehaviour
         Invoke("SetBattlePhase", battlePhaseActivationDelay);
     }
 
-    private void BattleFieldAnimatorControllingPhases_OnBattlefieldsSplit(object sender, EventArgs e) {
-        if (!IsServer) {
-            return;
-        }
-        state.Value = State.PreparationPhase;
-    }
-
     [Command]
     public void SetBattlePhase() {
         state.Value = State.BattlePhase;
@@ -171,9 +168,18 @@ public class BattleManager : NetworkBehaviour
         OnStateChanged?.Invoke(this, EventArgs.Empty);
     }
 
+    private void BattleFieldAnimatorControllingPhases_OnBattlefieldsSplit(object sender, EventArgs e) {
+        if (!IsServer) {
+            return;
+        }
+        state.Value = State.PreparationPhase;
+    }
+
     private void State_OnValueChanged(State previousValue, State newValue) {
         OnStateChanged?.Invoke(this, EventArgs.Empty);
         Time.timeScale = 1f;
+
+        HandleTurnPass();
 
         if (IsServer) {
             if(state.Value == State.PreparationPhase) {
@@ -190,6 +196,24 @@ public class BattleManager : NetworkBehaviour
         }
 
         speedUpButtonActive = false;
+    }
+
+    private void HandleTurnPass() {
+        // Change turn number on clients
+        if (state.Value == State.PreparationPhase) {
+            turnNumber++;
+            Debug.Log("turn number" + turnNumber);
+
+            // End game if turn > max turns
+            if (turnNumber == maxTurnNumber) {
+                EndGame();
+            }
+
+        }
+    }
+
+    private void EndGame() {
+        OnGameEnded?.Invoke(this, EventArgs.Empty);
     }
 
     [ServerRpc] 
