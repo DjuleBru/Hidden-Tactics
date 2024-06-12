@@ -9,6 +9,9 @@ public class BattlePhaseUI : MonoBehaviour
     [SerializeField] Button playerSpeedUpButton;
     [SerializeField] GameObject playerSpeedUpGameObject;
 
+    [SerializeField] GameObject playerSpeedUpIndicator;
+    [SerializeField] GameObject opponentSpeedUpIndicator;
+
     private void Awake() {
         playerSpeedUpButton.onClick.AddListener(() => {
             Player.LocalInstance.SetPlayerWantsToSpeedUp();
@@ -22,6 +25,7 @@ public class BattlePhaseUI : MonoBehaviour
         BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
         BattleManager.Instance.OnSpeedUpButtonActivation += BattleManager_OnSpeedUpButtonActivation;
         PlayerReadyManager.Instance.OnAllPlayersWantToSpeedUp += PlayerReadyManager_OnAllPlayersWantToSpeedUp;
+        PlayerReadyManager.Instance.OnPlayerWantsToSpeedUpChanged += PlayerReadyManager_OnPlayerWantsToSpeedUpChanged;
 
         Hide();
     }
@@ -49,6 +53,14 @@ public class BattlePhaseUI : MonoBehaviour
     private void PlayerReadyManager_OnAllPlayersWantToSpeedUp(object sender, System.EventArgs e) {
         playerSpeedUpButton.enabled = false;
         playerSpeedUpGameObject.GetComponent<Animator>().SetTrigger("SlideUp");
+    }
+
+    private void PlayerReadyManager_OnPlayerWantsToSpeedUpChanged(object sender, System.EventArgs e) {
+        PlayerData playerData = HiddenTacticsMultiplayer.Instance.GetLocalPlayerData();
+        PlayerData opponentData = HiddenTacticsMultiplayer.Instance.GetLocalOpponentData();
+
+        playerSpeedUpIndicator.SetActive(PlayerReadyManager.Instance.PlayerWantingToSpeedUp(playerData.clientId));
+        opponentSpeedUpIndicator.SetActive(PlayerReadyManager.Instance.PlayerWantingToSpeedUp(opponentData.clientId));
     }
 
     public void Show() {

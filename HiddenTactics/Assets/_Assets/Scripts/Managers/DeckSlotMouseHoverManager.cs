@@ -23,6 +23,13 @@ public class DeckSlotMouseHoverManager : MonoBehaviour
     {
         if (!editingDeck) return;
 
+        if(Input.GetMouseButtonDown(0)) {
+            if(deckSlotVisualHovered != null) {
+                // Player is clicking on deck slot
+                deckSlotVisualHovered.GetComponentInParent<DeckSlot>().SetSelecting(true);
+            }
+        }
+
         RaycastHit2D[] hit = Physics2D.RaycastAll(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
 
         //Unhover deck slot hovered that are not in the list anymore

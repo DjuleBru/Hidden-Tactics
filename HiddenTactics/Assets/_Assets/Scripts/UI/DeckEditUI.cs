@@ -32,9 +32,9 @@ public class DeckEditUI : MonoBehaviour
 
         DeckManager.LocalInstance.OnDeckModified += DeckManager_OnDeckModified;
         DeckSlot.OnAnyDeckSlotSelected += DeckSlot_OnAnyDeckSlotSelected;
+        DeckSlot.OnAnyDeckSlotUnSelected += DeckSlot_OnAnyDeckSlotUnSelected;
         gameObject.SetActive(false);
     }
-
 
     private void DeckManager_OnDeckModified(object sender, DeckManager.OnDeckChangedEventArgs e) {
         deckSelected = e.selectedDeck;
@@ -130,11 +130,23 @@ public class DeckEditUI : MonoBehaviour
     private void DeckSlot_OnAnyDeckSlotSelected(object sender, System.EventArgs e)
     {
         deckSlotSelected = (DeckSlot)sender;
+        Debug.Log("selected " +  deckSlotSelected);
+    }
+
+    private void DeckSlot_OnAnyDeckSlotUnSelected(object sender, System.EventArgs e) {
+        if(deckSlotSelected == (DeckSlot)sender) {
+            Debug.Log("unselected " + deckSlotSelected);
+            deckSlotSelected = null;
+        }
     }
 
     public int GetDeckSlotSelectedIndex()
     {
         return deckSlotSelected.GetDeckSlotNumber();
+    }
+
+    public DeckSlot GetDeckSlotSelected() {
+        return deckSlotSelected;
     }
 
     public void EnableEditDeckUI() {

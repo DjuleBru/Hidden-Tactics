@@ -1,3 +1,4 @@
+using Sirenix.Utilities;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -106,6 +107,13 @@ public class DeckManager : MonoBehaviour
     }
 
     #endregion
+
+    public int GetTroopSOIndex(TroopSO troopSO) {
+        return Array.IndexOf(deckSelected.troopsInDeck, troopSO);
+    }
+    public int GetBuildingSOIndex(BuildingSO buildingSO) {
+        return Array.IndexOf(deckSelected.buildingsInDeck, buildingSO);
+    }
 
     public void SetDeckName(string name) {
         deckSelected.deckName = name;

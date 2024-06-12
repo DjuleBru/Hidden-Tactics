@@ -57,6 +57,7 @@ public class DeckSlotVisual : MonoBehaviour
         deckSlotAnimatorManager.SetDeckSlotAnimationHovered();
         deckSlotHovered = true;
         deckSlotVisualSpriteRenderer.material = hoveredMaterial;
+        GetComponentInChildren<DeckSlotUI>().SetAddTroopTextHovered();
     }
 
     public void SetDeckSlotUnhovered()
@@ -67,6 +68,7 @@ public class DeckSlotVisual : MonoBehaviour
             deckSlotAnimatorManager.SetDeckSlotAnimationUnhovered();
             deckSlotHovered = false;
             deckSlotVisualSpriteRenderer.material = cleanMaterial;
+            GetComponentInChildren<DeckSlotUI>().SetAddTroopTextUnhovered();
         }
     }
 

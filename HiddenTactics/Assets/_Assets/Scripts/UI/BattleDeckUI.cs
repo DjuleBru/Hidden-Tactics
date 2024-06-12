@@ -16,6 +16,10 @@ public class BattleDeckUI : MonoBehaviour
 
         int i = 0;
         foreach(TroopSO troopSO in playerDeck.troopsInDeck) {
+            if (troopSO == null) {
+                i++;
+                continue;
+            }
             troopsItemTemplateVisualUIList[i].SetTroopSO(troopSO);
             troopsItemTemplateVisualUIList[i].GetComponentInChildren<SpawnIPlaceableButton>().SetTroopToSpawn(troopSO);
             i++;
@@ -23,6 +27,10 @@ public class BattleDeckUI : MonoBehaviour
 
         i = 0;
         foreach (BuildingSO buildingSO in playerDeck.buildingsInDeck) {
+            if (buildingSO == null) {
+                i++;
+                continue;
+            }
             buildingsItemTemplateVisualUIList[i].SetBuildingSO(buildingSO);
             buildingsItemTemplateVisualUIList[i].GetComponentInChildren<SpawnIPlaceableButton>().SetBuildingToSpawn(buildingSO);
             i++;

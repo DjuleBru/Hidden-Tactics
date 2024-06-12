@@ -14,9 +14,13 @@ public class PlayerReadyManager : NetworkBehaviour
     private Dictionary<ulong, bool> playerReadyDictionary;
 
     public event EventHandler OnAllPlayersWantToSpeedUp;
+    public event EventHandler OnAllPlayersWantToReplay;
+
     public event EventHandler OnPlayerWantsToSpeedUpChanged;
+    public event EventHandler OnPlayerWantsToReplayChanged;
 
     private Dictionary<ulong, bool> playerWantsToSpeedUpDictionary;
+    private Dictionary<ulong, bool> playerWantsToReplayDictionary;
 
     private void Awake() {
 
@@ -24,6 +28,7 @@ public class PlayerReadyManager : NetworkBehaviour
 
         playerReadyDictionary = new Dictionary<ulong, bool>() { };
         playerWantsToSpeedUpDictionary = new Dictionary<ulong, bool>() { };
+        playerWantsToReplayDictionary = new Dictionary<ulong, bool>() { };
     }
 
     #region READY MANAGEMENT
@@ -118,6 +123,56 @@ public class PlayerReadyManager : NetworkBehaviour
         return playerWantsToSpeedUpDictionary.ContainsKey(clientId) && playerWantsToSpeedUpDictionary[clientId];
     }
 
+    #endregion
+
+    #region  REPLAY MANAGEMENT
+
+    public void TogglePlayerWantsToReplay(bool wantsToReplay) {
+        if (HiddenTacticsMultiplayer.Instance.IsMultiplayer()) {
+            TogglePlayerWantsToReplayServerRpc(wantsToReplay);
+        }
+        else {
+            if (wantsToReplay) {
+                OnAllPlayersWantToReplay?.Invoke(this, EventArgs.Empty);
+            }
+        }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void TogglePlayerWantsToReplayServerRpc(bool wantsToReplay, ServerRpcParams serverRpcParams = default) {
+        TogglePlayerWantsToReplayClientRpc(serverRpcParams.Receive.SenderClientId, wantsToReplay);
+
+        if (!IsServer) return;
+        playerWantsToReplayDictionary[serverRpcParams.Receive.SenderClientId] = wantsToReplay;
+
+        bool allClientsWantToReplay = true;
+        foreach (ulong clientId in NetworkManager.Singleton.ConnectedClientsIds) {
+            if (!playerWantsToReplayDictionary.ContainsKey(clientId) || !playerWantsToReplayDictionary[clientId]) {
+                // Player is NOT ready
+                allClientsWantToReplay = false;
+            }
+        }
+
+        if (allClientsWantToReplay) {
+            //Reset ready state
+            InvokeAllPlayerWantsToReplayClientRpc();
+        }
+    }
+
+    [ClientRpc]
+    private void TogglePlayerWantsToReplayClientRpc(ulong clientId, bool playerWantsToReplay) {
+        playerWantsToReplayDictionary[clientId] = playerWantsToReplay;
+        OnPlayerWantsToReplayChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    [ClientRpc]
+    private void InvokeAllPlayerWantsToReplayClientRpc() {
+        OnAllPlayersWantToReplay?.Invoke(this, EventArgs.Empty);
+    }
+
+    public bool PlayerWantingToReplay(ulong clientId) {
+        return playerWantsToReplayDictionary.ContainsKey(clientId) && playerWantsToReplayDictionary[clientId];
+    }
     #endregion
 
 }

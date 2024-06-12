@@ -51,11 +51,6 @@ public class PlayerStateUI : MonoBehaviour {
     }
 
     private void Start() {
-        //PlayerData localPlayerData = HiddenTacticsMultiplayer.Instance.GetPlayerData();
-
-        PlayerReadyManager.Instance.OnReadyChanged += PlayerReadyManager_OnReadyChanged;
-        PlayerReadyManager.Instance.OnPlayerWantsToSpeedUpChanged += PlayerReadyManager_OnPlayerWantsToSpeedUpChanged;
-
         BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
 
         VillageManager.Instance.OnPlayerVillageDestroyed += VillageManager_OnPlayerVillageDestroyed;
@@ -79,33 +74,6 @@ public class PlayerStateUI : MonoBehaviour {
         if(BattleManager.Instance.IsBattlePhaseStarting() | BattleManager.Instance.IsPreparationPhase()) {
             playerReadyGameObject.SetActive(false);
         } 
-    }
-
-    private void PlayerReadyManager_OnReadyChanged(object sender, System.EventArgs e) {
-
-        PlayerData playerData = new PlayerData();
-
-        if (!isOpponentPanel) {
-            playerData = HiddenTacticsMultiplayer.Instance.GetLocalPlayerData();
-        } else {
-            playerData = HiddenTacticsMultiplayer.Instance.GetLocalOpponentData();
-        }
-
-        playerReadyGameObject.SetActive(PlayerReadyManager.Instance.IsPlayerReady(playerData.clientId));
-    }
-
-    private void PlayerReadyManager_OnPlayerWantsToSpeedUpChanged(object sender, System.EventArgs e) {
-
-        PlayerData playerData = new PlayerData();
-
-        if (!isOpponentPanel) {
-            playerData = HiddenTacticsMultiplayer.Instance.GetLocalPlayerData();
-        }
-        else {
-            playerData = HiddenTacticsMultiplayer.Instance.GetLocalOpponentData();
-        }
-
-        playerReadyGameObject.SetActive(PlayerReadyManager.Instance.PlayerWantingToSpeedUp(playerData.clientId));
     }
 
     public void RefreshPlayerGoldUI(int previousGold, int newGold) {

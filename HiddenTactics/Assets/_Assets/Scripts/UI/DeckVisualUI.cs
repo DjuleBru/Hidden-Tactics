@@ -10,7 +10,6 @@ public class DeckVisualUI : MonoBehaviour
 
     public static DeckVisualUI Instance;
 
-    [SerializeField] Button editDeckButton;
     [SerializeField] Button saveDeckButton;
     [SerializeField] GameObject editDeckMenu;
 
@@ -24,10 +23,6 @@ public class DeckVisualUI : MonoBehaviour
 
     private void Awake() {
         Instance = this;
-
-        editDeckButton.onClick.AddListener(() => {
-            StartEditingDeck();
-        });
 
         saveDeckButton.onClick.AddListener(() => {
             saveDeckButton.gameObject.SetActive(false);

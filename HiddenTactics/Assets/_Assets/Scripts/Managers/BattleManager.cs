@@ -212,7 +212,7 @@ public class BattleManager : NetworkBehaviour
         }
     }
 
-    private void EndGame() {
+    public void EndGame() {
         OnGameEnded?.Invoke(this, EventArgs.Empty);
     }
 

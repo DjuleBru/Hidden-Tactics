@@ -26,7 +26,7 @@ public class DebugButtons : MonoBehaviour
     }
 
     [Button]
-    private void ShowPlayerDataDebugInfo() {
+    private void ShowPlayerCustomizationDataDebugInfo() {
         PlayerCustomizationData playerData = HiddenTacticsMultiplayer.Instance.GetLocalPlayerCustomizationData();
 
         Debug.Log("player icon sprite id " + playerData.iconSpriteId);
@@ -42,7 +42,7 @@ public class DebugButtons : MonoBehaviour
     }
 
     [Button]
-    private void ShowOpponentDataDebugInfo() {
+    private void ShowOpponentCustomizationDataDebugInfo() {
         PlayerCustomizationData opponentData = HiddenTacticsMultiplayer.Instance.GetLocalOpponentCustomizationData();
 
         Debug.Log("opponent icon sprite id " + opponentData.iconSpriteId);
@@ -57,23 +57,15 @@ public class DebugButtons : MonoBehaviour
         Debug.Log("opponent village sprite id 5 " + opponentData.villageSprite5Id);
     }
 
-    [Button]
-    private void ShowPlayer0DataDebugInfo() {
-        PlayerCustomizationData playerData = HiddenTacticsMultiplayer.Instance.GetPlayerCustomizationDataFromPlayerIndex(0);
 
-        Debug.Log("player 1 id " + playerData.playerId);
-        Debug.Log("player 1 icon sprite id " + playerData.iconSpriteId);
-        Debug.Log("player 1 grid sprite id " + playerData.gridVisualSOId);
-        Debug.Log("player 1 battlefield base id " + playerData.battlefieldBaseSpriteId);
+    [Button]
+    private void ShowPlayerDataDebugInfo() {
+        PlayerData playerData = HiddenTacticsMultiplayer.Instance.GetLocalPlayerData();
     }
 
     [Button]
-    private void ShowPlayer1DataDebugInfo() {
-        PlayerCustomizationData opponentData = HiddenTacticsMultiplayer.Instance.GetPlayerCustomizationDataFromPlayerIndex(1);
-
-        Debug.Log("player 2 id " + opponentData.playerId);
-        Debug.Log("player 2 icon sprite id " + opponentData.iconSpriteId);
-        Debug.Log("player 2 grid sprite id " + opponentData.gridVisualSOId);
-        Debug.Log("player 2 battlefield base id " + opponentData.battlefieldBaseSpriteId);
+    private void ShowOpponentDataDebugInfo() {
+        PlayerData opponentData = HiddenTacticsMultiplayer.Instance.GetLocalOpponentData();
     }
+
 }

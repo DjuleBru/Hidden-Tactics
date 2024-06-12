@@ -26,6 +26,8 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
     public event EventHandler OnFailedToJoinGame;
     public event EventHandler OnPlayerDataNetworkListChanged;
     public event EventHandler OnPlayerCustomizationDataNetworkListChanged;
+    public event EventHandler OnPlayerSurrendered;
+    public event EventHandler OnOpponentSurrendered;
 
     public event EventHandler<OnPlayerGoldChangedEventArgs> OnPlayerGoldChanged;
     public event EventHandler<OnPlayerRevenueChangedEventArgs> OnPlayerRevenueChanged;
@@ -72,6 +74,7 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
         NetworkManager.Singleton.OnClientDisconnectCallback += NetworkManager_Server_OnClientDisconnectCallback;
         NetworkManager.Singleton.StartHost();
     }
+
     private void NetworkManager_Server_OnClientDisconnectCallback(ulong clientId) {
         for (int i = 0; i < playerDataNetworkList.Count; i++) {
             PlayerData playerData = playerDataNetworkList[i];
@@ -416,6 +419,24 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
         });
     }
 
+    public void SetPlayerSurrender(ulong clientId) {
+        SetPlayerSurrenderServerRpc(clientId);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void SetPlayerSurrenderServerRpc(ulong clientId) {
+        SetPlayerSurrendererClientRpc(clientId);
+    }
+
+    [ClientRpc]
+    private void SetPlayerSurrendererClientRpc(ulong clientId) {
+        if(clientId == NetworkManager.Singleton.LocalClientId) {
+            OnPlayerSurrendered?.Invoke(this, EventArgs.Empty);
+        } else {
+            OnOpponentSurrendered?.Invoke(this, EventArgs.Empty);
+        }
+    }
+
     public bool PlayerWon(ulong clientId) {
         int playerDataIndex = GetPlayerDataIndexFromClientId(clientId);
         PlayerData playerData = playerDataNetworkList[playerDataIndex];
@@ -424,7 +445,7 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
         PlayerData opponentPlayerData = playerDataNetworkList[opponentDataIndex];
 
         if(playerData.playerVillagesRemaining > opponentPlayerData.playerVillagesRemaining) {
-            // Player won
+            // Player has more villages remaining : he won !
             return true;
         }
 

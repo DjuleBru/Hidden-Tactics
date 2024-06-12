@@ -12,6 +12,7 @@ public class Player : NetworkBehaviour
     private Deck playerDeck;
     private bool isReady;
     private bool wantsToSpeedUp;
+    private bool wantsToReplay;
 
     public override void OnNetworkSpawn() {
         if (IsOwner) {
@@ -23,6 +24,7 @@ public class Player : NetworkBehaviour
     private void Start() {
         BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
     }
+
 
     public void SetPlayerReadyOrUnready() {
         isReady = !isReady;
@@ -36,6 +38,25 @@ public class Player : NetworkBehaviour
     public void SetPlayerWantsToSpeedUp() {
         wantsToSpeedUp = !wantsToSpeedUp;
         PlayerReadyManager.Instance.TogglePlayerWantsToSpeedUp(wantsToSpeedUp);
+    }
+
+    public void SetPlayerWantsReplay() {
+        wantsToReplay = !wantsToReplay;
+        Debug.Log(wantsToReplay);
+        PlayerReadyManager.Instance.TogglePlayerWantsToReplay(wantsToReplay);
+    }
+
+    public void SetPlayerSurrenders() {
+        HiddenTacticsMultiplayer.Instance.SetPlayerSurrender(NetworkManager.Singleton.LocalClientId);
+    }
+    
+    public bool CheckIfPlayerWon() {
+        Debug.Log("check if player won");
+        return HiddenTacticsMultiplayer.Instance.PlayerWon(NetworkManager.Singleton.LocalClientId);
+    }
+
+    public bool CheckIfPlayerTie() {
+        return HiddenTacticsMultiplayer.Instance.PlayerTie(NetworkManager.Singleton.LocalClientId);
     }
 
     private void BattleManager_OnStateChanged(object sender, EventArgs e) {

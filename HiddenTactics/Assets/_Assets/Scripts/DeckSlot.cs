@@ -35,6 +35,7 @@ public class DeckSlot : MonoBehaviour
     private Building buildingSpawned;
 
     public static event EventHandler OnAnyDeckSlotSelected;
+    public static event EventHandler OnAnyDeckSlotUnSelected;
     private bool selecting;
 
     private void Awake()
@@ -86,7 +87,7 @@ public class DeckSlot : MonoBehaviour
         RuntimeAnimatorController unitAnimator = troopSO.unitPrefab.transform.GetComponentInChildren<Animator>().runtimeAnimatorController;
 
         SpawnUnitVisuals();
-        deckSlotUI.DisableAddTroopButton();
+        deckSlotUI.DisableAddTroopText();
 
         if (DeckSlotMouseHoverManager.Instance.GetEditingDeck())
         {
@@ -137,7 +138,7 @@ public class DeckSlot : MonoBehaviour
         this.buildingSO = buildingSO;
 
         SpawnBuildingVisuals();
-        deckSlotUI.DisableAddTroopButton();
+        deckSlotUI.DisableAddTroopText();
 
         if (DeckSlotMouseHoverManager.Instance.GetEditingDeck())
         {
@@ -198,7 +199,7 @@ public class DeckSlot : MonoBehaviour
         {
             if (troopSO == null && buildingSO == null)
             {
-                deckSlotUI.EnableAddTroopButton();
+                deckSlotUI.EnableAddTroopText();
             }
             else
             {
@@ -206,7 +207,7 @@ public class DeckSlot : MonoBehaviour
             }
         } else
         {
-            deckSlotUI.DisableAddTroopButton();
+            deckSlotUI.DisableAddTroopText();
             deckSlotUI.DisableRemoveTroopButton();
         }
     }
@@ -225,6 +226,7 @@ public class DeckSlot : MonoBehaviour
             deckSlotVisual.SetDeckSlotUnhovered();
             deckSlotAnimatorManager.SetDeckSlotAnimationUnhovered();
             deckSlotUI.SetTroopSelectingVisualUI(false);
+            OnAnyDeckSlotUnSelected?.Invoke(this, EventArgs.Empty);
         } else
         {
             OnAnyDeckSlotSelected?.Invoke(this, EventArgs.Empty);

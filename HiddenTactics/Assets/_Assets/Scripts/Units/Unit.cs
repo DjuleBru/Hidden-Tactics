@@ -350,8 +350,9 @@ public class Unit : NetworkBehaviour, ITargetable {
         GetComponent<UnitHP>().enabled = false;
         GetComponent<SimpleSmoothModifier>().enabled = false;
         GetComponentInChildren<UnitUI>().enabled = false;
+        GetComponentInChildren<UnitAI>().enabled = false;
 
-        foreach(Transform child in GetComponentsInChildren<Transform>())
+        foreach (Transform child in GetComponentsInChildren<Transform>())
         {
             if(child.GetComponent<StylizedShadowCaster2D>() != null)
             {

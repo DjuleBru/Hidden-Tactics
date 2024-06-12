@@ -30,6 +30,5 @@ public struct PlayerData : IEquatable<PlayerData>, INetworkSerializable {
         serializer.SerializeValue(ref playerGold);
         serializer.SerializeValue(ref playerVillagesRemaining);
         serializer.SerializeValue(ref playerRevenue);
-
     }
 }

@@ -5,9 +5,9 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class DeckSlotUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public class DeckSlotUI : MonoBehaviour
 {
-    [SerializeField] private Button addTroopButton;
+    [SerializeField] private TextMeshProUGUI addTroopText;
     [SerializeField] private Button removeSlotContentButton;
 
     [SerializeField] private Color addTroopButtonColorWhenUnhovered;
@@ -19,19 +19,14 @@ public class DeckSlotUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
     {
         deckSlot = GetComponentInParent<DeckSlot>();
 
-        addTroopButton.gameObject.SetActive(false);
-        addTroopButton.GetComponentInChildren<TextMeshProUGUI>().faceColor = addTroopButtonColorWhenUnhovered;
+        addTroopText.gameObject.SetActive(false);
+        addTroopText.faceColor = addTroopButtonColorWhenUnhovered;
         removeSlotContentButton.gameObject.SetActive(false);
-
-        addTroopButton.onClick.AddListener(() =>
-        {
-            deckSlot.SetSelecting(true);
-        });
 
         removeSlotContentButton.onClick.AddListener(() =>
         {
             deckSlot.RemoveSlotContent();
-            EnableAddTroopButton();
+            EnableAddTroopText();
             DisableRemoveTroopButton();
         });
 
@@ -52,26 +47,26 @@ public class DeckSlotUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         this.selectingTroop = selectingTroop;
     }
 
-    public void OnPointerEnter(PointerEventData eventData)
-    {
-        addTroopButton.GetComponentInChildren<TextMeshProUGUI>().faceColor = Color.white;
+    public void SetAddTroopTextHovered() {
+        if (!DeckSlotMouseHoverManager.Instance.GetEditingDeck()) return;
+        addTroopText.faceColor = Color.white;
     }
 
 
-    public void OnPointerExit(PointerEventData eventData)
+    public void SetAddTroopTextUnhovered()
     {
         if (selectingTroop) return;
-        addTroopButton.GetComponentInChildren<TextMeshProUGUI>().faceColor = addTroopButtonColorWhenUnhovered;
+        addTroopText.faceColor = addTroopButtonColorWhenUnhovered;
     }
 
     public void SetTroopSelectingVisualUI(bool selectingTroop)
     {
         if(selectingTroop)
         {
-            addTroopButton.GetComponentInChildren<TextMeshProUGUI>().faceColor = Color.white;
+            addTroopText.faceColor = Color.white;
         } else
         {
-            addTroopButton.GetComponentInChildren<TextMeshProUGUI>().faceColor = addTroopButtonColorWhenUnhovered;
+            addTroopText.faceColor = addTroopButtonColorWhenUnhovered;
         }
     }
 
@@ -80,18 +75,18 @@ public class DeckSlotUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         if (!DeckSlotMouseHoverManager.Instance.GetEditingDeck()) return;
         if(deckSlot.GetSlotTroopSO() == null && deckSlot.GetSlotBuildingSO() == null)
         {
-            EnableAddTroopButton();
+            EnableAddTroopText();
             DisableRemoveTroopButton();
         } else
         {
             EnableRemoveTroopButton();
-            DisableAddTroopButton();
+            DisableAddTroopText();
         }
     }
 
-    public void EnableAddTroopButton()
+    public void EnableAddTroopText()
     {
-        addTroopButton.gameObject.SetActive(true);
+        addTroopText.gameObject.SetActive(true);
     }
 
     public void EnableRemoveTroopButton()
@@ -99,9 +94,9 @@ public class DeckSlotUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandl
         removeSlotContentButton.gameObject.SetActive(true);
     }
 
-    public void DisableAddTroopButton()
+    public void DisableAddTroopText()
     {
-        addTroopButton.gameObject.SetActive(false);
+        addTroopText.gameObject.SetActive(false);
     }
 
     public void DisableRemoveTroopButton()
