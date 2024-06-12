@@ -10,4 +10,5 @@ public class FactionSO : ScriptableObject
     public List<TroopSO> troopsInFaction;
     public List<BuildingSO> buildingsInFaction;
     public List<Sprite> villageSpritesInFaction;
+    public List<Sprite> deckSlotSpritesInFaction;
 }

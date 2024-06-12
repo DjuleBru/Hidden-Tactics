@@ -12,6 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85abc532579c0ec4d839a1a1bcb04732, type: 3}
   m_Name: GreenskinWall
   m_EditorClassIdentifier: 
+  buildingIllustrationSlotSprite: {fileID: 0}
+  buildingDescriptionSlotSprite: {fileID: 0}
   buildingPrefab: {fileID: 679574338467843152, guid: 6c5ea2d16ed57084590f6dd163d4c8dd, type: 3}
   buildingHP: 100
   buildingBlocksUnitMovement: 1
+  hasGarrisonedTroop: 0
+  garrisonedTroopSO: {fileID: 0}
+  spawnBuildingCost: 0
+  upgradeBuildingCost: 0
+  buildingIsImplemented: 0

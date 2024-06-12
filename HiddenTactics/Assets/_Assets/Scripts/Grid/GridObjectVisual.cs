@@ -107,4 +107,17 @@ public class GridObjectVisual : MonoBehaviour
         }
     }
 
+    public void SetGridSpriteMaterial(Material material)
+    {
+        gridSprite.material = material;
+    }
+
+    public void SetVillageSpriteMaterial(Material material)
+    {
+        foreach (SpriteRenderer spriteRenderer in villageSpriteRenderers)
+        {
+            spriteRenderer.material = material;
+        }
+    } 
+
 }

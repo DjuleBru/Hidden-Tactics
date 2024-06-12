@@ -12,15 +12,19 @@ public class BuildingVisual : MonoBehaviour
 
     private void Awake() {
         building = GetComponentInParent<Building>();
-        
-        foreach(SpriteRenderer spriteRenderer in buildingSpriteRendererList) {
-            spriteRenderer.material = placingMaterial;
-        }
     }
 
     private void Start() {
         building.OnBuildingPlaced += Building_OnBuildingPlaced;
         building.OnBuildingDestroyed += Building_OnBuildingDestroyed;
+
+        if(!building.GetBuildingIsOnlyVisual())
+        {
+            foreach (SpriteRenderer spriteRenderer in buildingSpriteRendererList)
+            {
+                spriteRenderer.material = placingMaterial;
+            }
+        }
     }
 
     private void Building_OnBuildingDestroyed(object sender, System.EventArgs e) {

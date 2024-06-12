@@ -1,3 +1,4 @@
+using Pathfinding;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -25,6 +26,8 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
     protected Transform battlefieldOwner;
     protected Vector3 battlefieldOffset;
 
+    protected bool buildingIsOnlyVisual;
+
     protected void Awake() {
         if(buildingSO.buildingBlocksUnitMovement) {
             GetComponent<Collider2D>().enabled = true;
@@ -32,6 +35,7 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
     }
 
     protected virtual void Update() {
+        if (buildingIsOnlyVisual) return;
         if (!isPlaced) {
             HandlePositioningOnGrid();
             HandleIPlaceablePositionDuringPlacement();
@@ -179,5 +183,21 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
         return GetComponent<BuildingHP>();
     }
 
+    public void SetBuildingAsVisual()
+    {
+        buildingIsOnlyVisual = true;
+        GetComponent<BuildingHP>().enabled = false;
+        GetComponent<NetworkObject>().enabled = false;
+        transform.localScale = Vector3.one * .6f;
+    }
 
+    public bool GetBuildingIsOnlyVisual()
+    {
+        return buildingIsOnlyVisual;
+    }
+
+    public Transform GetCenterPoint()
+    {
+        return buildingCenterPoint;
+    }
 }

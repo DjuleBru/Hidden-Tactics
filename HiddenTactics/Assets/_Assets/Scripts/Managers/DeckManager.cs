@@ -65,8 +65,8 @@ public class DeckManager : MonoBehaviour
 
     #region ADDING AND REMOVING ITEMS
 
-    public void AddTroopToDeckSelected(TroopSO troopSO) {
-        deckSelected.troopsInDeck.Add(troopSO);
+    public void AddTroopToDeckSelected(TroopSO troopSO, int troopIndex) {
+        deckSelected.troopsInDeck[troopIndex] = troopSO;
 
         OnDeckModified?.Invoke(this, new OnDeckChangedEventArgs {
             selectedDeck = deckSelected,
@@ -75,8 +75,8 @@ public class DeckManager : MonoBehaviour
         SaveDeckSelected();
     }
 
-    public void RemoveTroopFromDeckSelected(TroopSO troopSO) {
-        deckSelected.troopsInDeck.Remove(troopSO);
+    public void RemoveTroopFromDeckSelected(TroopSO troopSO, int troopIndex) {
+        deckSelected.troopsInDeck[troopIndex] = null;
 
         OnDeckModified?.Invoke(this, new OnDeckChangedEventArgs {
             selectedDeck = deckSelected,
@@ -85,8 +85,8 @@ public class DeckManager : MonoBehaviour
         SaveDeckSelected();
     }
 
-    public void AddBuildingToDeckSelected(BuildingSO buildingSO) {
-        deckSelected.buildingsInDeck.Add(buildingSO);
+    public void AddBuildingToDeckSelected(BuildingSO buildingSO, int buildingIndex) {
+        deckSelected.buildingsInDeck[buildingIndex] = buildingSO;
 
         OnDeckModified?.Invoke(this, new OnDeckChangedEventArgs {
             selectedDeck = deckSelected,
@@ -95,8 +95,8 @@ public class DeckManager : MonoBehaviour
         SaveDeckSelected();
     }
 
-    public void RemoveBuildingFromDeckSelected(BuildingSO buildingSO) {
-        deckSelected.buildingsInDeck.Remove(buildingSO);
+    public void RemoveBuildingFromDeckSelected(BuildingSO buildingSO, int buildingIndex) {
+        deckSelected.buildingsInDeck[buildingIndex] = null;
 
         OnDeckModified?.Invoke(this, new OnDeckChangedEventArgs {
             selectedDeck = deckSelected,
@@ -113,12 +113,34 @@ public class DeckManager : MonoBehaviour
     }
 
     private void SaveDeckSelected() {
-        Debug.Log("savec deck " + deckSelected.deckName);
         SavingManager.Instance.SaveDeck(deckSelected, deckNumber);
     }
 
     public Deck GetDeckSelected() {
         return deckSelected;
+    }
+
+    public int GetEmptyDeckSlots()
+    {
+        int emptyDeckSlots = 6;
+
+        foreach(TroopSO troopSO in deckSelected.troopsInDeck)
+        {
+            if(troopSO != null)
+            {
+                emptyDeckSlots--;
+            }
+        }
+
+        foreach (BuildingSO buildingSO in deckSelected.buildingsInDeck)
+        {
+            if (buildingSO != null)
+            {
+                emptyDeckSlots--;
+            }
+        }
+
+        return emptyDeckSlots;
     }
 
     public List<FactionSO> GetFactionSOList() {

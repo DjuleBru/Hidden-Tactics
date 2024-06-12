@@ -6,8 +6,6 @@ using TMPro;
 
 public class PlayerCustomizationUI : MonoBehaviour
 {
-    [SerializeField] Button closeButton;
-
     public static PlayerCustomizationUI Instance { get; private set; }
 
     [SerializeField] private TMP_InputField playerNameInputField;
@@ -15,10 +13,6 @@ public class PlayerCustomizationUI : MonoBehaviour
 
     private void Awake() {
         Instance = this;
-
-        closeButton.onClick.AddListener(() => {
-            Hide();
-        });
     }
 
     private void Start() {

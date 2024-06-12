@@ -59,6 +59,8 @@ public class WeaponVisual : NetworkBehaviour
     private string magicStateTrigger;
     private string legendaryStateTrigger;
 
+    private int weaponSortingOrder;
+
     private void Awake() {
         mainWeaponAnimator = GetComponent<Animator>();
         weaponVisualSpriteRenderer = GetComponent<SpriteRenderer>();
@@ -171,29 +173,31 @@ public class WeaponVisual : NetworkBehaviour
         // change sorting layer if Y > 0 (only works with legendary weapons)
         HandleWeaponSpriteSortingLayerDuringAttacks();
     }
+
     private void HandleWeaponSpriteSortingLayerIdle() {
         if (Y > 0) {
-            weaponVisualSpriteRenderer.sortingOrder = -1;
+            weaponVisualSpriteRenderer.sortingOrder = weaponSortingOrder - 1;
         } else {
-            weaponVisualSpriteRenderer.sortingOrder = 1;
+            weaponVisualSpriteRenderer.sortingOrder = weaponSortingOrder + 1;
         }
     }
+
     private void HandleWeaponSpriteSortingLayerDuringAttacks(){
 
         if(orthogonalAnimations)
         {
             if(Y > 0.5) {
-                weaponVisualSpriteRenderer.sortingOrder = -1;
+                weaponVisualSpriteRenderer.sortingOrder = weaponSortingOrder - 1;
             } else {
-                weaponVisualSpriteRenderer.sortingOrder = 1;
+                weaponVisualSpriteRenderer.sortingOrder = weaponSortingOrder + 1;
             }
         } else
         {
             if (Y > 0)
             {
-                weaponVisualSpriteRenderer.sortingOrder = -1;
+                weaponVisualSpriteRenderer.sortingOrder = weaponSortingOrder - 1;
             } else {
-                weaponVisualSpriteRenderer.sortingOrder = 1;
+                weaponVisualSpriteRenderer.sortingOrder = weaponSortingOrder + 1;
             }
         }
 
@@ -477,5 +481,9 @@ public class WeaponVisual : NetworkBehaviour
         weaponMaterial = newWeaponMaterial;
         weaponVisualSpriteRenderer.material = weaponMaterial;
     }
-
+    public void SetWeaponSortingOrder(int sortingLayerId, int sortingOrder)
+    {
+        weaponVisualSpriteRenderer.sortingLayerID = sortingLayerId;
+        weaponSortingOrder = sortingOrder;
+    }
 }

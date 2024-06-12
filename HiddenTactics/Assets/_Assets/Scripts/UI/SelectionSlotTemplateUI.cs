@@ -25,12 +25,13 @@ public class SelectionSlotTemplateUI : ItemTemplateUI
     }
 
     public void TryAddOrRemoveTroopToDeck() {
+        if (!troopSO.troopIsImplemented) return;
         if (selected) {
-            DeckManager.LocalInstance.RemoveTroopFromDeckSelected(troopSO);
+            DeckManager.LocalInstance.RemoveTroopFromDeckSelected(troopSO, DeckEditUI.Instance.GetDeckSlotSelectedIndex());
         } else {
 
-            if(DeckManager.LocalInstance.GetDeckSelected().troopsInDeck.Count < 4) {
-                DeckManager.LocalInstance.AddTroopToDeckSelected(troopSO);
+            if(DeckManager.LocalInstance.GetEmptyDeckSlots() > 0) {
+                DeckManager.LocalInstance.AddTroopToDeckSelected(troopSO, DeckEditUI.Instance.GetDeckSlotSelectedIndex());
             } else {
                 // There are no more slots available in deck
                 return;
@@ -38,14 +39,17 @@ public class SelectionSlotTemplateUI : ItemTemplateUI
         }
     }
 
-    public void TryAddOrRemoveBuildingToDeck() {
+    public void TryAddOrRemoveBuildingToDeck()
+    {
+        if (!buildingSO.buildingIsImplemented) return;
+
         if (selected) {
-            DeckManager.LocalInstance.RemoveBuildingFromDeckSelected(buildingSO);
+            DeckManager.LocalInstance.RemoveBuildingFromDeckSelected(buildingSO, DeckEditUI.Instance.GetDeckSlotSelectedIndex());
         }
 
         else {
-            if (DeckManager.LocalInstance.GetDeckSelected().buildingsInDeck.Count < 1) {
-                DeckManager.LocalInstance.AddBuildingToDeckSelected(buildingSO);
+            if (DeckManager.LocalInstance.GetEmptyDeckSlots() > 0) {
+                DeckManager.LocalInstance.AddBuildingToDeckSelected(buildingSO, DeckEditUI.Instance.GetDeckSlotSelectedIndex());
             }
             else {
                 // There are no more slots available in deck

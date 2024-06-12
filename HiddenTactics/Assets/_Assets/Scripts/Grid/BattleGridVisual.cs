@@ -19,6 +19,7 @@ public class BattleGridVisual : MonoBehaviour
     [SerializeField] private bool isLobbyScene;
 
     private BattleGrid battleGrid;
+    private GridTileVisualSO gridTileVisualSO;
 
     private void Awake() {
         Instance = this;
@@ -35,9 +36,6 @@ public class BattleGridVisual : MonoBehaviour
             LoadOpponentSprites();
             RefreshPlayerAndOpponentBattlefieldVisualSprites();
 
-        }  else {
-
-            RefreshPlayerBattlefieldVisualSprites();
         }
     }
 
@@ -47,7 +45,6 @@ public class BattleGridVisual : MonoBehaviour
             // Lobby scene : create grid only for player 
 
             LoadPlayerBattleGridSprites(e.selectedDeck);
-            RefreshPlayerBattlefieldVisualSprites();
         }
     }
 
@@ -56,15 +53,25 @@ public class BattleGridVisual : MonoBehaviour
         Deck selectedDeck = DeckManager.LocalInstance.GetDeckSelected();
         GridTileVisualSO playerGridTileVisualSO = SavingManager.Instance.LoadGridTileVisualSO(selectedDeck);
 
-        List<Sprite> loadedVillageSpriteList = SavingManager.Instance.LoadVillageSpriteList(selectedDeck);
+        if (gridTileVisualSO == null || gridTileVisualSO != playerGridTileVisualSO)
+        {
+            gridTileVisualSO = playerGridTileVisualSO;
 
-        playerGridSprites = playerGridTileVisualSO.gridSpriteList;
-        playerSettlementSprites = playerGridTileVisualSO.settlementSpriteList;
-        Debug.Log(playerSettlementSprites[0]);
-        playerVillageSprites = loadedVillageSpriteList;
+            List<Sprite> loadedVillageSpriteList = SavingManager.Instance.LoadVillageSpriteList(selectedDeck);
 
-        //Save GridTiles To PlayerData
-        HiddenTacticsMultiplayer.Instance.SetPlayerGridVisualSO(PlayerCustomizationDataManager.Instance.GetGridTileVisualSOID(playerGridTileVisualSO));
+            playerGridSprites = playerGridTileVisualSO.gridSpriteList;
+            playerSettlementSprites = playerGridTileVisualSO.settlementSpriteList;
+            playerVillageSprites = loadedVillageSpriteList;
+
+            //Save GridTiles To PlayerData
+            HiddenTacticsMultiplayer.Instance.SetPlayerGridVisualSO(PlayerCustomizationDataManager.Instance.GetGridTileVisualSOID(playerGridTileVisualSO));
+
+            if(BattleManager.Instance == null)
+            {
+                // Lobby scene : create grid only for player 
+                RefreshPlayerBattlefieldVisualSprites();
+            }
+        }
     }
 
     private void LoadOpponentSprites() {

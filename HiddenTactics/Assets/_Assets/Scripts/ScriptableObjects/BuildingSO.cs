@@ -17,4 +17,6 @@ public class BuildingSO : ScriptableObject
 
     public int spawnBuildingCost;
     public int upgradeBuildingCost;
+
+    public bool buildingIsImplemented;
 }

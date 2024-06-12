@@ -17,4 +17,6 @@ public class TroopSO : ScriptableObject {
     public int upgradeTroopCost;
     public int buyAdditionalUnitsCost;
 
+    public bool troopIsImplemented;
+
 }

@@ -33,14 +33,15 @@ public class UnitAnimatorManager : NetworkBehaviour
         unitMovement = GetComponentInParent<UnitMovement>();
         unitAnimator = GetComponent<Animator>();
         unitAttack = GetComponentInParent<UnitAttack>();
-    }
 
-    public override void OnNetworkSpawn() {
-        // Randomize Idle animation starting frame
+
+        // Randomize Idle animation starting frame (previously OnNetworkSpawn)
         float randomOffset = Random.Range(0f, 1f);
         unitAnimator.Play("Idle", 0, randomOffset);
         unitAnimator.SetBool("Idle", true);
+    }
 
+    public override void OnNetworkSpawn() {
         unitHP.OnHealthChanged += Unit_OnHealthChanged;
         unit.OnUnitReset += Unit_OnUnitReset;
         unitAI.OnStateChanged += UnitAI_OnStateChanged;

@@ -353,6 +353,9 @@ public class UnitAI : NetworkBehaviour
 
     public override void OnDestroy() {
         base.OnDestroy();
+
+        if (unit.GetUnitIsOnlyVisual()) return;
+
         BattleManager.Instance.OnStateChanged -= BattleManager_OnStateChanged;
     }
 }

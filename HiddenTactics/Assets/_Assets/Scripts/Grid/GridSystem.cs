@@ -140,6 +140,47 @@ public class GridSystem
         }
     }
 
+    public void SetGridSpritesMaterial(Material material)
+    {
+        for (int x = 0; x < width; x++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                GridObjectVisual gridObjectVisual = gridObjectVisualArray[x, y];
+
+                
+                if (x == width - 1)
+                {
+                    continue;
+                }
+
+                if (x < width / 2)
+                {
+                    gridObjectVisual.SetGridSpriteMaterial(material);
+                }
+                else
+                {
+                    continue;
+                }
+            }
+        }
+    }
+    public void SetVillageSpritesMaterial(Material material)
+    {
+        for (int x = 0; x < width; x++)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                GridObjectVisual gridObjectVisual = gridObjectVisualArray[x, y];
+
+                // first and last sprites = settlements
+                if (x == 0)
+                {
+                    gridObjectVisual.SetVillageSpriteMaterial(material);
+                }
+            }
+        }
+    }
     public GridObject GetGridObject(GridPosition gridPosition) {
         return gridObjectArray[gridPosition.x, gridPosition.y];
     }

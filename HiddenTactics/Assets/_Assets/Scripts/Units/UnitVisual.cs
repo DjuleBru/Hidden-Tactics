@@ -60,8 +60,14 @@ public class UnitVisual : NetworkBehaviour
     }
 
     protected virtual void Start() {
-        ChangeSpriteRendererListMaterial(allVisualsSpriteRendererList, placingUnitMaterial);
-        OnUnitVisualPlacingMaterialSet?.Invoke(this, EventArgs.Empty);
+        if (!unit.GetUnitIsOnlyVisual())
+        {
+            ChangeSpriteRendererListMaterial(allVisualsSpriteRendererList, placingUnitMaterial);
+            OnUnitVisualPlacingMaterialSet?.Invoke(this, EventArgs.Empty);
+        } else
+        {
+            ChangeSpriteRendererListMaterial(allVisualsSpriteRendererList, cleanMaterial);
+        }
     }
 
     private void Unit_OnUnitReset(object sender, System.EventArgs e) {
@@ -94,6 +100,7 @@ public class UnitVisual : NetworkBehaviour
     }
 
     protected virtual void Unit_OnUnitPlaced(object sender, System.EventArgs e) {
+        Debug.Log("received placed event");
         ChangeSpriteRendererListMaterial(allVisualsSpriteRendererList, cleanMaterial);
     }
 
@@ -102,10 +109,6 @@ public class UnitVisual : NetworkBehaviour
         foreach(GameObject shadowGameObject in shadowGameObjectList) {
             shadowGameObject.SetActive(false);
         }
-    }
-
-    public void SetSpritesAsCleanMaterial() {
-        ChangeSpriteRendererListMaterial(allVisualsSpriteRendererList, cleanMaterial);
     }
 
     protected virtual void ChangeSpriteRendererListMaterial(List<SpriteRenderer> spriteRendererList, Material material) {
@@ -118,6 +121,36 @@ public class UnitVisual : NetworkBehaviour
     protected virtual void ChangeSpriteRendererListSortingOrder(List<SpriteRenderer> spriteRendererList, int sortingOrder) {
         foreach (SpriteRenderer spriteRenderer in spriteRendererList) {
             spriteRenderer.sortingOrder = sortingOrder;
+        }
+    }
+
+    public virtual void ChangeAllSpriteRendererListSortingOrder(int sortingLayerId, int sortingOrder)
+    {
+        foreach (SpriteRenderer spriteRenderer in allVisualsSpriteRendererList)
+        {
+            spriteRenderer.sortingOrder = sortingOrder;
+            spriteRenderer.sortingLayerID = sortingLayerId;
+        }
+
+        foreach (GameObject gameObject in shadowGameObjectList)
+        {
+            SpriteRenderer shadowSpriteRenderer = gameObject.GetComponent<SpriteRenderer>();
+            if(shadowSpriteRenderer != null)
+            {
+                gameObject.GetComponent<SpriteRenderer>().sortingOrder = sortingOrder - 1;
+                gameObject.GetComponent<SpriteRenderer>().sortingLayerID = sortingLayerId;
+            }
+        }
+    }
+
+    public void DeActivateStylizedShadows()
+    {
+        foreach(GameObject shadowGameObject in shadowGameObjectList)
+        {
+            if(shadowGameObject.name != "ShadowBase")
+            {
+                shadowGameObject.SetActive(false);
+            }
         }
     }
 

@@ -1,3 +1,5 @@
+using Modern2D;
+using Pathfinding;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -39,7 +41,7 @@ public class Unit : NetworkBehaviour, ITargetable {
     protected bool unitIsPlaced;
     protected bool isAdditionalUnit;
     protected bool unitIsBought;
-
+    protected bool unitIsOnlyVisual;
 
     protected virtual void Awake() {
         collider2d = GetComponent<Collider2D>();
@@ -50,7 +52,10 @@ public class Unit : NetworkBehaviour, ITargetable {
     }
 
     protected virtual void Start() {
-        BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
+        if(!unitIsOnlyVisual)
+        {
+            BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
+        }
     }
 
     protected void Update() {
@@ -335,10 +340,39 @@ public class Unit : NetworkBehaviour, ITargetable {
         OnUnitPlaced?.Invoke(this, EventArgs.Empty);
     }
 
+    public void SetUnitAsVisual()
+    {
+        unitIsOnlyVisual = true;
+        GetComponent<UnitMovement>().enabled = false;
+        GetComponent<UnitTargetingSystem>().enabled = false;
+        GetComponent<UnitAttack>().enabled = false;
+        GetComponent<NetworkObject>().enabled = false;
+        GetComponent<UnitHP>().enabled = false;
+        GetComponent<SimpleSmoothModifier>().enabled = false;
+        GetComponentInChildren<UnitUI>().enabled = false;
+
+        foreach(Transform child in GetComponentsInChildren<Transform>())
+        {
+            if(child.GetComponent<StylizedShadowCaster2D>() != null)
+            {
+                child.GetComponent<StylizedShadowCaster2D>().enabled = false;
+            }
+        }
+
+    }
+
+    public bool GetUnitIsOnlyVisual()
+    {
+        return unitIsOnlyVisual;
+    }
+
     public override void OnDestroy() {
         base.OnDestroy();
+
+        if (unitIsOnlyVisual) return;
 
         BattleManager.Instance.RemoveUnitFromUnitListInBattlefield(this);
         BattleManager.Instance.OnStateChanged -= BattleManager_OnStateChanged;
     }
+
 }

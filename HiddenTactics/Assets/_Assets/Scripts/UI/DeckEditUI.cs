@@ -9,9 +9,7 @@ public class DeckEditUI : MonoBehaviour
 
     private Deck deckSelected;
     private FactionSO factionSelected;
-
-    [SerializeField] Button backToMenuButton;
-    [SerializeField] Button saveDeckButton;
+    private DeckSlot deckSlotSelected;
 
     [SerializeField] Transform heroMenuContainer;
     [SerializeField] Transform heroSelectionSlotTemplate;
@@ -22,21 +20,21 @@ public class DeckEditUI : MonoBehaviour
     [SerializeField] Transform spellsMenuContainer;
     [SerializeField] Transform spellSelectionSlotTemplate;
 
+    [SerializeField] List<DeckSlot> deckSlotList;
+
     private void Awake() {
         Instance = this;
+    }
 
+    private void Start()
+    {
         factionSelected = SavingManager.Instance.LoadFactionSO();
 
-        backToMenuButton.onClick.AddListener(() => {
-            CloseEditDeckMenu();
-        });
-
+        DeckManager.LocalInstance.OnDeckModified += DeckManager_OnDeckModified;
+        DeckSlot.OnAnyDeckSlotSelected += DeckSlot_OnAnyDeckSlotSelected;
         gameObject.SetActive(false);
     }
 
-    private void Start() {
-        DeckManager.LocalInstance.OnDeckModified += DeckManager_OnDeckModified;
-    }
 
     private void DeckManager_OnDeckModified(object sender, DeckManager.OnDeckChangedEventArgs e) {
         deckSelected = e.selectedDeck;
@@ -79,8 +77,13 @@ public class DeckEditUI : MonoBehaviour
 
             itemTemplateVisualUI.SetTroopSO(troopSO);
 
-            if(deckSelected.troopsInDeck.Contains(troopSO)) {
-                itemTemplateVisualUI.SetSelected(true);
+            foreach(TroopSO deckTroopSO in deckSelected.troopsInDeck)
+            {
+                if(deckTroopSO == troopSO)
+                {
+                    itemTemplateVisualUI.SetSelected(true);
+
+                }
             }
         }
     }
@@ -97,8 +100,13 @@ public class DeckEditUI : MonoBehaviour
 
             itemTemplateVisualUI.SetBuildingSO(buildingSO);
 
-            if (deckSelected.buildingsInDeck.Contains(buildingSO)) {
-                itemTemplateVisualUI.SetSelected(true);
+            foreach (BuildingSO deckBuildingSOSO in deckSelected.buildingsInDeck)
+            {
+                if (deckBuildingSOSO == buildingSO)
+                {
+                    itemTemplateVisualUI.SetSelected(true);
+
+                }
             }
         }
     }
@@ -107,8 +115,10 @@ public class DeckEditUI : MonoBehaviour
 
     }
 
-    private void CloseEditDeckMenu() {
+    public void CloseEditDeckMenu() {
+        MainMenuCameraManager.Instance.SetBaseCamera();
         gameObject.SetActive(false);
+        DeckSlotMouseHoverManager.Instance.SetEditingDeck(false);
     }
 
     public void SetFactionSelected(FactionSO factionSO) {
@@ -117,8 +127,32 @@ public class DeckEditUI : MonoBehaviour
         RefreshAllSelectionMenus();
     }
 
-    public void OnEnable() {
+    private void DeckSlot_OnAnyDeckSlotSelected(object sender, System.EventArgs e)
+    {
+        deckSlotSelected = (DeckSlot)sender;
+    }
+
+    public int GetDeckSlotSelectedIndex()
+    {
+        return deckSlotSelected.GetDeckSlotNumber();
+    }
+
+    public void EnableEditDeckUI() {
+
         deckSelected = DeckManager.LocalInstance.GetDeckSelected();
         RefreshAllSelectionMenus();
+
+        foreach(DeckSlot deckSlot in deckSlotList)
+        {
+            deckSlot.SetUIActive(true);
+        }
+    }
+
+    public void OnDisable()
+    {
+        foreach (DeckSlot deckSlot in deckSlotList)
+        {
+            deckSlot.SetUIActive(false);
+        }
     }
 }

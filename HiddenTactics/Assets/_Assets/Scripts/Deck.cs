@@ -9,8 +9,8 @@ public class Deck
 
     public string deckName;
 
-    public List<TroopSO> troopsInDeck;
-    public List<BuildingSO> buildingsInDeck;
+    public TroopSO[] troopsInDeck;
+    public BuildingSO[] buildingsInDeck;
 
     public Deck(FactionSO deckFaction, int deckNumber) {
         this.deckFactionSO = deckFaction;
@@ -18,7 +18,7 @@ public class Deck
 
         this.deckName = "My " + deckFaction.name + " Deck " + deckNumber;
 
-        troopsInDeck = new List<TroopSO>();
-        buildingsInDeck = new List<BuildingSO>();
+        troopsInDeck = new TroopSO[7];
+        buildingsInDeck = new BuildingSO[7];
     }
 }

@@ -48,12 +48,14 @@ public class UnitAttack : NetworkBehaviour
         unit = GetComponent<Unit>();
         unitMovement = GetComponent<UnitMovement>();
 
-        UpdateActiveAttackParameters(unit.GetUnitSO().mainAttackSO);
-        activeAttackSO = unit.GetUnitSO().mainAttackSO;
     }
 
-    protected void Start() {
-        if(IsServer) {
+    protected void Start()
+    {
+        UpdateActiveAttackParameters(unit.GetUnitSO().mainAttackSO);
+        activeAttackSO = unit.GetUnitSO().mainAttackSO;
+
+        if (IsServer) {
             RandomizeAttackTimersServerRpc();
         }
     }
@@ -436,6 +438,7 @@ public class UnitAttack : NetworkBehaviour
 
     public override void OnDestroy() {
         base.OnDestroy();
+        if (unit.GetUnitIsOnlyVisual()) return;
 
         BattleManager.Instance.OnStateChanged -= BattleManager_OnStateChanged;
     }

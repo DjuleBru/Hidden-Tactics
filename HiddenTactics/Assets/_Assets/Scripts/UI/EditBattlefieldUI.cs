@@ -1,10 +1,13 @@
 using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public class EditBattlefieldUI : MonoBehaviour
 {
+    public static EditBattlefieldUI Instance;
+
     [SerializeField] private GameObject battlefieldCustomizationUI;
 
     [SerializeField] private Transform battlefieldVisualGridContainer;
@@ -16,10 +19,18 @@ public class EditBattlefieldUI : MonoBehaviour
     [SerializeField] private Transform battlefieldVillageSpritesContainer;
     [SerializeField] private Transform battlefieldVillageSpriteTemplate;
 
+
+    [SerializeField] private GameObject editGridTilesButton;
+    [SerializeField] private GameObject editBaseButton;
+    [SerializeField] private GameObject editVillagesButton;
+    [SerializeField] private GameObject editBattlefieldGeneralButton;
+
     private bool editingVillages;
     private bool editingGridTiles;
 
     private void Awake() {
+        Instance = this;
+
         battlefieldCustomizationUI.SetActive(false);
         battlefieldVisualGridContainer.gameObject.SetActive(false);
         battlefieldVisualGridTemplate.gameObject.SetActive(false);
@@ -47,7 +58,6 @@ public class EditBattlefieldUI : MonoBehaviour
     public void StartEditBattlefieldGridTiles() {
         editingGridTiles = true;
         editingVillages = false;
-        StartEditBattlefield();
 
         battlefieldVisualGridContainer.gameObject.SetActive(true);
         battlefieldVisualBaseContainer.gameObject.SetActive(false);
@@ -61,7 +71,6 @@ public class EditBattlefieldUI : MonoBehaviour
     public void StartEditBattlefieldVillages() {
         editingVillages = true;
         editingGridTiles = false;
-        StartEditBattlefield();
 
         battlefieldVisualGridContainer.gameObject.SetActive(false);
         battlefieldVisualBaseContainer.gameObject.SetActive(false);
@@ -73,7 +82,6 @@ public class EditBattlefieldUI : MonoBehaviour
     }
 
     public void StartEditBattlefieldBase() {
-        StartEditBattlefield();
 
         battlefieldVisualGridContainer.gameObject.SetActive(false);
         battlefieldVisualBaseContainer.gameObject.SetActive(true);
@@ -145,9 +153,16 @@ public class EditBattlefieldUI : MonoBehaviour
         battlefieldVillageSpriteTemplate.gameObject.SetActive(false);
     }
 
-    private void StartEditBattlefield() {
+    public void StartEditBattlefield() {
         battlefieldCustomizationUI.SetActive(true);
         DeckVisualUI.Instance.gameObject.SetActive(false);
+
+        editGridTilesButton.SetActive(true);
+        editBaseButton.SetActive(true);
+        editVillagesButton.SetActive(true);
+        editBattlefieldGeneralButton.SetActive(false);
+
+        MainMenuCameraManager.Instance.SetEditBattlefieldCamera();
     }
 
     public void StopEditBattlefield() {
@@ -156,5 +171,14 @@ public class EditBattlefieldUI : MonoBehaviour
         battlefieldCustomizationUI.SetActive(false);
         DeckVisualUI.Instance.gameObject.SetActive(true);
         MainMenuCameraManager.Instance.SetBaseCamera();
+
+        editGridTilesButton.SetActive(false);
+        editBaseButton.SetActive(false);
+        editVillagesButton.SetActive(false);
+        editBattlefieldGeneralButton.SetActive(true);
+
+        battlefieldVisualGridContainer.gameObject.SetActive(false);
+        battlefieldVisualBaseContainer.gameObject.SetActive(false);
+        battlefieldVillageSpritesContainer.gameObject.SetActive(false);
     }
 }

@@ -120,4 +120,10 @@ public class UCWVisual : UnitVisual
         }
     }
 
+    public override void ChangeAllSpriteRendererListSortingOrder(int sortingLayerId, int sortingOrder)
+    {
+        base.ChangeAllSpriteRendererListSortingOrder(sortingLayerId, sortingOrder);
+        weaponVisual.SetWeaponSortingOrder(sortingLayerId, sortingOrder + 1);
+    }
+
 }
