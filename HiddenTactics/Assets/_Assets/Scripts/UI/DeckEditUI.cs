@@ -73,7 +73,7 @@ public class DeckEditUI : MonoBehaviour
 
         foreach(TroopSO troopSO in factionSelected.troopsInFaction) {
             Transform troopTemplateInstantiated = Instantiate(unitSelectionSlotTemplate, unitsMenuContainer);
-            SelectionSlotTemplateUI itemTemplateVisualUI = troopTemplateInstantiated.GetComponent<SelectionSlotTemplateUI>();
+            ItemTemplateUI_DeckCreation itemTemplateVisualUI = troopTemplateInstantiated.GetComponent<ItemTemplateUI_DeckCreation>();
 
             itemTemplateVisualUI.SetTroopSO(troopSO);
 
@@ -96,7 +96,7 @@ public class DeckEditUI : MonoBehaviour
 
         foreach (BuildingSO buildingSO in factionSelected.buildingsInFaction) {
             Transform troopTemplateInstantiated = Instantiate(buildingSelectionSlotTemplate, buildingsMenuContainer);
-            SelectionSlotTemplateUI itemTemplateVisualUI = troopTemplateInstantiated.GetComponent<SelectionSlotTemplateUI>();
+            ItemTemplateUI_DeckCreation itemTemplateVisualUI = troopTemplateInstantiated.GetComponent<ItemTemplateUI_DeckCreation>();
 
             itemTemplateVisualUI.SetBuildingSO(buildingSO);
 

@@ -100,7 +100,6 @@ public class UnitVisual : NetworkBehaviour
     }
 
     protected virtual void Unit_OnUnitPlaced(object sender, System.EventArgs e) {
-        Debug.Log("received placed event");
         ChangeSpriteRendererListMaterial(allVisualsSpriteRendererList, cleanMaterial);
     }
 

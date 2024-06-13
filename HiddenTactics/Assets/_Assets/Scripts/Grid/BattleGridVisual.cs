@@ -63,10 +63,12 @@ public class BattleGridVisual : MonoBehaviour
             playerSettlementSprites = playerGridTileVisualSO.settlementSpriteList;
             playerVillageSprites = loadedVillageSpriteList;
 
-            //Save GridTiles To PlayerData
+            //Save customization data
             HiddenTacticsMultiplayer.Instance.SetPlayerGridVisualSO(PlayerCustomizationDataManager.Instance.GetGridTileVisualSOID(playerGridTileVisualSO));
+            SetPlayerVillageSprites(playerVillageSprites);
 
-            if(BattleManager.Instance == null)
+
+            if (BattleManager.Instance == null)
             {
                 // Lobby scene : create grid only for player 
                 RefreshPlayerBattlefieldVisualSprites();
@@ -165,8 +167,6 @@ public class BattleGridVisual : MonoBehaviour
         // Save VillageSprites To Local Machine
         SavingManager.Instance.SaveVillageSprites(playerVillageSprites);
 
-        RefreshPlayerBattlefieldVisualSprites();
-
         // Set VillageSprite To PlayerData
         List<int> villageSpriteIdList = new List<int>();    
         foreach(Sprite sprite in playerVillageSprites) {
@@ -180,6 +180,7 @@ public class BattleGridVisual : MonoBehaviour
         if(!playerVillageSprites.Contains(playerVillageSprite)) {
             playerVillageSprites.Add(playerVillageSprite);
             SetPlayerVillageSprites(playerVillageSprites);
+            RefreshPlayerBattlefieldVisualSprites();
             return true;
         }
         return false;
@@ -190,6 +191,7 @@ public class BattleGridVisual : MonoBehaviour
         if(playerVillageSprites.Count > 1) {
             playerVillageSprites.Remove(playerVillageSprite);
             SetPlayerVillageSprites(playerVillageSprites);
+            RefreshPlayerBattlefieldVisualSprites();
             return true;
         }
         return false;

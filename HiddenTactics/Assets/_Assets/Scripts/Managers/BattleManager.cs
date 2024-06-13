@@ -34,7 +34,12 @@ public class BattleManager : NetworkBehaviour
     private List<Unit> unitsStillInBattle = new List<Unit>();
 
     private int turnNumber;
-    private int maxTurnNumber = 2;
+    [SerializeField] private int maxTurnNumber;
+
+    private TroopSO level1Mercenary;
+    private TroopSO level2Mercenary;
+    private TroopSO level3Mercenary;
+    private TroopSO level4Mercenary;
 
     private enum State {
         WaitingToStart,
@@ -42,6 +47,7 @@ public class BattleManager : NetworkBehaviour
         BattlePhaseStarting,
         BattlePhase,
         BattlePhaseEnding,
+        GameEnded,
     }
 
     private NetworkVariable<State> state = new NetworkVariable<State>();
@@ -54,6 +60,7 @@ public class BattleManager : NetworkBehaviour
         state.OnValueChanged += State_OnValueChanged;
         PlayerReadyManager.Instance.OnAllPlayersReady += PlayersReadyManager_OnAllPlayersReady;
         PlayerReadyManager.Instance.OnAllPlayersWantToSpeedUp += PlayersReadyManager_OnAllPlayersWantToSpeedUp;
+        PlayerReadyManager.Instance.OnAllPlayersWantToReplay += PlayerReadyManager_OnAllPlayersWantToReplay;
 
         battleFieldAnimatorControllingPhases.OnBattlefieldsSlammed += BattleFieldAnimatorControllingPhases_OnBattlefieldsSlammed;
         battleFieldAnimatorControllingPhases.OnBattlefieldsSplit += BattleFieldAnimatorControllingPhases_OnBattlefieldsSplit;
@@ -66,7 +73,6 @@ public class BattleManager : NetworkBehaviour
         battlePhaseTimer.Value = battlePhaseMaxTime;
         preparationPhaseTimer.Value = preparationPhaseMaxTime;
     }
-
 
     private void Update() {
 
@@ -116,7 +122,27 @@ public class BattleManager : NetworkBehaviour
 
             case State.BattlePhaseEnding:
             break;
+            case State.GameEnded:
+            break;
         }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void SetMercenariesForBattleServerRpc() {
+        int level1Mercenary = UnityEngine.Random.Range(0, BattleDataManager.Instance.GetLevel1MercenaryTroopSOList().Count);
+        int level2Mercenary = UnityEngine.Random.Range(0, BattleDataManager.Instance.GetLevel2MercenaryTroopSOList().Count);
+        int level3Mercenary = UnityEngine.Random.Range(0, BattleDataManager.Instance.GetLevel3MercenaryTroopSOList().Count);
+        int level4Mercenary = UnityEngine.Random.Range(0, BattleDataManager.Instance.GetLevel4MercenaryTroopSOList().Count);
+
+        SetMercenariesForBattleClientRpc(level1Mercenary, level2Mercenary, level3Mercenary, level4Mercenary);
+    }
+
+    [ClientRpc]
+    private void SetMercenariesForBattleClientRpc(int level1MercenaryIndex, int level2MercenaryIndex, int level3MercenaryIndex, int level4MercenaryIndex) {
+        level1Mercenary = BattleDataManager.Instance.GetLevel1MercenaryTroopSOList()[level1MercenaryIndex];
+        level2Mercenary = BattleDataManager.Instance.GetLevel2MercenaryTroopSOList()[level2MercenaryIndex];
+        level3Mercenary = BattleDataManager.Instance.GetLevel3MercenaryTroopSOList()[level3MercenaryIndex];
+        level4Mercenary = BattleDataManager.Instance.GetLevel4MercenaryTroopSOList()[level4MercenaryIndex];
     }
 
     private void PlayersReadyManager_OnAllPlayersReady(object sender, EventArgs e) {
@@ -125,6 +151,10 @@ public class BattleManager : NetworkBehaviour
 
     private void PlayersReadyManager_OnAllPlayersWantToSpeedUp(object sender, EventArgs e) {
         Time.timeScale = 1.75f;
+    }
+
+    private void PlayerReadyManager_OnAllPlayersWantToReplay(object sender, EventArgs e) {
+        Debug.Log("Battle manager - All players want to replay");
     }
 
     [ServerRpc(RequireOwnership =false)]
@@ -202,7 +232,12 @@ public class BattleManager : NetworkBehaviour
         // Change turn number on clients
         if (state.Value == State.PreparationPhase) {
             turnNumber++;
-            Debug.Log("turn number" + turnNumber);
+
+            if(turnNumber == 1) {
+                if(IsServer) {
+                    SetMercenariesForBattleServerRpc();
+                }
+            }
 
             // End game if turn > max turns
             if (turnNumber == maxTurnNumber) {
@@ -213,6 +248,7 @@ public class BattleManager : NetworkBehaviour
     }
 
     public void EndGame() {
+        state.Value = State.GameEnded;
         OnGameEnded?.Invoke(this, EventArgs.Empty);
     }
 
@@ -286,6 +322,10 @@ public class BattleManager : NetworkBehaviour
         return state.Value == State.WaitingToStart;
     }
 
+    public bool GameEnded() {
+        return state.Value == State.GameEnded;
+    }
+
     public bool AllPlayersLoaded() {
         return allPlayersLoaded;
     }
@@ -293,5 +333,27 @@ public class BattleManager : NetworkBehaviour
     public bool IsFirstPreparationPhase() {
         return isFirstPreparationPhase;
     }
+
+    public int GetCurrentTurn() {
+        return turnNumber;
+    }
+
+    public int GetMaxTurns() {
+        return maxTurnNumber;
+    }
+
+    public TroopSO GetLevel1Mercenary() {
+        return level1Mercenary;
+    }
+    public TroopSO GetLevel2Mercenary() {
+        return level2Mercenary;
+    }
+    public TroopSO GetLevel3Mercenary() {
+        return level3Mercenary;
+    }
+    public TroopSO GetLevel4Mercenary() {
+        return level4Mercenary;
+    }
+
     #endregion
 }

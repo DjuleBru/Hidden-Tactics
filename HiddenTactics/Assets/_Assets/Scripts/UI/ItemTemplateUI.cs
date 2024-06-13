@@ -7,20 +7,21 @@ public class ItemTemplateUI : MonoBehaviour
 {
     [SerializeField] protected Image illustrationImage;
     [SerializeField] protected Image outlineImage;
-    [SerializeField] protected Sprite comingSoonSprite;
+    [SerializeField] protected GameObject comingSoonText;
 
     protected TroopSO troopSO;
     protected BuildingSO buildingSO;
 
-    public void SetTroopSO(TroopSO troopSO) {
+    public virtual void SetTroopSO(TroopSO troopSO) {
         this.troopSO = troopSO;
+        illustrationImage.gameObject.SetActive(true);
 
-        if(troopSO.troopIllustrationSlotSprite != null  && troopSO.troopIsImplemented) {
+        if (troopSO.troopIllustrationSlotSprite != null  && troopSO.troopIsImplemented) {
             illustrationImage.sprite = troopSO.troopIllustrationSlotSprite;
         }
-        else
-        {
-            illustrationImage.sprite = comingSoonSprite;
+        else {
+            illustrationImage.gameObject.SetActive(false);
+            comingSoonText.SetActive(true);
         }
 
         if (troopSO.troopIllustrationSlotSprite == null && troopSO.troopIsImplemented)
@@ -30,14 +31,16 @@ public class ItemTemplateUI : MonoBehaviour
 
     }
 
-    public void SetBuildingSO(BuildingSO buildingSO) {
+    public virtual void SetBuildingSO(BuildingSO buildingSO) {
         this.buildingSO = buildingSO;
+        illustrationImage.gameObject.SetActive(true);
 
         if (buildingSO.buildingIllustrationSlotSprite != null && buildingSO.buildingIsImplemented) {
             illustrationImage.sprite = buildingSO.buildingIllustrationSlotSprite;
         }
         else {
-            illustrationImage.sprite = comingSoonSprite;
+            illustrationImage.gameObject.SetActive(false);
+            comingSoonText.SetActive(true);
         }
 
         if (buildingSO.buildingIllustrationSlotSprite == null && buildingSO.buildingIsImplemented)

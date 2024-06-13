@@ -26,8 +26,6 @@ public class SpawnIPlaceableButton : MonoBehaviour
     private void SpawnBuildingButton() {
         if (!CheckSpawnConditions()) return;
         int buildingIndex = BattleDataManager.Instance.GetBuildingSOIndex(buildingToSpawnSO);
-
-
         PlayerActionsManager.LocalInstance.SelectBuildingToSpawn(buildingIndex);
     }
 

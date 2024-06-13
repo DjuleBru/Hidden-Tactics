@@ -44,6 +44,7 @@ public class UnitAI : NetworkBehaviour
     }
 
     public override void OnNetworkSpawn() {
+        if (unit.GetUnitIsOnlyVisual()) return;
         state.OnValueChanged += State_OnValueChanged;
         state.Value = State.idle;
 

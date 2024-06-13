@@ -42,7 +42,6 @@ public class Player : NetworkBehaviour
 
     public void SetPlayerWantsReplay() {
         wantsToReplay = !wantsToReplay;
-        Debug.Log(wantsToReplay);
         PlayerReadyManager.Instance.TogglePlayerWantsToReplay(wantsToReplay);
     }
 

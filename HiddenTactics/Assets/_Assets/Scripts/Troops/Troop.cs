@@ -22,6 +22,7 @@ public class Troop : NetworkBehaviour, IPlaceable {
 
     [SerializeField] private List<Transform> baseUnitPositions = new List<Transform>();
     [SerializeField] private List<Transform> additionalUnitPositions = new List<Transform>();
+    [SerializeField] private Transform allUnitsMiddlePoint;
 
     private GridPosition currentGridPosition;
     private Transform battlefieldOwner;
@@ -68,6 +69,7 @@ public class Troop : NetworkBehaviour, IPlaceable {
             HandleIPlaceablePositionDuringPlacement();
         } else {
             HandleIPlaceablePosition();
+            HandleAllUnitsMiddlePoint();
         }
     }
 
@@ -113,6 +115,23 @@ public class Troop : NetworkBehaviour, IPlaceable {
     public void HandleIPlaceablePosition() {
         //transform.position = BattleGrid.Instance.GetWorldPosition(currentGridPosition) - troopCenterPoint.transform.localPosition;
         transform.position = battlefieldOwner.position + battlefieldOffset;
+    }
+
+    private void HandleAllUnitsMiddlePoint() {
+        Vector3 allUnitsSum = Vector3.zero;
+        int allUnitsCount = 0;
+
+        foreach(Unit unit in allUnitsInTroop) {
+            if(unit.GetUnitIsBought() && !unit.GetIsDead()) {
+                allUnitsSum += unit.transform.position;
+                allUnitsCount++;
+            }
+        }
+
+        if(allUnitsCount > 0) {
+            allUnitsSum = allUnitsSum / allUnitsCount;
+            allUnitsMiddlePoint.position = allUnitsSum;
+        }
     }
 
     public void SetIPlaceableOwnerClientId(ulong clientId) {

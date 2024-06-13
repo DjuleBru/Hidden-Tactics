@@ -61,6 +61,7 @@ public class UnitAttack : NetworkBehaviour
     }
 
     public override void OnNetworkSpawn() {
+        if (unit.GetUnitIsOnlyVisual()) return;
         unitAI.OnStateChanged += UnitAI_OnStateChanged;
 
         BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;

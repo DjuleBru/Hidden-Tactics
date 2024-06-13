@@ -75,6 +75,7 @@ public class BattlePauseMenuUI : MonoBehaviour
 
     private void ClosePauseMenu() {
         tryingToSurrender = false;
+        surrenderText.text = "Surrender";
         pauseMenuPanel.SetActive(false);
     }
 }
