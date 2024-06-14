@@ -5,7 +5,15 @@ using Unity.Netcode;
 using UnityEngine;
 
 public class Troop : NetworkBehaviour, IPlaceable {
+
     public event EventHandler OnTroopPlaced;
+    public static event EventHandler OnAnyTroopPlaced;
+    public static event EventHandler OnAnyTroopSelled;
+
+    public event EventHandler OnTroopHPChanged;
+    public float maxTroopHP;
+    public float troopHP;
+
     private ulong ownerClientId;
 
     private bool isPlaced;
@@ -78,6 +86,12 @@ public class Troop : NetworkBehaviour, IPlaceable {
             UpdateTroopServerRpc();
             troopWasPlacedThisPreparationPhase = false;
         }
+
+        if(BattleManager.Instance.IsPreparationPhase()) {
+            troopHP = maxTroopHP;
+            OnTroopHPChanged?.Invoke(this, EventArgs.Empty);
+
+        } 
     }
 
     public void HandlePositioningOnGrid() {
@@ -118,19 +132,23 @@ public class Troop : NetworkBehaviour, IPlaceable {
     }
 
     private void HandleAllUnitsMiddlePoint() {
-        Vector3 allUnitsSum = Vector3.zero;
-        int allUnitsCount = 0;
+        if(BattleManager.Instance.IsBattlePhase()) {
+            Vector3 allUnitsSum = Vector3.zero;
+            int allUnitsCount = 0;
 
-        foreach(Unit unit in allUnitsInTroop) {
-            if(unit.GetUnitIsBought() && !unit.GetIsDead()) {
-                allUnitsSum += unit.transform.position;
-                allUnitsCount++;
+            foreach (Unit unit in allUnitsInTroop) {
+                if (unit.GetUnitIsBought() && !unit.GetIsDead()) {
+                    allUnitsSum += unit.transform.position;
+                    allUnitsCount++;
+                }
             }
-        }
 
-        if(allUnitsCount > 0) {
-            allUnitsSum = allUnitsSum / allUnitsCount;
-            allUnitsMiddlePoint.position = allUnitsSum;
+            if (allUnitsCount > 0) {
+                allUnitsSum = allUnitsSum / allUnitsCount;
+                allUnitsMiddlePoint.position = allUnitsSum;
+            }
+        } else {
+            allUnitsMiddlePoint.position = troopCenterPoint.position;
         }
     }
 
@@ -173,7 +191,12 @@ public class Troop : NetworkBehaviour, IPlaceable {
     private void BuyAdditionalUnitsClientRpc() {
         if (isOwnedByPlayer) {
             foreach (Unit unit in additionalUnitsInTroop) {
-                unit.ActivateAdditionalUnit(); 
+                unit.ActivateAdditionalUnit();
+
+                // Update troop HP
+                troopHP += unit.GetComponent<UnitHP>().GetHP();
+                maxTroopHP = troopHP;
+                Debug.Log("max troop HP : " + maxTroopHP);
             }
             additionalUnitsInTroop.Clear();
         }
@@ -197,8 +220,10 @@ public class Troop : NetworkBehaviour, IPlaceable {
     }
 
     public void SellTroop() {
+        OnAnyTroopSelled?.Invoke(this, EventArgs.Empty);
         StartCoroutine(SellTroopCoroutine());
     }
+
 
     private IEnumerator SellTroopCoroutine() {
 
@@ -216,6 +241,8 @@ public class Troop : NetworkBehaviour, IPlaceable {
     }
 
     public void PlaceIPlaceable() {
+        Debug.Log("placing iplaceable " + this);
+
         if (!isOwnedByPlayer) {
             gameObject.SetActive(true);
         }
@@ -225,16 +252,20 @@ public class Troop : NetworkBehaviour, IPlaceable {
         SetIPlaceableGridPosition(currentGridPosition);
         battlefieldOffset = transform.position - battlefieldOwner.transform.position;
 
-        // Set base units as bought (not in additionalUnitsInTroop) AND Set unit initial grid positions
+        // Set base units as bought (not in additionalUnitsInTroop), Set unit initial grid positions, Set Troop max HP
         foreach(Unit unit in allUnitsInTroop) {
             unit.SetInitialGridPosition(currentGridPosition);
 
             if (!additionalUnitsInTroop.Contains(unit)) {
                 unit.ActivateAdditionalUnit();
+                troopHP += unit.GetComponent<UnitHP>().GetHP();
+                maxTroopHP = troopHP;
             }
         }
 
+        Debug.Log("invoking troop placed event " + this);
         OnTroopPlaced?.Invoke(this, null);
+        OnAnyTroopPlaced?.Invoke(this, EventArgs.Empty);
         isPlaced = true;
     }
 
@@ -247,6 +278,9 @@ public class Troop : NetworkBehaviour, IPlaceable {
     }
     public void AddUnitToUnitInTroopList(Unit unit) {
         allUnitsInTroop.Add(unit);
+
+        //Subscribe to unit HP events
+        unit.GetComponent<UnitHP>().OnHealthChanged += UnitHP_OnHealthChanged;
     }
 
     public List<Unit> GetUnitInTroopList() {
@@ -272,7 +306,7 @@ public class Troop : NetworkBehaviour, IPlaceable {
     public TroopUI GetTroopUI() {
         return troopUI;
     }
-         
+
     public bool IsOwnedByPlayer() {
         return isOwnedByPlayer;
     }
@@ -295,6 +329,17 @@ public class Troop : NetworkBehaviour, IPlaceable {
 
     public List<Transform> GetAdditionalUnitPositions() {
         return additionalUnitPositions;
+    }
+
+    private void UnitHP_OnHealthChanged(object sender, UnitHP.OnHealthChangedEventArgs e) {
+        float healthChange = e.newHealth - e.previousHealth;
+        troopHP += healthChange;
+
+        OnTroopHPChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    public float GetTroopHPNormalized() {
+        return troopHP/maxTroopHP;
     }
 
     public override void OnDestroy() {

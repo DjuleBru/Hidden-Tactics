@@ -238,14 +238,16 @@ public class PlayerAction_SpawnTroop : NetworkBehaviour {
         GridPosition spawnedIPlaceableGridPosition = new GridPosition(gridPositionx, gridPositiony);
 
         if (!iPlaceableSpawned.IsOwnedByPlayer()) {
+            // IPlaceable is Opponent's 
+
             spawnedIPlaceableGridPosition = BattleGrid.Instance.TranslateOpponentGridPosition(spawnedIPlaceableGridPosition);
+
+            // Set grid position on iPlaceable
+            iPlaceableSpawned.SetIPlaceableGridPosition(spawnedIPlaceableGridPosition);
+
+            // Carry out placed logic on iPlaceable
+            iPlaceableSpawned.PlaceIPlaceable();
         }
-
-        // Set grid position on iPlaceable
-        iPlaceableSpawned.SetIPlaceableGridPosition(spawnedIPlaceableGridPosition);
-
-        // Carry out placed logic on iPlaceable
-        iPlaceableSpawned.PlaceIPlaceable();
     }
     #endregion
 

@@ -9,11 +9,21 @@ public class GameInput : MonoBehaviour
 
     private PlayerInputActions playerInputActions;
 
+    public event EventHandler OnShowIPlaceableIconPerformed;
+    public bool showIPlaceableIcon;
+
     private void Awake() {
         Instance = this;
+        showIPlaceableIcon = true;
 
         playerInputActions = new PlayerInputActions();
         playerInputActions.Player.Enable();
+        playerInputActions.Player.ShowIPlaceableIcons.performed += ShowIPlaceableIcons_performed;
+    }
+
+    private void ShowIPlaceableIcons_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj) {
+        showIPlaceableIcon = !showIPlaceableIcon;
+        OnShowIPlaceableIconPerformed?.Invoke(this, EventArgs.Empty);
     }
 
     public Vector2 GetMovementVector() {
@@ -26,5 +36,9 @@ public class GameInput : MonoBehaviour
         Vector2 zoomInput = playerInputActions.Player.Zoom.ReadValue<Vector2>();
 
         return zoomInput;
+    }
+
+    public bool GetShowIPlaceableIconSetting() {
+        return showIPlaceableIcon;
     }
 }

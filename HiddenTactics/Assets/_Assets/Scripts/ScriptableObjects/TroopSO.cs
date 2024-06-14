@@ -7,6 +7,7 @@ public class TroopSO : ScriptableObject {
 
     public Sprite troopIllustrationSlotSprite;
     public Sprite troopDescriptionSlotSprite;
+    public Sprite troopTypeIconSprite;
 
     public GameObject troopPrefab;
     public GameObject unitPrefab;

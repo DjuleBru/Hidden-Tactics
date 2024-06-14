@@ -1031,7 +1031,7 @@ MonoBehaviour:
       m_Calls: []
   m_Sprite: {fileID: 584758547, guid: 5ad9eb65a1226b04fbafb0309216a0f3, type: 3}
   m_Type: 0
-  m_PreserveAspect: 0
+  m_PreserveAspect: 1
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
@@ -1456,6 +1456,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 054286ff18e8f0641bf8ce1b2a70ddfc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  maxTroopHP: 0
+  troopHP: 0
   debugMode: 0
   troopSO: {fileID: 0}
   troopCenterPoint: {fileID: 1200779722}
@@ -1548,7 +1550,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -1086252314, guid: e452d7e8831ccca4cab17c44369bf302, type: 3}
+  m_Sprite: {fileID: -322719756, guid: e452d7e8831ccca4cab17c44369bf302, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1557,7 +1559,7 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_PixelsPerUnitMultiplier: 0.92
 --- !u!1 &8586642559861741358
 GameObject:
   m_ObjectHideFlags: 0
@@ -1699,6 +1701,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   troop: {fileID: -7405699509265139040}
+  troopTypeIcon: {fileID: 7450056789291903111}
   troopTypeUIGameObject: {fileID: 4498549023134165043}
 --- !u!95 &3812718612932658632
 Animator:

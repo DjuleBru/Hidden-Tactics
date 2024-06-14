@@ -31,8 +31,6 @@ public class BattlePhaseUI : MonoBehaviour
         PlayerReadyManager.Instance.OnPlayerWantsToSpeedUpChanged += PlayerReadyManager_OnPlayerWantsToSpeedUpChanged;
 
         turnText.text = "I/" + ConvertIntToRomanNumber(BattleManager.Instance.GetMaxTurns());
-
-        Hide();
     }
 
 
@@ -43,7 +41,8 @@ public class BattlePhaseUI : MonoBehaviour
     private void BattleManager_OnStateChanged(object sender, System.EventArgs e) {
 
         if (BattleManager.Instance.IsBattlePhase()) {
-            Show(); turnText.text = ConvertIntToRomanNumber(BattleManager.Instance.GetCurrentTurn()) + "/" + ConvertIntToRomanNumber(BattleManager.Instance.GetMaxTurns());
+            Show(); 
+            turnText.text = ConvertIntToRomanNumber(BattleManager.Instance.GetCurrentTurn()) + "/" + ConvertIntToRomanNumber(BattleManager.Instance.GetMaxTurns());
             playerSpeedUpGameObject.SetActive(false);
         } else {
             Hide();

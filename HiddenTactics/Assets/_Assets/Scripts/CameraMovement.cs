@@ -25,6 +25,9 @@ public class CameraMovement : MonoBehaviour
     [SerializeField] float cameraMinX;
     [SerializeField] float cameraMinY;
 
+    private float worldIconScaleMultiplier = 1f;
+    private float worldIconScaleTickPerZoom = .01f;
+
     public event EventHandler OnCameraZoomedChanged;
     public static CameraMovement Instance { get; private set; }
 
@@ -57,10 +60,15 @@ public class CameraMovement : MonoBehaviour
         zoom = Mathf.Clamp(zoom, minOrtho, maxOrtho);
         mainVirtualCamera.m_Lens.OrthographicSize = Mathf.SmoothDamp(mainVirtualCamera.m_Lens.OrthographicSize, zoom, ref velocity, smoothTime);
 
+        worldIconScaleMultiplier = mainVirtualCamera.m_Lens.OrthographicSize/25f;
         OnCameraZoomedChanged?.Invoke(this, EventArgs.Empty);
     }
 
     public float GetCameraOrthoSize() {
         return mainVirtualCamera.m_Lens.OrthographicSize;
+    }
+
+    public float GetWorldIconScaleMultiplier() {
+        return worldIconScaleMultiplier;
     }
 }

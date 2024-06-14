@@ -59,7 +59,6 @@ public class MercenariesUI : MonoBehaviour
 
     private void BattleManager_OnStateChanged(object sender, System.EventArgs e) {
         if (BattleManager.Instance.IsPreparationPhase()) {
-                Debug.Log(BattleManager.Instance.GetCurrentTurn());
             if (BattleManager.Instance.GetCurrentTurn() == 0) {
                 mercenariesAnimator.SetTrigger("Grow");
                 randomizingMercenary = true;
@@ -120,12 +119,15 @@ public class MercenariesUI : MonoBehaviour
             level1MercenarySlot.GetComponentInChildren<SpawnIPlaceableButton>().SetTroopToSpawn(BattleManager.Instance.GetLevel1Mercenary());
         }
         if (mercenaryLevel == 2) {
+            level2MercenarySlot.SetTroopSO(BattleManager.Instance.GetLevel2Mercenary());
             level2MercenarySlot.GetComponentInChildren<SpawnIPlaceableButton>().SetTroopToSpawn(BattleManager.Instance.GetLevel2Mercenary());
         }
         if (mercenaryLevel == 3) {
+            level3MercenarySlot.SetTroopSO(BattleManager.Instance.GetLevel3Mercenary());
             level3MercenarySlot.GetComponentInChildren<SpawnIPlaceableButton>().SetTroopToSpawn(BattleManager.Instance.GetLevel3Mercenary());
         }
         if (mercenaryLevel == 4) {
+            level4MercenarySlot.SetTroopSO(BattleManager.Instance.GetLevel4Mercenary());
             level4MercenarySlot.GetComponentInChildren<SpawnIPlaceableButton>().SetTroopToSpawn(BattleManager.Instance.GetLevel4Mercenary());
         }
     }

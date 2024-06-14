@@ -62,6 +62,7 @@ public class UnitVisual : NetworkBehaviour
     protected virtual void Start() {
         if (!unit.GetUnitIsOnlyVisual())
         {
+            if (!unit.IsOwnedByPlayer()) return;
             ChangeSpriteRendererListMaterial(allVisualsSpriteRendererList, placingUnitMaterial);
             OnUnitVisualPlacingMaterialSet?.Invoke(this, EventArgs.Empty);
         } else
