@@ -12,6 +12,7 @@ public class PlayerStateUI : MonoBehaviour {
     [SerializeField] private bool isOpponentPanel;
 
     [SerializeField] private Image playerIconImage;
+    [SerializeField] private Image playerIconShadowImage;
 
     [SerializeField] private TextMeshProUGUI playerGoldText;
     [SerializeField] private TextMeshProUGUI playerGoldChangingText;
@@ -31,6 +32,20 @@ public class PlayerStateUI : MonoBehaviour {
     private int goldToEarn;
     private float goldEarningPSRate = .15f;
     private float goldEarningPSTimer;
+
+    [SerializeField] private Image backgroundImage;
+    [SerializeField] private Image backgroundBorderImage;
+    [SerializeField] private Image backgroundBorderShadowImage;
+
+    [SerializeField] private Image playerIconBackgroundImage;
+    [SerializeField] private Image playerIconBackgroundShadowImage;
+    [SerializeField] private Image playerIconBorderImage;
+    [SerializeField] private Image heroIconBackgroundImage;
+    [SerializeField] private Image heroIconBackgroundShadowImage;
+    [SerializeField] private Image heroIconBorderImage;
+
+    [SerializeField] private Image goldbackgroundBorderImage;
+    [SerializeField] private Image villagesbackgroundBorderImage;
 
     private void Awake() {
         playerReadyGameObject.gameObject.SetActive(false);
@@ -55,8 +70,37 @@ public class PlayerStateUI : MonoBehaviour {
 
         VillageManager.Instance.OnPlayerVillageDestroyed += VillageManager_OnPlayerVillageDestroyed;
         VillageManager.Instance.OnOpponentVillageDestroyed += VillageManager_OnOpponentVillageDestroyed;
+
+        SetPanelVisuals();
     }
 
+
+    private void SetPanelVisuals() {
+        Deck playerDeck = DeckManager.LocalInstance.GetDeckSelected();
+
+        if (isOpponentPanel) {
+            //Get opponent deck
+            playerDeck = DeckManager.LocalInstance.GetDeckSelected();
+        }
+
+        backgroundImage.sprite = playerDeck.deckFactionSO.panelBackground;
+        backgroundBorderImage.sprite = playerDeck.deckFactionSO.panelBackgroundBorder;
+        backgroundBorderShadowImage.sprite = playerDeck.deckFactionSO.panelBackgroundBorder;
+
+
+        playerIconBackgroundImage.sprite = playerDeck.deckFactionSO.slotBackground;
+        playerIconBackgroundShadowImage.sprite = playerDeck.deckFactionSO.slotBorder;
+        playerIconBorderImage.sprite = playerDeck.deckFactionSO.slotBorder;
+        heroIconBackgroundImage.sprite = playerDeck.deckFactionSO.slotBackground;
+        heroIconBackgroundShadowImage.sprite = playerDeck.deckFactionSO.slotBorder;
+        heroIconBorderImage.sprite = playerDeck.deckFactionSO.panelBackgroundBorder;
+
+        villagesbackgroundBorderImage.sprite = playerDeck.deckFactionSO.panelBackgroundBorder;
+
+        if (!isOpponentPanel) {
+            goldbackgroundBorderImage.sprite = playerDeck.deckFactionSO.panelBackgroundBorder;
+        }
+    }
 
     private void VillageManager_OnOpponentVillageDestroyed(object sender, System.EventArgs e) {
         if (isOpponentPanel) {

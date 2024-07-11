@@ -338,6 +338,8 @@ public class Unit : NetworkBehaviour, ITargetable {
 
     public void DebugModeStartFunction() {
         OnUnitPlaced?.Invoke(this, EventArgs.Empty);
+        unitIsBought = true;
+        collider2d.enabled = true;
     }
 
     public void SetUnitAsVisual()
@@ -359,7 +361,6 @@ public class Unit : NetworkBehaviour, ITargetable {
                 child.GetComponent<StylizedShadowCaster2D>().enabled = false;
             }
         }
-
     }
 
     public bool GetUnitIsOnlyVisual()

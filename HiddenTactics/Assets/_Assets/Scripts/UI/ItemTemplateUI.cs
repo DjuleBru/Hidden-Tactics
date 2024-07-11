@@ -7,10 +7,18 @@ public class ItemTemplateUI : MonoBehaviour
 {
     [SerializeField] protected Image illustrationImage;
     [SerializeField] protected Image outlineImage;
+    [SerializeField] protected Image outlineShadowImage;
+    [SerializeField] protected Image backgroundImage;
     [SerializeField] protected GameObject comingSoonText;
 
     protected TroopSO troopSO;
     protected BuildingSO buildingSO;
+
+    public virtual void SetDeckVisuals(Deck deck) {
+        outlineImage.sprite = deck.deckFactionSO.slotBorder;
+        outlineShadowImage.sprite = deck.deckFactionSO.slotBorder;
+        backgroundImage.sprite = deck.deckFactionSO.slotBackground;
+    }
 
     public virtual void SetTroopSO(TroopSO troopSO) {
         this.troopSO = troopSO;

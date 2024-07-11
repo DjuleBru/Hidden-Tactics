@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ItemTemplateUI_BattleDeck : ItemTemplateUI
-{
+public class ItemTemplateUI_BattleDeck : ItemTemplateUI {
+
     [SerializeField] protected Button unlockTroopButton;
+
 
     [SerializeField] private bool isBuilding;
     [SerializeField] private bool isSpell;
     [SerializeField] private bool isTroop;
     [SerializeField] private bool isMercenary;
-
 
     private void Awake() {
         unlockTroopButton.onClick.AddListener(() => {

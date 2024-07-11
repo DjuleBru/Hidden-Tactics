@@ -99,6 +99,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4563581498693216965, guid: e10391934621fb548b6e692a8b1644d3, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4996280849073375066, guid: e10391934621fb548b6e692a8b1644d3, type: 3}
       propertyPath: m_AnchoredPosition.x
       value: 1.5250244
@@ -187,6 +191,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   illustrationImage: {fileID: 1450932983445715200}
   outlineImage: {fileID: 1450932982626449386}
+  outlineShadowImage: {fileID: 2629457943671782136}
+  backgroundImage: {fileID: 1450932983339824339}
   comingSoonText: {fileID: 7154408540959121226}
   unSelectedColor: {r: 0.74509805, g: 0.74509805, b: 0.74509805, a: 1}
 --- !u!114 &1450932983339824339 stripped
@@ -203,6 +209,17 @@ MonoBehaviour:
 --- !u!114 &1450932983445715200 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4563581498693216967, guid: e10391934621fb548b6e692a8b1644d3, type: 3}
+  m_PrefabInstance: {fileID: 3132155606355055559}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &2629457943671782136 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1083697337645672767, guid: e10391934621fb548b6e692a8b1644d3, type: 3}
   m_PrefabInstance: {fileID: 3132155606355055559}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}

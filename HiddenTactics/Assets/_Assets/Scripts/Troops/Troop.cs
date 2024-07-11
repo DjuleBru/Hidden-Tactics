@@ -53,8 +53,11 @@ public class Troop : NetworkBehaviour, IPlaceable {
     private void Start() {
         if (debugMode) {
             isOwnedByPlayer = false;
+            SetIPlaceableBattlefieldOwner();
+            currentGridPosition = BattleGrid.Instance.GetGridPosition(transform.position);
             PlaceIPlaceable();
             Unit[] unitArray = GetComponentsInChildren<Unit>();
+            BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
 
             foreach (Unit unit in unitArray) {
                 //Set Parent Troop
@@ -62,7 +65,7 @@ public class Troop : NetworkBehaviour, IPlaceable {
 
                 //Set Unit Local Position
                 unit.SetPosition(unit.transform.position);
-                unit.DebugModeStartFunction();  
+                unit.DebugModeStartFunction();
             }
         }
     }
@@ -241,7 +244,6 @@ public class Troop : NetworkBehaviour, IPlaceable {
     }
 
     public void PlaceIPlaceable() {
-        Debug.Log("placing iplaceable " + this);
 
         if (!isOwnedByPlayer) {
             gameObject.SetActive(true);
@@ -263,7 +265,6 @@ public class Troop : NetworkBehaviour, IPlaceable {
             }
         }
 
-        Debug.Log("invoking troop placed event " + this);
         OnTroopPlaced?.Invoke(this, null);
         OnAnyTroopPlaced?.Invoke(this, EventArgs.Empty);
         isPlaced = true;

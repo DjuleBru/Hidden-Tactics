@@ -75,6 +75,7 @@ public class PlayerGoldManager : NetworkBehaviour {
     }
 
     public bool CanSpendGold(int goldAmount, ulong clientID) {
+        Debug.Log(goldAmount + " " + clientID);
         PlayerData playerData = HiddenTacticsMultiplayer.Instance.GetPlayerDataFromClientId(clientID);
 
         return playerData.playerGold >= goldAmount;

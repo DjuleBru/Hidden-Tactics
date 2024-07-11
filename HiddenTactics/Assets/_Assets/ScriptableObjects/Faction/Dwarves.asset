@@ -12,8 +12,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94ea46ef78865b74bb8e414907951874, type: 3}
   m_Name: Dwarves
   m_EditorClassIdentifier: 
+  factionName: 2
   factionSprite: {fileID: 21300000, guid: 25accdbe1dd79f541acaec2f1f72eaf1, type: 3}
   factionDefaultGridTileVisualSO: {fileID: 11400000, guid: d1b69855f8b228745beec31481030a0f, type: 2}
+  panelBackground: {fileID: 21300000, guid: 745f2ed6f72a20a4ca15ab1c46f70c14, type: 3}
+  panelBackgroundBorder: {fileID: 21300000, guid: 902c05dc32d07014590e2b7313fcc8e3, type: 3}
+  panelBackgroundInnerShadow: {fileID: 21300000, guid: 357a00235cc708d49aaa63ae48d3d724, type: 3}
+  panelBorder: {fileID: 21300000, guid: be9510adf98afd645a349082e9fd3d5f, type: 3}
+  panelTopItem: {fileID: 21300000, guid: ece7eead42afcbf45b15fb2c3b890298, type: 3}
+  panelBottomItem: {fileID: 21300000, guid: 804a9d47934a0f24f99cf914b0345e73, type: 3}
+  panelLeftItem: {fileID: 21300000, guid: d039c58b8136057468dfd9ce45ec2473, type: 3}
+  panelRightItem: {fileID: 21300000, guid: 02db26bd093e70e4c99edb0cd5a89038, type: 3}
+  slotBackground: {fileID: 21300000, guid: 34c454f3cdf2808408815d4ad8b9cbe5, type: 3}
+  slotBorder: {fileID: 21300000, guid: 12c7712326e26974689d356e4f526f54, type: 3}
   troopsInFaction:
   - {fileID: 11400000, guid: c0cec2b5ae4ba9e4c8b61d987f8b4bd7, type: 2}
   - {fileID: 11400000, guid: 6c4efe60e6742bc4e9cd7a32aba8bfde, type: 2}

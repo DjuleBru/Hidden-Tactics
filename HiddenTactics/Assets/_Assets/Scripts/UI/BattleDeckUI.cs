@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -31,6 +32,21 @@ public class BattleDeckUI : MonoBehaviour
     [SerializeField] private List<int> unlockNextItemCostList;
     private int unlockNextItemCost;
 
+    [SerializeField] private Image background;
+    [SerializeField] private Image borderShadow;
+    [SerializeField] private Image innerShadow;
+    [SerializeField] private Image border;
+    [SerializeField] private Image item_top;
+    [SerializeField] private Image item_bottom;
+    [SerializeField] private Image item_right;
+    [SerializeField] private Image item_left;
+
+
+    [SerializeField] private Image unlockBackground;
+    [SerializeField] private Image unlockBorderShadow;
+    [SerializeField] private Image unlockInnerShadow;
+    [SerializeField] private Image unlockBorder;
+
     private void Awake() {
         Instance = this;
         unlockNewItemPanelCloseButton.onClick.AddListener(() => {
@@ -41,9 +57,42 @@ public class BattleDeckUI : MonoBehaviour
     private void Start() {
         playerDeck = DeckManager.LocalInstance.GetDeckSelected();
 
-        int i = 0;
+        SetPanelVisuals();
+        SetButtonsSO();
+        SetButtonVisuals();
+    }
 
-        foreach(TroopSO troopSO in playerDeck.troopsInDeck) {
+    private void SetPanelVisuals() {
+        background.sprite = playerDeck.deckFactionSO.panelBackground;
+        borderShadow.sprite = playerDeck.deckFactionSO.panelBorder;
+        innerShadow.sprite = playerDeck.deckFactionSO.panelBackgroundInnerShadow;
+        border.sprite = playerDeck.deckFactionSO.panelBorder;
+        item_top.sprite = playerDeck.deckFactionSO.panelTopItem;
+        item_bottom.sprite = playerDeck.deckFactionSO.panelBottomItem;
+        item_right.sprite = playerDeck.deckFactionSO.panelRightItem;
+        item_left.sprite = playerDeck.deckFactionSO.panelLeftItem;
+
+        unlockBackground.sprite = playerDeck.deckFactionSO.panelBackground;
+        unlockBorderShadow.sprite = playerDeck.deckFactionSO.panelBackgroundBorder;
+        unlockInnerShadow.sprite = playerDeck.deckFactionSO.panelBackgroundInnerShadow;
+        unlockBorder.sprite = playerDeck.deckFactionSO.panelBackgroundBorder;
+    }
+
+    private void SetButtonVisuals() {
+        foreach(ItemTemplateUI_BattleDeck itemTemplate in buildingsItemTemplateVisualUIList) {
+            itemTemplate.SetDeckVisuals(playerDeck);
+        }
+        foreach (ItemTemplateUI_BattleDeck itemTemplate in troopsItemTemplateVisualUIList) {
+            itemTemplate.SetDeckVisuals(playerDeck);
+        }
+        foreach (ItemTemplateUI_BattleDeck itemTemplate in spellsItemTemplateVisualUIList) {
+            itemTemplate.SetDeckVisuals(playerDeck);
+        }
+    }
+
+    private void SetButtonsSO() {
+        int i = 0;
+        foreach (TroopSO troopSO in playerDeck.troopsInDeck) {
             if (troopSO == null) {
                 continue;
             }
@@ -53,7 +102,7 @@ public class BattleDeckUI : MonoBehaviour
         }
 
         i = 0;
-        
+
         foreach (BuildingSO buildingSO in playerDeck.buildingsInDeck) {
             if (buildingSO == null) {
                 continue;
@@ -100,8 +149,6 @@ public class BattleDeckUI : MonoBehaviour
             unlockNewItemText.text = "Next spell cost :";
         }
 
-
-
         RefreshUnlockNewItemPanel(building, troop, spell);
     }
 
@@ -137,6 +184,7 @@ public class BattleDeckUI : MonoBehaviour
             foreach(BuildingSO buildingSO in buildingsNotInDeck) {
                 ItemTemplateUI_UnlockItem unlockItemTemplate = Instantiate(unlockNewItemTemplate.transform, unlockNewItemContainer).GetComponent<ItemTemplateUI_UnlockItem>();
                 unlockItemTemplate.SetBuildingSO(buildingSO);
+                unlockItemTemplate.SetDeckVisuals(playerDeck);
             }
 
         }
@@ -163,6 +211,7 @@ public class BattleDeckUI : MonoBehaviour
             foreach (TroopSO troopSO in troopsNotInDeck) {
                 ItemTemplateUI_UnlockItem unlockItemTemplate = Instantiate(unlockNewItemTemplate.transform, unlockNewItemContainer).GetComponent<ItemTemplateUI_UnlockItem>();
                 unlockItemTemplate.SetTroopSO(troopSO);
+                unlockItemTemplate.SetDeckVisuals(playerDeck);
             }
 
         }

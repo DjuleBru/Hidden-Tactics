@@ -96,7 +96,9 @@ public class PlayerAction_SpawnTroop : NetworkBehaviour {
 
             if (iPlaceable is Troop) {
                 Troop troopSpawned = (Troop)iPlaceable;
-                PlayerGoldManager.Instance.SpendGold(troopSpawned.GetTroopSO().spawnTroopCost, NetworkManager.Singleton.LocalClientId);
+                if(HiddenTacticsMultiplayer.Instance.IsMultiplayer()) {
+                    PlayerGoldManager.Instance.SpendGold(troopSpawned.GetTroopSO().spawnTroopCost, NetworkManager.Singleton.LocalClientId);
+                }
             }
         }
 

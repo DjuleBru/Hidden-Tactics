@@ -12,8 +12,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94ea46ef78865b74bb8e414907951874, type: 3}
   m_Name: Humans
   m_EditorClassIdentifier: 
+  factionName: 0
   factionSprite: {fileID: 21300000, guid: e896a75138a8faa4d8454fb71455f68f, type: 3}
   factionDefaultGridTileVisualSO: {fileID: 11400000, guid: 60af851b58e93984f9641693f007a5f4, type: 2}
+  panelBackground: {fileID: 21300000, guid: e47f7d179a3d07f46b52ab7f78687974, type: 3}
+  panelBackgroundBorder: {fileID: 21300000, guid: aaee9bdc221947c4e8b6d8308089f007, type: 3}
+  panelBackgroundInnerShadow: {fileID: 21300000, guid: 5c46042b283aed543aaa564565faf4f4, type: 3}
+  panelBorder: {fileID: 21300000, guid: 1fec168f17be3544a8c181feaf767937, type: 3}
+  panelTopItem: {fileID: 21300000, guid: bca54351465f01748b38dc5c76eeb3f8, type: 3}
+  panelBottomItem: {fileID: 21300000, guid: 92b4545432832df42ad2c7ef4cb7127a, type: 3}
+  panelLeftItem: {fileID: 21300000, guid: 40fe9bab56f137843a502ded0a09d292, type: 3}
+  panelRightItem: {fileID: 21300000, guid: 534e4a4b755403c4eb35e3af8e108cd3, type: 3}
+  slotBackground: {fileID: 21300000, guid: a8485b2857495fe4e83442ae55fc5ef2, type: 3}
+  slotBorder: {fileID: 21300000, guid: 25984227d0af4ca4ea02a0ae2d7311e0, type: 3}
   troopsInFaction:
   - {fileID: 11400000, guid: 25c624dea8b263c4c8b430cbd6ecbdd7, type: 2}
   - {fileID: 11400000, guid: 0e834b0ac5dc8c149b4d94ce0c7c852b, type: 2}

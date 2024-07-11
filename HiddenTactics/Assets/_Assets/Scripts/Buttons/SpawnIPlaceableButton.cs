@@ -6,30 +6,30 @@ using UnityEngine.UI;
 
 public class SpawnIPlaceableButton : MonoBehaviour
 {
-    TroopSO troopToSpawnSO;
-    BuildingSO buildingToSpawnSO;
+    protected TroopSO troopToSpawnSO;
+    protected BuildingSO buildingToSpawnSO;
 
-    private Button spawnIPlaceableButton;
+    protected Button spawnIPlaceableButton;
 
-    private void Awake() {
+    protected void Awake() {
         spawnIPlaceableButton = GetComponent<Button>();
     }
 
-    private void SpawnTroopButton() {
-        if(!CheckSpawnConditions()) return;
+    protected virtual void SpawnTroopButton() {
+        if (!CheckSpawnConditions()) return;
         int troopIndex = BattleDataManager.Instance.GetTroopSOIndex(troopToSpawnSO);
         PlayerStateUI.Instance.SetPlayerGoldChangingUI(-troopToSpawnSO.spawnTroopCost);
 
         PlayerActionsManager.LocalInstance.SelectTroopToSpawn(troopIndex);
     }
 
-    private void SpawnBuildingButton() {
+    protected virtual void SpawnBuildingButton() {
         if (!CheckSpawnConditions()) return;
         int buildingIndex = BattleDataManager.Instance.GetBuildingSOIndex(buildingToSpawnSO);
         PlayerActionsManager.LocalInstance.SelectBuildingToSpawn(buildingIndex);
     }
 
-    private bool CheckSpawnConditions() {
+    protected virtual bool CheckSpawnConditions() {
 
         if(troopToSpawnSO != null) {
             if(PlayerGoldManager.Instance.CanSpendGold(troopToSpawnSO.spawnTroopCost, NetworkManager.Singleton.LocalClientId)) {
@@ -50,7 +50,7 @@ public class SpawnIPlaceableButton : MonoBehaviour
         return false;
     }
 
-    public void SetTroopToSpawn(TroopSO troopSO) {
+    public virtual void SetTroopToSpawn(TroopSO troopSO) {
         troopToSpawnSO = troopSO;
 
         spawnIPlaceableButton.onClick.AddListener(() => {
@@ -58,7 +58,7 @@ public class SpawnIPlaceableButton : MonoBehaviour
         });
     }
 
-    public void SetBuildingToSpawn(BuildingSO buildingSO) {
+    public virtual void SetBuildingToSpawn(BuildingSO buildingSO) {
         buildingToSpawnSO = buildingSO;
 
         spawnIPlaceableButton.onClick.AddListener(() => {

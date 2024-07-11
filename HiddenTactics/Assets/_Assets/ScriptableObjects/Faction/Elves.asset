@@ -12,8 +12,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 94ea46ef78865b74bb8e414907951874, type: 3}
   m_Name: Elves
   m_EditorClassIdentifier: 
+  factionName: 1
   factionSprite: {fileID: 21300000, guid: e2ae608f6c8f9784faf8989cad0e9353, type: 3}
   factionDefaultGridTileVisualSO: {fileID: 11400000, guid: c7f82bb1884bfc140bb8017a0e613c8e, type: 2}
+  panelBackground: {fileID: 21300000, guid: c970b175aa6106c4ea6eae9c277f0797, type: 3}
+  panelBackgroundBorder: {fileID: 21300000, guid: 1ca1d8037767d884181d8dfa14ac6186, type: 3}
+  panelBackgroundInnerShadow: {fileID: 21300000, guid: a75c9e3a2b1602c4ebc5867ec8c99a51, type: 3}
+  panelBorder: {fileID: 21300000, guid: 9503851ff5f64014f8b94fe145b40ace, type: 3}
+  panelTopItem: {fileID: 21300000, guid: fe9b5f0faddf5d644a2afcb1eca16671, type: 3}
+  panelBottomItem: {fileID: 21300000, guid: 594cc6700affb814f9228d2dff78af6b, type: 3}
+  panelLeftItem: {fileID: 21300000, guid: ad903e9be2ac9be42a1f76c6e14c5897, type: 3}
+  panelRightItem: {fileID: 21300000, guid: 958cccca038218743a94a381d4d61daa, type: 3}
+  slotBackground: {fileID: 21300000, guid: 906bdc27b3b9e0e4984ead46f9bd7716, type: 3}
+  slotBorder: {fileID: 21300000, guid: f759a3ffa6a0c4f4b8a2dac03cef2952, type: 3}
   troopsInFaction:
   - {fileID: 11400000, guid: 0bcd963c4d49e214cbcf1351292b15d6, type: 2}
   - {fileID: 11400000, guid: f8c0eb0489fc2354d93e8ae78b322f6f, type: 2}
