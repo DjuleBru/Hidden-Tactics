@@ -7,6 +7,8 @@ public class ItemTemplateUI_DeckCreation : ItemTemplateUI
 {
 
     [SerializeField] protected Color unSelectedColor;
+    [SerializeField] protected Material selectedMaterial;
+    [SerializeField] protected Material cleanMaterial;
     private Button selectButton;
 
     private bool selected;
@@ -92,9 +94,13 @@ public class ItemTemplateUI_DeckCreation : ItemTemplateUI
         this.selected = selected;
         if (selected) {
             outlineImage.color = Color.white;
+            outlineImage.material = selectedMaterial;
+            backgroundImage.material = selectedMaterial;
         }
         else {
             outlineImage.color = unSelectedColor;
+            outlineImage.material = cleanMaterial;
+            backgroundImage.material = cleanMaterial;
         }
     }
 

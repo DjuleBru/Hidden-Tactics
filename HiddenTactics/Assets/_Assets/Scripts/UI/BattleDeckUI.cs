@@ -49,6 +49,7 @@ public class BattleDeckUI : MonoBehaviour
 
     private void Awake() {
         Instance = this;
+        unlockNewItemPanel.gameObject.SetActive(false);
         unlockNewItemPanelCloseButton.onClick.AddListener(() => {
             unlockNewItemPanel.gameObject.SetActive(false);
         });
@@ -64,9 +65,9 @@ public class BattleDeckUI : MonoBehaviour
 
     private void SetPanelVisuals() {
         background.sprite = playerDeck.deckFactionSO.panelBackground;
-        borderShadow.sprite = playerDeck.deckFactionSO.panelBorder;
+        borderShadow.sprite = playerDeck.deckFactionSO.panelBackgroundBorder;
         innerShadow.sprite = playerDeck.deckFactionSO.panelBackgroundInnerShadow;
-        border.sprite = playerDeck.deckFactionSO.panelBorder;
+        border.sprite = playerDeck.deckFactionSO.panelBackgroundBorder;
         item_top.sprite = playerDeck.deckFactionSO.panelTopItem;
         item_bottom.sprite = playerDeck.deckFactionSO.panelBottomItem;
         item_right.sprite = playerDeck.deckFactionSO.panelRightItem;

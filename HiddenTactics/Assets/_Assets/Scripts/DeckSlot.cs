@@ -54,6 +54,7 @@ public class DeckSlot : MonoBehaviour
         RefreshDeckSlotTroopSO();
         RefreshDeckSlotBuildingSO();
     }
+
     #region TROOPS
     private void RefreshDeckSlotTroopSO()
     {
@@ -171,7 +172,6 @@ public class DeckSlot : MonoBehaviour
         deckSlotUI.RefreshAddRemoveButtons();
     }
 
-
     public void SetUnitAnimatorInFunctionOfSpawnPosition(DeckSlotVisual_Unit deckSlotVisualUnit, int spawnPosition) {
         if (spawnPosition < 5) {
             deckSlotVisualUnit.SetUnitAnimatorXY(-1, -1);
@@ -195,7 +195,7 @@ public class DeckSlot : MonoBehaviour
 
     public void SetUIActive(bool active)
     {
-        if(active)
+        if (active)
         {
             if (troopSO == null && buildingSO == null)
             {
@@ -210,6 +210,15 @@ public class DeckSlot : MonoBehaviour
             deckSlotUI.DisableAddTroopText();
             deckSlotUI.DisableRemoveTroopButton();
         }
+    }
+
+    public void SetAnimatorActive(bool active) {
+        deckSlotAnimatorManager.SetAnimatorActive(active);
+    }
+
+    public void SetAnimatorActiveAndTriggerDown() {
+        deckSlotAnimatorManager.SetAnimatorActive(true);
+        deckSlotAnimatorManager.SetDeckSlotAnimationUnhoveredAbsolute();
     }
 
     public void SetSelecting(bool selecting)
@@ -273,6 +282,9 @@ public class DeckSlot : MonoBehaviour
         SetSelecting(false);
     }
 
+    public DeckSlotVisual GetDeckSlotVisual() {
+        return deckSlotVisual;
+    }
 
     #region SET UNIT SPAWN POSITIONS
     private void SetSpawnPositions()

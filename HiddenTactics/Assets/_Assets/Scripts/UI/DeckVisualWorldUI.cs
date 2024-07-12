@@ -14,6 +14,7 @@ public class DeckVisualWorldUI : MonoBehaviour, IPointerEnterHandler, IPointerEx
 
     private bool hoveringSlots;
     private bool unHoveringSlots;
+    private bool editDeckButtonEnabled = true;
 
     private float hoverSlotTimer;
     private float hoverSlotRate = .025f;
@@ -22,22 +23,26 @@ public class DeckVisualWorldUI : MonoBehaviour, IPointerEnterHandler, IPointerEx
     private void Awake()
     {
         Instance = this;
-        editDeckButton.onClick.AddListener(() =>
-        {
-            hoveringSlots = false;
-            hoverSlotIndex = 0;
-            DeckVisualUI.Instance.StartEditingDeck();
-            editDeckButton.gameObject.SetActive(false);
-        });
     }
 
     private void Start()
     {
         hoverSlotIndex = deckSlotList.Count;
+        editDeckButton.onClick.AddListener(() => {
+            DeckEditUI.Instance.EnableEditDeckUI();
+            foreach(DeckSlot deckslot in deckSlotList) {
+                deckslot.SetAnimatorActive(false);
+                deckslot.GetDeckSlotVisual().DisableDeckSlotHover();
+                editDeckButtonEnabled = false;
+            }
+
+        });
     }
 
     private void Update()
     {
+        if (!editDeckButtonEnabled) return;
+
         if(hoveringSlots && hoverSlotIndex < deckSlotList.Count)
         {
             hoverSlotTimer += Time.deltaTime;
@@ -72,6 +77,7 @@ public class DeckVisualWorldUI : MonoBehaviour, IPointerEnterHandler, IPointerEx
 
     public void OnPointerExit(PointerEventData eventData)
     {
+
         hoveringSlots = false;
         hoverSlotIndex = 0;
     }
@@ -79,6 +85,12 @@ public class DeckVisualWorldUI : MonoBehaviour, IPointerEnterHandler, IPointerEx
     public void EnableEditDeckButton()
     {
         editDeckButton.gameObject.SetActive(true);
+        editDeckButtonEnabled = true;
+    }
+
+    public void DisableEditDeckButton() {
+        editDeckButton.gameObject.SetActive(false);
+        editDeckButtonEnabled = false;
     }
 
 }

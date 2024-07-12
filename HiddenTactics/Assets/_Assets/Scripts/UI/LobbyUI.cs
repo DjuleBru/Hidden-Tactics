@@ -12,7 +12,6 @@ public class LobbyUI : MonoBehaviour
     [SerializeField] private Button quickJoinButton;
     [SerializeField] private Button mainMenuButton;
     [SerializeField] private Button joinPrivateLobbyButton;
-    [SerializeField] private Button customizeButton;
     [SerializeField] private TMP_InputField joinCodeInputField;
 
     [SerializeField] private TextMeshProUGUI playerNameText;
@@ -49,9 +48,6 @@ public class LobbyUI : MonoBehaviour
         });
         joinPrivateLobbyButton.onClick.AddListener(() => {
             HiddenTacticsLobby.Instance.JoinWithCode(joinCodeInputField.text);
-        });
-        customizeButton.onClick.AddListener(() => {
-            PlayerCustomizationUI.Instance.Show();
         });
     }
 

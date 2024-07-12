@@ -27,6 +27,10 @@ public class SavingManager : MonoBehaviour
         ES3.Save(saveSlot.ToString() + PlayerSaveConstString.PLAYER_ICON_SPRITE_MULTIPLAYER, playerIconId);
     }
 
+    public void SavePlayerFactionId(int factionID) {
+        ES3.Save(saveSlot.ToString() + PlayerSaveConstString.PLAYER_FACTION_ID, factionID);
+    }
+
     public void SavePlayerGridVisualSOId(int playerGridVisualSOId) {
         ES3.Save(saveSlot.ToString() + PlayerSaveConstString.PLAYER_BATTLEFIELD_GRIDTILEVISUAL_MULTIPLAYER, playerGridVisualSOId);
     }
@@ -109,6 +113,10 @@ public class SavingManager : MonoBehaviour
 
     public int LoadPlayerIconSpriteId() {
         return ES3.Load(saveSlot.ToString() + PlayerSaveConstString.PLAYER_ICON_SPRITE_MULTIPLAYER, defaultValue: 0);
+    }
+
+    public int LoadPlayerFactionId() {
+        return ES3.Load(saveSlot.ToString() + PlayerSaveConstString.PLAYER_FACTION_ID, defaultValue: 0);
     }
 
     public int LoadPlayerGridVisualSOId() {

@@ -7,25 +7,43 @@ public class FactionSelectionButtonUI : MonoBehaviour
 {
     [SerializeField] private FactionSO factionSO;
     [SerializeField] private Image factionImage;
+    [SerializeField] private Image factionImageShadow;
+    [SerializeField] private Image factionOutlineImage;
+    [SerializeField] private Image factionBackgroundImage;
+    [SerializeField] private Image factionBackgroundShadowImage;
+
+    [SerializeField] private ChangeDeckFactionButtonUI changeDeckFactionButtonUI;
     private Button button;
 
     private void Awake() {
         button = GetComponent<Button>();
 
         button.onClick.AddListener(() => {
-            DeckVisualUI.Instance.CloseChangeDeckFactionContainer();
+            PlayerCustomizationUI.Instance.CloseChangeDeckFactionContainer();
+            DeckEditUI.Instance.CloseChangeDeckFactionContainer();
             DeckManager.LocalInstance.SetDeckSelected(factionSO);
-            ChangeDeckFactionButtonUI.Instance.SetSelected(false);
+            if(changeDeckFactionButtonUI != null) {
+                changeDeckFactionButtonUI.SetSelected(false);
+            }
         });
 
         if(factionSO != null) {
             factionImage.sprite = factionSO.factionSprite;
+            factionImageShadow.sprite = factionSO.factionSprite;
+            factionOutlineImage.sprite = factionSO.slotBorder;
+            factionBackgroundImage.sprite = factionSO.slotBackground;
+            factionBackgroundShadowImage.sprite = factionSO.slotBackground;
+            factionImage.preserveAspect = true;
         }
     }
 
     public void SetFactionSO(FactionSO factionSO) {
         this.factionSO = factionSO;
         factionImage.sprite = factionSO.factionSprite;
+        factionImageShadow.sprite = factionSO.factionSprite;
+        factionOutlineImage.sprite = factionSO.slotBorder;
+        factionBackgroundImage.sprite = factionSO.slotBackground;
+        factionBackgroundShadowImage.sprite = factionSO.slotBackground;
     }
 
 

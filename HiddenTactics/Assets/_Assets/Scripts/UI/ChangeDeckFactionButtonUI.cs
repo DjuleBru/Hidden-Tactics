@@ -6,25 +6,28 @@ using UnityEngine.UI;
 public class ChangeDeckFactionButtonUI : MonoBehaviour
 {
 
-    public static ChangeDeckFactionButtonUI Instance;
 
     [SerializeField] private FactionSO factionSO;
     [SerializeField] private Image factionImage;
+    [SerializeField] private Image factionImageShadow;
+    [SerializeField] private Image factionBackgroundImage;
+    [SerializeField] private Image factionOutlineImage;
+    [SerializeField] private Image factionOutlineShadowImage;
     private Button button;
 
     private bool selected;
 
     private void Awake() {
-        Instance = this;
-
         button = GetComponent<Button>();
         button.onClick.AddListener(() => {
             if (!selected) {
-                DeckVisualUI.Instance.OpenChangeDeckFactionContainer();
+                PlayerCustomizationUI.Instance.OpenChangeDeckFactionContainer();
+                DeckEditUI.Instance.OpenChangeDeckFactionContainer();
                 selected = true;
             }
             else {
-                DeckVisualUI.Instance.CloseChangeDeckFactionContainer();
+                PlayerCustomizationUI.Instance.CloseChangeDeckFactionContainer();
+                DeckEditUI.Instance.CloseChangeDeckFactionContainer();
                 selected = false;
             }
         });
@@ -37,6 +40,10 @@ public class ChangeDeckFactionButtonUI : MonoBehaviour
     public void SetFactionSO(FactionSO factionSO) {
         this.factionSO = factionSO;
         factionImage.sprite = factionSO.factionSprite;
-        DeckVisualUI.Instance.CloseChangeDeckFactionContainer();
+        factionImageShadow.sprite = factionSO.factionSprite;
+        factionBackgroundImage.sprite = factionSO.slotBackground;
+        factionOutlineImage.sprite = factionSO.slotBorder;
+        factionOutlineShadowImage.sprite = factionSO.slotBorder;
+        PlayerCustomizationUI.Instance.CloseChangeDeckFactionContainer();
     }
 }

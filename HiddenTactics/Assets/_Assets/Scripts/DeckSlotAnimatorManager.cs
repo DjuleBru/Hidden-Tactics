@@ -11,6 +11,7 @@ public class DeckSlotAnimatorManager : MonoBehaviour
 
     private bool deckSlotHovered;
     private bool deckSlotSelected;
+    private bool animatorActive = true;
 
     private void Awake()
     {
@@ -24,9 +25,12 @@ public class DeckSlotAnimatorManager : MonoBehaviour
         deckSlotVisualAnimator.Play("Idle", 0, randomOffset);
         deckSlotVisualAnimator.SetBool("Idle", true);
     }
+
     public void SetDeckSlotAnimationHovered()
     {
         if (deckSlotSelected) return;
+        if (!animatorActive) return;
+
         deckSlotVisualAnimator.SetBool("Idle", false);
         deckSlotVisualAnimator.SetTrigger("Hovered");
         deckSlotHovered = true;
@@ -35,14 +39,26 @@ public class DeckSlotAnimatorManager : MonoBehaviour
     public void SetDeckSlotAnimationUnhovered()
     {
         if (deckSlotSelected) return;
-
+        if (!animatorActive) return;
         if (!deckSlotHovered) return;
+
         deckSlotVisualAnimator.SetTrigger("Unhovered");
         deckSlotVisualAnimator.SetBool("Idle", true);
         deckSlotHovered = false;
     }
+
+    public void SetDeckSlotAnimationUnhoveredAbsolute() {
+        deckSlotVisualAnimator.SetTrigger("Unhovered");
+        deckSlotVisualAnimator.SetBool("Idle", true);
+        deckSlotHovered = false;
+    }
+
     public void SetSelectingTroop(bool selectingTroop)
     {
         this.deckSlotSelected = selectingTroop;
+    }
+
+    public void SetAnimatorActive(bool active) {
+        animatorActive = active;
     }
 }

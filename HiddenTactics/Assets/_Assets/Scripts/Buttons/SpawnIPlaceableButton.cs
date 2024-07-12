@@ -16,6 +16,7 @@ public class SpawnIPlaceableButton : MonoBehaviour
     }
 
     protected virtual void SpawnTroopButton() {
+        Debug.Log("click");
         if (!CheckSpawnConditions()) return;
         int troopIndex = BattleDataManager.Instance.GetTroopSOIndex(troopToSpawnSO);
         PlayerStateUI.Instance.SetPlayerGoldChangingUI(-troopToSpawnSO.spawnTroopCost);
@@ -52,6 +53,7 @@ public class SpawnIPlaceableButton : MonoBehaviour
 
     public virtual void SetTroopToSpawn(TroopSO troopSO) {
         troopToSpawnSO = troopSO;
+        //Debug.Log("setting troop to " + troopSO);
 
         spawnIPlaceableButton.onClick.AddListener(() => {
             SpawnTroopButton();

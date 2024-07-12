@@ -19,6 +19,7 @@ public class DeckSlotVisual : MonoBehaviour
 
     private DeckSlot deckSlot;
     private bool deckSlotSelected;
+    private bool deckSlotSelectionEnabled = true;
 
     private void Awake()
     {
@@ -31,7 +32,7 @@ public class DeckSlotVisual : MonoBehaviour
     private void Start()
     {
         DeckManager.LocalInstance.OnSelectedDeckChanged += DeckManager_OnSelectedDeckChanged;
-        DeckVisualUI.Instance.OnDeckEditMenuClosed += Instance_OnDeckEditMenuClosed;
+        DeckEditUI.Instance.OnDeckEditMenuClosed += Instance_OnDeckEditMenuClosed;
         RefreshDeckSlotSprite();
     }
 
@@ -54,6 +55,7 @@ public class DeckSlotVisual : MonoBehaviour
     public void SetDeckSlotHovered()
     {
         if (deckSlotSelected) return;
+        if (!deckSlotSelectionEnabled) return;
         deckSlotAnimatorManager.SetDeckSlotAnimationHovered();
         deckSlotHovered = true;
         deckSlotVisualSpriteRenderer.material = hoveredMaterial;
@@ -63,6 +65,8 @@ public class DeckSlotVisual : MonoBehaviour
     public void SetDeckSlotUnhovered()
     {
         if (deckSlotSelected) return;
+        if (!deckSlotSelectionEnabled) return;
+
         if (deckSlotHovered)
         {
             deckSlotAnimatorManager.SetDeckSlotAnimationUnhovered();
@@ -103,6 +107,14 @@ public class DeckSlotVisual : MonoBehaviour
     public SpriteRenderer GetSlotVisualSpriteRenderer()
     {
         return deckSlotVisualSpriteRenderer;
+    }
+
+    public void EnableDeckSlotHover() {
+        deckSlotSelectionEnabled = true;
+    }
+
+    public void DisableDeckSlotHover() {
+        deckSlotSelectionEnabled = false;
     }
 
 }

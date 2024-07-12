@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,10 +10,19 @@ public class DeckEditUI : MonoBehaviour
 {
     public static DeckEditUI Instance;
 
+    private Animator animator;
     private Deck deckSelected;
     private FactionSO factionSelected;
     private FactionSO previousFactionSelected;
     private DeckSlot deckSlotSelected;
+
+    public event EventHandler OnDeckEditMenuClosed;
+
+    [SerializeField] Button saveDeckButton;
+    [SerializeField] TMP_InputField deckNameInputField;
+    [SerializeField] private ChangeDeckFactionButtonUI deckFactionChangeButton;
+    [SerializeField] private Transform changeDeckFactionContainer;
+    [SerializeField] private Transform changeDeckFactionTemplate;
 
     [SerializeField] Transform heroMenuContainer;
     [SerializeField] Transform heroSelectionSlotTemplate;
@@ -28,6 +39,8 @@ public class DeckEditUI : MonoBehaviour
     [SerializeField] private Image backgroundInnerShadow;
     [SerializeField] private Image borderShadow;
     [SerializeField] private Image border;
+    [SerializeField] private Image windowBorder;
+    [SerializeField] private Image windowBorderShadow;
     [SerializeField] private Image item_Top;
     [SerializeField] private Image item_Bottom;
     [SerializeField] private Image item_Left;
@@ -35,6 +48,8 @@ public class DeckEditUI : MonoBehaviour
     [SerializeField] private Image heroesBorder;
     [SerializeField] private Image heroesBorderShadow;
 
+    [SerializeField] private Image deckSelectionBorder;
+    [SerializeField] private Image deckSelectionBorderShadow;
     [SerializeField] private Image unitsBorder;
     [SerializeField] private Image unitsBorderShadow;
     [SerializeField] private Image buildingsBorder;
@@ -44,17 +59,27 @@ public class DeckEditUI : MonoBehaviour
 
     private void Awake() {
         Instance = this;
+        animator = GetComponent<Animator>();
+        saveDeckButton.onClick.AddListener(() => {
+            CloseEditDeckMenu();
+            PlayerCustomizationUI.Instance.ShowPanel();
+            OnDeckEditMenuClosed?.Invoke(this, EventArgs.Empty);
+        });
+
+        changeDeckFactionTemplate.gameObject.SetActive(false);
+        changeDeckFactionContainer.gameObject.SetActive(false);
     }
 
     private void Start()
     {
+        deckNameInputField.onValueChanged.AddListener(delegate { deckNameInputField_OnValueChanged(); });
+
         factionSelected = SavingManager.Instance.LoadFactionSO();
         previousFactionSelected = SavingManager.Instance.LoadFactionSO();
 
         DeckManager.LocalInstance.OnDeckModified += DeckManager_OnDeckModified;
         DeckSlot.OnAnyDeckSlotSelected += DeckSlot_OnAnyDeckSlotSelected;
         DeckSlot.OnAnyDeckSlotUnSelected += DeckSlot_OnAnyDeckSlotUnSelected;
-        gameObject.SetActive(false);
     }
 
     private void DeckManager_OnDeckModified(object sender, DeckManager.OnDeckChangedEventArgs e) {
@@ -64,6 +89,12 @@ public class DeckEditUI : MonoBehaviour
 
     private void RefreshAllSelectionMenus() {
         factionSelected = deckSelected.deckFactionSO;
+
+        // Deck faction button
+        deckFactionChangeButton.SetFactionSO(deckSelected.deckFactionSO);
+        
+        // Deck Name
+        deckNameInputField.text = DeckManager.LocalInstance.GetDeckSelected().deckName;
 
         heroSelectionSlotTemplate.gameObject.SetActive(true);
         unitSelectionSlotTemplate.gameObject.SetActive(true);
@@ -91,17 +122,21 @@ public class DeckEditUI : MonoBehaviour
         backgroundInnerShadow.sprite = deckSelected.deckFactionSO.panelBackgroundInnerShadow;
         borderShadow.sprite = deckSelected.deckFactionSO.panelBorder;
         border.sprite = deckSelected.deckFactionSO.panelBorder;
+        windowBorder.sprite = deckSelected.deckFactionSO.panelBackgroundBorder;
+        windowBorderShadow.sprite = deckSelected.deckFactionSO.panelBackgroundBorder;
 
         item_Top.sprite = deckSelected.deckFactionSO.panelTopItem;
         item_Bottom.sprite = deckSelected.deckFactionSO.panelBottomItem;
         item_Left.sprite = deckSelected.deckFactionSO.panelLeftItem;
         item_Right.sprite = deckSelected.deckFactionSO.panelRightItem;
 
+        deckSelectionBorder.sprite = deckSelected.deckFactionSO.panelBackgroundBorder;
         heroesBorder.sprite = deckSelected.deckFactionSO.panelBackgroundBorder;
         unitsBorder.sprite = deckSelected.deckFactionSO.panelBackgroundBorder;
         buildingsBorder.sprite = deckSelected.deckFactionSO.panelBackgroundBorder;
         spellsBorder.sprite = deckSelected.deckFactionSO.panelBackgroundBorder;
 
+        deckSelectionBorderShadow.sprite = deckSelected.deckFactionSO.panelBackgroundBorder;
         heroesBorderShadow.sprite = deckSelected.deckFactionSO.panelBackgroundBorder;
         unitsBorderShadow.sprite = deckSelected.deckFactionSO.panelBackgroundBorder;
         buildingsBorderShadow.sprite = deckSelected.deckFactionSO.panelBackgroundBorder;
@@ -116,61 +151,61 @@ public class DeckEditUI : MonoBehaviour
         RectTransform item_TopRT = item_Top.GetComponent(typeof(RectTransform)) as RectTransform;
 
         float shadowOffset = 20;
-        if (deckSelected.deckFactionSO.factionName == FactionSO.FactionName.Greenskins) {
-            /*Right - Top*/
-            borderRT.offsetMax = new Vector2(77, 165);
-            borderShadowRT.offsetMax = borderRT.offsetMax - new Vector2(shadowOffset, shadowOffset);
-            /*Left - Bottom*/
-            borderRT.offsetMin = new Vector2(-40, -121);
-            borderShadowRT.offsetMin = borderRT.offsetMin - new Vector2(shadowOffset, shadowOffset);
+        //if (deckSelected.deckFactionSO.factionName == FactionSO.FactionName.Greenskins) {
+        //    /*Right - Top*/
+        //    borderRT.offsetMax = new Vector2(77, 165);
+        //    borderShadowRT.offsetMax = borderRT.offsetMax - new Vector2(shadowOffset, shadowOffset);
+        //    /*Left - Bottom*/
+        //    borderRT.offsetMin = new Vector2(-40, -121);
+        //    borderShadowRT.offsetMin = borderRT.offsetMin - new Vector2(shadowOffset, shadowOffset);
 
-            item_BottomRT.anchoredPosition = new Vector2(0, -36);
-            item_LeftRT.anchoredPosition = new Vector2(0, 0);
-            item_RightRT.anchoredPosition = new Vector2(0, 0);
-            item_TopRT.anchoredPosition = new Vector2(0, 0);
-        }
+        //    item_BottomRT.anchoredPosition = new Vector2(0, -36);
+        //    item_LeftRT.anchoredPosition = new Vector2(0, 0);
+        //    item_RightRT.anchoredPosition = new Vector2(0, 0);
+        //    item_TopRT.anchoredPosition = new Vector2(0, 0);
+        //}
 
-        if (deckSelected.deckFactionSO.factionName == FactionSO.FactionName.Dwarves) {
-            /*Right - Top*/
-            borderRT.offsetMax = new Vector2(43, 77);
-            borderShadowRT.offsetMax = borderRT.offsetMax - new Vector2(shadowOffset, shadowOffset);
-            /*Left - Bottom*/
-            borderRT.offsetMin = new Vector2(-40, -121);
-            borderShadowRT.offsetMin = borderRT.offsetMin - new Vector2(shadowOffset, shadowOffset);
+        //if (deckSelected.deckFactionSO.factionName == FactionSO.FactionName.Dwarves) {
+        //    /*Right - Top*/
+        //    borderRT.offsetMax = new Vector2(43, 77);
+        //    borderShadowRT.offsetMax = borderRT.offsetMax - new Vector2(shadowOffset, shadowOffset);
+        //    /*Left - Bottom*/
+        //    borderRT.offsetMin = new Vector2(-40, -121);
+        //    borderShadowRT.offsetMin = borderRT.offsetMin - new Vector2(shadowOffset, shadowOffset);
 
-            item_BottomRT.anchoredPosition = new Vector2(0, -36);
-            item_LeftRT.anchoredPosition = new Vector2(0, 0);
-            item_RightRT.anchoredPosition = new Vector2(0, 0);
-            item_TopRT.anchoredPosition = new Vector2(0, 0);
-        }
+        //    item_BottomRT.anchoredPosition = new Vector2(0, -36);
+        //    item_LeftRT.anchoredPosition = new Vector2(0, 0);
+        //    item_RightRT.anchoredPosition = new Vector2(0, 0);
+        //    item_TopRT.anchoredPosition = new Vector2(0, 0);
+        //}
 
-        if (deckSelected.deckFactionSO.factionName == FactionSO.FactionName.Humans) {
-            /*Right - Top*/
-            borderRT.offsetMax = new Vector2(94, 87);
-            borderShadowRT.offsetMax = borderRT.offsetMax - new Vector2(shadowOffset, shadowOffset);
-            /*Left - Bottom*/
-            borderRT.offsetMin = new Vector2(-96, -84);
-            borderShadowRT.offsetMin = borderRT.offsetMin - new Vector2(shadowOffset, shadowOffset);
+        //if (deckSelected.deckFactionSO.factionName == FactionSO.FactionName.Humans) {
+        //    /*Right - Top*/
+        //    borderRT.offsetMax = new Vector2(94, 87);
+        //    borderShadowRT.offsetMax = borderRT.offsetMax - new Vector2(shadowOffset, shadowOffset);
+        //    /*Left - Bottom*/
+        //    borderRT.offsetMin = new Vector2(-96, -84);
+        //    borderShadowRT.offsetMin = borderRT.offsetMin - new Vector2(shadowOffset, shadowOffset);
 
-            item_BottomRT.anchoredPosition = new Vector2(0, -36);
-            item_LeftRT.anchoredPosition = new Vector2(0, 0);
-            item_RightRT.anchoredPosition = new Vector2(0, 0);
-            item_TopRT.anchoredPosition = new Vector2(0, 20);
-        }
+        //    item_BottomRT.anchoredPosition = new Vector2(0, -36);
+        //    item_LeftRT.anchoredPosition = new Vector2(0, 0);
+        //    item_RightRT.anchoredPosition = new Vector2(0, 0);
+        //    item_TopRT.anchoredPosition = new Vector2(0, 20);
+        //}
 
-        if (deckSelected.deckFactionSO.factionName == FactionSO.FactionName.Elves) {
-            /*Right - Top*/
-            borderRT.offsetMax = new Vector2(102, 160);
-            borderShadowRT.offsetMax = borderRT.offsetMax - new Vector2(shadowOffset, shadowOffset);
-            /*Left - Bottom*/
-            borderRT.offsetMin = new Vector2(-110, -104);
-            borderShadowRT.offsetMin = borderRT.offsetMin - new Vector2(shadowOffset, shadowOffset);
+        //if (deckSelected.deckFactionSO.factionName == FactionSO.FactionName.Elves) {
+        //    /*Right - Top*/
+        //    borderRT.offsetMax = new Vector2(102, 160);
+        //    borderShadowRT.offsetMax = borderRT.offsetMax - new Vector2(shadowOffset, shadowOffset);
+        //    /*Left - Bottom*/
+        //    borderRT.offsetMin = new Vector2(-110, -104);
+        //    borderShadowRT.offsetMin = borderRT.offsetMin - new Vector2(shadowOffset, shadowOffset);
 
-            item_BottomRT.anchoredPosition = new Vector2(0, 5);
-            item_LeftRT.anchoredPosition = new Vector2(0, 0);
-            item_RightRT.anchoredPosition = new Vector2(0, 0);
-            item_TopRT.anchoredPosition = new Vector2(0, 0);
-        }
+        //    item_BottomRT.anchoredPosition = new Vector2(0, 5);
+        //    item_LeftRT.anchoredPosition = new Vector2(0, 0);
+        //    item_RightRT.anchoredPosition = new Vector2(0, 0);
+        //    item_TopRT.anchoredPosition = new Vector2(0, 0);
+        //}
 
     }
 
@@ -236,11 +271,6 @@ public class DeckEditUI : MonoBehaviour
         }
     }
 
-    public void CloseEditDeckMenu() {
-        MainMenuCameraManager.Instance.SetBaseCamera();
-        gameObject.SetActive(false);
-        DeckSlotMouseHoverManager.Instance.SetEditingDeck(false);
-    }
 
     public void SetFactionSelected(FactionSO factionSO) {
         factionSelected = factionSO;
@@ -268,22 +298,76 @@ public class DeckEditUI : MonoBehaviour
         return deckSlotSelected;
     }
 
-    public void EnableEditDeckUI() {
+    public void CloseEditDeckMenu() {
+        MainMenuCameraManager.Instance.SetBaseCamera(.5f);
+        DeckSlotMouseHoverManager.Instance.SetEditingDeck(false);
+        animator.SetTrigger("Close");
+        DeckVisualWorldUI.Instance.EnableEditDeckButton();
 
-        deckSelected = DeckManager.LocalInstance.GetDeckSelected();
-        RefreshAllSelectionMenus();
-        RefreshPanelVisuals();
-        foreach (DeckSlot deckSlot in deckSlotList)
-        {
-            deckSlot.SetUIActive(true);
+        foreach (DeckSlot deckSlot in deckSlotList) {
+            deckSlot.SetUIActive(false);
         }
     }
 
-    public void OnDisable()
-    {
-        foreach (DeckSlot deckSlot in deckSlotList)
-        {
-            deckSlot.SetUIActive(false);
+    public void EnableEditDeckUI() {
+
+        MainMenuCameraManager.Instance.SetEditDeckCamera();
+        StartCoroutine(TriggerOpenPanelAfterDelay(1f));
+        StartCoroutine(ActivateDeckEditingUIAfterDelay(2f));
+        DeckSlotMouseHoverManager.Instance.SetEditingDeck(true);
+
+        PlayerCustomizationUI.Instance.HidePanel();
+        deckSelected = DeckManager.LocalInstance.GetDeckSelected();
+        RefreshAllSelectionMenus();
+        RefreshPanelVisuals();
+    }
+
+    public void OpenChangeDeckFactionContainer() {
+        changeDeckFactionContainer.gameObject.SetActive(true);
+        changeDeckFactionTemplate.gameObject.SetActive(true);
+
+        foreach (Transform child in changeDeckFactionContainer) {
+            if (child == changeDeckFactionTemplate) continue;
+            Destroy(child.gameObject);
+        }
+
+        foreach (FactionSO factionSO in DeckManager.LocalInstance.GetFactionSOList()) {
+            if (factionSO == DeckManager.LocalInstance.GetDeckSelected().deckFactionSO) continue;
+
+            Transform changeDeckFactionTemplateInstantiated = Instantiate(changeDeckFactionTemplate, changeDeckFactionContainer);
+            FactionSelectionButtonUI factionSelectionButton = changeDeckFactionTemplateInstantiated.GetComponent<FactionSelectionButtonUI>();
+
+            factionSelectionButton.SetFactionSO(factionSO);
+        }
+
+        changeDeckFactionTemplate.gameObject.SetActive(false);
+    }
+
+    public void CloseChangeDeckFactionContainer() {
+        changeDeckFactionContainer.gameObject.SetActive(false);
+        changeDeckFactionTemplate.gameObject.SetActive(false);
+    }
+
+    private void deckNameInputField_OnValueChanged() {
+        DeckManager.LocalInstance.SetDeckName(deckNameInputField.text);
+    }
+
+    public IEnumerator TriggerOpenPanelAfterDelay(float delay) {
+        yield return new WaitForSeconds(delay);
+        animator.SetTrigger("Open");
+    }
+    public IEnumerator ActivateDeckEditingUIAfterDelay(float delay) {
+        yield return new WaitForSeconds(delay);
+        ActivateDeckEditingUI();
+    }
+
+    private void ActivateDeckEditingUI() {
+
+        foreach (DeckSlot deckSlot in deckSlotList) {
+            deckSlot.SetUIActive(true);
+            deckSlot.SetAnimatorActiveAndTriggerDown();
+            deckSlot.GetDeckSlotVisual().EnableDeckSlotHover();
+            deckSlot.GetDeckSlotVisual().SetDeckSlotUnhoveredWithoutConditions();
         }
     }
 }

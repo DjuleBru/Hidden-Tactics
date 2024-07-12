@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class ItemTemplateUI_BattleDeck : ItemTemplateUI {
 
     [SerializeField] protected Button unlockTroopButton;
-
+    [SerializeField] protected Button recruitTroopButton;
 
     [SerializeField] private bool isBuilding;
     [SerializeField] private bool isSpell;
@@ -18,20 +18,26 @@ public class ItemTemplateUI_BattleDeck : ItemTemplateUI {
             BattleDeckUI.Instance.OpenUnlockNewItemPanel(isBuilding, isTroop, isSpell);
         });
 
-        if (isMercenary) {
+        // Deactivate unlock button if there are troops set
+        if (troopSO != null || buildingSO != null) {
             unlockTroopButton.gameObject.SetActive(false);
-        } 
+        } else {
+            recruitTroopButton.gameObject.SetActive(false);
+        }
     }
 
     public override void SetTroopSO(TroopSO troopSO) {
         this.troopSO = troopSO;
+
         if(troopSO == null) {
             illustrationImage.gameObject.SetActive(false);
             unlockTroopButton.gameObject.SetActive(true);
+            recruitTroopButton.gameObject.SetActive(false);
 
         } else {
             illustrationImage.gameObject.SetActive(true);
             unlockTroopButton.gameObject.SetActive(false);
+            recruitTroopButton.gameObject.SetActive(true);
 
             if (troopSO.troopIllustrationSlotSprite != null && troopSO.troopIsImplemented) {
                 illustrationImage.sprite = troopSO.troopIllustrationSlotSprite;

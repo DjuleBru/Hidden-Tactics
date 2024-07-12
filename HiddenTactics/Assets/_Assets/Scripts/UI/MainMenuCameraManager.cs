@@ -14,6 +14,8 @@ public class MainMenuCameraManager : MonoBehaviour
     [SerializeField] private CinemachineVirtualCamera editBattlefieldCamera;
     [SerializeField] private CinemachineVirtualCamera editDeckCamera;
 
+    [SerializeField] private CinemachineBrain brain;
+
     private void Awake() {
         Instance = this;
 
@@ -53,6 +55,21 @@ public class MainMenuCameraManager : MonoBehaviour
         editBattlefieldGridTilesCamera.enabled = false;
         editBattlefieldVillagesCamera.enabled = false;
         editBattlefieldBaseCamera.enabled = true;
+        editDeckCamera.enabled = false;
+        editBattlefieldCamera.enabled = false;
+    }
+
+    public void SetBaseCamera(float delay) {
+        StartCoroutine(SetBaseCameraAfterDelayCoroutine(delay));
+    }
+
+    public IEnumerator SetBaseCameraAfterDelayCoroutine(float delay) {
+        yield return new WaitForSeconds(delay);
+
+        mainMenuCamera.enabled = true;
+        editBattlefieldGridTilesCamera.enabled = false;
+        editBattlefieldVillagesCamera.enabled = false;
+        editBattlefieldBaseCamera.enabled = false;
         editDeckCamera.enabled = false;
         editBattlefieldCamera.enabled = false;
     }

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class EditBattlefieldUI : MonoBehaviour
 {
@@ -24,6 +25,11 @@ public class EditBattlefieldUI : MonoBehaviour
     [SerializeField] private GameObject editBaseButton;
     [SerializeField] private GameObject editVillagesButton;
     [SerializeField] private GameObject editBattlefieldGeneralButton;
+
+    [SerializeField] private Image background;
+    [SerializeField] private Image border;
+    [SerializeField] private Image borderShadow;
+    [SerializeField] private Image innerShadow;
 
     private bool editingVillages;
     private bool editingGridTiles;
@@ -52,7 +58,7 @@ public class EditBattlefieldUI : MonoBehaviour
         if(editingGridTiles) {
             RefreshBattlefieldVisualGridContainer(e.selectedDeck.deckFactionSO);
         }
-
+        RefreshPanelVisuals(e.selectedDeck);
     }
 
     public void StartEditBattlefieldGridTiles() {
@@ -153,9 +159,16 @@ public class EditBattlefieldUI : MonoBehaviour
         battlefieldVillageSpriteTemplate.gameObject.SetActive(false);
     }
 
+    private void RefreshPanelVisuals(Deck deck) {
+        background.sprite = deck.deckFactionSO.panelBackground;
+        border.sprite = deck.deckFactionSO.panelBackgroundBorder;
+        borderShadow.sprite = deck.deckFactionSO.panelBackgroundBorder;
+        innerShadow.sprite = deck.deckFactionSO.panelBackgroundInnerShadow;
+    }
+
     public void StartEditBattlefield() {
         battlefieldCustomizationUI.SetActive(true);
-        DeckVisualUI.Instance.gameObject.SetActive(false);
+        PlayerCustomizationUI.Instance.gameObject.SetActive(false);
 
         editGridTilesButton.SetActive(true);
         editBaseButton.SetActive(true);
@@ -163,13 +176,15 @@ public class EditBattlefieldUI : MonoBehaviour
         editBattlefieldGeneralButton.SetActive(false);
 
         MainMenuCameraManager.Instance.SetEditBattlefieldCamera();
+
+        RefreshPanelVisuals(DeckManager.LocalInstance.GetDeckSelected());
     }
 
     public void StopEditBattlefield() {
         editingVillages = false;
         editingGridTiles = false;
         battlefieldCustomizationUI.SetActive(false);
-        DeckVisualUI.Instance.gameObject.SetActive(true);
+        PlayerCustomizationUI.Instance.gameObject.SetActive(true);
         MainMenuCameraManager.Instance.SetBaseCamera();
 
         editGridTilesButton.SetActive(false);

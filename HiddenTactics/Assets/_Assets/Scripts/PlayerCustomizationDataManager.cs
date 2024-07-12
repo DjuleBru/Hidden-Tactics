@@ -14,6 +14,7 @@ public class PlayerCustomizationDataManager : MonoBehaviour
     [SerializeField] private List<Sprite> battlefieldBaseSpriteList;
 
     [SerializeField] private List<Sprite> villageSpriteList;
+    [SerializeField] private List<FactionSO> factionSOList;
 
 
     private void Awake() {
@@ -32,6 +33,10 @@ public class PlayerCustomizationDataManager : MonoBehaviour
         return gridTileVisualSOList[gridTileId];
     }
 
+    public FactionSO GetFactionSOFromId(int factionSOID) {
+        return factionSOList[factionSOID];
+    }
+
     public int GetGridTileVisualSOID(GridTileVisualSO gridTileVisualSO) {
         return gridTileVisualSOList.IndexOf(gridTileVisualSO);
     }
@@ -42,6 +47,10 @@ public class PlayerCustomizationDataManager : MonoBehaviour
 
     public int GetVillageSpriteID(Sprite villageSprite) {
         return villageSpriteList.IndexOf(villageSprite);
+    }
+
+    public int GetFactionSOID(FactionSO factionSO) {
+        return factionSOList.IndexOf(factionSO);
     }
 
     public Sprite GetBattlefieldBaseSpriteFromId(int battlefieldBaseSpriteId) {

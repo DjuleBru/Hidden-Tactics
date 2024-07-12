@@ -16,6 +16,7 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
 
     private string playerName;
     private int playerIconSpriteId;
+    private int playerFactionId;
     private int playerGridVisualSOId;
     private List<int> villageSpriteIdList;
     private int playerBattlefieldBaseSpriteId;
@@ -110,6 +111,7 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
         playerData.truePlayerNumber = playerDataNetworkList.Count;
 
         SetPlayerNameServerRpc(GetPlayerName());
+        SetPlayerFactionServerRpc(GetPlayerFactionSOId());
         SetPlayerIconSpriteServerRpc(GetPlayerIconSpriteId());
         SetPlayerBattlefieldBaseSpriteServerRpc(GetPlayerBattlefieldBaseSpriteId());
         SetPlayerGridVisualSOServerRpc(GetPlayerGridVisualSOId());
@@ -150,6 +152,7 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
         Debug.Log("CLIENT client connected " + clientId);
 
         SetPlayerIdServerRpc(AuthenticationService.Instance.PlayerId);
+        SetPlayerFactionServerRpc(GetPlayerFactionSOId());
         SetPlayerNameServerRpc(GetPlayerName());
         SetPlayerIconSpriteServerRpc(GetPlayerIconSpriteId());
         SetPlayerBattlefieldBaseSpriteServerRpc(GetPlayerBattlefieldBaseSpriteId());
@@ -165,6 +168,7 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
     private void LoadPlayerCustomizationData() {
         playerName = SavingManager.Instance.LoadPlayerName();
         playerIconSpriteId = SavingManager.Instance.LoadPlayerIconSpriteId();
+        playerFactionId = SavingManager.Instance.LoadPlayerFactionId();
         playerGridVisualSOId = SavingManager.Instance.LoadPlayerGridVisualSOId();
         playerBattlefieldBaseSpriteId = SavingManager.Instance.LoadPlayerBattlefieldBaseSpriteId();
         villageSpriteIdList = SavingManager.Instance.LoadPlayerVillageSpriteIdList();
@@ -340,6 +344,7 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
     public PlayerCustomizationData GetPlayerCustomizationDataFromPlayerIndex(int playerIndex) {
         return playerCustomizationDataNetworkList[playerIndex];
     }
+
     #endregion
 
     #region GOLD&VILLAGES
@@ -486,6 +491,10 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
         return playerIconSpriteId;
     }
 
+    public int GetPlayerFactionSOId() {
+        return playerFactionId;
+    }
+
     public int GetPlayerGridVisualSOId() {
         return playerGridVisualSOId;
     }
@@ -506,6 +515,12 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
     public void SetPlayerIconSprite(int iconSpriteId) {
         playerIconSpriteId = iconSpriteId;
         SavingManager.Instance.SavePlayerIconSpriteId(iconSpriteId);
+    }
+
+    public void SetPlayerFactionSO(int factionID) {
+        Debug.Log("setting faction so to " + factionID);
+        playerFactionId = factionID;
+        SavingManager.Instance.SavePlayerFactionId(factionID);
     }
 
     public void SetPlayerGridVisualSO(int gridVisualSOId) {
@@ -530,6 +545,17 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
         PlayerCustomizationData playerCustomizationData = playerCustomizationDataNetworkList[playerCustomizationDataIndex];
 
         playerCustomizationData.playerName = playerName;
+
+        playerCustomizationDataNetworkList[playerCustomizationDataIndex] = playerCustomizationData;
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void SetPlayerFactionServerRpc(int factionId, ServerRpcParams serverRpcParams = default) {
+        int playerCustomizationDataIndex = GetPlayerCustomizationDataIndexFromClientId(serverRpcParams.Receive.SenderClientId);
+
+        PlayerCustomizationData playerCustomizationData = playerCustomizationDataNetworkList[playerCustomizationDataIndex];
+
+        playerCustomizationData.factionID = factionId;
 
         playerCustomizationDataNetworkList[playerCustomizationDataIndex] = playerCustomizationData;
     }

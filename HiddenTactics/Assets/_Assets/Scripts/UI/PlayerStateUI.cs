@@ -45,7 +45,9 @@ public class PlayerStateUI : MonoBehaviour {
     [SerializeField] private Image heroIconBorderImage;
 
     [SerializeField] private Image goldbackgroundBorderImage;
+    [SerializeField] private Image goldbackgroundImage;
     [SerializeField] private Image villagesbackgroundBorderImage;
+    [SerializeField] private Image villagesbackgroundImage;
 
     private void Awake() {
         playerReadyGameObject.gameObject.SetActive(false);
@@ -77,28 +79,31 @@ public class PlayerStateUI : MonoBehaviour {
 
     private void SetPanelVisuals() {
         Deck playerDeck = DeckManager.LocalInstance.GetDeckSelected();
+        FactionSO deckFactionSO = playerDeck.deckFactionSO;
 
         if (isOpponentPanel) {
-            //Get opponent deck
-            playerDeck = DeckManager.LocalInstance.GetDeckSelected();
+            PlayerCustomizationData opponentCustomizationData = HiddenTacticsMultiplayer.Instance.GetLocalOpponentCustomizationData();
+            deckFactionSO = PlayerCustomizationDataManager.Instance.GetFactionSOFromId(opponentCustomizationData.factionID);
+            Debug.Log("opponent faction " + deckFactionSO);
         }
 
-        backgroundImage.sprite = playerDeck.deckFactionSO.panelBackground;
-        backgroundBorderImage.sprite = playerDeck.deckFactionSO.panelBackgroundBorder;
-        backgroundBorderShadowImage.sprite = playerDeck.deckFactionSO.panelBackgroundBorder;
+        backgroundImage.sprite = deckFactionSO.panelBackground;
+        backgroundBorderImage.sprite = deckFactionSO.panelBackgroundBorder;
+        backgroundBorderShadowImage.sprite = deckFactionSO.panelBackgroundBorder;
 
+        playerIconBackgroundImage.sprite = deckFactionSO.slotBackground;
+        playerIconBackgroundShadowImage.sprite = deckFactionSO.slotBorder;
+        playerIconBorderImage.sprite = deckFactionSO.slotBorder;
+        heroIconBackgroundImage.sprite = deckFactionSO.slotBackground;
+        heroIconBackgroundShadowImage.sprite = deckFactionSO.slotBorder;
+        heroIconBorderImage.sprite = deckFactionSO.slotBorder;
 
-        playerIconBackgroundImage.sprite = playerDeck.deckFactionSO.slotBackground;
-        playerIconBackgroundShadowImage.sprite = playerDeck.deckFactionSO.slotBorder;
-        playerIconBorderImage.sprite = playerDeck.deckFactionSO.slotBorder;
-        heroIconBackgroundImage.sprite = playerDeck.deckFactionSO.slotBackground;
-        heroIconBackgroundShadowImage.sprite = playerDeck.deckFactionSO.slotBorder;
-        heroIconBorderImage.sprite = playerDeck.deckFactionSO.panelBackgroundBorder;
-
-        villagesbackgroundBorderImage.sprite = playerDeck.deckFactionSO.panelBackgroundBorder;
+        villagesbackgroundBorderImage.sprite = deckFactionSO.slotBorder;
+        villagesbackgroundImage.sprite = deckFactionSO.slotBackground;
 
         if (!isOpponentPanel) {
-            goldbackgroundBorderImage.sprite = playerDeck.deckFactionSO.panelBackgroundBorder;
+            goldbackgroundBorderImage.sprite = deckFactionSO.slotBorder;
+            goldbackgroundImage.sprite = deckFactionSO.slotBackground;
         }
     }
 

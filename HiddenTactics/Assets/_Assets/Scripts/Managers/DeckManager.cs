@@ -35,6 +35,12 @@ public class DeckManager : MonoBehaviour
         OnDeckModified?.Invoke(this, new OnDeckChangedEventArgs {
             selectedDeck = deckSelected,
         });
+
+        OnDeckModified += DeckManager_OnDeckModified;
+    }
+
+    private void DeckManager_OnDeckModified(object sender, OnDeckChangedEventArgs e) {
+        HiddenTacticsMultiplayer.Instance.SetPlayerFactionSO(PlayerCustomizationDataManager.Instance.GetFactionSOID(deckSelected.deckFactionSO));
     }
 
     public void SetDeckSelected(int deckNumber) {
