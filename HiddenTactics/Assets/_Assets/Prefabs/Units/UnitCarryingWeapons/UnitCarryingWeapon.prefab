@@ -79,6 +79,10 @@ PrefabInstance:
       propertyPath: unit
       value: 
       objectReference: {fileID: 1437879440930286512}
+    - target: {fileID: 80930970339324738, guid: ecaf4c1c39222ff458941abdb8115703, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 410141775492371974, guid: ecaf4c1c39222ff458941abdb8115703, type: 3}
       propertyPath: m_RootOrder
       value: 0
@@ -272,9 +276,13 @@ PrefabInstance:
       value: 0.02054998
       objectReference: {fileID: 0}
     - target: {fileID: 7206156626738903265, guid: ecaf4c1c39222ff458941abdb8115703, type: 3}
+      propertyPath: m_Color.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7206156626738903265, guid: ecaf4c1c39222ff458941abdb8115703, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 21bf8b6f555823e40be5c25739d4f42e, type: 2}
+      objectReference: {fileID: 2100000, guid: 5472c483cff72494e8e1f9233fc2308a, type: 2}
     - target: {fileID: 8016987216396510007, guid: ecaf4c1c39222ff458941abdb8115703, type: 3}
       propertyPath: m_RootOrder
       value: 5

@@ -431,6 +431,9 @@ public class UnitAttack : NetworkBehaviour
     public Vector3 GetProjectileSpawnPointPosition() {
         return projectileSpawnPoint.position;
     }
+    public AttackSO GetActiveAttackSO() {
+        return activeAttackSO;
+    }
 
     public float GetAttackDamage() {
         return attackDamage;

@@ -377,4 +377,8 @@ public class Unit : NetworkBehaviour, ITargetable {
         BattleManager.Instance.OnStateChanged -= BattleManager_OnStateChanged;
     }
 
+    public bool GetIsServer() {
+        return IsServer;
+    }
+
 }

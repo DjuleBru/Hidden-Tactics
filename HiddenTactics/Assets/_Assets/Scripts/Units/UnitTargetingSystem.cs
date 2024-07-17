@@ -13,6 +13,11 @@ public class UnitTargetingSystem : NetworkBehaviour
     private List<ITargetable> mainAttackITargerableList = new List<ITargetable>();
     private List<ITargetable> sideAttackITargetableList = new List<ITargetable>();
 
+    public enum AttackMode {
+        mainAttack,
+        sideAttack,
+    }
+
     private AttackSO mainAttackSO;
     private AttackSO sideAttackSO;
 

@@ -60,6 +60,7 @@ public class UnitAI : NetworkBehaviour
 
 
     protected virtual void Update() {
+        return;
         if (!IsServer) return;
         // AI runs only on server
 
@@ -266,7 +267,7 @@ public class UnitAI : NetworkBehaviour
         unitAttack.SetDazed(false);
     }
 
-    protected void ChangeState(State newState) {
+    public void ChangeState(State newState) {
         state.Value = newState;
     }
 
@@ -289,6 +290,9 @@ public class UnitAI : NetworkBehaviour
     }
     public virtual bool IsWalking() {
         return state.Value == State.moveForwards;
+    }
+    public bool GetAttackStarted() {
+        return attackStarted;
     }
 
     public bool IsIdle() {
@@ -315,6 +319,17 @@ public class UnitAI : NetworkBehaviour
 
     public bool IsFallen() {
         return state.Value == State.fallen;
+    }
+
+    public bool UnitIsActive() {
+        return unitActive;
+    }
+
+    public bool IsState(State askedState) {
+        return state.Value == askedState;
+    }
+    public bool IsNotState(State askedState) {
+        return state.Value != askedState;
     }
     #endregion
 

@@ -8,6 +8,7 @@ public class UnitAI_Melee : UnitAI
 
     protected override void MoveForwardsStateUpdate() {
         unitMovement.MoveForwards();
+
         if (unitTargetingSystem.GetMainAttackTarget() != null) {
             //Unit has a valid target
             ChangeState(State.moveToMeleeTarget);
