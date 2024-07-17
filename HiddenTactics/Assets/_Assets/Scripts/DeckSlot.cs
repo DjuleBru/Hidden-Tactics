@@ -90,10 +90,6 @@ public class DeckSlot : MonoBehaviour
         SpawnUnitVisuals();
         deckSlotUI.DisableAddTroopText();
 
-        if (DeckSlotMouseHoverManager.Instance.GetEditingDeck())
-        {
-            deckSlotUI.EnableRemoveTroopButton();
-        }
     }
 
     private void SpawnUnitVisuals()
@@ -140,11 +136,6 @@ public class DeckSlot : MonoBehaviour
 
         SpawnBuildingVisuals();
         deckSlotUI.DisableAddTroopText();
-
-        if (DeckSlotMouseHoverManager.Instance.GetEditingDeck())
-        {
-            deckSlotUI.EnableRemoveTroopButton();
-        }
     }
 
     private void SpawnBuildingVisuals()
@@ -201,14 +192,9 @@ public class DeckSlot : MonoBehaviour
             {
                 deckSlotUI.EnableAddTroopText();
             }
-            else
-            {
-                deckSlotUI.EnableRemoveTroopButton();
-            }
         } else
         {
             deckSlotUI.DisableAddTroopText();
-            deckSlotUI.DisableRemoveTroopButton();
         }
     }
 

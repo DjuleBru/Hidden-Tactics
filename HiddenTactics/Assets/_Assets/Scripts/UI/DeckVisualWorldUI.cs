@@ -30,7 +30,12 @@ public class DeckVisualWorldUI : MonoBehaviour, IPointerEnterHandler, IPointerEx
         hoverSlotIndex = deckSlotList.Count;
         editDeckButton.onClick.AddListener(() => {
             DeckEditUI.Instance.EnableEditDeckUI();
+
             foreach(DeckSlot deckslot in deckSlotList) {
+                if(deckslot.GetDeckSlotVisual().GetDeckSlotHovered()) {
+                    deckslot.GetDeckSlotVisual().SetDeckSlotUnhoveredWithoutConditions();
+                }
+
                 deckslot.SetAnimatorActive(false);
                 deckslot.GetDeckSlotVisual().DisableDeckSlotHover();
                 editDeckButtonEnabled = false;
@@ -41,8 +46,6 @@ public class DeckVisualWorldUI : MonoBehaviour, IPointerEnterHandler, IPointerEx
 
     private void Update()
     {
-        if (!editDeckButtonEnabled) return;
-
         if(hoveringSlots && hoverSlotIndex < deckSlotList.Count)
         {
             hoverSlotTimer += Time.deltaTime;
@@ -54,6 +57,9 @@ public class DeckVisualWorldUI : MonoBehaviour, IPointerEnterHandler, IPointerEx
                 hoverSlotTimer = 0;
             }
         }
+
+        if (!editDeckButtonEnabled) return;
+
 
         if (!hoveringSlots && hoverSlotIndex < deckSlotList.Count)
         {

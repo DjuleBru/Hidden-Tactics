@@ -32,7 +32,7 @@ public class DeckSlotVisual : MonoBehaviour
     private void Start()
     {
         DeckManager.LocalInstance.OnSelectedDeckChanged += DeckManager_OnSelectedDeckChanged;
-        DeckEditUI.Instance.OnDeckEditMenuClosed += Instance_OnDeckEditMenuClosed;
+        DeckEditUI.Instance.OnDeckEditMenuClosed += DeckEditUI_OnDeckEditMenuClosed;
         RefreshDeckSlotSprite();
     }
 
@@ -97,10 +97,9 @@ public class DeckSlotVisual : MonoBehaviour
         }
     }
 
-    private void Instance_OnDeckEditMenuClosed(object sender, EventArgs e)
+    private void DeckEditUI_OnDeckEditMenuClosed(object sender, EventArgs e)
     {
         deckSlot.SetSelecting(false);
-
         deckSlotVisualSpriteRenderer.material = cleanMaterial;
     }
 

@@ -18,6 +18,7 @@ public class FactionSO : ScriptableObject
     public GridTileVisualSO factionDefaultGridTileVisualSO;
     public Sprite panelBackground;
     public Sprite panelBackgroundBorder;
+    public Sprite panelBackgroundBorderSimple;
     public Sprite panelBackgroundInnerShadow;
     public Sprite panelBorder;
     public Sprite panelTopItem;

@@ -1,14 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.UI;
 
 public class DeckSlotUI : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI addTroopText;
-    [SerializeField] private Button removeSlotContentButton;
 
     [SerializeField] private Color addTroopButtonColorWhenUnhovered;
 
@@ -21,14 +16,6 @@ public class DeckSlotUI : MonoBehaviour
 
         addTroopText.gameObject.SetActive(false);
         addTroopText.faceColor = addTroopButtonColorWhenUnhovered;
-        removeSlotContentButton.gameObject.SetActive(false);
-
-        removeSlotContentButton.onClick.AddListener(() =>
-        {
-            deckSlot.RemoveSlotContent();
-            EnableAddTroopText();
-            DisableRemoveTroopButton();
-        });
 
     }
 
@@ -76,10 +63,8 @@ public class DeckSlotUI : MonoBehaviour
         if(deckSlot.GetSlotTroopSO() == null && deckSlot.GetSlotBuildingSO() == null)
         {
             EnableAddTroopText();
-            DisableRemoveTroopButton();
         } else
         {
-            EnableRemoveTroopButton();
             DisableAddTroopText();
         }
     }
@@ -89,19 +74,9 @@ public class DeckSlotUI : MonoBehaviour
         addTroopText.gameObject.SetActive(true);
     }
 
-    public void EnableRemoveTroopButton()
-    {
-        removeSlotContentButton.gameObject.SetActive(true);
-    }
-
     public void DisableAddTroopText()
     {
         addTroopText.gameObject.SetActive(false);
-    }
-
-    public void DisableRemoveTroopButton()
-    {
-        removeSlotContentButton.gameObject.SetActive(false);
     }
 
 }

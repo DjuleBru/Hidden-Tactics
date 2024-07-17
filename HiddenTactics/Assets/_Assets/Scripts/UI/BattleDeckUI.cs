@@ -65,18 +65,18 @@ public class BattleDeckUI : MonoBehaviour
 
     private void SetPanelVisuals() {
         background.sprite = playerDeck.deckFactionSO.panelBackground;
-        borderShadow.sprite = playerDeck.deckFactionSO.panelBackgroundBorder;
+        borderShadow.sprite = playerDeck.deckFactionSO.panelBackgroundBorderSimple;
         innerShadow.sprite = playerDeck.deckFactionSO.panelBackgroundInnerShadow;
-        border.sprite = playerDeck.deckFactionSO.panelBackgroundBorder;
+        border.sprite = playerDeck.deckFactionSO.panelBackgroundBorderSimple;
         item_top.sprite = playerDeck.deckFactionSO.panelTopItem;
         item_bottom.sprite = playerDeck.deckFactionSO.panelBottomItem;
         item_right.sprite = playerDeck.deckFactionSO.panelRightItem;
         item_left.sprite = playerDeck.deckFactionSO.panelLeftItem;
 
         unlockBackground.sprite = playerDeck.deckFactionSO.panelBackground;
-        unlockBorderShadow.sprite = playerDeck.deckFactionSO.panelBackgroundBorder;
+        unlockBorderShadow.sprite = playerDeck.deckFactionSO.panelBackgroundBorderSimple;
         unlockInnerShadow.sprite = playerDeck.deckFactionSO.panelBackgroundInnerShadow;
-        unlockBorder.sprite = playerDeck.deckFactionSO.panelBackgroundBorder;
+        unlockBorder.sprite = playerDeck.deckFactionSO.panelBackgroundBorderSimple;
     }
 
     private void SetButtonVisuals() {

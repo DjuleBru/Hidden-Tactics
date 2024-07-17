@@ -37,6 +37,9 @@ public class PlayerStateUI : MonoBehaviour {
     [SerializeField] private Image backgroundBorderImage;
     [SerializeField] private Image backgroundBorderShadowImage;
 
+    [SerializeField] private Image revenueDetailBackgroundImage;
+    [SerializeField] private Image revenueDetailBorderImage;
+
     [SerializeField] private Image playerIconBackgroundImage;
     [SerializeField] private Image playerIconBackgroundShadowImage;
     [SerializeField] private Image playerIconBorderImage;
@@ -88,8 +91,8 @@ public class PlayerStateUI : MonoBehaviour {
         }
 
         backgroundImage.sprite = deckFactionSO.panelBackground;
-        backgroundBorderImage.sprite = deckFactionSO.panelBackgroundBorder;
-        backgroundBorderShadowImage.sprite = deckFactionSO.panelBackgroundBorder;
+        backgroundBorderImage.sprite = deckFactionSO.panelBackgroundBorderSimple;
+        backgroundBorderShadowImage.sprite = deckFactionSO.panelBackgroundBorderSimple;
 
         playerIconBackgroundImage.sprite = deckFactionSO.slotBackground;
         playerIconBackgroundShadowImage.sprite = deckFactionSO.slotBorder;
@@ -104,6 +107,8 @@ public class PlayerStateUI : MonoBehaviour {
         if (!isOpponentPanel) {
             goldbackgroundBorderImage.sprite = deckFactionSO.slotBorder;
             goldbackgroundImage.sprite = deckFactionSO.slotBackground;
+            revenueDetailBackgroundImage.sprite = deckFactionSO.panelBackground;
+            revenueDetailBorderImage.sprite = deckFactionSO.panelBackgroundBorderSimple;
         }
     }
 
