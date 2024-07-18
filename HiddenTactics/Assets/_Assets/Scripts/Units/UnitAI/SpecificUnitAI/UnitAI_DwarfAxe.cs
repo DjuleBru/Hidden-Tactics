@@ -4,15 +4,14 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
-public class UnitAI_DwarfAxe : UnitAI_Melee
+public class UnitAI_DwarfAxe : UnitAI
 {
     private bool wearingShield;
     private bool shieldingDamage;
     private int projectilesShielded;
     private int maxProjectilesShielded = 2;
 
-    protected override void Update() {
-        base.Update();
+    protected void Update() {
         if(shieldingDamage) {
             unitMovement.StopMoving();
         }
@@ -27,7 +26,7 @@ public class UnitAI_DwarfAxe : UnitAI_Melee
         if (state.Value == State.idle) {
 
         }
-        if (state.Value == State.attacking) {
+        if (state.Value == State.attackingMelee) {
             wearingShield = false;
         }
 
@@ -57,7 +56,6 @@ public class UnitAI_DwarfAxe : UnitAI_Melee
         if(!shieldingDamage) {
             StartCoroutine(TakeShieldDamageCoroutine());
         }
-
     }
 
     public IEnumerator TakeShieldDamageCoroutine() {

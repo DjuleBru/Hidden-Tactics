@@ -12,6 +12,7 @@ public class AttackStarted : Conditional
     }
     public override TaskStatus OnUpdate() {
         bool attackStarted = unitAI.GetAttackStarted();
+
         if(attackStarted) {
             return TaskStatus.Success;
         } else {

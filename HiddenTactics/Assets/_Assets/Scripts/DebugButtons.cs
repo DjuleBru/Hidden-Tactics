@@ -26,6 +26,21 @@ public class DebugButtons : MonoBehaviour
     }
 
     [Button]
+    private void SlowMo() {
+        Time.timeScale = .25f;
+    }
+
+    [Button]
+    private void Play() {
+        Time.timeScale = 1f;
+    }
+
+    [Button]
+    private void FastMo() {
+        Time.timeScale = 2f;
+    }
+
+    [Button]
     private void ShowPlayerCustomizationDataDebugInfo() {
         PlayerCustomizationData playerData = HiddenTacticsMultiplayer.Instance.GetLocalPlayerCustomizationData();
 

@@ -9,7 +9,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 579011395201113408, guid: e6d0e8717f6dc0049bda6c0f472ac28b, type: 3}
       propertyPath: m_LocalScale.y
-      value: 4
+      value: 3.92
       objectReference: {fileID: 0}
     - target: {fileID: 579011395201113408, guid: e6d0e8717f6dc0049bda6c0f472ac28b, type: 3}
       propertyPath: m_LocalPosition.x
@@ -17,7 +17,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 579011395201113408, guid: e6d0e8717f6dc0049bda6c0f472ac28b, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.059999943
+      value: 0.058799945
       objectReference: {fileID: 0}
     - target: {fileID: 625947453899721624, guid: e6d0e8717f6dc0049bda6c0f472ac28b, type: 3}
       propertyPath: m_Sprite
@@ -105,19 +105,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7249842218541377443, guid: e6d0e8717f6dc0049bda6c0f472ac28b, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.7819229
+      value: 0.79623723
       objectReference: {fileID: 0}
     - target: {fileID: 7249842218541377443, guid: e6d0e8717f6dc0049bda6c0f472ac28b, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.5978252
+      value: 0.59783185
       objectReference: {fileID: 0}
     - target: {fileID: 7249842218541377443, guid: e6d0e8717f6dc0049bda6c0f472ac28b, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.10728668
+      value: -0.05569181
       objectReference: {fileID: 0}
     - target: {fileID: 7249842218541377443, guid: e6d0e8717f6dc0049bda6c0f472ac28b, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.14032513
+      value: 0.07417452
+      objectReference: {fileID: 0}
+    - target: {fileID: 7486054614370019999, guid: e6d0e8717f6dc0049bda6c0f472ac28b, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7574386858778582788, guid: e6d0e8717f6dc0049bda6c0f472ac28b, type: 3}
       propertyPath: upgradedBodyMaterial
@@ -130,7 +134,7 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 5614006768863344306, guid: e6d0e8717f6dc0049bda6c0f472ac28b, type: 3}
   m_PrefabInstance: {fileID: 3001400264058651355}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &4222719526552345488
+--- !u!114 &4616244344601791591
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -139,6 +143,46 @@ MonoBehaviour:
   m_GameObject: {fileID: 7228251882027103337}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1f04232ea015d6b4a9c9dc32c827ed89, type: 3}
+  m_Script: {fileID: 11500000, guid: 2bf9678b97d092a4b8df0ff7fa2efd93, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &7133206403845830869
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7228251882027103337}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d7b55c7ecdb49a4a89fa5e6f9022861, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  startWhenEnabled: 1
+  asynchronousLoad: 0
+  pauseWhenDisabled: 0
+  restartWhenComplete: 0
+  logTaskChanges: 0
+  group: 0
+  resetValuesOnRestart: 0
+  externalBehavior: {fileID: 11400000, guid: ad025c0f2ed217d4faf8ab5976048e2a, type: 2}
+  mBehaviorSource:
+    behaviorName: Behavior
+    behaviorDescription: 
+    mTaskData:
+      types: []
+      parentIndex: 
+      startIndex: 
+      variableStartIndex: 
+      JSONSerialization: 
+      fieldSerializationData:
+        typeName: []
+        fieldNameHash: 
+        startIndex: 
+        dataPosition: 
+        unityObjects: []
+        byteData: 
+        byteDataArray: 
+      Version: 
+  gizmoViewMode: 2
+  showBehaviorDesignerGizmo: 1

@@ -141,7 +141,7 @@ PrefabInstance:
       objectReference: {fileID: 11400000, guid: 21495dba9b78bdf4c9e267892990732b, type: 2}
     - target: {fileID: 7249842218541377443, guid: e6d0e8717f6dc0049bda6c0f472ac28b, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.15624666
+      value: 0.15625
       objectReference: {fileID: 0}
     - target: {fileID: 7249842218541377443, guid: e6d0e8717f6dc0049bda6c0f472ac28b, type: 3}
       propertyPath: m_LocalPosition.y
@@ -182,18 +182,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 5614006768863344306, guid: e6d0e8717f6dc0049bda6c0f472ac28b, type: 3}
   m_PrefabInstance: {fileID: 3001400264058651355}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1781005382573903345
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7228251882027103337}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1f04232ea015d6b4a9c9dc32c827ed89, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &4731302382681514246
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -222,16 +210,27 @@ MonoBehaviour:
       parentIndex: 
       startIndex: 
       variableStartIndex: 
-      JSONSerialization: '{"Variables":[{"Type":"BehaviorDesigner.Runtime.SharedObject","Name":"meleeAttackSO","IsShared":true,"ObjectmValue":0}]}'
+      JSONSerialization: '{}'
       fieldSerializationData:
         typeName: []
         fieldNameHash: 
         startIndex: 
         dataPosition: 
-        unityObjects:
-        - {fileID: 11400000, guid: 7b735deec11654243a3d702854c9ff3a, type: 2}
+        unityObjects: []
         byteData: 
         byteDataArray: 
       Version: 1.7.8
   gizmoViewMode: 2
   showBehaviorDesignerGizmo: 1
+--- !u!114 &4783079499330893789
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7228251882027103337}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2bf9678b97d092a4b8df0ff7fa2efd93, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

@@ -15,7 +15,6 @@ public class SetState : Action
         bool isState = unitAI.IsState(state);
 
         if (!isState) {
-            Debug.Log(this + " chaged state to " + state.ToString());
             unitAI.ChangeState(state);
         }
 

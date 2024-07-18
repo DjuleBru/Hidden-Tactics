@@ -69,7 +69,7 @@ public class UnitAttack : NetworkBehaviour
 
     protected void Update() {
 
-        if (attackTarget == null) return;
+        if (attackTarget as MonoBehaviour == null) return;
 
         unitMovement.SetWatchDir((attackTarget as MonoBehaviour).transform);
 

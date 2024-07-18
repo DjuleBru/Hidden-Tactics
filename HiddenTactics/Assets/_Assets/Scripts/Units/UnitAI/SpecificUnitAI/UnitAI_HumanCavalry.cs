@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
-public class UnitAI_HumanCavalry : UnitAI_Melee
+public class UnitAI_HumanCavalry : UnitAI
 {
     private float gallopTimer;
 

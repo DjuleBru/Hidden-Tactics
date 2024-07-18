@@ -6,7 +6,6 @@ using UnityEngine;
 public class IsActiveConditional : Conditional {
 
     private UnitAI unitAI;
-    public UnitAI.State state;
 
     public override void OnAwake() {
         unitAI = GetComponent<UnitAI>();

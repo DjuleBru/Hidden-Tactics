@@ -1,0 +1,67 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b23f08d2ae4cba14087c1ed36193d82b, type: 3}
+  m_Name: BasicRangedAI
+  m_EditorClassIdentifier: 
+  mBehaviorSource:
+    behaviorName: Basic Ranged AI
+    behaviorDescription: 
+    mTaskData:
+      types: []
+      parentIndex: 
+      startIndex: 
+      variableStartIndex: 
+      JSONSerialization: '{"EntryTask":{"Type":"BehaviorDesigner.Runtime.Tasks.EntryTask","NodeData":{"Offset":"(327.0646,151.971664)"},"ID":0,"Name":"Entry","Instant":true},"RootTask":{"Type":"BehaviorDesigner.Runtime.Tasks.Repeater","NodeData":{"Offset":"(-2.93539429,108.827087)"},"ID":1,"Name":"Repeater","Instant":true,"SharedIntcount":{"Type":"BehaviorDesigner.Runtime.SharedInt","Name":null,"Int32mValue":0},"SharedBoolrepeatForever":{"Type":"BehaviorDesigner.Runtime.SharedBool","Name":null,"BooleanmValue":true},"SharedBoolendOnFailure":{"Type":"BehaviorDesigner.Runtime.SharedBool","Name":null,"BooleanmValue":false},"Children":[{"Type":"BehaviorDesigner.Runtime.Tasks.Sequence","NodeData":{"Offset":"(-2.19512939,126.4208)"},"ID":2,"Name":"","Instant":true,"AbortTypeabortType":"None","Children":[{"Type":"BehaviorDesigner.Runtime.Tasks.Sequence","NodeData":{"Offset":"(-920.4652,177.1478)"},"ID":3,"Name":"Common
+        checks","Instant":true,"AbortTypeabortType":"None","Children":[{"Type":"IsServerConditional","NodeData":{"Offset":"(-236.628754,140.232437)"},"ID":4,"Name":"Is
+        Server","Instant":true},{"Type":"BehaviorDesigner.Runtime.Tasks.Inverter","NodeData":{"Offset":"(-119.332558,139.758911)"},"ID":5,"Name":"Inverter","Instant":true,"Children":[{"Type":"IsStateConditional","NodeData":{"Offset":"(4.23164368,108.068611)"},"ID":6,"Name":"Is
+        Dead","Instant":true,"Statestate":"dead"}]},{"Type":"IsActiveConditional","NodeData":{"Offset":"(15.6757717,139.553909)"},"ID":7,"Name":"Is
+        Active Conditional","Instant":true}]},{"Type":"BehaviorDesigner.Runtime.Tasks.Inverter","NodeData":{"Offset":"(-710.497253,191.051788)"},"ID":8,"Name":"NotBlockedByBuilding","Instant":true,"Children":[{"Type":"BehaviorDesigner.Runtime.Tasks.Sequence","NodeData":{"Offset":"(1.62790489,119.902077)"},"ID":9,"Name":"BlockedByBuilding","Instant":true,"AbortTypeabortType":"None","Children":[{"Type":"IsBlockedByBuilding","NodeData":{"Offset":"(-121.647324,118.476669)"},"ID":10,"Name":"Is
+        Blocked By Building","Instant":true},{"Type":"BehaviorDesigner.Runtime.Tasks.Inverter","NodeData":{"Offset":"(34.8567467,126.413391)"},"ID":11,"Name":"Inverter","Instant":true,"Children":[{"Type":"BehaviorDesigner.Runtime.Tasks.Sequence","NodeData":{"Offset":"(1.73912811,100)"},"ID":12,"Name":"Check
+        Ranged & Switch","Instant":true,"AbortTypeabortType":"None","Children":[{"Type":"HasTarget","NodeData":{"Offset":"(-130,110)"},"ID":13,"Name":"Has
+        Ranged Target","Instant":true,"AttackModeattackMode":"mainAttack"},{"Type":"StopMoving","NodeData":{"Offset":"(0,110)"},"ID":14,"Name":"Stop
+        Moving","Instant":true},{"Type":"SetState","NodeData":{"Offset":"(130,110)"},"ID":15,"Name":"SetRangedAttacking","Instant":true,"Statestate":"attackingRanged"},{"Type":"SetAttackMode","NodeData":{"Offset":"(280,110)"},"ID":16,"Name":"Set
+        Ranged Mode","Instant":true,"AttackModeattackMode":"mainAttack"}]}]},{"Type":"SetState","NodeData":{"Offset":"(233.332916,129.5484)"},"ID":17,"Name":"Set
+        BlockedByBuilding","Instant":true,"Statestate":"blockedByBuilding"}]}]},{"Type":"BehaviorDesigner.Runtime.Tasks.Selector","NodeData":{"Offset":"(-4.35907,174.9458)"},"ID":18,"Name":"Main
+        AI","Instant":true,"AbortTypeabortType":"None","Children":[{"Type":"IsStateConditional","NodeData":{"Offset":"(-255.258865,177.8016)"},"ID":19,"Name":"IsIdle","Instant":true,"Statestate":"idle"},{"Type":"BehaviorDesigner.Runtime.Tasks.Inverter","NodeData":{"Offset":"(-39.4323044,183.760529)"},"ID":20,"Name":"Inverter","Instant":true,"Children":[{"Type":"BehaviorDesigner.Runtime.Tasks.Sequence","NodeData":{"Offset":"(0,241.578964)"},"ID":21,"Name":"MoveForwards","Instant":true,"AbortTypeabortType":"None","Children":[{"Type":"MoveForwards","NodeData":{"Offset":"(-121.730568,231.897278)"},"ID":22,"Name":"Move
+        Forwards","Instant":true},{"Type":"BehaviorDesigner.Runtime.Tasks.Selector","NodeData":{"Offset":"(51.782196,236.532532)"},"ID":23,"Name":"Selector","Instant":true,"AbortTypeabortType":"None","Children":[{"Type":"BehaviorDesigner.Runtime.Tasks.Sequence","NodeData":{"Offset":"(-79.14745,120.000008)"},"ID":24,"Name":"Sequence","Instant":true,"AbortTypeabortType":"None","Children":[{"Type":"HasTarget","NodeData":{"Offset":"(-208.0302,120)"},"ID":25,"Name":"Has
+        Melee Target","Instant":true,"AttackModeattackMode":"sideAttack"},{"Type":"SetState","NodeData":{"Offset":"(-83.15442,120)"},"ID":26,"Name":"SetMovingToMelee","Instant":true,"Statestate":"moveToMeleeTarget"},{"Type":"SetAttackMode","NodeData":{"Offset":"(54.3589821,120)"},"ID":27,"Name":"Set
+        Melee Mode","Instant":true,"AttackModeattackMode":"sideAttack"}]},{"Type":"BehaviorDesigner.Runtime.Tasks.Sequence","NodeData":{"Offset":"(256.934082,133.306213)"},"ID":28,"Name":"Sequence","Instant":true,"AbortTypeabortType":"None","Children":[{"Type":"HasTarget","NodeData":{"Offset":"(-132.6817,112.5)"},"ID":29,"Name":"Has
+        Ranged Target","Instant":true,"AttackModeattackMode":"mainAttack"},{"Type":"StopMoving","NodeData":{"Offset":"(-4.762512,105.833496)"},"ID":30,"Name":"Stop
+        Moving","Instant":true},{"Type":"SetState","NodeData":{"Offset":"(125.604965,105.833321)"},"ID":31,"Name":"SetRangedAttacking","Instant":true,"Statestate":"attackingRanged"},{"Type":"SetAttackMode","NodeData":{"Offset":"(278.823181,105.294067)"},"ID":32,"Name":"Set
+        Ranged Mode","Instant":true,"AttackModeattackMode":"mainAttack"}]},{"Type":"SetState","NodeData":{"Offset":"(606.0026,133.306229)"},"ID":33,"Name":"Set
+        Move Forwards","Instant":true,"Statestate":"moveForwards"}]}]}]},{"Type":"IsStateConditional","NodeData":{"Offset":"(75.37532,177.40239)"},"ID":34,"Name":"IsMovingForwards","Instant":true,"Statestate":"moveForwards"},{"Type":"BehaviorDesigner.Runtime.Tasks.Sequence","NodeData":{"Offset":"(780.9157,235.713867)"},"ID":35,"Name":"AttackingRanged","Instant":true,"AbortTypeabortType":"None","Children":[{"Type":"IsAttackMode","NodeData":{"Offset":"(-169.820236,124.262573)"},"ID":36,"Name":"Is
+        Ranged Mode","Instant":true,"AttackModeattackMode":"mainAttack"},{"Type":"HasTarget","NodeData":{"Offset":"(-54.794117,118.63636)"},"ID":37,"Name":"Has
+        Target","Instant":true,"AttackModeattackMode":"mainAttack"},{"Type":"BehaviorDesigner.Runtime.Tasks.Selector","NodeData":{"Offset":"(78.4964752,118.63636)"},"ID":38,"Name":"Set
+        attack Target","Instant":true,"AbortTypeabortType":"None","Children":[{"Type":"HasAttackTarget","NodeData":{"Offset":"(-91.71301,110)"},"ID":39,"Name":"Has
+        Attack Target","Instant":true},{"Type":"SetAttackTarget","NodeData":{"Offset":"(76.98827,110)"},"ID":40,"Name":"Set
+        Attack Target","Instant":true,"AttackModeattackMode":"mainAttack"}]}]},{"Type":"IsStateConditional","NodeData":{"Offset":"(916.2603,228.396149)"},"ID":41,"Name":"IsAttackingRanged","Instant":true,"Statestate":"attackingRanged"},{"Type":"BehaviorDesigner.Runtime.Tasks.Inverter","NodeData":{"Offset":"(1368.01758,237.522949)"},"ID":42,"Name":"Inverter","Instant":true,"Children":[{"Type":"BehaviorDesigner.Runtime.Tasks.Sequence","NodeData":{"Offset":"(0,283.907928)"},"ID":43,"Name":"MoveToTarget","Instant":true,"AbortTypeabortType":"None","Children":[{"Type":"BehaviorDesigner.Runtime.Tasks.Selector","NodeData":{"Offset":"(-168.614655,127.094177)"},"ID":44,"Name":"Has
+        target","Instant":true,"AbortTypeabortType":"None","Children":[{"Type":"HasTarget","NodeData":{"Offset":"(-74.44519,154.648148)"},"ID":45,"Name":"Has
+        Target","Instant":true,"AttackModeattackMode":"sideAttack"},{"Type":"SetState","NodeData":{"Offset":"(59.081192,152.094116)"},"ID":46,"Name":"SetMoveForwards","Instant":true,"Statestate":"moveForwards"}]},{"Type":"BehaviorDesigner.Runtime.Tasks.Sequence","NodeData":{"Offset":"(212.064575,141.97168)"},"ID":47,"Name":"Attack
+        Target in Range ?","Instant":true,"AbortTypeabortType":"None","Children":[{"Type":"MoveToTarget","NodeData":{"Offset":"(-113.338547,140)"},"ID":48,"Name":"Move
+        To Target","Instant":true,"AttackModeattackMode":"sideAttack"},{"Type":"MeleeTargetIsInRange","NodeData":{"Offset":"(56.6386642,140)"},"ID":49,"Name":"Melee
+        Target Is In Range","Instant":true,"AttackModeattackMode":"sideAttack"},{"Type":"StopMoving","NodeData":{"Offset":"(211.344543,140)"},"ID":50,"Name":"Stop
+        Moving","Instant":true},{"Type":"SetAttackSO","NodeData":{"Offset":"(316.63858,140)"},"ID":51,"Name":"Set
+        Attack SO","Instant":true,"AttackModeattackMode":"sideAttack"},{"Type":"SetState","NodeData":{"Offset":"(453.705444,140)"},"ID":52,"Name":"SetAttacking","Instant":true,"Statestate":"attackingMelee"}]}]}]},{"Type":"IsStateConditional","NodeData":{"Offset":"(1507.21973,230.403076)"},"ID":53,"Name":"IsMovingToMeleeTarget","Instant":true,"Statestate":"moveToMeleeTarget"},{"Type":"BehaviorDesigner.Runtime.Tasks.Inverter","NodeData":{"Offset":"(1814.43555,236.369019)"},"ID":54,"Name":"Inverter","Instant":true,"Children":[{"Type":"BehaviorDesigner.Runtime.Tasks.Sequence","NodeData":{"Offset":"(-5.624996,110)"},"ID":55,"Name":"AttackingMelee","Instant":true,"AbortTypeabortType":"None","Children":[{"Type":"IsAttackMode","NodeData":{"Offset":"(-145.908142,136.363525)"},"ID":56,"Name":"Is
+        Melee Mode","Instant":true,"AttackModeattackMode":"sideAttack"},{"Type":"HasTarget","NodeData":{"Offset":"(-34.5454521,130)"},"ID":57,"Name":"Has
+        Target","Instant":true,"AttackModeattackMode":"sideAttack"},{"Type":"BehaviorDesigner.Runtime.Tasks.Selector","NodeData":{"Offset":"(105.454559,130)"},"ID":58,"Name":"Set
+        attack Target","Instant":true,"AbortTypeabortType":"None","Children":[{"Type":"HasAttackTarget","NodeData":{"Offset":"(-80,110)"},"ID":59,"Name":"Has
+        Attack Target","Instant":true},{"Type":"SetAttackTarget","NodeData":{"Offset":"(149.767426,110)"},"ID":60,"Name":"Set
+        Attack Target","Instant":true,"AttackModeattackMode":"sideAttack"}]}]}]},{"Type":"IsStateConditional","NodeData":{"Offset":"(1965.62061,244.600037)"},"ID":61,"Name":"IsAttackingmelee","Instant":true,"Statestate":"attackingMelee"}]}]}]}}'
+      fieldSerializationData:
+        typeName: []
+        fieldNameHash: 
+        startIndex: 
+        dataPosition: 
+        unityObjects: []
+        byteData: 
+        byteDataArray: 
+      Version: 1.7.8

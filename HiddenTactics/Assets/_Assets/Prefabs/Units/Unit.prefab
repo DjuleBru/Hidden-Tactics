@@ -599,6 +599,7 @@ GameObject:
   - component: {fileID: 2925960546089814935}
   - component: {fileID: 4926622457937813654}
   - component: {fileID: 39220643896460453}
+  - component: {fileID: 2364588985034844252}
   m_Layer: 6
   m_Name: UnitUI
   m_TagString: Untagged
@@ -711,6 +712,27 @@ MonoBehaviour:
   healTargetSprite: {fileID: -1600217160, guid: ab49c36e9d22c2647a0701b78dcb0d9d, type: 3}
   armorTargetSprite: {fileID: -368315034, guid: ab49c36e9d22c2647a0701b78dcb0d9d, type: 3}
   coinSprite: {fileID: -1463619571, guid: 7e66a88849e83c548b81ed8c15ecd48a, type: 3}
+--- !u!95 &2364588985034844252
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5885283849525194750}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 1a4d9153ba219cf438f8526576daa0c8, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &6220047560856617129
 GameObject:
   m_ObjectHideFlags: 0
@@ -811,6 +833,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   unitShaderAnimatorList:
   - {fileID: 7852375926518810119}
+  - {fileID: 2364588985034844252}
 --- !u!1 &8253137376983543320
 GameObject:
   m_ObjectHideFlags: 0

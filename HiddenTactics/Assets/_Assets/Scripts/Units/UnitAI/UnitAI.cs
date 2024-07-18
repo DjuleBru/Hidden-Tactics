@@ -19,13 +19,15 @@ public class UnitAI : NetworkBehaviour
 
     protected bool unitActive;
     protected bool attackStarted;
+    protected bool attackEnded;
 
     public enum State {
         idle,
         blockedByBuilding,
         moveForwards,
         moveToMeleeTarget,
-        attacking,
+        attackingMelee,
+        attackingRanged,
         dead,
         fallen,
     }
@@ -56,40 +58,6 @@ public class UnitAI : NetworkBehaviour
         unitAttack.OnUnitAttackStarted += UnitAttack_OnUnitAttackStarted;
 
         BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
-    }
-
-
-    protected virtual void Update() {
-        return;
-        if (!IsServer) return;
-        // AI runs only on server
-
-        if (!unitActive | state.Value == State.dead) return;
-
-        if(state.Value != State.idle) {
-            CheckConditionsBeforeSwitch();
-        }
-
-        switch (state.Value) {
-            case State.idle:
-                IdleStateUpdate();
-                break;
-            case State.blockedByBuilding:
-                BlockedByBuildingStateUpdate();
-                break;
-            case State.moveForwards:
-                MoveForwardsStateUpdate();
-                break;
-            case State.moveToMeleeTarget:
-                MoveToMeleeTargetStateUpdate();
-                break;
-            case State.attacking:
-                AttackingStateUpdate();
-                break;
-            case State.dead:
-                DeadStateUpdate();
-                break;
-        }
     }
 
     protected virtual void CheckConditionsBeforeSwitch() {
@@ -166,7 +134,7 @@ public class UnitAI : NetworkBehaviour
             } else {
                 unitAttack.SetAttackTarget(unitTargetingSystem.GetSideAttackTarget());
             }
-            ChangeState(State.attacking);
+            ChangeState(State.attackingMelee);
         }
     }
 
@@ -192,7 +160,7 @@ public class UnitAI : NetworkBehaviour
             unitMovement.StopMoving();
         }
 
-        if (state.Value == State.attacking) {
+        if (state.Value == State.attackingMelee) {
             unitMovement.StopMoving();
         }
 
@@ -246,10 +214,15 @@ public class UnitAI : NetworkBehaviour
     }
 
     protected virtual void UnitAttack_OnUnitAttackStarted(object sender, EventArgs e) {
+        attackStarted = true;
+        attackEnded = false;
     }
 
     protected virtual void UnitAttack_OnUnitAttackEnded(object sender, EventArgs e) {
+        attackStarted = false;
+        attackEnded = true;
     }
+
     #endregion
     protected IEnumerator TakeDazed(float dazedTime) {
         unitActive = false;
@@ -294,6 +267,9 @@ public class UnitAI : NetworkBehaviour
     public bool GetAttackStarted() {
         return attackStarted;
     }
+    public bool GetAttackEnded() {
+        return attackEnded;
+    }
 
     public bool IsIdle() {
         return state.Value == State.idle;
@@ -308,7 +284,7 @@ public class UnitAI : NetworkBehaviour
     }
 
     public bool IsAttacking() {
-        return state.Value == State.attacking;
+        return state.Value == State.attackingMelee || state.Value == State.attackingRanged;
     }
     public bool IsMovingForwards() {
         return state.Value == State.moveForwards;
@@ -331,17 +307,29 @@ public class UnitAI : NetworkBehaviour
     public bool IsNotState(State askedState) {
         return state.Value != askedState;
     }
+
+    public bool GetMainAttackActive() {
+        if (unitAttack.GetActiveAttackSO() == mainAttackSO) return true;
+        return false;
+    }
+
+    public bool GetSideAttackActive() {
+        if (unitAttack.GetActiveAttackSO() == sideAttackSO) return true;
+        return false;
+    }
     #endregion
 
     #region CHANGING ATTACK SO
 
-    protected void ActivateMainAttack() {
+    public void ActivateMainAttack() {
+        if (unitAttack.GetActiveAttackSO() == mainAttackSO) return;
         InvokeOnMainAttackActivatedServerRpc();
         unitAttack.SetAttackTarget(unitTargetingSystem.GetMainAttackTarget());
         unitAttack.SetActiveAttackSO(mainAttackSO);
     }
 
-    protected void ActivateSideAttack() {
+    public void ActivateSideAttack() {
+        if (unitAttack.GetActiveAttackSO() == sideAttackSO) return;
         InvokeOnSideAttackActivatedServerRpc();
         unitAttack.SetAttackTarget(unitTargetingSystem.GetSideAttackTarget());
         unitAttack.SetActiveAttackSO(sideAttackSO);
