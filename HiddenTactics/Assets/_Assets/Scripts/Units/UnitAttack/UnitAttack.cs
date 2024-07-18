@@ -379,6 +379,7 @@ public class UnitAttack : NetworkBehaviour
 
 
     public void SetAttackTarget(ITargetable attackTarget) {
+        Debug.Log("set attack target to " + attackTarget);
         if(attackTarget != null) {
             NetworkObject targetNetworkObject = (attackTarget as MonoBehaviour).GetComponent<NetworkObject>();
             SetAttackTargetServerRpc(targetNetworkObject);

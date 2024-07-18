@@ -36,19 +36,18 @@ MonoBehaviour:
         To Target","Instant":true},{"Type":"MeleeTargetIsInRange","NodeData":{"Offset":"(-40,140)"},"ID":27,"Name":"Melee
         Target Is In Range","Instant":true,"AttackModeattackMode":"mainAttack"},{"Type":"StopMoving","NodeData":{"Offset":"(100,140)"},"ID":28,"Name":"Stop
         Moving","Instant":true},{"Type":"SetAttackSO","NodeData":{"Offset":"(220,140)"},"ID":29,"Name":"Set
-        Attack SO","Instant":true,"AttackSOattackSO":0},{"Type":"SetState","NodeData":{"Offset":"(330,140)"},"ID":30,"Name":"SetAttacking","Instant":true,"Statestate":"attacking"}]}]},{"Type":"BehaviorDesigner.Runtime.Tasks.Sequence","NodeData":{"Offset":"(1654.12292,157.668991)"},"ID":31,"Name":"Attacking","Instant":true,"AbortTypeabortType":"None","Children":[{"Type":"IsStateConditional","NodeData":{"Offset":"(-135.555542,140)"},"ID":32,"Name":"IsAttacking","Instant":true,"Statestate":"attacking"},{"Type":"BehaviorDesigner.Runtime.Tasks.Selector","NodeData":{"Offset":"(40.3078461,135.304962)"},"ID":33,"Name":"Set
+        Attack SO","Instant":true,"AttackModeattackMode":"mainAttack"},{"Type":"SetState","NodeData":{"Offset":"(330,140)"},"ID":30,"Name":"SetAttacking","Instant":true,"Statestate":"attacking"}]}]},{"Type":"BehaviorDesigner.Runtime.Tasks.Sequence","NodeData":{"Offset":"(1654.12292,157.668991)"},"ID":31,"Name":"Attacking","Instant":true,"AbortTypeabortType":"None","Children":[{"Type":"IsStateConditional","NodeData":{"Offset":"(-135.555542,140)"},"ID":32,"Name":"IsAttacking","Instant":true,"Statestate":"attacking"},{"Type":"BehaviorDesigner.Runtime.Tasks.Selector","NodeData":{"Offset":"(40.3078461,135.304962)"},"ID":33,"Name":"Set
         attack Target","Instant":true,"AbortTypeabortType":"None","Children":[{"Type":"HasAttackTarget","NodeData":{"Offset":"(-145.311172,116.415482)"},"ID":34,"Name":"Has
         Attack Target","Instant":true},{"Type":"SetState","NodeData":{"Offset":"(-2.94813538,115.956436)"},"ID":35,"Name":"Set
         State","Instant":true,"Statestate":"moveForwards"},{"Type":"SetAttackTarget","NodeData":{"Offset":"(133.450134,118.638893)"},"ID":36,"Name":"Set
-        Attack Target","Instant":true,"AttackModeattackMode":"mainAttack"}]},{"Type":"AttackStarted","NodeData":{"Offset":"(365.8706,138.97168)"},"ID":37,"Name":"Attack
+        Attack Target","Instant":true,"AttackModeattackMode":"mainAttack"}]},{"Type":"AttackStarted","NodeData":{"Offset":"(303.370667,138.97168)"},"ID":37,"Name":"Attack
         Started","Instant":true}]}]}]}]}}'
       fieldSerializationData:
         typeName: []
         fieldNameHash: 
         startIndex: 
         dataPosition: 
-        unityObjects:
-        - {fileID: 11400000, guid: 9a47a449831df2741853c993d2802811, type: 2}
+        unityObjects: []
         byteData: 
         byteDataArray: 
       Version: 1.7.8

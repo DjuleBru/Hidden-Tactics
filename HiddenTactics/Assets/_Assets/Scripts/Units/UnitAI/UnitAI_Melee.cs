@@ -30,7 +30,6 @@ public class UnitAI_Melee : UnitAI
     }
 
     protected override void AttackingStateUpdate() {
-
         if (attackStarted) return;
 
         if (unitAttack.GetAttackTarget() == null) {

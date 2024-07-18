@@ -23,9 +23,9 @@ public class HasTarget : Conditional {
 
        if (hasMeleeTarget) {
             return TaskStatus.Success;
-        } else {
+       } else {
             return TaskStatus.Failure;
-        }
+       }
 
     }
 }
