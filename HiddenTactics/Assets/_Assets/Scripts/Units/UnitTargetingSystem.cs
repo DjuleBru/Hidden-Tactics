@@ -90,10 +90,15 @@ public class UnitTargetingSystem : NetworkBehaviour
                 target = FindClosestAttackTarget(targetList);
             }
 
-            if (attackSO.attackType == AttackSO.AttackType.ranged && target == null) {
-                // Ranged attack : keep same attack target
-                target = FindRandomAttackTarget(targetList);
+            // Ranged attack : keep same attack target if still in range
+
+            if (attackSO.attackType == AttackSO.AttackType.ranged) {
+
+                if(target == null || !targetList.Contains(target)) {
+                    target = FindRandomAttackTarget(targetList);
+                }
             }
+
         } else {
             target = null;
         }
@@ -242,6 +247,14 @@ public class UnitTargetingSystem : NetworkBehaviour
         return sideAttackITargetable;
     }
 
+    public ITargetable GetRandomMainAttackTarget() {
+        return mainAttackITargerableList[Random.Range(0, mainAttackITargerableList.Count)];
+    }
+
+    public ITargetable GetRandomSideAttackTarget() {
+        return sideAttackITargetableList[Random.Range(0, sideAttackITargetableList.Count)];
+    }
+
     public float GetClosestTargetDistance() {
         return distanceToClosestTargetITargetable;
     }
@@ -264,6 +277,7 @@ public class UnitTargetingSystem : NetworkBehaviour
 
         return ITargetableIsInRange; 
     }
+
     #endregion
 
 }

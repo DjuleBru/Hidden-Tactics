@@ -30,17 +30,17 @@ public class ProjectileVisual : MonoBehaviour
     }
 
     private void UpdateShadowPosition() {
-        Vector3 newPosition = transform.position + new Vector3(projectile.GetProjectileMoveSpeed() * Time.deltaTime, 0, 0);
+        Vector3 newPosition = transform.position;
         Vector2 trajectoryRange = trajectoryEndPoint - trajectoryStartPoint;
 
-        newPositionXNormalized = (newPosition.x - trajectoryStartPoint.x) / (trajectoryRange.x);
-        float newPositionYNormalized = projectile.GetProjectileTrajectoryAnimationCurve().Evaluate(newPositionXNormalized);
+        if(Mathf.Abs(trajectoryRange.normalized.x) < Mathf.Abs(trajectoryRange.normalized.y)) {
+            // Curved on X
+            newPosition.x = trajectoryStartPoint.x + projectile.GetNextXTrajectoryPosition() / 4 + projectile.GetNextPositionXCorrectionAbsolute();
+        } else {
+            // Curved on Y
+            newPosition.y = trajectoryStartPoint.y + projectile.GetNextYTrajectoryPosition() / 4 + projectile.GetNextPositionYCorrectionAbsolute();
 
-
-        float yDifferentialTargetWithTimeRelative = projectile.GetProjectileYDifferentialWithTargetAnimationCurve().Evaluate(newPositionXNormalized);
-        float yDifferentialTargetWithTime = yDifferentialTargetWithTimeRelative * trajectoryRange.y;
-
-        newPosition.y = trajectoryStartPoint.y + (projectile.GetTrajectoryMaxRelativeHeight() * newPositionYNormalized) / 4 + + yDifferentialTargetWithTime;
+        }
 
         shadowVisual.position = newPosition;
     }

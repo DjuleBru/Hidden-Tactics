@@ -25,16 +25,17 @@ public class UnitAI_HumanCavalry : UnitAI
 
     public override void OnNetworkSpawn() {
         base.OnNetworkSpawn();
-        unitAttack.OnUnitAttack += UnitAttack_OnUnitAttack;
-
         galloping.OnValueChanged += Galloping_OnValueChanged;
     }
 
-    protected override void CheckConditionsBeforeSwitch() {
-        base.CheckConditionsBeforeSwitch();
+    private void Update() {
+        CheckConditionsBeforeSwitch();
+    }
 
+    protected override void CheckConditionsBeforeSwitch() {
         if (galloping.Value) return;
-        if(state.Value == State.moveToMeleeTarget | state.Value == State.moveForwards) {
+
+        if(state.Value == State.moveToMeleeTarget || state.Value == State.moveForwards) {
 
             gallopTimer -= Time.deltaTime;
 

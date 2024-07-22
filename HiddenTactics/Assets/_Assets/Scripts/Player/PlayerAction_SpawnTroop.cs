@@ -43,9 +43,10 @@ public class PlayerAction_SpawnTroop : NetworkBehaviour {
                 IPlaceable spawnedIPLaceable = spawnedIPlaceablesDictionary[i];
                 GridPosition spawnedIPlaceableGridPosition = spawnedIPlaceableGridPositions[i];
 
-                NetworkObjectReference spawnedIPlaceableNetworkObject = (spawnedIPLaceable as MonoBehaviour).GetComponent<NetworkObject>();
-
-                SetIPlaceablePositionServerRpc(spawnedIPlaceableNetworkObject, spawnedIPlaceableGridPosition.x, spawnedIPlaceableGridPosition.y);
+                if((spawnedIPLaceable as MonoBehaviour) != null) {
+                    NetworkObjectReference spawnedIPlaceableNetworkObject = (spawnedIPLaceable as MonoBehaviour).GetComponent<NetworkObject>();
+                    SetIPlaceablePositionServerRpc(spawnedIPlaceableNetworkObject, spawnedIPlaceableGridPosition.x, spawnedIPlaceableGridPosition.y);
+                }
             }
 
             spawnedIPlaceablesDictionary.Clear();

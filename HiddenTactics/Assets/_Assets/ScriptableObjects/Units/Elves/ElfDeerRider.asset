@@ -13,11 +13,15 @@ MonoBehaviour:
   m_Name: ElfDeerRider
   m_EditorClassIdentifier: 
   unitTagList: 
+  unitTargetType: 0
   HP: 50
   armor: 0
   mass: 600
   moveType: 0
-  unitMoveSpeed: 60
+  unitMoveSpeed: 120
+  isGarrisonedUnit: 0
+  mainWeaponSO: {fileID: 0}
   mainAttackSO: {fileID: 11400000, guid: 4a66f227ac729bd4d9209f1bff06aad7, type: 2}
   sideAttackSO: {fileID: 0}
   specialAttackSO: {fileID: 0}
+  damageToVillages: 0

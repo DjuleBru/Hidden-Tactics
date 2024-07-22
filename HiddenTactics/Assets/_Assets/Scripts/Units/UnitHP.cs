@@ -10,9 +10,16 @@ public class UnitHP : NetworkBehaviour, IDamageable
     protected float unitHP;
     protected int unitArmor;
 
+    protected bool burning;
+    protected float burningTimer;
+    protected float burningTick = .7f;
+    protected float burningDamage = 1f;
+
     protected int garrisonedProtectionChance = 50;
 
     public event EventHandler<OnHealthChangedEventArgs> OnHealthChanged;
+
+    [SerializeField] protected string debug;
 
     public class OnHealthChangedEventArgs : EventArgs {
         public float previousHealth;
@@ -27,6 +34,33 @@ public class UnitHP : NetworkBehaviour, IDamageable
 
     protected virtual void Start() {
         unit.OnUnitReset += Unit_OnUnitReset;
+        unit.OnUnitFlamed += Unit_OnUnitFlamed;
+        unit.OnUnitFlamedEnded += Unit_OnUnitSpecialEnded;
+    }
+
+    protected virtual void Update() {
+        if (!IsServer) return;
+
+        if (burning) {
+            burningTimer += Time.deltaTime;
+
+            if(burningTimer >= burningTick) {
+                burningTimer = 0f;
+                TakeDamageServerRpc(burningDamage);
+            }
+        }
+    }
+
+    private void Unit_OnUnitSpecialEnded(object sender, EventArgs e) {
+        burning = false;
+    }
+
+    private void Unit_OnUnitFlamed(object sender, Unit.OnUnitSpecialEventArgs e) {
+        if(!burning) {
+            burningTimer = 0f;
+        }
+
+        burning = true;
     }
 
     protected void Unit_OnUnitReset(object sender, System.EventArgs e) {

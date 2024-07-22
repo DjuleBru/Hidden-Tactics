@@ -38,4 +38,5 @@ public class AttackSO : ScriptableObject
     public float meleeAttackAnimationHitDelay;
     public float meleeAttackAnimationDuration;
     public List<UnitAttackSpecial> attackSpecialList;
+    public float specialEffectDuration;
 }

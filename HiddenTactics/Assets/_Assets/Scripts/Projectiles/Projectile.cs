@@ -24,17 +24,24 @@ public class Projectile : NetworkBehaviour
 
     protected Transform targetTransform;
     protected UnitAttack unitAttackOrigin;
+    protected Vector2 trajectoryRange;
     protected Vector2 trajectoryStartPoint;
     protected Vector2 trajectoryEndPointRandomized;
     protected Vector3 trajectoryEndPointRandomOffset;
     protected float trajectoryEndPointRandomOffsetValue = .5f;
-    protected Vector3 newPosition;
+    protected Vector3 nextPosition;
 
     protected Vector3 projectileMoveDir;
 
     protected float targetPositionUpdateTime = .2f;
     protected float targetPositionUpdateTimer;
-    protected float newPositionXNormalized;
+    protected float nextPositionXNormalized;
+    protected float nextPositionYNormalized;
+
+    protected float nextYTrajectoryPosition;
+    protected float nextXTrajectoryPosition;
+    protected float nextPositionYCorrectionAbsolute;
+    protected float nextPositionXCorrectionAbsolute;
 
     protected bool projectileHasHit;
 
@@ -47,14 +54,7 @@ public class Projectile : NetworkBehaviour
     protected virtual void Update() {
         if (projectileHasHit) return;
 
-        if (newPositionXNormalized < .95) {
-            UpdateNewPosition();
-        } else {
-            projectileHasHit = true;
-            StartCoroutine(DestroyProjectile());
-            unitAttackOrigin.ProjectileHasHit(target, transform.position);
-        }
-
+        UpdateProjectilePosition();
         UpdateTrajectoryEndPoint();
     }
 
@@ -87,28 +87,94 @@ public class Projectile : NetworkBehaviour
         projectileMoveSpeed = projectileMaxMoveSpeed * projectileMoveSpeedNormalized;
     }
 
-    protected void UpdateNewPosition() {
-        Vector2 trajectoryRange = trajectoryEndPointRandomized - trajectoryStartPoint;
-        if(trajectoryRange.x < 0) {
-            // Target is located behind shooted
-            projectileMoveSpeed = -projectileMoveSpeed;
+    protected void UpdateProjectilePosition() {
+        trajectoryRange = trajectoryEndPointRandomized - trajectoryStartPoint;
+
+        if(Mathf.Abs(trajectoryRange.normalized.x) < Mathf.Abs(trajectoryRange.normalized.y)) {
+            // Projectile will be curved on the X axis
+
+            if (trajectoryRange.y < 0) {
+                // Target is located behind shooted
+                projectileMoveSpeed = -projectileMoveSpeed;
+            }
+
+            UpdatePositionXCurve();
+
+        } else {
+            // Projectile will be curved on the Y axis
+
+            if (trajectoryRange.x < 0) {
+                // Target is located behind shooted
+                projectileMoveSpeed = -projectileMoveSpeed;
+            }
+            UpdatePositionYCurve();
         }
-        newPosition = transform.position + new Vector3(projectileMoveSpeed * Time.deltaTime, 0, 0);
+    }
 
-        newPositionXNormalized = (newPosition.x - trajectoryStartPoint.x) / (trajectoryRange.x);
-        float newPositionYNormalized = projectileTrajectoryAnimationCurve.Evaluate(newPositionXNormalized);
+    protected void UpdatePositionYCurve() {
+        float nextPositionX = transform.position.x + projectileMoveSpeed * Time.deltaTime;
 
-        float trajectoryYWithTime = trajectoryMaxRelativeHeight * newPositionYNormalized;
+        nextPositionXNormalized = (nextPositionX - trajectoryStartPoint.x) / (trajectoryRange.x);
+        float nextPositionYNormalized = projectileTrajectoryAnimationCurve.Evaluate(nextPositionXNormalized);
 
-        float yDifferentialTargetWithTimeRelative = projectileYDifferentialWithTargetAnimationCurve.Evaluate(newPositionXNormalized);
-        float yDifferentialTargetWithTime = yDifferentialTargetWithTimeRelative * trajectoryRange.y;
+        if(nextPositionXNormalized >= .99f) {
+            ProjectileHasHit();
+            return;
+        }
 
-        newPosition.y = trajectoryStartPoint.y + trajectoryYWithTime + yDifferentialTargetWithTime;
+        nextYTrajectoryPosition = nextPositionYNormalized * trajectoryMaxRelativeHeight;
 
-        projectileMoveDir = newPosition - transform.position;
+        float nextPositionYCorrectionNormalized = projectileYDifferentialWithTargetAnimationCurve.Evaluate(nextPositionXNormalized);
+        nextPositionYCorrectionAbsolute = nextPositionYCorrectionNormalized * trajectoryRange.y;
 
-        CalculateNewProjectileMoveSpeed(newPositionXNormalized);
-        transform.position = newPosition;
+        float nextPositionY = trajectoryStartPoint.y + nextYTrajectoryPosition + nextPositionYCorrectionAbsolute;
+
+        Vector3 nextPosition = new Vector3(nextPositionX, nextPositionY, 0);
+
+        CalculateNewProjectileMoveSpeed(nextPositionXNormalized);
+        projectileMoveDir = nextPosition - transform.position;
+
+        transform.position = nextPosition;
+    }
+
+    protected void UpdatePositionXCurve() {
+
+        float nextPositionY = transform.position.y + projectileMoveSpeed * Time.deltaTime;
+
+        nextPositionYNormalized = (nextPositionY - trajectoryStartPoint.y) / (trajectoryRange.y);
+        float nextPositionXNormalized = projectileTrajectoryAnimationCurve.Evaluate(nextPositionYNormalized);
+
+        if (nextPositionYNormalized >= .99f) {
+            ProjectileHasHit();
+            return;
+        }
+
+        nextXTrajectoryPosition = nextPositionXNormalized * trajectoryMaxRelativeHeight;
+
+        float nextPositionXCorrectionNormalized = projectileYDifferentialWithTargetAnimationCurve.Evaluate(nextPositionYNormalized);
+        nextPositionXCorrectionAbsolute = nextPositionXCorrectionNormalized * trajectoryRange.x;
+
+        if (trajectoryRange.x > 0 && trajectoryRange.y > 0) {
+            nextXTrajectoryPosition = -nextXTrajectoryPosition;
+        }
+        if (trajectoryRange.x < 0 && trajectoryRange.y < 0) {
+            nextXTrajectoryPosition = -nextXTrajectoryPosition;
+        }
+
+        float nextPositionX = trajectoryStartPoint.x + nextXTrajectoryPosition + nextPositionXCorrectionAbsolute;
+
+        Vector3 nextPosition = new Vector3(nextPositionX, nextPositionY, 0);
+
+        CalculateNewProjectileMoveSpeed(nextPositionYNormalized);
+        projectileMoveDir = nextPosition - transform.position;
+
+        transform.position = nextPosition;
+    }
+
+    private void ProjectileHasHit() {
+        projectileHasHit = true;
+        StartCoroutine(DestroyProjectile());
+        unitAttackOrigin.ProjectileHasHit(target, transform.position);
     }
 
     protected IEnumerator DestroyProjectile() {
@@ -175,4 +241,16 @@ public class Projectile : NetworkBehaviour
         return projectileHitVisualPrefab;
     }
 
+    public float GetNextYTrajectoryPosition() {
+        return nextYTrajectoryPosition;
+    }
+    public float GetNextXTrajectoryPosition() {
+        return nextXTrajectoryPosition;
+    }
+    public float GetNextPositionYCorrectionAbsolute() {
+        return nextPositionYCorrectionAbsolute;
+    }
+    public float GetNextPositionXCorrectionAbsolute() {
+        return nextPositionXCorrectionAbsolute;
+    }
 }

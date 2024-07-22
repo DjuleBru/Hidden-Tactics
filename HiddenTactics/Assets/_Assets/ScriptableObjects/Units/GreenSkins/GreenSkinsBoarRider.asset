@@ -14,12 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   unitTagList: 
   unitTargetType: 0
-  HP: 50
+  HP: 60
   armor: 0
   mass: 600
   moveType: 0
-  unitMoveSpeed: 110
+  unitMoveSpeed: 130
   isGarrisonedUnit: 0
+  mainWeaponSO: {fileID: 0}
   mainAttackSO: {fileID: 11400000, guid: b8b78f662c6de1042a7cd1d701bd4fef, type: 2}
   sideAttackSO: {fileID: 0}
   specialAttackSO: {fileID: 0}
+  damageToVillages: 0

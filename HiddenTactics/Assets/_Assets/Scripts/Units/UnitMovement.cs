@@ -45,6 +45,7 @@ public class UnitMovement : NetworkBehaviour {
     private Vector3 moveDir;
     private Vector3 watchDir;
     private Vector3 moveForwardsPoint;
+    private Vector3 moveBackwardsPoint;
 
     private void Awake() {
         rb = GetComponent<Rigidbody2D>();
@@ -74,7 +75,11 @@ public class UnitMovement : NetworkBehaviour {
             Vector3 direction = (destinationPoint - unit.transform.position).normalized;
             Vector3 pathStartPoint = unit.transform.position + direction * unitCollider.radius;
 
-            CalculatePath(pathStartPoint, destinationPoint);
+            if(!unit.GetScared()) {
+                CalculatePath(pathStartPoint, destinationPoint);
+            } else {
+                CalculateFleePath(destinationPoint);
+            }
         }
 
         if (path != null) {
@@ -133,6 +138,7 @@ public class UnitMovement : NetworkBehaviour {
             velocity = moveDir * moveSpeed * speedFactor;
         }
     }
+
     public void CalculatePath(Vector3 startPoint, Vector3 destinationPoint) {
         //Update graph
         Bounds bounds = GetComponent<Collider2D>().bounds;
@@ -145,6 +151,19 @@ public class UnitMovement : NetworkBehaviour {
         }
     }
 
+    public void CalculateFleePath(Vector3 destinationPoint) {
+        // Create a path object
+        FleePath path = FleePath.Construct(transform.position, destinationPoint, theGScoreToStopAt);
+        // This is how strongly it will try to flee, if you set it to 0 it will behave like a RandomPath
+        path.aimStrength = 1;
+        // Determines the variation in path length that is allowed
+        path.spread = 4000;
+        // Get the Seeker component which must be attached to this GameObject
+        Seeker seeker = GetComponent<Seeker>();
+        // Start the path and return the result to MyCompleteFunction (which is a function you have to define, the name can of course be changed)
+        seeker.StartPath(path, PathComplete);
+    }
+
     protected void PathComplete(Path p) {
         path = p;
         currentWaypoint = 0;
@@ -154,11 +173,9 @@ public class UnitMovement : NetworkBehaviour {
         canMove = true;
         destinationPoint = moveForwardsPoint;
     }
-
     public void MoveToTarget(Vector3 targetPosition) {
         canMove = true;
 
-        CalculatePath(transform.position, targetPosition);
         destinationPoint = targetPosition;
     }
 

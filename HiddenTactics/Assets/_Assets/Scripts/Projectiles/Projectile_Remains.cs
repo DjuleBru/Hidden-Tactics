@@ -10,8 +10,8 @@ public class Projectile_Remains : Projectile
     protected override void Update() {
         if (projectileHasHit) return;
 
-        if (newPositionXNormalized < 1) {
-            UpdateNewPosition();
+        if (nextPositionXNormalized < 1) {
+            UpdateProjectilePosition();
         } else {
             StartCoroutine(ProjectileHitCoroutine());
             unitAttackOrigin.ProjectileHasHit(target, transform.position);

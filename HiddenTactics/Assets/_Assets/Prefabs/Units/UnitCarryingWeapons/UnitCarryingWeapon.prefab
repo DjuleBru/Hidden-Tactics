@@ -220,6 +220,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5923283366198014383, guid: ecaf4c1c39222ff458941abdb8115703, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.09375
+      objectReference: {fileID: 0}
+    - target: {fileID: 5923283366198014383, guid: ecaf4c1c39222ff458941abdb8115703, type: 3}
       propertyPath: m_LocalPosition.y
       value: -0.014999986
       objectReference: {fileID: 0}
@@ -285,7 +289,7 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 5472c483cff72494e8e1f9233fc2308a, type: 2}
     - target: {fileID: 8016987216396510007, guid: ecaf4c1c39222ff458941abdb8115703, type: 3}
       propertyPath: m_RootOrder
-      value: 5
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 8883300417249960126, guid: ecaf4c1c39222ff458941abdb8115703, type: 3}
       propertyPath: m_Name
@@ -338,6 +342,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d96246b8880ecb44ba642e5527ff8ee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!95 &4449375985032815496 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 492524284081826473, guid: ecaf4c1c39222ff458941abdb8115703, type: 3}
+  m_PrefabInstance: {fileID: 4281401351482345761}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &4624428746373917087 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8883300417249960126, guid: ecaf4c1c39222ff458941abdb8115703, type: 3}
@@ -439,6 +448,12 @@ MonoBehaviour:
   invisibleMaterial: {fileID: 2100000, guid: 0fd6a58cd0afa51469b9baca76fc6c55, type: 2}
   placingUnitMaterial: {fileID: 2100000, guid: 684a5a5301c6bfd4eb68f6d32d5b9a09, type: 2}
   unitGoldBurstPS: {fileID: 5434656116740465933}
+  fireFXAnimator: {fileID: 8138735459081056204}
+  fearFXAnimator: {fileID: 4449375985032815496}
+  iceFXAnimator: {fileID: 0}
+  poisonFXAnimator: {fileID: 0}
+  bleedFXAnimator: {fileID: 0}
+  stunFXAnimator: {fileID: 0}
   upgradedBodyMaterial: {fileID: 0}
   upgradeReplacesBody: 0
   upgradedBodyAnimator: {fileID: 0}
@@ -458,6 +473,11 @@ MonoBehaviour:
   ugradedMountShader: {fileID: 0}
   hasSideWeapon: 0
   bodySideWeaponAnimator: {fileID: 0}
+--- !u!95 &8138735459081056204 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 5447120375401768685, guid: ecaf4c1c39222ff458941abdb8115703, type: 3}
+  m_PrefabInstance: {fileID: 4281401351482345761}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &8392534498386143616
 PrefabInstance:
   m_ObjectHideFlags: 0

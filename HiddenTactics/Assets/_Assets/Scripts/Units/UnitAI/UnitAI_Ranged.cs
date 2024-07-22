@@ -30,7 +30,7 @@ public class UnitAI_Ranged : UnitAI
             // This GridPosition is a valid grid position
             List<Building> buildingList = BattleGrid.Instance.GetBuildingListAtGridPosition(nextGridPosition);
 
-            if(state.Value != State.attacking) {
+            if(state.Value != State.attackingMelee || state.Value != State.attackingRanged) {
 
                 // This ranged unit is not attacking
                 if (state.Value != State.blockedByBuilding) {
@@ -59,7 +59,7 @@ public class UnitAI_Ranged : UnitAI
     protected override void BlockedByBuildingStateUpdate() {
         if (unitTargetingSystem.GetMainAttackTarget() != null) {
             // Unit has a target to shoot
-            ChangeState(State.attacking);
+            ChangeState(State.attackingRanged);
             return;
         }
     }
@@ -69,7 +69,7 @@ public class UnitAI_Ranged : UnitAI
 
         if (unitTargetingSystem.GetMainAttackTarget() != null) {
             //Unit has a valid target for shooting
-            ChangeState(State.attacking);
+            ChangeState(State.attackingRanged);
             return;
         }
     }
@@ -149,7 +149,7 @@ public class UnitAI_Ranged : UnitAI
         if (state.Value == State.idle) {
             foundMeleeTarget = false;
         }
-        if (state.Value == State.attacking) {
+        if (state.Value == State.attackingRanged) {
             unitMovement.StopMoving();
         }
         if (state.Value == State.moveToMeleeTarget) {

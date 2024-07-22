@@ -17,9 +17,12 @@ public class UnitAI : NetworkBehaviour
     public event EventHandler OnMainAttackActivated;
     public event EventHandler OnSideAttackActivated;
 
+    protected float specialTimer;
+
     protected bool unitActive;
     protected bool attackStarted;
     protected bool attackEnded;
+    protected bool specialActive;
 
     public enum State {
         idle,
@@ -107,9 +110,11 @@ public class UnitAI : NetworkBehaviour
 
     protected virtual void BlockedByBuildingStateUpdate() {
     }
+    
     protected virtual void MoveForwardsStateUpdate() {
 
     }
+
     protected virtual void MoveToMeleeTargetStateUpdate() {
 
     }
@@ -194,9 +199,9 @@ public class UnitAI : NetworkBehaviour
     }
 
 
-    protected void Unit_OnUnitDazed(object sender, Unit.OnUnitDazedEventArgs e) {
+    protected void Unit_OnUnitDazed(object sender, Unit.OnUnitSpecialEventArgs e) {
         if (!IsServer) return;
-        StartCoroutine(TakeDazed(e.dazedTime));
+        StartCoroutine(TakeDazed(e.effectDuration));
     }
 
     protected void Unit_OnUnitDied(object sender, EventArgs e) {
@@ -224,6 +229,8 @@ public class UnitAI : NetworkBehaviour
     }
 
     #endregion
+
+    #region SET PARAMETERS
     protected IEnumerator TakeDazed(float dazedTime) {
         unitActive = false;
         unitMovement.SetDazed(true);
@@ -255,6 +262,11 @@ public class UnitAI : NetworkBehaviour
     public void SetAttackStarted(bool attackStarted) {
         this.attackStarted = attackStarted;
     }
+
+    public void SetSpecialTimer(float timer) {
+        specialTimer = timer;
+    }
+    #endregion
 
     #region GET PARAMETERS
 
@@ -317,6 +329,15 @@ public class UnitAI : NetworkBehaviour
         if (unitAttack.GetActiveAttackSO() == sideAttackSO) return true;
         return false;
     }
+
+    public float GetSpecialTimer() {
+        return specialTimer;
+    }
+
+    public bool GetSpecialActive() {
+        return specialActive;
+    }
+
     #endregion
 
     #region CHANGING ATTACK SO

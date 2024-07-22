@@ -48,16 +48,12 @@ public class Troop : NetworkBehaviour, IPlaceable {
         foreach (Transform position in additionalUnitPositions) {
             position.gameObject.SetActive(false);
         }
-    }
 
-    private void Start() {
         if (debugMode) {
             isOwnedByPlayer = false;
             SetIPlaceableBattlefieldOwner();
             currentGridPosition = BattleGrid.Instance.GetGridPosition(transform.position);
-            PlaceIPlaceable();
             Unit[] unitArray = GetComponentsInChildren<Unit>();
-            BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
 
             foreach (Unit unit in unitArray) {
                 //Set Parent Troop
@@ -65,6 +61,17 @@ public class Troop : NetworkBehaviour, IPlaceable {
 
                 //Set Unit Local Position
                 unit.SetPosition(unit.transform.position);
+            }
+        }
+    }
+
+    private void Start() {
+        if (debugMode) {
+            PlaceIPlaceable();
+            Unit[] unitArray = GetComponentsInChildren<Unit>();
+            BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
+
+            foreach (Unit unit in unitArray) {
                 unit.DebugModeStartFunction();
             }
         }
@@ -199,7 +206,6 @@ public class Troop : NetworkBehaviour, IPlaceable {
                 // Update troop HP
                 troopHP += unit.GetComponent<UnitHP>().GetHP();
                 maxTroopHP = troopHP;
-                Debug.Log("max troop HP : " + maxTroopHP);
             }
             additionalUnitsInTroop.Clear();
         }

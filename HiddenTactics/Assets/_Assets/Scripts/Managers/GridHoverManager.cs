@@ -150,7 +150,9 @@ public class GridHoverManager : MonoBehaviour
     private void CancelPreviousUnitsSetAsTarget() {
         if (unitSetAsTargetList.Count > 0) {
             foreach (Unit unit in unitSetAsTargetList) {
-                unit.GetUnitUI().HideUnitTargetUI();
+                if(unit != null) {
+                    unit.GetUnitUI().HideUnitTargetUI();
+                }
             }
         }
         unitSetAsTargetList.Clear();

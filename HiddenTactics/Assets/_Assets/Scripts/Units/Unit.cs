@@ -16,16 +16,30 @@ public class Unit : NetworkBehaviour, ITargetable {
     public event EventHandler OnUnitReset;
     public event EventHandler OnUnitFell;
     public event EventHandler OnUnitSold;
-    public event EventHandler<OnUnitDazedEventArgs> OnUnitDazed;
     public event EventHandler OnUnitSetAsAdditionalUnit;
     public event EventHandler OnAdditionalUnitActivated;
+
+    public event EventHandler<OnUnitSpecialEventArgs> OnUnitDazed;
+    public event EventHandler<OnUnitSpecialEventArgs> OnUnitFlamed;
+    public event EventHandler<OnUnitSpecialEventArgs> OnUnitScared;
+    public event EventHandler OnUnitFlamedEnded;
+    public event EventHandler OnUnitScaredEnded;
+
 
     [SerializeField] private Transform projectileTarget;
     [SerializeField] private UnitVisual unitVisual;
     [SerializeField] private UnitUI unitUI;
-    public class OnUnitDazedEventArgs : EventArgs {
-        public float dazedTime;
+    public class OnUnitSpecialEventArgs : EventArgs {
+        public float effectDuration;
     }
+
+    private bool burning;
+    private float burningTimer;
+    private float burningDuration;
+
+    private bool scared;
+    private float scaredTimer;
+    private float scaredDuration;
 
     [SerializeField] protected UnitSO unitSO;
     protected Troop parentTroop;
@@ -62,6 +76,33 @@ public class Unit : NetworkBehaviour, ITargetable {
         HandlePositionOnGrid();
         if(IsServer && BattleManager.Instance.IsBattlePhase()) {
             HandlePositionSyncServerRpc(transform.position);
+        }
+
+        if(IsServer) {
+            HandleStatusEffects();
+        }
+
+    }
+
+    protected void HandleStatusEffects() {
+        if(burning) {
+            burningTimer += Time.deltaTime;
+
+            if(burningTimer >= burningDuration) {
+                burningTimer = 0;
+                burning = false;
+                RemoveSpecial(AttackSO.UnitAttackSpecial.fire);
+            }
+        }
+
+        if (scared) {
+            scaredTimer += Time.deltaTime;
+
+            if (scaredTimer >= scaredDuration) {
+                scaredTimer = 0;
+                scared = false;
+                RemoveSpecial(AttackSO.UnitAttackSpecial.fear);
+            }
         }
     }
 
@@ -136,6 +177,7 @@ public class Unit : NetworkBehaviour, ITargetable {
         if (!unitSO.isGarrisonedUnit & unitIsBought) {
             collider2d.enabled = true;
         }
+        RemoveAllSpecialEffects();
         OnUnitReset?.Invoke(this, EventArgs.Empty);
     }
 
@@ -152,17 +194,77 @@ public class Unit : NetworkBehaviour, ITargetable {
     }
 
     public void TakeDazed(float dazedTime) {
-        OnUnitDazed?.Invoke(this, new OnUnitDazedEventArgs {
-            dazedTime = dazedTime
+        OnUnitDazed?.Invoke(this, new OnUnitSpecialEventArgs {
+            effectDuration = dazedTime
         });
     }
 
-    public void Die() {
+    public void TakeSpecial(AttackSO.UnitAttackSpecial specialEffect, float duration) {
+        TakeSpecialServerRpc(specialEffect, duration);
+    }
+
+    [ServerRpc]
+    private void TakeSpecialServerRpc(AttackSO.UnitAttackSpecial specialEffect, float duration) {
+        TakeSpecialClientRpc(specialEffect, duration);
+    }
+
+    [ClientRpc]
+    private void TakeSpecialClientRpc(AttackSO.UnitAttackSpecial specialEffect, float duration) {
+        if (specialEffect == AttackSO.UnitAttackSpecial.fire) {
+            burning = true;
+            burningTimer = 0f;
+            burningDuration = duration;
+            OnUnitFlamed?.Invoke(this, new OnUnitSpecialEventArgs {
+                effectDuration = duration
+            });
+        }
+
+        if (specialEffect == AttackSO.UnitAttackSpecial.fear) {
+            scared = true;
+            scaredTimer = 0f;
+            scaredDuration = duration;
+            OnUnitScared?.Invoke(this, new OnUnitSpecialEventArgs {
+                effectDuration = duration
+            });
+        }
+    }
+
+    public void RemoveAllSpecialEffects() {
+        RemoveSpecial(AttackSO.UnitAttackSpecial.fire);
+        RemoveSpecial(AttackSO.UnitAttackSpecial.fear);
+        RemoveSpecial(AttackSO.UnitAttackSpecial.ice);
+        RemoveSpecial(AttackSO.UnitAttackSpecial.shock);
+        RemoveSpecial(AttackSO.UnitAttackSpecial.bleed);
+        RemoveSpecial(AttackSO.UnitAttackSpecial.poison);
+    }
+
+    public void RemoveSpecial(AttackSO.UnitAttackSpecial specialEffect) {
+        RemoveSpecialServerRpc(specialEffect);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void RemoveSpecialServerRpc(AttackSO.UnitAttackSpecial specialEffect) {
+        RemoveSpecialClientRpc(specialEffect);
+    }
+
+    [ClientRpc]
+    private void RemoveSpecialClientRpc(AttackSO.UnitAttackSpecial specialEffect) {
+        if (specialEffect == AttackSO.UnitAttackSpecial.fear) {
+            OnUnitScaredEnded?.Invoke(this, EventArgs.Empty);
+        }
+        if (specialEffect == AttackSO.UnitAttackSpecial.fire) {
+            OnUnitFlamedEnded?.Invoke(this, EventArgs.Empty);
+        }
+    }
+
+    public virtual void Die() {
         OnUnitDied?.Invoke(this, EventArgs.Empty);
         unitIsDead = true;
         collider2d.enabled = false;
+        OnUnitFlamedEnded?.Invoke(this, EventArgs.Empty);
 
         RemoveUnitFromBattlePhaseUnitList();
+        RemoveAllSpecialEffects();
     }
 
     public void Fall() {
@@ -170,6 +272,7 @@ public class Unit : NetworkBehaviour, ITargetable {
         unitIsDead = true;
         collider2d.enabled = false;
         RemoveUnitFromBattlePhaseUnitList();
+        RemoveAllSpecialEffects();
     }
 
     public void SellUnit() {
@@ -246,6 +349,10 @@ public class Unit : NetworkBehaviour, ITargetable {
 
     public UnitVisual GetUnitVisual() {
         return unitVisual;
+    }
+
+    public bool GetScared() {
+        return scared;
     }
 
     #endregion

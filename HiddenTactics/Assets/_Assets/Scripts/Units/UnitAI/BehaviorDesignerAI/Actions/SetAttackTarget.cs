@@ -8,6 +8,7 @@ public class SetAttackTarget : Action {
     private UnitAttack unitAttack;
     private UnitTargetingSystem unitTargetingSystem;
     public UnitTargetingSystem.AttackMode attackMode;
+    public bool randomTarget;
 
     public override void OnAwake() {
         unitAttack = GetComponent<UnitAttack>();
@@ -15,12 +16,26 @@ public class SetAttackTarget : Action {
     }
     public override TaskStatus OnUpdate() {
 
-        if(attackMode == UnitTargetingSystem.AttackMode.mainAttack) {
-            unitAttack.SetAttackTarget(unitTargetingSystem.GetMainAttackTarget());
-        }
-        
-        if(attackMode == UnitTargetingSystem.AttackMode.sideAttack) {
-            unitAttack.SetAttackTarget(unitTargetingSystem.GetSideAttackTarget());
+        if(randomTarget) {
+
+            if (attackMode == UnitTargetingSystem.AttackMode.mainAttack) {
+                unitAttack.SetAttackTarget(unitTargetingSystem.GetRandomMainAttackTarget());
+            }
+
+            if (attackMode == UnitTargetingSystem.AttackMode.sideAttack) {
+                unitAttack.SetAttackTarget(unitTargetingSystem.GetRandomSideAttackTarget());
+            }
+
+        } else {
+
+            if (attackMode == UnitTargetingSystem.AttackMode.mainAttack) {
+                unitAttack.SetAttackTarget(unitTargetingSystem.GetMainAttackTarget());
+            }
+
+            if (attackMode == UnitTargetingSystem.AttackMode.sideAttack) {
+                unitAttack.SetAttackTarget(unitTargetingSystem.GetSideAttackTarget());
+            }
+
         }
 
         return TaskStatus.Success;

@@ -35,6 +35,7 @@ public class UnitAttack : NetworkBehaviour
     protected bool attackDecomposition;
     protected bool attackHasAOECollider;
     protected bool attackHasAOE;
+    protected List<AttackSO.UnitAttackSpecial> attackSpecialList;
 
     protected float attackRateModidier;
     protected float attackDamageModifier;
@@ -67,7 +68,7 @@ public class UnitAttack : NetworkBehaviour
         BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
     }
 
-    protected void Update() {
+    protected virtual void Update() {
 
         if (attackTarget as MonoBehaviour == null) return;
 
@@ -174,7 +175,7 @@ public class UnitAttack : NetworkBehaviour
             if (attackAOE != 0) {
                 // Attack AOE is a circle around damageHitPosition
 
-                foreach (Unit unitAOETarget in FindAOEAttackTargets(damageHitPosition)) {
+                foreach (Unit unitAOETarget in FindAOEAttackTargets(damageHitPosition, attackAOE)) {
                     // Don't damage target unit twice
                     if(unitAOETarget != (target as MonoBehaviour)) {
                         PerformAllDamageActions(unitAOETarget, damageHitPosition);
@@ -215,6 +216,8 @@ public class UnitAttack : NetworkBehaviour
     }
 
     protected virtual void PerformDamageActionOnUnit(ITargetable target, Vector3 damageHitPosition) {
+
+        //Knockback
         if (attackKnockback != 0) {
             Vector2 incomingDamageDirection = new Vector2((target as Unit).transform.position.x - damageHitPosition.x, (target as Unit).transform.position.y - damageHitPosition.y);
             Vector2 force = incomingDamageDirection * attackKnockback;
@@ -222,8 +225,19 @@ public class UnitAttack : NetworkBehaviour
             (target as Unit).TakeKnockBack(force);
         }
 
+        //Daze
         if (attackDazedTime != 0) {
             (target as Unit).TakeDazed(attackDazedTime);
+        }
+
+        //Fire
+        if(attackSpecialList.Contains(AttackSO.UnitAttackSpecial.fire)) {
+            (target as Unit).TakeSpecial(AttackSO.UnitAttackSpecial.fire, activeAttackSO.specialEffectDuration);
+        }
+
+        //Fear
+        if (attackSpecialList.Contains(AttackSO.UnitAttackSpecial.fear)) {
+            (target as Unit).TakeSpecial(AttackSO.UnitAttackSpecial.fear, activeAttackSO.specialEffectDuration);
         }
     }
 
@@ -232,9 +246,9 @@ public class UnitAttack : NetworkBehaviour
         targetIDamageable.TakeDamage(unit.GetUnitSO().damageToVillages);
     }
 
-    protected List<Unit> FindAOEAttackTargets(Vector3 targetPosition) {
+    protected List<Unit> FindAOEAttackTargets(Vector3 targetPosition, float AOE) {
 
-        Collider2D[] colliderArray = Physics2D.OverlapCircleAll(targetPosition, attackAOE);
+        Collider2D[] colliderArray = Physics2D.OverlapCircleAll(targetPosition, AOE);
         List<Collider2D> colliderList = new List<Collider2D>();
         foreach (Collider2D collider in colliderArray) {
             colliderList.Add(collider);
@@ -270,6 +284,7 @@ public class UnitAttack : NetworkBehaviour
         attackDecomposition = attackSO.attackDecomposition;
         attackHasAOECollider = attackSO.attackHasAOECollider;
         attackHasAOE = attackSO.attackHasAOE;
+        attackSpecialList = attackSO.attackSpecialList;
     }
         
     [ServerRpc(RequireOwnership = false)]
@@ -345,7 +360,7 @@ public class UnitAttack : NetworkBehaviour
         this.dazed = dazed;
     }
 
-    protected void UnitAI_OnStateChanged(object sender, System.EventArgs e) {
+    protected virtual void UnitAI_OnStateChanged(object sender, System.EventArgs e) {
         if(unitAI.IsAttacking()) {
             attacking = true;
         } else {
@@ -353,6 +368,7 @@ public class UnitAttack : NetworkBehaviour
             attackStarted = false;
         }
     }
+
     #endregion
 
     #region SET PARAMETERS
@@ -379,7 +395,6 @@ public class UnitAttack : NetworkBehaviour
 
 
     public void SetAttackTarget(ITargetable attackTarget) {
-        Debug.Log("set attack target to " + attackTarget);
         if(attackTarget != null) {
             NetworkObject targetNetworkObject = (attackTarget as MonoBehaviour).GetComponent<NetworkObject>();
             SetAttackTargetServerRpc(targetNetworkObject);

@@ -13,11 +13,15 @@ MonoBehaviour:
   m_Name: Naga
   m_EditorClassIdentifier: 
   unitTagList: 
-  HP: 15
+  unitTargetType: 0
+  HP: 25
   armor: 0
   mass: 60
   moveType: 0
   unitMoveSpeed: 80
+  isGarrisonedUnit: 0
+  mainWeaponSO: {fileID: 0}
   mainAttackSO: {fileID: 11400000, guid: beae92b214376184bb43b1e5d2b7a948, type: 2}
   sideAttackSO: {fileID: 0}
   specialAttackSO: {fileID: 0}
+  damageToVillages: 0

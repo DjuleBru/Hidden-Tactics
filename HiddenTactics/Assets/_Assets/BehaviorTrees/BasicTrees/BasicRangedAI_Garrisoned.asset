@@ -40,8 +40,8 @@ MonoBehaviour:
         Ranged Mode","Instant":true,"AttackModeattackMode":"mainAttack"},{"Type":"HasTarget","NodeData":{"Offset":"(-54.794117,118.63636)"},"ID":33,"Name":"Has
         Target","Instant":true,"AttackModeattackMode":"mainAttack"},{"Type":"BehaviorDesigner.Runtime.Tasks.Selector","NodeData":{"Offset":"(78.4964752,118.63636)"},"ID":34,"Name":"Set
         attack Target","Instant":true,"AbortTypeabortType":"None","Children":[{"Type":"HasAttackTarget","NodeData":{"Offset":"(-91.71301,110)"},"ID":35,"Name":"Has
-        Attack Target","Instant":true},{"Type":"SetAttackTarget","NodeData":{"Offset":"(76.98827,110)"},"ID":36,"Name":"Set
-        Attack Target","Instant":true,"AttackModeattackMode":"mainAttack"}]}]},{"Type":"IsStateConditional","NodeData":{"Offset":"(916.2603,239.265717)"},"ID":37,"Name":"IsAttackingRanged","Instant":true,"Statestate":"attackingRanged"}]}]}]}}'
+        Attack Target","Instant":true,"AttackModeattackMode":"mainAttack"},{"Type":"SetAttackTarget","NodeData":{"Offset":"(76.98827,110)"},"ID":36,"Name":"Set
+        Attack Target","Instant":true,"AttackModeattackMode":"mainAttack","BooleanrandomTarget":false}]}]},{"Type":"IsStateConditional","NodeData":{"Offset":"(916.2603,239.265717)"},"ID":37,"Name":"IsAttackingRanged","Instant":true,"Statestate":"attackingRanged"}]}]}]}}'
       fieldSerializationData:
         typeName: []
         fieldNameHash: 

@@ -88,7 +88,7 @@ public class UnitAI_MeleeMain_SideRanged : UnitAI
 
             // THERE IS A UNIT IN RANGED RANGE AND NO UNIT IN MELEE 
             ActivateSideAttack();
-            ChangeState(State.attacking);
+            ChangeState(State.attackingRanged);
         } else {
             foundRangedTarget = false;
         }
@@ -105,7 +105,7 @@ public class UnitAI_MeleeMain_SideRanged : UnitAI
             foundRangedTarget = false;
             ammoCount = ammoMax;
         }
-        if (state.Value == State.attacking) {
+        if (state.Value == State.attackingRanged) {
             unitMovement.StopMoving();
         }
         if (state.Value == State.moveToMeleeTarget) {

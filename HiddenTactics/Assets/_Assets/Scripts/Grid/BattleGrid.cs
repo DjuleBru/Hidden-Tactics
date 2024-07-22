@@ -74,7 +74,6 @@ public class BattleGrid : MonoBehaviour
         if(unit.IsOwnedByPlayer()) {
             nextGridPosition = new GridPosition(unitGridPosition.x + 1, unitGridPosition.y);
 
-
             //Unit reached end on battlefield
             if (nextGridPosition.x == 12) {
                 nextGridPosition = new GridPosition(11, nextGridPosition.y);
@@ -102,6 +101,7 @@ public class BattleGrid : MonoBehaviour
                 nextWorldPosition.x += unit.GetUnitPositionInTroop().x - gridCellSize / 2;
             }
         }
+
         return nextWorldPosition;
     }
 

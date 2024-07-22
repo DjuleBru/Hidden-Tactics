@@ -1,0 +1,15 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!221 &22100000
+AnimatorOverrideController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: FearStatusEffect
+  m_Controller: {fileID: 9100000, guid: f87dade4d728928408c2e8bb7e510a0b, type: 2}
+  m_Clips:
+  - m_OriginalClip: {fileID: 7400000, guid: f0ddcfb72e39b924293b36f7b5204f83, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: c81831862d7f7d344b9e10125f40ccd3, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 706cbae6789ad964e81abf532cb3bf24, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 2802a3c0edd01b040986f2d03e90dce3, type: 2}

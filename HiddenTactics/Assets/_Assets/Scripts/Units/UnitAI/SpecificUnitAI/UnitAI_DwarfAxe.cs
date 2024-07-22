@@ -7,15 +7,13 @@ using UnityEngine;
 public class UnitAI_DwarfAxe : UnitAI
 {
     private bool wearingShield;
-    private bool shieldingDamage;
     private int projectilesShielded;
     private int maxProjectilesShielded = 2;
 
     protected void Update() {
-        if(shieldingDamage) {
+        if(specialActive) {
             unitMovement.StopMoving();
         }
-
     }
 
     [ClientRpc]
@@ -53,13 +51,13 @@ public class UnitAI_DwarfAxe : UnitAI
     }
 
     public void TakeShieldDamage() {
-        if(!shieldingDamage) {
+        if(!specialActive) {
             StartCoroutine(TakeShieldDamageCoroutine());
         }
     }
 
     public IEnumerator TakeShieldDamageCoroutine() {
-        shieldingDamage = true;
+        specialActive = true;
 
         unitAttack.InvokeOnUnitAttack();
         yield return new WaitForSeconds(1f);
@@ -72,7 +70,7 @@ public class UnitAI_DwarfAxe : UnitAI
             ActivateMainAttack();
         }
 
-        shieldingDamage = false;
+        specialActive = false;
     }
 
     public bool GetWearingShield() {

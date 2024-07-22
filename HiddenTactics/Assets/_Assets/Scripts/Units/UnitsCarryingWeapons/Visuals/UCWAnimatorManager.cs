@@ -49,6 +49,7 @@ public class UCWAnimatorManager : UnitAnimatorManager
         if (ucw.GetIsMountedUnit()) {
             if (!ucw.MountedUnit_HasBodyAttackAnimation()) return;
         }
+
         ucwAnimator.ResetTrigger("Attack_End");
         ucwAnimator.SetTrigger("Attack_Start");
         ucwAnimator.SetBool("Walking", false);

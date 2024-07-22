@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Security.Cryptography.X509Certificates;
 using Unity.Netcode;
 using UnityEngine;
 using static UCW;
@@ -95,7 +94,7 @@ public class UnitAnimatorManager : NetworkBehaviour
         SetUnitWatchDirectionBasedOnGridPosition();
     }
 
-    protected void UnitAI_OnStateChanged(object sender, System.EventArgs e) {
+    protected virtual void UnitAI_OnStateChanged(object sender, System.EventArgs e) {
         if (unitAI.IsDead() | unitAI.IsFallen()) {
             UpdateAnimatorParameters();
             if(unitAI.IsFallen()) {
@@ -136,7 +135,14 @@ public class UnitAnimatorManager : NetworkBehaviour
     }
 
     protected virtual void UnitAttack_OnUnitAttack(object sender, System.EventArgs e) {
-        unitAnimator.SetTrigger("BaseAttack");
+        if(unitAttack.GetActiveAttackSO().attackType == AttackSO.AttackType.ranged) {
+            unitAnimator.SetTrigger("RangedAttack");
+        }
+
+        if(unitAttack.GetActiveAttackSO().attackType == AttackSO.AttackType.melee) {
+            unitAnimator.SetTrigger("BaseAttack");
+        }
+
     }
 
     protected virtual void UnitAttack_OnUnitAttackEnded(object sender, System.EventArgs e) {
@@ -153,7 +159,7 @@ public class UnitAnimatorManager : NetworkBehaviour
         }
     }
 
-    protected void UpdateAnimatorParameters() {
+    protected virtual void UpdateAnimatorParameters() {
         string animationName = "Walk";
 
         if (unitAI.IsWalking() | unitAI.IsMovingToTarget()) {
