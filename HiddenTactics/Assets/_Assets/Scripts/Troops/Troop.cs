@@ -30,6 +30,10 @@ public class Troop : NetworkBehaviour, IPlaceable {
 
     [SerializeField] private List<Transform> baseUnitPositions = new List<Transform>();
     [SerializeField] private List<Transform> additionalUnitPositions = new List<Transform>();
+    [SerializeField] private List<Transform> baseUnit1Positions = new List<Transform>();
+    [SerializeField] private List<Transform> additionalUnit1Positions = new List<Transform>();
+    [SerializeField] private List<Transform> baseUnit2Positions = new List<Transform>();
+    [SerializeField] private List<Transform> additionalUnit2Positions = new List<Transform>();
     [SerializeField] private Transform allUnitsMiddlePoint;
 
     private GridPosition currentGridPosition;
@@ -271,9 +275,9 @@ public class Troop : NetworkBehaviour, IPlaceable {
             }
         }
 
+        isPlaced = true;
         OnTroopPlaced?.Invoke(this, null);
         OnAnyTroopPlaced?.Invoke(this, EventArgs.Empty);
-        isPlaced = true;
     }
 
     public void SetIPlaceableGridPosition(GridPosition troopGridPosition) {
@@ -336,6 +340,22 @@ public class Troop : NetworkBehaviour, IPlaceable {
 
     public List<Transform> GetAdditionalUnitPositions() {
         return additionalUnitPositions;
+    }
+
+    public List<Transform> GetBaseUnit1Positions() {
+        return baseUnit1Positions;
+    }
+
+    public List<Transform> GetAdditionalUnit1Positions() {
+        return additionalUnit1Positions;
+    }
+
+    public List<Transform> GetBaseUnit2Positions() {
+        return baseUnit2Positions;
+    }
+
+    public List<Transform> GetAdditionalUnit2Positions() {
+        return additionalUnit2Positions;
     }
 
     private void UnitHP_OnHealthChanged(object sender, UnitHP.OnHealthChangedEventArgs e) {

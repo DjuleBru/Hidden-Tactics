@@ -48,6 +48,7 @@ public class Unit : NetworkBehaviour, ITargetable {
     protected GridPosition initialUnitGridPosition;
     protected GridPosition currentGridPosition;
     protected Vector3 unitPositionInTroop;
+    public event EventHandler OnUnitChangedGridPosition;
 
     protected Rigidbody2D rb;
     protected Collider2D collider2d;
@@ -74,6 +75,7 @@ public class Unit : NetworkBehaviour, ITargetable {
 
     protected void Update() {
         HandlePositionOnGrid();
+
         if(IsServer && BattleManager.Instance.IsBattlePhase()) {
             HandlePositionSyncServerRpc(transform.position);
         }
@@ -136,7 +138,9 @@ public class Unit : NetworkBehaviour, ITargetable {
         if (newGridPosition != currentGridPosition) {
             BattleGrid.Instance.UnitMovedGridPosition(this, currentGridPosition, newGridPosition);
             currentGridPosition = newGridPosition;
+            OnUnitChangedGridPosition?.Invoke(this, EventArgs.Empty);
         }
+
     }
 
     protected void BattleManager_OnStateChanged(object sender, EventArgs e) {
@@ -156,6 +160,7 @@ public class Unit : NetworkBehaviour, ITargetable {
             SetParentBuilding();
         }
 
+        currentGridPosition = parentTroop.GetIPlaceableGridPosition();
         OnUnitPlaced?.Invoke(this, EventArgs.Empty);
     }
 

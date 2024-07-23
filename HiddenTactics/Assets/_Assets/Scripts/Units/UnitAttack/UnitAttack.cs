@@ -37,9 +37,11 @@ public class UnitAttack : NetworkBehaviour
     protected bool attackHasAOE;
     protected List<AttackSO.UnitAttackSpecial> attackSpecialList;
 
-    protected float attackRateModidier;
-    protected float attackDamageModifier;
-    protected float attackKnockbackModifier;
+    protected float attackRateMultiplier = 1;
+    protected float attackDamageMultiplier = 1;
+    protected float attackKnockbackBuffAbsolute;
+    public event EventHandler OnAttackRateBuffed;
+    public event EventHandler OnAttackRateDebuffed;
 
     protected bool attacking;
     protected bool dazed;
@@ -48,13 +50,12 @@ public class UnitAttack : NetworkBehaviour
         unitAI = GetComponent<UnitAI>();
         unit = GetComponent<Unit>();
         unitMovement = GetComponent<UnitMovement>();
+        activeAttackSO = unit.GetUnitSO().mainAttackSO;
+        UpdateActiveAttackParameters(activeAttackSO);
 
     }
 
-    protected void Start()
-    {
-        UpdateActiveAttackParameters(unit.GetUnitSO().mainAttackSO);
-        activeAttackSO = unit.GetUnitSO().mainAttackSO;
+    protected void Start() {
 
         if (IsServer) {
             RandomizeAttackTimersServerRpc();
@@ -64,9 +65,11 @@ public class UnitAttack : NetworkBehaviour
     public override void OnNetworkSpawn() {
         if (unit.GetUnitIsOnlyVisual()) return;
         unitAI.OnStateChanged += UnitAI_OnStateChanged;
+        unit.OnUnitReset += Unit_OnUnitReset;
 
         BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
     }
+
 
     protected virtual void Update() {
 
@@ -274,9 +277,9 @@ public class UnitAttack : NetworkBehaviour
     }
 
     protected void UpdateActiveAttackParameters(AttackSO attackSO) {
-        attackDamage = attackSO.attackDamage + attackDamageModifier;
-        attackRate = attackSO.attackRate + attackRateModidier;
-        attackKnockback = attackSO.attackKnockback + attackKnockbackModifier;
+        attackDamage = attackSO.attackDamage * attackDamageMultiplier;
+        attackRate = attackSO.attackRate * attackRateMultiplier;
+        attackKnockback = attackSO.attackKnockback + attackKnockbackBuffAbsolute;
         attackDazedTime = attackSO.attackDazedTime;
         attackAnimationHitDelay = attackSO.meleeAttackAnimationHitDelay;
         meleeAttackAnimationDuration = attackSO.meleeAttackAnimationDuration;
@@ -367,32 +370,94 @@ public class UnitAttack : NetworkBehaviour
             attacking = false;
             attackStarted = false;
         }
+
+        if(unitAI.IsDead()) {
+            ResetBuffs();
+        }
+    }
+
+    private void Unit_OnUnitReset(object sender, EventArgs e) {
+        ResetBuffs();
+    }
+
+    #endregion
+
+    #region BUFFS
+
+    public void BuffAttackDamage(float attackDamagebuff) {
+        attackDamageMultiplier += attackDamagebuff;
+        UpdateActiveAttackParameters(activeAttackSO);
+    }
+
+    public void DebuffAttackDamage(float attackDamageDebuff) {
+        attackDamageMultiplier -= attackDamageDebuff;
+        UpdateActiveAttackParameters(activeAttackSO);
+    }
+
+    public void BuffAttackRate(float attackRatebuff) {
+        BuffAttackRateServerRpc(attackRatebuff);
+    }
+
+    public void ResetAttackRate() {
+        ResetAttackRateServerRpc();
+    }
+
+    public void BuffAttackKnockbackAbsolute(float attackKnockbackbuff) {
+        attackKnockbackBuffAbsolute += attackKnockbackbuff;
+        UpdateActiveAttackParameters(activeAttackSO);
+    }
+
+    public void DebuffAttackKnockbackAbsolute(float attackKnockbackDebuff) {
+        attackKnockbackBuffAbsolute -= attackKnockbackDebuff;
+        UpdateActiveAttackParameters(activeAttackSO);
+    }
+
+    private void ResetBuffs() {
+        if (attackRateMultiplier < 1) {
+            ResetAttackRate();
+        }
+
+        if (attackDamageMultiplier > 1) {
+            attackDamageMultiplier = 1;
+        }
+
+        if (attackKnockbackBuffAbsolute > 0) {
+            attackKnockbackBuffAbsolute = 0;
+        }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void BuffAttackRateServerRpc(float attackRatebuff) {
+        attackRateMultiplier -= attackRatebuff;
+        UpdateActiveAttackParameters(activeAttackSO);
+        Debug.Log("attack rate buffed to " + attackRateMultiplier);
+
+        BuffAttackRateClientRpc();
+    }
+
+    [ClientRpc]
+    private void BuffAttackRateClientRpc() {
+        Debug.Log("BuffAttackRateClientRpc");
+        OnAttackRateBuffed?.Invoke(this, EventArgs.Empty);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void ResetAttackRateServerRpc() {
+        attackRateMultiplier = 1f;
+        Debug.Log("attack rate Reset");
+        ResetAttackRateClientRpc();
+    }
+
+    [ClientRpc]
+    private void ResetAttackRateClientRpc() {
+        Debug.Log("ResetAttackRateClientRpc");
+        OnAttackRateDebuffed?.Invoke(this, EventArgs.Empty);
+        UpdateActiveAttackParameters(activeAttackSO);
     }
 
     #endregion
 
     #region SET PARAMETERS
-
-    public void BuffAttackDamage(float attackDamagebuff) {
-        attackDamageModifier += attackDamagebuff;
-        UpdateActiveAttackParameters(activeAttackSO);
-    }
-
-    public void DebuffAttackDamage(float attackDamageDebuff) {
-        attackDamageModifier -= attackDamageDebuff;
-        UpdateActiveAttackParameters(activeAttackSO);
-    }
-
-    public void BuffAttackKnockback(float attackKnockbackbuff) {
-        attackKnockbackModifier += attackKnockbackbuff;
-        UpdateActiveAttackParameters(activeAttackSO);
-    }
-
-    public void DebuffAttackKnockback(float attackKnockbackDebuff) {
-        attackKnockbackModifier -= attackKnockbackDebuff;
-        UpdateActiveAttackParameters(activeAttackSO);
-    }
-
 
     public void SetAttackTarget(ITargetable attackTarget) {
         if(attackTarget != null) {
@@ -436,6 +501,7 @@ public class UnitAttack : NetworkBehaviour
     private void SetActiveAttackSODecompositionParameterClientRpc(bool attackSODecomposition) {
         attackDecomposition = attackSODecomposition;
     }
+
 
     #endregion
 

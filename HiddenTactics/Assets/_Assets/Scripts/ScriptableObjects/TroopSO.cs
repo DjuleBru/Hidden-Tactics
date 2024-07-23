@@ -11,12 +11,16 @@ public class TroopSO : ScriptableObject {
 
     public GameObject troopPrefab;
     public GameObject unitPrefab;
-
-    public AttackSO mainTroopAttackSO;
+    public GameObject additionalUnit1Prefab;
+    public GameObject additionalUnit2Prefab;
 
     public int spawnTroopCost;
     public int upgradeTroopCost;
     public int buyAdditionalUnitsCost;
+
+    public List<Vector2> buffedGridPositions;
+    public SupportUnit.SupportType supportType;
+
 
     public bool troopIsImplemented;
 

@@ -12,5 +12,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44a693b538d454945879116c3a121ddd, type: 3}
   m_Name: HumanKingTroop
   m_EditorClassIdentifier: 
+  troopIllustrationSlotSprite: {fileID: 0}
+  troopDescriptionSlotSprite: {fileID: 0}
+  troopTypeIconSprite: {fileID: 0}
   troopPrefab: {fileID: 2495463524177989710, guid: 303fe98e49b5ea44c95da258e02a865e, type: 3}
   unitPrefab: {fileID: 7228251882027103337, guid: 9094d890246214a4983af19decaac9a3, type: 3}
+  additionalUnit1Prefab: {fileID: 6582105824262927089, guid: 974a18b8d382e7e49970efa5bd60d332, type: 3}
+  additionalUnit2Prefab: {fileID: 6582105824262927089, guid: 4698c5779928d6c408aaccf36b744339, type: 3}
+  spawnTroopCost: 0
+  upgradeTroopCost: 0
+  buyAdditionalUnitsCost: 0
+  buffedGridPositions:
+  - {x: 0, y: 0}
+  - {x: -1, y: 0}
+  - {x: -1, y: 1}
+  - {x: -1, y: -1}
+  - {x: 0, y: 1}
+  - {x: 0, y: -1}
+  - {x: 1, y: -1}
+  - {x: 1, y: 0}
+  - {x: 1, y: 1}
+  supportType: 1
+  troopIsImplemented: 0

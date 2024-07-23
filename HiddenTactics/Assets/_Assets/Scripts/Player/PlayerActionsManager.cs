@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
@@ -7,6 +8,13 @@ using UnityEngine;
 public class PlayerActionsManager : NetworkBehaviour {
 
     public static PlayerActionsManager LocalInstance;
+    private int troopSOIndexBeingSpawned;
+    private int buildingSOIndexBeingSpawned;
+
+    private bool placingTroop;
+    private bool placingBuilding;
+
+    public event EventHandler OnActionChanged;
 
     public enum Action {
         Idle,
@@ -18,6 +26,7 @@ public class PlayerActionsManager : NetworkBehaviour {
     public override void OnNetworkSpawn() {
         if(IsOwner) {
             LocalInstance = this;
+            GridHoverManager.Instance.SubsribeToPlayerActions();
         }
     }
 
@@ -33,14 +42,14 @@ public class PlayerActionsManager : NetworkBehaviour {
                     if (PlayerAction_SpawnTroop.LocalInstance.IsValidIPlaceableSpawningTarget()) {
                         PlayerAction_SpawnTroop.LocalInstance.PlaceIPlaceableList();
                         PlayerStateUI.Instance.ResetPlayerGoldChangingUI();
-                        currentAction = Action.Idle;
+                        ChangeAction(Action.Idle);
                     }
                 }
 
                 if (Input.GetMouseButtonDown(1)) {
                     PlayerAction_SpawnTroop.LocalInstance.CancelIPlaceablePlacement();
                     PlayerStateUI.Instance.ResetPlayerGoldChangingUI();
-                    ChangeActionAtFrameEnd(Action.Idle);
+                    ChangeAction(Action.Idle);
                 }
                 break;
         }
@@ -63,15 +72,18 @@ public class PlayerActionsManager : NetworkBehaviour {
         }
 
         currentAction = newAction;
+        OnActionChanged?.Invoke(this, EventArgs.Empty);
     }
 
     public void SelectTroopToSpawn(int troopListSOIndex) {
         ChangeAction(Action.SelectingIPlaceableToSpawn);
+        troopSOIndexBeingSpawned = troopListSOIndex;
         PlayerAction_SpawnTroop.LocalInstance.SelectTroopToSpawn(troopListSOIndex);
     }
 
     public void SelectBuildingToSpawn(int buildingListSOIndex) {
         ChangeAction(Action.SelectingIPlaceableToSpawn);
+        buildingSOIndexBeingSpawned = buildingListSOIndex;
         PlayerAction_SpawnTroop.LocalInstance.SelectBuildingToSpawn(buildingListSOIndex);
     }
 
@@ -79,4 +91,10 @@ public class PlayerActionsManager : NetworkBehaviour {
         return currentAction;
     }
 
+    public int GetTroopSOIndexBeingSpawned() {
+        return troopSOIndexBeingSpawned;
+    }
+    public int GetBuildingSOIndexBeingSpawned() {
+        return buildingSOIndexBeingSpawned;
+    }
 }

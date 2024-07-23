@@ -20,12 +20,6 @@ public class UnitVisual : NetworkBehaviour
 
     [FoldoutGroup("Visual Components")]
     protected Animator bodyAnimator;
-    [SerializeField] protected Animator fireFXAnimator;
-    [SerializeField] protected Animator fearFXAnimator;
-    [SerializeField] protected Animator iceFXAnimator;
-    [SerializeField] protected Animator poisonFXAnimator;
-    [SerializeField] protected Animator bleedFXAnimator;
-    [SerializeField] protected Animator stunFXAnimator;
     protected RuntimeAnimatorController activeBodyAnimator;
 
     [FoldoutGroup("Upgrade visual attributes")]
@@ -54,12 +48,6 @@ public class UnitVisual : NetworkBehaviour
         unit.OnUnitDied += Unit_OnUnitDied;
         unit.OnUnitFell += Unit_OnUnitFell;
         unit.OnUnitReset += Unit_OnUnitReset;
-
-        unit.OnUnitFlamed += Unit_OnUnitFlamed;
-        unit.OnUnitFlamedEnded += Unit_OnUnitFlameEnded;
-
-        unit.OnUnitScared += Unit_OnUnitScared;
-        unit.OnUnitScaredEnded += Unit_OnUnitScaredEnded;
     }
 
     protected virtual void Start() {
@@ -114,31 +102,6 @@ public class UnitVisual : NetworkBehaviour
         }
     }
 
-    #region STATUS EFFECTS
-    private void Unit_OnUnitFlameEnded(object sender, EventArgs e) {
-
-        fireFXAnimator.ResetTrigger("Effect_Start");
-        fireFXAnimator.SetTrigger("Effect_End");
-    }
-
-    private void Unit_OnUnitFlamed(object sender, Unit.OnUnitSpecialEventArgs e) {
-
-        fireFXAnimator.ResetTrigger("Effect_End");
-        fireFXAnimator.SetTrigger("Effect_Start");
-    }
-
-    private void Unit_OnUnitScaredEnded(object sender, EventArgs e) {
-        fearFXAnimator.ResetTrigger("Effect_Start");
-        fearFXAnimator.SetTrigger("Effect_End");
-    }
-
-    private void Unit_OnUnitScared(object sender, Unit.OnUnitSpecialEventArgs e) {
-        fearFXAnimator.ResetTrigger("Effect_End");
-        fearFXAnimator.SetTrigger("Effect_Start");
-    }
-
-    
-    #endregion
     private void Unit_OnUnitFell(object sender, System.EventArgs e) {
         unitGoldBurstPS.Play();
         unitGoldBurstPS.Stop();

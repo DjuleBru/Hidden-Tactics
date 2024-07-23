@@ -44,7 +44,7 @@ public class UnitAI_HumanCavalry : UnitAI
                 galloping.Value = true;
                 unitMovement.BuffMoveSpeed(unitInitialMoveSpeed * gallopMoveSpeedMultiplier);
                 unitAttack.BuffAttackDamage(unitInitialDamage * gallopDamageBuffMultiplier);
-                unitAttack.BuffAttackKnockback(gallopKnockbackBuffAbsolute);
+                unitAttack.BuffAttackKnockbackAbsolute(gallopKnockbackBuffAbsolute);
                 unitAttack.SetAttackTimer(0f);
             }
         }
@@ -65,7 +65,7 @@ public class UnitAI_HumanCavalry : UnitAI
     private void RemoveGallopBuffs() {
         gallopTimer = gallopTriggerTime;
         unitAttack.DebuffAttackDamage(unitInitialDamage * gallopDamageBuffMultiplier);
-        unitAttack.DebuffAttackKnockback(gallopKnockbackBuffAbsolute);
+        unitAttack.DebuffAttackKnockbackAbsolute(gallopKnockbackBuffAbsolute);
         unitMovement.DebuffMoveSpeed(unitInitialMoveSpeed * gallopMoveSpeedMultiplier);
         unitAttack.InvokeOnUnitAttackEnded();
     }

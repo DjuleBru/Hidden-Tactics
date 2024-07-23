@@ -186,13 +186,11 @@ public class BattleManager : NetworkBehaviour
         Invoke("SetBattlePhase", battlePhaseActivationDelay);
     }
 
-    [Command]
     public void SetBattlePhase() {
         state.Value = State.BattlePhase;
         OnStateChanged?.Invoke(this, EventArgs.Empty);
     }
 
-    [Command]
     public void SetPreparationPhase() {
         state.Value = State.PreparationPhase;
         OnStateChanged?.Invoke(this, EventArgs.Empty);

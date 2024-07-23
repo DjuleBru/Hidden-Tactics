@@ -606,11 +606,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5718880567459754360, guid: 974a18b8d382e7e49970efa5bd60d332, type: 3}
       propertyPath: m_RootOrder
-      value: 6
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 5773286928627039853, guid: 974a18b8d382e7e49970efa5bd60d332, type: 3}
       propertyPath: m_RootOrder
-      value: 5
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 6582105824262927089, guid: 974a18b8d382e7e49970efa5bd60d332, type: 3}
       propertyPath: m_Name
@@ -785,8 +785,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5dc35f8a47dcd3d439ef9ab32b44b298, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gallopMoveSpeedMultiplier: 1
-  gallopDamageBuffMultiplier: 1
+  gallopMoveSpeedMultiplier: 1.5
+  gallopDamageBuffMultiplier: 2
   gallopKnockbackBuffAbsolute: 30000
   gallopTriggerTime: 5
 --- !u!4 &2688804089757113189 stripped
