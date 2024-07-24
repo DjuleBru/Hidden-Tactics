@@ -23,7 +23,10 @@ public class GridObjectVisual : MonoBehaviour
     private Material cleanMaterial;
     [SerializeField] Material selectedMaterial;
     [SerializeField] Material targetTileMaterial;
+    [SerializeField] Material healTargetTileMaterial;
     [SerializeField] Material attackSpeedBuffTileMaterial;
+    [SerializeField] Material attackDamageBuffTileMaterial;
+    [SerializeField] Material moveSpeedBuffTileMaterial;
     [SerializeField] Material destroyedVillageMaterial;
 
     [SerializeField] List<SpriteRenderer> villageSpriteRenderers;
@@ -95,10 +98,29 @@ public class GridObjectVisual : MonoBehaviour
         overlayGridSprite.gameObject.SetActive(true);
         rangedAttackTargetGameObject.SetActive(true);
     }
-
+    public void SetAsHealTargetTile() {
+        overlayGridSprite.sprite = overlayGradientSprite;
+        overlayGridSprite.material = healTargetTileMaterial;
+        overlayGridSprite.gameObject.SetActive(true);
+        rangedAttackTargetGameObject.SetActive(false);
+    }
     public void SetAsAttackSpeedBuffTile() {
         overlayGridSprite.sprite = overlayGradientSprite;
         overlayGridSprite.material = attackSpeedBuffTileMaterial;
+        overlayGridSprite.gameObject.SetActive(true);
+        rangedAttackTargetGameObject.SetActive(false);
+    }
+
+    public void SetAsMoveSpeedBuffTile() {
+        overlayGridSprite.sprite = overlayGradientSprite;
+        overlayGridSprite.material = moveSpeedBuffTileMaterial;
+        overlayGridSprite.gameObject.SetActive(true);
+        rangedAttackTargetGameObject.SetActive(false);
+    }
+
+    public void SetAsAttackDamageBuffTile() {
+        overlayGridSprite.sprite = overlayGradientSprite;
+        overlayGridSprite.material = attackDamageBuffTileMaterial;
         overlayGridSprite.gameObject.SetActive(true);
         rangedAttackTargetGameObject.SetActive(false);
     }

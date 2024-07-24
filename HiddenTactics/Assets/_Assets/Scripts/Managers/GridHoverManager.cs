@@ -194,15 +194,11 @@ public class GridHoverManager : MonoBehaviour
             SupportUnit.SupportType supportType = newHoveredTroop.GetTroopSO().supportType;
 
             if (troopMainAttackSO != null) {
-                if (troopMainAttackSO.attackType == AttackSO.AttackType.ranged) {
-                    ShowRangedAttackSOAttackTiles(troopMainAttackSO, newHoveredTroop.IsOwnedByPlayer());
-                }
+                ShowRangedAttackSOAttackTiles(troopMainAttackSO, troopMainAttackSO.attackType, newHoveredTroop.IsOwnedByPlayer());
             }
 
             if (troopSideAttackSO != null) {
-                if(troopSideAttackSO.attackType == AttackSO.AttackType.ranged) {
-                    ShowRangedAttackSOAttackTiles(troopSideAttackSO, newHoveredTroop.IsOwnedByPlayer());
-                }
+                ShowRangedAttackSOAttackTiles(troopSideAttackSO, troopSideAttackSO.attackType, newHoveredTroop.IsOwnedByPlayer());
             }
 
             if (supportType != SupportUnit.SupportType.none) {
@@ -226,15 +222,11 @@ public class GridHoverManager : MonoBehaviour
         SupportUnit.SupportType supportType = troopSO.supportType;
 
         if (troopMainAttackSO != null) {
-            if (troopMainAttackSO.attackType == AttackSO.AttackType.ranged) {
-                ShowRangedAttackSOAttackTiles(troopMainAttackSO, true);
-            }
+                ShowRangedAttackSOAttackTiles(troopMainAttackSO, troopMainAttackSO.attackType, true);
         }
 
         if (troopSideAttackSO != null) {
-            if (troopSideAttackSO.attackType == AttackSO.AttackType.ranged) {
-                ShowRangedAttackSOAttackTiles(troopSideAttackSO, true);
-            }
+            ShowRangedAttackSOAttackTiles(troopSideAttackSO, troopSideAttackSO.attackType, true);
         }
 
         if(supportType != SupportUnit.SupportType.none) {
@@ -242,7 +234,7 @@ public class GridHoverManager : MonoBehaviour
         }
     }
 
-    private void ShowRangedAttackSOAttackTiles(AttackSO attackSO, bool isPlayerTroop) {
+    private void ShowRangedAttackSOAttackTiles(AttackSO attackSO, AttackSO.AttackType attackType, bool isPlayerTroop) {
         // Only show this if it is a ranged attack
 
         foreach (Vector2 gridPositionVector in attackSO.attackTargetTiles) {
@@ -257,11 +249,16 @@ public class GridHoverManager : MonoBehaviour
             if (rangedAttackGridPosition == currentHoveredGridPosition) continue;
             if (!BattleGrid.Instance.IsValidGridPosition(rangedAttackGridPosition)) continue;
 
-            SetGridObjectVisualAsAttackTarget(rangedAttackGridPosition);
-            HandleSettingUnitsAsRangedAttackTarget(rangedAttackGridPosition);
+            if(attackType == AttackSO.AttackType.ranged) {
+                SetGridObjectVisualAsAttackTarget(rangedAttackGridPosition);
+                HandleSettingUnitsAsRangedAttackTarget(rangedAttackGridPosition);
+            }
+            if(attackType == AttackSO.AttackType.healAllyRangedTargeting) {
+                SetGridObjectVisualAsHealTarget(rangedAttackGridPosition);
+            }
         }
     }
-
+    
     private void ShowPlacingSupportTroopBuffedTiles(TroopSO troopSO) {
         foreach (Vector2 gridPositionVector in troopSO.buffedGridPositions) {
             GridPosition supportGridPosition = new GridPosition((int)gridPositionVector.x, (int)gridPositionVector.y);
@@ -297,12 +294,25 @@ public class GridHoverManager : MonoBehaviour
         targetGridPositionGridObjectVisual.SetAsAttackTargetTile();
     }
 
+    private void SetGridObjectVisualAsHealTarget(GridPosition rangedAttackGridPosition) {
+        GridObjectVisual targetGridPositionGridObjectVisual = BattleGrid.Instance.GetGridObjectVisual(rangedAttackGridPosition);
+        targetTilesGridObjectVisuals.Add(targetGridPositionGridObjectVisual);
+
+        targetGridPositionGridObjectVisual.SetAsHealTargetTile();
+    }
+
     private void SetGridObjectVisualAsBuffTarget(GridPosition gridPosition, SupportUnit.SupportType supportType) {
         GridObjectVisual targetGridPositionGridObjectVisual = BattleGrid.Instance.GetGridObjectVisual(gridPosition);
         targetTilesGridObjectVisuals.Add(targetGridPositionGridObjectVisual);
 
         if(supportType == SupportUnit.SupportType.attackSpeed) {
             targetGridPositionGridObjectVisual.SetAsAttackSpeedBuffTile();
+        }
+        if (supportType == SupportUnit.SupportType.attackDamage) {
+            targetGridPositionGridObjectVisual.SetAsAttackDamageBuffTile();
+        }
+        if (supportType == SupportUnit.SupportType.moveSpeed) {
+            targetGridPositionGridObjectVisual.SetAsMoveSpeedBuffTile();
         }
     }
 

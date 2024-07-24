@@ -49,6 +49,10 @@ public class BuildingHP : NetworkBehaviour, IDamageable {
         }
     }
 
+    public void Heal(float damage) {
+
+    }
+
     public float GetMaxHP() {
         return building.GetBuildingSO().buildingHP;
     }

@@ -71,7 +71,7 @@ public class BattleGrid : MonoBehaviour
         GridPosition nextGridPosition = new GridPosition(0, 0);
         Vector3 nextWorldPosition = Vector3.zero;
 
-        if(unit.IsOwnedByPlayer()) {
+        if (unit.IsOwnedByPlayer()) {
             nextGridPosition = new GridPosition(unitGridPosition.x + 1, unitGridPosition.y);
 
             //Unit reached end on battlefield

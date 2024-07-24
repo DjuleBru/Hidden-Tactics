@@ -40,8 +40,6 @@ public class UnitAttack : NetworkBehaviour
     protected float attackRateMultiplier = 1;
     protected float attackDamageMultiplier = 1;
     protected float attackKnockbackBuffAbsolute;
-    public event EventHandler OnAttackRateBuffed;
-    public event EventHandler OnAttackRateDebuffed;
 
     protected bool attacking;
     protected bool dazed;
@@ -65,7 +63,6 @@ public class UnitAttack : NetworkBehaviour
     public override void OnNetworkSpawn() {
         if (unit.GetUnitIsOnlyVisual()) return;
         unitAI.OnStateChanged += UnitAI_OnStateChanged;
-        unit.OnUnitReset += Unit_OnUnitReset;
 
         BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
     }
@@ -96,8 +93,13 @@ public class UnitAttack : NetworkBehaviour
             if (activeAttackSO.attackType == AttackSO.AttackType.melee) {
                 StartCoroutine(MeleeAttack(attackTarget));
             }
+
             if (activeAttackSO.attackType == AttackSO.AttackType.ranged) {
                 StartCoroutine(RangedAttack(attackTarget));
+            }
+
+            if (activeAttackSO.attackType == AttackSO.AttackType.healAllyMeleeTargeting || activeAttackSO.attackType == AttackSO.AttackType.healAllyRangedTargeting) {
+                StartCoroutine(HealAlly(attackTarget));
             }
         }
     }
@@ -150,6 +152,23 @@ public class UnitAttack : NetworkBehaviour
         if (!unit.GetIsDead() && !target.GetIsDead()) {
             // Unit is still alive on attack animation hit and target unit is still alive
             Shoot(attackTarget);
+        }
+
+        yield return new WaitForSeconds(meleeAttackAnimationDuration - attackAnimationHitDelay);
+        unitAI.SetAttackStarted(false);
+    }
+
+    protected IEnumerator HealAlly(ITargetable target) {
+        OnUnitAttack?.Invoke(this, EventArgs.Empty);
+        unitAI.SetAttackStarted(true);
+
+        yield return new WaitForSeconds(attackAnimationHitDelay);
+
+        if (!unit.GetIsDead() && !target.GetIsDead()) {
+            // Unit is still alive on attack animation hit and target is still alive
+            IDamageable targetIDamageable = target.GetIDamageable();
+
+            targetIDamageable.Heal(attackDamage);
         }
 
         yield return new WaitForSeconds(meleeAttackAnimationDuration - attackAnimationHitDelay);
@@ -249,7 +268,7 @@ public class UnitAttack : NetworkBehaviour
         targetIDamageable.TakeDamage(unit.GetUnitSO().damageToVillages);
     }
 
-    protected List<Unit> FindAOEAttackTargets(Vector3 targetPosition, float AOE) {
+    protected List<Unit> FindAOEAttackTargets(Vector3 targetPosition, float AOE, bool targetAllyUnits = false) {
 
         Collider2D[] colliderArray = Physics2D.OverlapCircleAll(targetPosition, AOE);
         List<Collider2D> colliderList = new List<Collider2D>();
@@ -257,17 +276,22 @@ public class UnitAttack : NetworkBehaviour
             colliderList.Add(collider);
         }
 
-        return FindTargetUnitsInColliderList(colliderList);
+        return FindTargetUnitsInColliderList(colliderList, targetAllyUnits);
     }
 
-    protected List<Unit> FindTargetUnitsInColliderList(List<Collider2D> colliderList) {
+    protected List<Unit> FindTargetUnitsInColliderList(List<Collider2D> colliderList, bool targetAllyUnits = false) {
         List<Unit> targetUnitList = new List<Unit>();
 
         foreach (Collider2D collider in colliderList) {
             if (collider.TryGetComponent<Unit>(out Unit unit)) {
                 // Collider is a unit
+                bool correctTeam = unit.GetParentTroop().IsOwnedByPlayer() != this.unit.GetParentTroop().IsOwnedByPlayer();
 
-                if (unit.GetParentTroop().IsOwnedByPlayer() != this.unit.GetParentTroop().IsOwnedByPlayer() && !unit.GetIsDead()) {
+                if (targetAllyUnits) {
+                    correctTeam = unit.GetParentTroop().IsOwnedByPlayer() == this.unit.GetParentTroop().IsOwnedByPlayer();
+                }
+
+                if (correctTeam && !unit.GetIsDead()) {
                     // target unit is not from the same team AND Unit is not dead
                     targetUnitList.Add(unit);
                 }
@@ -371,90 +395,25 @@ public class UnitAttack : NetworkBehaviour
             attackStarted = false;
         }
 
-        if(unitAI.IsDead()) {
-            ResetBuffs();
-        }
-    }
-
-    private void Unit_OnUnitReset(object sender, EventArgs e) {
-        ResetBuffs();
     }
 
     #endregion
 
     #region BUFFS
-
-    public void BuffAttackDamage(float attackDamagebuff) {
-        attackDamageMultiplier += attackDamagebuff;
+    public void SetAttackRateMultiplier(float attackRateMultiplier) {
+        this.attackRateMultiplier = attackRateMultiplier;
+        UpdateActiveAttackParameters(activeAttackSO);
+        RandomizeAttackTimersServerRpc();
+    }
+    public void SetAttackDamageMultiplier(float attackDamageMultiplier) {
+        this.attackDamageMultiplier = attackDamageMultiplier;
         UpdateActiveAttackParameters(activeAttackSO);
     }
-
-    public void DebuffAttackDamage(float attackDamageDebuff) {
-        attackDamageMultiplier -= attackDamageDebuff;
+    public void SetAttackKnockbackAbsolute(float attackKnockbackAbsolute) {
+        this.attackKnockbackBuffAbsolute = attackKnockbackAbsolute;
+        UpdateActiveAttackParameters(activeAttackSO);
         UpdateActiveAttackParameters(activeAttackSO);
     }
-
-    public void BuffAttackRate(float attackRatebuff) {
-        BuffAttackRateServerRpc(attackRatebuff);
-    }
-
-    public void ResetAttackRate() {
-        ResetAttackRateServerRpc();
-    }
-
-    public void BuffAttackKnockbackAbsolute(float attackKnockbackbuff) {
-        attackKnockbackBuffAbsolute += attackKnockbackbuff;
-        UpdateActiveAttackParameters(activeAttackSO);
-    }
-
-    public void DebuffAttackKnockbackAbsolute(float attackKnockbackDebuff) {
-        attackKnockbackBuffAbsolute -= attackKnockbackDebuff;
-        UpdateActiveAttackParameters(activeAttackSO);
-    }
-
-    private void ResetBuffs() {
-        if (attackRateMultiplier < 1) {
-            ResetAttackRate();
-        }
-
-        if (attackDamageMultiplier > 1) {
-            attackDamageMultiplier = 1;
-        }
-
-        if (attackKnockbackBuffAbsolute > 0) {
-            attackKnockbackBuffAbsolute = 0;
-        }
-    }
-
-    [ServerRpc(RequireOwnership = false)]
-    private void BuffAttackRateServerRpc(float attackRatebuff) {
-        attackRateMultiplier -= attackRatebuff;
-        UpdateActiveAttackParameters(activeAttackSO);
-        Debug.Log("attack rate buffed to " + attackRateMultiplier);
-
-        BuffAttackRateClientRpc();
-    }
-
-    [ClientRpc]
-    private void BuffAttackRateClientRpc() {
-        Debug.Log("BuffAttackRateClientRpc");
-        OnAttackRateBuffed?.Invoke(this, EventArgs.Empty);
-    }
-
-    [ServerRpc(RequireOwnership = false)]
-    private void ResetAttackRateServerRpc() {
-        attackRateMultiplier = 1f;
-        Debug.Log("attack rate Reset");
-        ResetAttackRateClientRpc();
-    }
-
-    [ClientRpc]
-    private void ResetAttackRateClientRpc() {
-        Debug.Log("ResetAttackRateClientRpc");
-        OnAttackRateDebuffed?.Invoke(this, EventArgs.Empty);
-        UpdateActiveAttackParameters(activeAttackSO);
-    }
-
     #endregion
 
     #region SET PARAMETERS

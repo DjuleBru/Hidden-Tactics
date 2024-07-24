@@ -251,7 +251,7 @@ public class PlayerAction_SpawnTroop : NetworkBehaviour {
         unitSpawned.SetParentTroop(troopToSpawnTroop);
 
         //Set Unit Local Position
-        unitSpawned.SetPosition(unitPosition);
+        unitSpawned.SetPosition(unitPosition, false);
 
         //Set Units As addional Unit
         if (isAdditionalUnit) {

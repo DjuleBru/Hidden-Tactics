@@ -40,12 +40,15 @@ public class UnitMovement : NetworkBehaviour {
     private bool canMove;
     private bool inFormation;
     private float moveSpeed;
+    private float moveSpeedMultiplier = 1f;
 
     private Vector3 destinationPoint;
     private Vector3 moveDir;
     private Vector3 watchDir;
     private Vector3 moveForwardsPoint;
-    private Vector3 moveBackwardsPoint;
+
+    public event EventHandler OnMoveSpeedBuffed;
+    public event EventHandler OnMoveSpeedDebuffed;
 
     private void Awake() {
         rb = GetComponent<Rigidbody2D>();
@@ -173,6 +176,12 @@ public class UnitMovement : NetworkBehaviour {
         canMove = true;
         destinationPoint = moveForwardsPoint;
     }
+
+    public void MoveToInitialPosition() {
+        canMove = true;
+        destinationPoint = unit.GetInitialUnitPosition();
+    }
+
     public void MoveToTarget(Vector3 targetPosition) {
         canMove = true;
 
@@ -185,7 +194,7 @@ public class UnitMovement : NetworkBehaviour {
 
     [ServerRpc(RequireOwnership = false)]
     private void MoveServerRpc(Vector3 moveDir3DNormalized) {
-        rb.velocity = moveDir3DNormalized * moveSpeed * Time.fixedDeltaTime;
+        rb.velocity = moveDir3DNormalized * moveSpeed * moveSpeedMultiplier * Time.fixedDeltaTime;
         MoveClientRpc(moveDir3DNormalized);
     }
 
@@ -212,14 +221,55 @@ public class UnitMovement : NetworkBehaviour {
         this.dazed = dazed;
     }
 
+    #region BUFFS
+
+    public void SetMoveSpeedMultiplier(float moveSpeedMultiplier) {
+        this.moveSpeedMultiplier = moveSpeedMultiplier;
+    }
+
     public void BuffMoveSpeed(float moveSpeedBuff) {
-        moveSpeed += moveSpeedBuff;
+        BuffMoveSpeedServerRpc(moveSpeedBuff);
 
     }
+
     public void DebuffMoveSpeed(float moveSpeedDebuff) {
         moveSpeed -= moveSpeedDebuff;
     }
 
+    public void ResetMoveSpeed() {
+        ResetMoveSpeedServerRpc();
+    }
+
+
+    [ServerRpc(RequireOwnership = false)]
+    private void BuffMoveSpeedServerRpc(float moveSpeedBuff) {
+        moveSpeedMultiplier += moveSpeedBuff;
+        BuffMoveSpeedClientRpc();
+    }
+
+    [ClientRpc]
+    private void BuffMoveSpeedClientRpc() {
+        Debug.Log("BuffAttackDamageClientRpc");
+        OnMoveSpeedBuffed?.Invoke(this, EventArgs.Empty);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void ResetMoveSpeedServerRpc() {
+        moveSpeedMultiplier = 1f;
+        Debug.Log("attack damage Reset");
+        ResetMoveSpeedClientRpc();
+    }
+
+    [ClientRpc]
+    private void ResetMoveSpeedClientRpc() {
+        Debug.Log("ResetAttackDamageClientRpc");
+        OnMoveSpeedDebuffed?.Invoke(this, EventArgs.Empty);
+    }
+
+
+
+
+    #endregion
 
     public void SetWatchDir(Transform targetTransform) {
         Vector3 watchDir = (targetTransform.position - transform.position).normalized;
@@ -251,6 +301,10 @@ public class UnitMovement : NetworkBehaviour {
 
     public float GetMoveSpeed() {
         return moveSpeed;
+    }
+
+    public Vector3 GetDestinationPoint() {
+        return destinationPoint;
     }
 
     private void Unit_OnUnitPlaced(object sender, EventArgs e) {

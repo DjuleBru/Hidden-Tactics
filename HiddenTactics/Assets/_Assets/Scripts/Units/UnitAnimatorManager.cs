@@ -143,6 +143,9 @@ public class UnitAnimatorManager : NetworkBehaviour
             unitAnimator.SetTrigger("BaseAttack");
         }
 
+        if (unitAttack.GetActiveAttackSO().attackType == AttackSO.AttackType.healAllyMeleeTargeting || unitAttack.GetActiveAttackSO().attackType == AttackSO.AttackType.healAllyRangedTargeting) {
+            unitAnimator.SetTrigger("BaseAttack");
+        }
     }
 
     protected virtual void UnitAttack_OnUnitAttackEnded(object sender, System.EventArgs e) {
@@ -155,6 +158,10 @@ public class UnitAnimatorManager : NetworkBehaviour
         if(e.newHealth < e.previousHealth) {
             foreach(Animator unitShaderAnimator in unitShaderAnimatorList) {
                 unitShaderAnimator.SetTrigger("Damaged");
+            }
+        } else {
+            foreach (Animator unitShaderAnimator in unitShaderAnimatorList) {
+                unitShaderAnimator.SetTrigger("Healed");
             }
         }
     }
@@ -172,7 +179,7 @@ public class UnitAnimatorManager : NetworkBehaviour
             unitAnimator.Play(animationName, 0, randomOffset);
         }
 
-        if (unitAI.IsIdle() | unitAI.IsBlockedByBuilding()) {
+        if (unitAI.IsIdle() | unitAI.IsBlockedByBuilding() | unitAI.IsWaiting()) {
             walking = false;
             idle = true;
             attacking = false;

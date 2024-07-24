@@ -27,6 +27,7 @@ public class UnitAI : NetworkBehaviour
     public enum State {
         idle,
         blockedByBuilding,
+        waiting,
         moveForwards,
         moveToMeleeTarget,
         attackingMelee,
@@ -191,6 +192,7 @@ public class UnitAI : NetworkBehaviour
         unitActive = BattleManager.Instance.IsBattlePhase();
 
         if(BattleManager.Instance.IsBattlePhase()) {
+            specialTimer = 0f;
             ChangeState(State.moveForwards);
         } else {
             ChangeState(State.idle);
@@ -304,7 +306,9 @@ public class UnitAI : NetworkBehaviour
     public bool IsMovingToTarget() {
         return state.Value == State.moveToMeleeTarget;
     }
-
+    public bool IsWaiting() {
+        return state.Value == State.waiting;
+    }
     public bool IsFallen() {
         return state.Value == State.fallen;
     }

@@ -114,7 +114,7 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 5614006768863344306, guid: e6d0e8717f6dc0049bda6c0f472ac28b, type: 3}
   m_PrefabInstance: {fileID: 3001400264058651355}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &5013461993109407292
+--- !u!114 &2538401655500704836
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -126,16 +126,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d89f61eb3dc68c4b9974c03d74fe8c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  buffTargetTiles:
-  - {x: -1, y: 0}
-  - {x: -1, y: 1}
-  - {x: -1, y: -1}
-  - {x: 0, y: -1}
-  - {x: 0, y: 1}
-  - {x: 1, y: 0}
-  - {x: 1, y: -1}
-  - {x: 1, y: 1}
-  - {x: 0, y: 0}
+  supportUnitType: 0
 --- !u!114 &5747906069960642990
 MonoBehaviour:
   m_ObjectHideFlags: 0

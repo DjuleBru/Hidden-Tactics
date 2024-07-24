@@ -69,7 +69,7 @@ public class UnitVisual : NetworkBehaviour
 
     private void Unit_OnUnitDied(object sender, System.EventArgs e) {
         ChangeSpriteRendererListMaterial(allVisualsSpriteRendererList, cleanMaterial);
-        //ChangeSpriteRendererListSortingOrder(allVisualsSpriteRendererList, -10);
+        ChangeSpriteRendererListSortingOrder(allVisualsSpriteRendererList, -10);
     }
 
     protected virtual void Unit_OnUnitUpgraded(object sender, System.EventArgs e) {

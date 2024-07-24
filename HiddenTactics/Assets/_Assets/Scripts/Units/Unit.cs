@@ -48,6 +48,7 @@ public class Unit : NetworkBehaviour, ITargetable {
     protected GridPosition initialUnitGridPosition;
     protected GridPosition currentGridPosition;
     protected Vector3 unitPositionInTroop;
+    protected Vector3 initialUnitPosition;
     public event EventHandler OnUnitChangedGridPosition;
 
     protected Rigidbody2D rb;
@@ -300,6 +301,7 @@ public class Unit : NetworkBehaviour, ITargetable {
     public Vector3 GetUnitPositionInTroop() {
         return unitPositionInTroop;
     }
+
     public bool GetIsDead() {
         return unitIsDead;
     }
@@ -344,6 +346,10 @@ public class Unit : NetworkBehaviour, ITargetable {
         return initialUnitGridPosition;
     }
 
+    public Vector3 GetInitialUnitPosition() {
+        return initialUnitPosition;
+    }
+
     public bool IsOwnedByPlayer() {
         return parentTroop.IsOwnedByPlayer();
     }
@@ -371,8 +377,8 @@ public class Unit : NetworkBehaviour, ITargetable {
         parentTroop.AddUnitToUnitInTroopList(this);
     }
 
-    public void SetPosition(Vector3 positionInTroop) {
-
+    public void SetPosition(Vector3 positionInTroop, bool debugMode) {
+        
         if(parentTroop.IsOwnedByPlayer()) {
 
             unitPositionInTroop = positionInTroop;
@@ -383,10 +389,15 @@ public class Unit : NetworkBehaviour, ITargetable {
         }
 
         transform.position = unitPositionInTroop;
+
+        if(debugMode) {
+            unitPositionInTroop = transform.position - parentTroop.transform.position;
+        }
     }
 
-    public void SetInitialGridPosition(GridPosition gridPosition) {
+    public void SetInitialUnitPosition(GridPosition gridPosition) {
         initialUnitGridPosition = gridPosition;
+        initialUnitPosition = transform.position;
     }
 
     public void SetUnitAsAdditionalUnit() {

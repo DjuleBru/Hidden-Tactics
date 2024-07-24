@@ -13,11 +13,15 @@ MonoBehaviour:
   m_Name: DwarfYellowBeardDwarf
   m_EditorClassIdentifier: 
   unitTagList: 
-  HP: 15
+  unitTargetType: 0
+  HP: 60
   armor: 0
-  mass: 60
+  mass: 100
   moveType: 0
   unitMoveSpeed: 80
-  mainAttackSO: {fileID: 11400000, guid: fc33f05ee2501fa459d7e9365748b913, type: 2}
-  sideAttackSO: {fileID: 11400000, guid: 28d89a9503000a0419c575f6aa3a164f, type: 2}
+  isGarrisonedUnit: 0
+  mainWeaponSO: {fileID: 0}
+  mainAttackSO: {fileID: 11400000, guid: cdbc1fbeaadd8ac499f9cdf85545ec57, type: 2}
+  sideAttackSO: {fileID: 11400000, guid: c4b92d55bcc0655428208184e8e0546d, type: 2}
   specialAttackSO: {fileID: 0}
+  damageToVillages: 0

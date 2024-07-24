@@ -64,7 +64,7 @@ public class Troop : NetworkBehaviour, IPlaceable {
                 unit.SetParentTroop(this);
 
                 //Set Unit Local Position
-                unit.SetPosition(unit.transform.position);
+                unit.SetPosition(unit.transform.position, true);
             }
         }
     }
@@ -266,7 +266,7 @@ public class Troop : NetworkBehaviour, IPlaceable {
 
         // Set base units as bought (not in additionalUnitsInTroop), Set unit initial grid positions, Set Troop max HP
         foreach(Unit unit in allUnitsInTroop) {
-            unit.SetInitialGridPosition(currentGridPosition);
+            unit.SetInitialUnitPosition(currentGridPosition);
 
             if (!additionalUnitsInTroop.Contains(unit)) {
                 unit.ActivateAdditionalUnit();

@@ -8,12 +8,19 @@ using UnityEngine;
 public class UnitStatusEffectVisuals : NetworkBehaviour
 {
     private Unit unit;
-    private UnitAttack unitAttack;
+    private UnitBuffManager unitBuffManager;
     [SerializeField] protected Material transparentBuffMaterial;
     [SerializeField] protected Material cleanMaterial;
     [SerializeField] protected List<SpriteRenderer> buffSpriteRendererList;
+
     [SerializeField] protected SpriteRenderer attackSpeedBuffEffectSpriteRenderer;
     [SerializeField] protected SpriteRenderer attackSpeedBuffBaseSpriteRenderer;
+    [SerializeField] protected SpriteRenderer attackDamageBuffEffectSpriteRenderer;
+    [SerializeField] protected SpriteRenderer attackDamageBuffBaseSpriteRenderer;
+    [SerializeField] protected SpriteRenderer healthRegenBuffEffectSpriteRenderer;
+    [SerializeField] protected SpriteRenderer healthRegenBuffBaseSpriteRenderer;
+    [SerializeField] protected SpriteRenderer moveSpeedBuffEffectSpriteRenderer;
+    [SerializeField] protected SpriteRenderer moveSpeedBuffBaseSpriteRenderer;
 
     [SerializeField] protected Animator fireFXAnimator;
     [SerializeField] protected Animator fearFXAnimator;
@@ -23,10 +30,13 @@ public class UnitStatusEffectVisuals : NetworkBehaviour
     [SerializeField] protected Animator stunFXAnimator;
 
     [SerializeField] protected Animator attackSpeedBuffAnimator;
+    [SerializeField] protected Animator attackDamageBuffAnimator;
+    [SerializeField] protected Animator healthRegenBuffAnimator;
+    [SerializeField] protected Animator moveSpeedBuffAnimator;
 
     private void Awake() {
         unit = GetComponentInParent<Unit>();
-        unitAttack = GetComponentInParent<UnitAttack>();
+        unitBuffManager = GetComponentInParent<UnitBuffManager>();
     }
 
     public override void OnNetworkSpawn() {
@@ -40,10 +50,16 @@ public class UnitStatusEffectVisuals : NetworkBehaviour
         unit.OnUnitScared += Unit_OnUnitScared;
         unit.OnUnitScaredEnded += Unit_OnUnitScaredEnded;
 
-        unitAttack.OnAttackRateBuffed += UnitAttack_OnAttackRateBuffed;
-        unitAttack.OnAttackRateDebuffed += UnitAttack_OnAttackRateDebuffed;
+        unitBuffManager.OnAttackRateBuffed += unitBuffManager_OnAttackRateBuffed;
+        unitBuffManager.OnAttackRateDebuffed += unitBuffManager_OnAttackRateDebuffed;
+        unitBuffManager.OnAttackDamageBuffed += unitBuffManager_OnAttackDamageBuffed;
+        unitBuffManager.OnAttackDamageDebuffed += unitBuffManager_OnAttackDamageDebuffed;
+        unitBuffManager.OnMoveSpeedBuffed += UnitBuffManager_OnMoveSpeedBuffed;
+        unitBuffManager.OnMoveSpeedDebuffed += UnitBuffManager_OnMoveSpeedDebuffed;
 
         attackSpeedBuffAnimator.SetTrigger("Effect_Start");
+        attackDamageBuffAnimator.SetTrigger("Effect_Start");
+        moveSpeedBuffAnimator.SetTrigger("Effect_Start");
 
         ChangeBuffVisualsMaterials(transparentBuffMaterial);
         HideBuffEffects();
@@ -62,30 +78,68 @@ public class UnitStatusEffectVisuals : NetworkBehaviour
             HideBuffBase();
             attackSpeedBuffAnimator.ResetTrigger("Effect_End");
             attackSpeedBuffAnimator.SetTrigger("Effect_Start");
+            attackDamageBuffAnimator.ResetTrigger("Effect_End");
+            attackDamageBuffAnimator.SetTrigger("Effect_Start");
+            moveSpeedBuffAnimator.ResetTrigger("Effect_End");
+            moveSpeedBuffAnimator.SetTrigger("Effect_Start");
         }
     }
 
     public void HideBuffEffects() {
         attackSpeedBuffEffectSpriteRenderer.enabled = false;
+        attackDamageBuffEffectSpriteRenderer.enabled = false;
+        moveSpeedBuffEffectSpriteRenderer.enabled = false;
     }
 
-    public void ShowBuffEffects() {
-        attackSpeedBuffEffectSpriteRenderer.enabled = true;
+    public void ShowBuffEffects(SupportUnit.SupportType supportType) {
+        if(supportType == SupportUnit.SupportType.attackSpeed) {
+            attackSpeedBuffEffectSpriteRenderer.enabled = true;
+        }
+        if(supportType == SupportUnit.SupportType.attackDamage) {
+            attackDamageBuffEffectSpriteRenderer.enabled = true;
+        }
     }
 
     public void HideBuffBase() {
         attackSpeedBuffBaseSpriteRenderer.enabled = false;
+        attackDamageBuffBaseSpriteRenderer.enabled = false;
+        moveSpeedBuffBaseSpriteRenderer.enabled = false;
     }
 
-    public void ShowBuffBase() {
-        attackSpeedBuffBaseSpriteRenderer.enabled = true;
+    public void ShowBuffBase(SupportUnit.SupportType supportType) {
+        if (supportType == SupportUnit.SupportType.attackSpeed) {
+            attackSpeedBuffBaseSpriteRenderer.enabled = true;
+        }
+        if (supportType == SupportUnit.SupportType.attackDamage) {
+            attackDamageBuffBaseSpriteRenderer.enabled = true;
+        }
+        if (supportType == SupportUnit.SupportType.moveSpeed) {
+            moveSpeedBuffBaseSpriteRenderer.enabled = true;
+        }
     }
 
-    public void ActivateBuffVisuals() {
-        attackSpeedBuffAnimator.Play("Effect_Start");
-        attackSpeedBuffAnimator.ResetTrigger("Effect_End");
-        attackSpeedBuffBaseSpriteRenderer.enabled = true;
-        attackSpeedBuffEffectSpriteRenderer.enabled = true;
+    public void ActivateBuffVisuals(SupportUnit.SupportType supportType) {
+
+        if(supportType == SupportUnit.SupportType.attackSpeed) {
+            attackSpeedBuffAnimator.Play("Effect_Start");
+            attackSpeedBuffAnimator.ResetTrigger("Effect_End");
+            attackSpeedBuffBaseSpriteRenderer.enabled = true;
+            attackSpeedBuffEffectSpriteRenderer.enabled = true;
+        }
+
+        if(supportType == SupportUnit.SupportType.attackDamage) {
+            attackDamageBuffAnimator.Play("Effect_Start");
+            attackDamageBuffAnimator.ResetTrigger("Effect_End");
+            attackDamageBuffBaseSpriteRenderer.enabled = true;
+            attackDamageBuffEffectSpriteRenderer.enabled = true;
+        }
+
+        if (supportType == SupportUnit.SupportType.moveSpeed) {
+            moveSpeedBuffAnimator.Play("Effect_Start");
+            moveSpeedBuffAnimator.ResetTrigger("Effect_End");
+            moveSpeedBuffBaseSpriteRenderer.enabled = true;
+            moveSpeedBuffEffectSpriteRenderer.enabled = true;
+        }
     }
 
     private void ChangeBuffVisualsMaterials(Material material) {
@@ -94,20 +148,46 @@ public class UnitStatusEffectVisuals : NetworkBehaviour
         }
     }
 
-    private void UnitAttack_OnAttackRateDebuffed(object sender, EventArgs e) {
-        Debug.Log("attack rate reset received");
+    private void unitBuffManager_OnAttackRateDebuffed(object sender, EventArgs e) {
         attackSpeedBuffBaseSpriteRenderer.enabled = false;
         attackSpeedBuffEffectSpriteRenderer.enabled = false;
         attackSpeedBuffAnimator.ResetTrigger("Effect_Start");
         attackSpeedBuffAnimator.SetTrigger("Effect_End");
     }
 
-    private void UnitAttack_OnAttackRateBuffed(object sender, EventArgs e) {
-        Debug.Log("attack rate buffed received");
+    private void unitBuffManager_OnAttackRateBuffed(object sender, EventArgs e) {
         attackSpeedBuffBaseSpriteRenderer.enabled = true;
         attackSpeedBuffEffectSpriteRenderer.enabled = true;
         attackSpeedBuffAnimator.ResetTrigger("Effect_End");
         attackSpeedBuffAnimator.SetTrigger("Effect_Start");
+    }
+
+    private void unitBuffManager_OnAttackDamageDebuffed(object sender, EventArgs e) {
+        attackDamageBuffBaseSpriteRenderer.enabled = false;
+        attackDamageBuffEffectSpriteRenderer.enabled = false;
+        attackDamageBuffAnimator.ResetTrigger("Effect_Start");
+        attackDamageBuffAnimator.SetTrigger("Effect_End");
+    }
+
+    private void unitBuffManager_OnAttackDamageBuffed(object sender, EventArgs e) {
+        attackDamageBuffBaseSpriteRenderer.enabled = true;
+        attackDamageBuffEffectSpriteRenderer.enabled = true;
+        attackDamageBuffAnimator.ResetTrigger("Effect_End");
+        attackDamageBuffAnimator.SetTrigger("Effect_Start");
+    }
+
+    private void UnitBuffManager_OnMoveSpeedDebuffed(object sender, EventArgs e) {
+        moveSpeedBuffBaseSpriteRenderer.enabled = false;
+        moveSpeedBuffEffectSpriteRenderer.enabled = false;
+        moveSpeedBuffAnimator.ResetTrigger("Effect_End");
+        moveSpeedBuffAnimator.SetTrigger("Effect_Start");
+    }
+
+    private void UnitBuffManager_OnMoveSpeedBuffed(object sender, EventArgs e) {
+        moveSpeedBuffBaseSpriteRenderer.enabled = true;
+        moveSpeedBuffEffectSpriteRenderer.enabled = true;
+        moveSpeedBuffAnimator.ResetTrigger("Effect_End");
+        moveSpeedBuffAnimator.SetTrigger("Effect_Start");
     }
 
     private void Unit_OnUnitFlameEnded(object sender, EventArgs e) {

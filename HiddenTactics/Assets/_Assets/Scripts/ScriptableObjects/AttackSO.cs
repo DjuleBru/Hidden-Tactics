@@ -8,6 +8,8 @@ public class AttackSO : ScriptableObject
     public enum AttackType {
         melee,
         ranged,
+        healAllyMeleeTargeting,
+        healAllyRangedTargeting,
     }
 
     public enum UnitAttackSpecial {

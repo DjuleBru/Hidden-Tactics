@@ -11,6 +11,7 @@ public class UnitUI : NetworkBehaviour
     [SerializeField] private GameObject unitHPBarGameObject;
     [SerializeField] private Image unitHPBarImage;
     [SerializeField] private Image unitHPBarDamageImage;
+    [SerializeField] private Image unitHPBarHealImage;
     [SerializeField] private Image unitTargetImage;
 
     [SerializeField] private Sprite meleeTargetSprite;
@@ -20,9 +21,9 @@ public class UnitUI : NetworkBehaviour
     [SerializeField] private Sprite coinSprite;
 
     private float damageBarUpdateTimer;
-    private float damageBarUpdateRate = .8f;
+    private float damageBarUpdateRate = 1f;
 
-    private float delayToUpdateDamageBar = .4f;
+    private float delayToUpdateDamageBar = .3f;
 
     private bool updateHPBarFinished;
     private bool unitHPBarIsActive;
@@ -31,6 +32,8 @@ public class UnitUI : NetworkBehaviour
 
     private float hideHPBarTimer;
     private float hideHPBarDuration = 1f;
+
+    [SerializeField] private string debug;
 
     private void Awake() {
         unitHPBarGameObject.SetActive(false);
@@ -49,26 +52,34 @@ public class UnitUI : NetworkBehaviour
     }
 
     private void Update() {
-        if(!updateHPBarFinished) {
+
+        debug = unitHPBarIsActive.ToString();
+
+        if (!updateHPBarFinished) {
             updateHPBarTimer -= Time.deltaTime;
             damageBarUpdateTimer -= Time.deltaTime;
 
-            if(updateHPBarDuration < 0) {
+            if(updateHPBarTimer < 0) {
                 updateHPBarFinished = true;
             }
 
-
             if(damageBarUpdateTimer < 0) {
+
                 if (unitHPBarDamageImage.fillAmount > unitHP.GetHP()/unitHP.GetMaxHP()) {
                     unitHPBarDamageImage.fillAmount = unitHPBarDamageImage.fillAmount - damageBarUpdateRate * Time.deltaTime;
+                }
+
+                if (unitHPBarImage.fillAmount < unitHP.GetHP() / unitHP.GetMaxHP()) {
+                    unitHPBarImage.fillAmount = unitHPBarImage.fillAmount + damageBarUpdateRate * Time.deltaTime;
                 }
             }
 
         } else {
             if (!unitHPBarIsActive) return;
 
+
             hideHPBarTimer -= Time.deltaTime;
-            if(hideHPBarDuration < 0) {
+            if(hideHPBarTimer < 0) {
                 unitHPBarGameObject.SetActive(false);
                 unitHPBarIsActive = false;
             }
@@ -77,6 +88,7 @@ public class UnitUI : NetworkBehaviour
 
     private void Unit_OnUnitDied(object sender, System.EventArgs e) {
         unitHPBarGameObject.SetActive(false);
+        unitHPBarIsActive = false;
     }
 
     private void Unit_OnHealthChanged(object sender, UnitHP.OnHealthChangedEventArgs e) {
@@ -108,10 +120,17 @@ public class UnitUI : NetworkBehaviour
 
         unitHPBarGameObject.SetActive(true);
         unitHPBarIsActive = true;
-        unitHPBarImage.fillAmount = newUnitHP / unitHP.GetMaxHP();
 
-        if(updateHPBarTimer > 0) {
+        if(newUnitHP < initialUnitHP) {
+            unitHPBarImage.fillAmount = newUnitHP / unitHP.GetMaxHP();
+            unitHPBarHealImage.fillAmount = newUnitHP / unitHP.GetMaxHP();
+
             updateHPBarTimer = updateHPBarDuration;
+
+        } else {
+            unitHPBarHealImage.fillAmount = newUnitHP / unitHP.GetMaxHP();
+            updateHPBarTimer = updateHPBarDuration;
+            
         }
     }
 
@@ -120,16 +139,19 @@ public class UnitUI : NetworkBehaviour
         unitTargetImage.sprite = meleeTargetSprite;
         unitTargetImage.gameObject.SetActive(true);
     }
+
     public void ShowUnitUIAsRangedTarget() {
         if (unit.IsOwnedByPlayer()) return;
         unitTargetImage.sprite = rangedTargetSprite;
         unitTargetImage.gameObject.SetActive(true);
     }
+
     public void ShowUnitAsHealTarget() {
         if (unit.IsOwnedByPlayer()) return;
         unitTargetImage.sprite = healTargetSprite;
         unitTargetImage.gameObject.SetActive(true);
     }
+
     public void ShowUnitAsArmorTarget() {
         if (unit.IsOwnedByPlayer()) return;
         unitTargetImage.sprite = armorTargetSprite;

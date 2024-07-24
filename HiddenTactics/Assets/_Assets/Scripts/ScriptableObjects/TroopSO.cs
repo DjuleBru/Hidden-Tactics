@@ -20,6 +20,7 @@ public class TroopSO : ScriptableObject {
 
     public List<Vector2> buffedGridPositions;
     public SupportUnit.SupportType supportType;
+    public float buffAmount;
 
 
     public bool troopIsImplemented;

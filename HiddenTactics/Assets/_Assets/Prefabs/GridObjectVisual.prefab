@@ -439,7 +439,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: f248aaee6e33ec34388b31d48f586d46, type: 2}
+  - {fileID: 2100000, guid: b6e0b4e4a4c53f14cb0587dcf5c47e6b, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1212,7 +1212,10 @@ MonoBehaviour:
   rangedAttackTargetGameObject: {fileID: 5638043996892351411}
   selectedMaterial: {fileID: 2100000, guid: b95b27813ed7a5047be067e7d905e88d, type: 2}
   targetTileMaterial: {fileID: 2100000, guid: 5f3edb048c9a18b4783c5c0fe6299ebb, type: 2}
-  attackSpeedBuffTileMaterial: {fileID: 2100000, guid: f248aaee6e33ec34388b31d48f586d46, type: 2}
+  healTargetTileMaterial: {fileID: 2100000, guid: d9ad5c790e31004438acd57cb0aecc7c, type: 2}
+  attackSpeedBuffTileMaterial: {fileID: 2100000, guid: b6e0b4e4a4c53f14cb0587dcf5c47e6b, type: 2}
+  attackDamageBuffTileMaterial: {fileID: 2100000, guid: 7e187956e6fbf254985bf9c69cd02b55, type: 2}
+  moveSpeedBuffTileMaterial: {fileID: 2100000, guid: f248aaee6e33ec34388b31d48f586d46, type: 2}
   destroyedVillageMaterial: {fileID: 2100000, guid: 93ad55aebf326d24d86be6b0cbbc6538, type: 2}
   villageSpriteRenderers:
   - {fileID: 6821687662051838033}

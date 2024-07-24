@@ -8,16 +8,25 @@ public class SupportUnit : NetworkBehaviour {
     public enum SupportType {
         none,
         attackSpeed,
-
+        attackDamage,
+        moveSpeed,
     }
 
-    private List<Vector2> buffTargetTiles = new List<Vector2>();
-    private List<Unit> unitsBuffedList = new List<Unit>();
-    private List<Unit> unitsBuffedVisualsList = new List<Unit>();
-    List<GridPosition> surroundingGridPositions = new List<GridPosition>();
-    private Unit unit;
+    public enum SupportUnitType {
+        King,
+        FlagBearer,
+        YellowBeardDwarf,
+    }
 
-    private void Awake() {
+    protected List<Vector2> buffTargetTiles = new List<Vector2>();
+    protected List<Unit> unitsBuffedList = new List<Unit>();
+    protected List<Unit> unitsBuffedVisualsList = new List<Unit>();
+    protected List<GridPosition> surroundingGridPositions = new List<GridPosition>();
+    protected SupportType supportType = SupportType.none;
+    [SerializeField] protected SupportUnitType supportUnitType;
+    protected Unit unit;
+
+    protected void Awake() {
         unit = GetComponent<Unit>();
     }
 
@@ -28,20 +37,21 @@ public class SupportUnit : NetworkBehaviour {
         BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
     }
 
-    private void Start() {
+    protected void Start() {
         buffTargetTiles = GetComponentInParent<Troop>().GetTroopSO().buffedGridPositions;
+        supportType = unit.GetParentTroop().GetTroopSO().supportType;
     }
 
-    private void BattleManager_OnStateChanged(object sender, System.EventArgs e) {
+    protected void BattleManager_OnStateChanged(object sender, System.EventArgs e) {
         Debug.Log("phase changed");
 
         // Buffs activate at the beginning of the battle phase
         if (BattleManager.Instance.IsBattlePhase()) {
             RefreshSurroundingGridPositions();
-            HandleBuffsInSurroundingGridPositions();
+            BuffUnitsInSurroundingGridPositions();
 
             foreach (Unit unit in unitsBuffedList) {
-                unit.GetComponentInChildren<UnitStatusEffectVisuals>().ActivateBuffVisuals();
+                unit.GetComponentInChildren<UnitStatusEffectVisuals>().ActivateBuffVisuals(supportType);
             }
         }
 
@@ -51,7 +61,7 @@ public class SupportUnit : NetworkBehaviour {
         }
     }
 
-    private void Unit_OnUnitPlaced(object sender, System.EventArgs e) {
+    protected void Unit_OnUnitPlaced(object sender, System.EventArgs e) {
         Debug.Log(unit.IsOwnedByPlayer());
         if(unit.IsOwnedByPlayer()) {
             HideBuffedUnitBuffs();
@@ -61,20 +71,32 @@ public class SupportUnit : NetworkBehaviour {
         GridHoverManager.Instance.AddSupportUnit(unit);
     }
 
-    private void Unit_OnUnitDied(object sender, System.EventArgs e) {
+    protected void Unit_OnUnitDied(object sender, System.EventArgs e) {
         foreach(Unit unit in unitsBuffedList) {
-            unit.GetComponent<UnitAttack>().ResetAttackRate();
+
+            if(supportUnitType == SupportUnitType.King) {
+                unit.GetComponent<UnitBuffManager>().ResetAttackRate();
+            }
+
+            if(supportUnitType== SupportUnitType.FlagBearer) {
+                unit.GetComponent<UnitBuffManager>().ResetAttackDamage();
+            }
+
+            if (supportUnitType == SupportUnitType.YellowBeardDwarf) {
+                unit.GetComponent<UnitBuffManager>().ResetMoveSpeed();
+            }
+
         }
     }
 
-    private void Unit_OnUnitChangedGridPosition(object sender, System.EventArgs e) {
+    protected void Unit_OnUnitChangedGridPosition(object sender, System.EventArgs e) {
         if (unit.GetUnitIsPlaced()) return;
 
         RefreshSurroundingGridPositions();
-        HandleBuffsVisualsInSurroundingGridPositions();
+        ShowBuffedUnitsInSurroundingGridPositions();
     }
 
-    private void RefreshSurroundingGridPositions() {
+    protected void RefreshSurroundingGridPositions() {
         GridPosition gridPosition = unit.GetCurrentGridPosition();
 
         surroundingGridPositions.Clear();
@@ -89,7 +111,7 @@ public class SupportUnit : NetworkBehaviour {
 
     }
 
-    private void HandleBuffsInSurroundingGridPositions() {
+    protected virtual void BuffUnitsInSurroundingGridPositions() {
         List<Unit> unitListInSurroundingGridPositions = new List<Unit>();
 
         // Fetch units in surrounding grid positions
@@ -97,7 +119,7 @@ public class SupportUnit : NetworkBehaviour {
 
             List<Unit> unitListAtGridPosition = BattleGrid.Instance.GetUnitListAtGridPosition(gridPosition);
 
-            foreach(Unit unit in unitListAtGridPosition) {
+            foreach (Unit unit in unitListAtGridPosition) {
                 bool targetUnitIsInSameTeam = (unit.IsOwnedByPlayer() == this.unit.IsOwnedByPlayer());
                 if (unit.GetUnitIsBought() && targetUnitIsInSameTeam && (unit != this.unit)) {
                     unitListInSurroundingGridPositions.Add(unit);
@@ -109,31 +131,32 @@ public class SupportUnit : NetworkBehaviour {
         List<Unit> unitsToDebuff = new List<Unit>();
 
         foreach (Unit unit in unitsBuffedList) {
-            if(!unitListInSurroundingGridPositions.Contains(unit)) {
+            if (!unitListInSurroundingGridPositions.Contains(unit)) {
                 bool targetUnitIsInSameTeam = (unit.IsOwnedByPlayer() == this.unit.IsOwnedByPlayer());
+
                 if (unit.GetUnitIsBought() && targetUnitIsInSameTeam && (unit != this.unit)) {
                     unitsToDebuff.Add(unit);
                 }
             }
         }
 
-        foreach(Unit unit in unitsToDebuff) {
-            unit.GetComponent<UnitAttack>().ResetAttackRate();
+        foreach (Unit unit in unitsToDebuff) {
+            unit.GetComponent<UnitBuffManager>().RemoveBuffedSupportUnit(supportUnitType);
             unitsBuffedList.Remove(unit);
         }
 
         // Buff new units not in surrounding grid positions 
-        foreach(Unit unit in unitListInSurroundingGridPositions) {
+        foreach (Unit unit in unitListInSurroundingGridPositions) {
 
             if (!unitsBuffedList.Contains(unit)) {
                 unitsBuffedList.Add(unit);
-                unit.GetComponent<UnitAttack>().BuffAttackRate(.5f);
+                unit.GetComponent<UnitBuffManager>().AddBuffedBySupportUnit(this.unit.GetParentTroop().GetTroopSO().buffAmount, supportUnitType);
             }
 
         }
     }
 
-    private void HandleBuffsVisualsInSurroundingGridPositions() {
+    protected void ShowBuffedUnitsInSurroundingGridPositions() {
         List<Unit> unitListInSurroundingGridPositions = new List<Unit>();
 
         // Fetch units in surrounding grid positions
@@ -171,14 +194,14 @@ public class SupportUnit : NetworkBehaviour {
         foreach (Unit unit in unitListInSurroundingGridPositions) {
             if (!unitsBuffedVisualsList.Contains(unit)) {
                 unitsBuffedVisualsList.Add(unit);
-                unit.GetComponentInChildren<UnitStatusEffectVisuals>().ShowBuffEffects();
-                unit.GetComponentInChildren<UnitStatusEffectVisuals>().ShowBuffBase();
+                unit.GetComponentInChildren<UnitStatusEffectVisuals>().ShowBuffEffects(supportType);
+                unit.GetComponentInChildren<UnitStatusEffectVisuals>().ShowBuffBase(supportType);
             }
 
         }
     }
 
-    private void DebuffUnitsInRange() {
+    protected virtual void DebuffUnitsInRange() {
         List<Unit> unitsToDebuff = new List<Unit>();
 
         foreach (Unit unit in unitsBuffedList) {
@@ -186,29 +209,29 @@ public class SupportUnit : NetworkBehaviour {
         }
 
         foreach (Unit unit in unitsToDebuff) {
-            unit.GetComponent<UnitAttack>().ResetAttackRate();
+            unit.GetComponent<UnitBuffManager>().RemoveBuffedSupportUnit(supportUnitType);
             unitsBuffedList.Remove(unit);
         }
     }
 
     public void ShowBuffedUnitBuffs() {
         Debug.Log("trying to shows");
-        HandleBuffsVisualsInSurroundingGridPositions();
+        ShowBuffedUnitsInSurroundingGridPositions();
 
         foreach (Unit unit in unitsBuffedList) {
-            unit.GetComponentInChildren<UnitStatusEffectVisuals>().ShowBuffEffects();
-            unit.GetComponentInChildren<UnitStatusEffectVisuals>().ShowBuffBase();
+            unit.GetComponentInChildren<UnitStatusEffectVisuals>().ShowBuffEffects(supportType);
+            unit.GetComponentInChildren<UnitStatusEffectVisuals>().ShowBuffBase(supportType);
         }
 
         foreach (Unit unit in unitsBuffedVisualsList) {
-            unit.GetComponentInChildren<UnitStatusEffectVisuals>().ShowBuffEffects();
-            unit.GetComponentInChildren<UnitStatusEffectVisuals>().ShowBuffBase();
+            unit.GetComponentInChildren<UnitStatusEffectVisuals>().ShowBuffEffects(supportType);
+            unit.GetComponentInChildren<UnitStatusEffectVisuals>().ShowBuffBase(supportType);
         }
     }
 
     public void HideBuffedUnitBuffs() {
         Debug.Log("trying to hide");
-        HandleBuffsVisualsInSurroundingGridPositions();
+        ShowBuffedUnitsInSurroundingGridPositions();
 
         foreach (Unit unit in unitsBuffedList) {
             unit.GetComponentInChildren<UnitStatusEffectVisuals>().HideBuffEffects();

@@ -78,6 +78,10 @@ public class UnitHP : NetworkBehaviour, IDamageable
         TakeDamageServerRpc(damage);
     }
 
+    public void Heal(float healAmount) {
+        HealServerRpc(healAmount);
+    }
+
     [ServerRpc(RequireOwnership = false)]
     protected void TakeDamageServerRpc(float damage) {
         if(unit.GetUnitSO().isGarrisonedUnit) {
@@ -104,6 +108,26 @@ public class UnitHP : NetworkBehaviour, IDamageable
         if (unitHP <= 0) {
             unit.Die();
         }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    protected void HealServerRpc(float healAmount) {
+        HealClientRpc(healAmount);
+    }
+
+    [ClientRpc]
+    protected virtual void HealClientRpc(float healAmount) {
+
+        if (unitHP + healAmount > GetMaxHP()) {
+            healAmount = GetMaxHP() - unitHP;
+        }
+
+        unitHP += healAmount;
+
+        OnHealthChanged?.Invoke(this, new OnHealthChangedEventArgs {
+            previousHealth = unitHP - healAmount,
+            newHealth = unitHP
+        });
     }
 
     public void BuffUnitArmor(int unitArmorBuff) {

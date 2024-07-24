@@ -8,7 +8,9 @@ public class CountdownTimer : Action
 {
     private float specialTimer;
     public float timerResetValue;
+    public float resetValueRandomizer;
     private UnitAI unitAI;
+
     public override void OnAwake() {
         unitAI = GetComponent<UnitAI>();
     }
@@ -18,7 +20,8 @@ public class CountdownTimer : Action
         unitAI.SetSpecialTimer(specialTimer);
 
         if (unitAI.GetSpecialTimer() < 0) {
-            unitAI.SetSpecialTimer(timerResetValue);
+            float randomizedTimerValue = timerResetValue + Random.Range(-resetValueRandomizer, resetValueRandomizer);
+            unitAI.SetSpecialTimer(randomizedTimerValue);
             return TaskStatus.Success;
         }
         else {

@@ -164,8 +164,8 @@ Transform:
   m_GameObject: {fileID: 2526775196858023321}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0.22, y: 1.02, z: 0}
-  m_LocalScale: {x: -1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: -1.2, y: 1.2, z: 1.2}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 5726142586174304943}
   m_RootOrder: 4
@@ -274,7 +274,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 0cd8f168e1f1a274c8411edc6c8401a4, type: 2}
+  - {fileID: 2100000, guid: 21bf8b6f555823e40be5c25739d4f42e, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -532,12 +532,20 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 499381468929607195, guid: 974a18b8d382e7e49970efa5bd60d332, type: 3}
+      propertyPath: m_FlipX
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 499381468929607195, guid: 974a18b8d382e7e49970efa5bd60d332, type: 3}
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 1201469058, guid: 0e491f7f63f81a9449621d6af487b50f, type: 3}
+    - target: {fileID: 499381468929607195, guid: 974a18b8d382e7e49970efa5bd60d332, type: 3}
+      propertyPath: m_SortingOrder
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 565499955144773914, guid: 974a18b8d382e7e49970efa5bd60d332, type: 3}
       propertyPath: m_RootOrder
-      value: 5
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 612855229817090270, guid: 974a18b8d382e7e49970efa5bd60d332, type: 3}
       propertyPath: unitSO
@@ -671,9 +679,21 @@ PrefabInstance:
       propertyPath: m_LocalPosition.y
       value: 0.76
       objectReference: {fileID: 0}
+    - target: {fileID: 4994556190344914593, guid: 974a18b8d382e7e49970efa5bd60d332, type: 3}
+      propertyPath: attackColliderAOE
+      value: 
+      objectReference: {fileID: 8192876364673747752}
+    - target: {fileID: 5583132679571853238, guid: 974a18b8d382e7e49970efa5bd60d332, type: 3}
+      propertyPath: m_RootOrder
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 5718880567459754360, guid: 974a18b8d382e7e49970efa5bd60d332, type: 3}
       propertyPath: m_RootOrder
-      value: 6
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 5773286928627039853, guid: 974a18b8d382e7e49970efa5bd60d332, type: 3}
+      propertyPath: m_RootOrder
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 6582105824262927089, guid: 974a18b8d382e7e49970efa5bd60d332, type: 3}
       propertyPath: m_Name
@@ -759,6 +779,22 @@ PrefabInstance:
       propertyPath: upgradeChangesWeaponScale
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8723239787107823819, guid: 974a18b8d382e7e49970efa5bd60d332, type: 3}
+      propertyPath: shadowGameObjectList.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8723239787107823819, guid: 974a18b8d382e7e49970efa5bd60d332, type: 3}
+      propertyPath: shadowGameObjectList.Array.data[2]
+      value: 
+      objectReference: {fileID: 7775877373702691044}
+    - target: {fileID: 8723239787107823819, guid: 974a18b8d382e7e49970efa5bd60d332, type: 3}
+      propertyPath: allVisualsSpriteRendererList.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 8723239787107823819, guid: 974a18b8d382e7e49970efa5bd60d332, type: 3}
+      propertyPath: allVisualsSpriteRendererList.Array.data[2]
+      value: 
+      objectReference: {fileID: 2113231150244044540}
     - target: {fileID: 9042352143343999295, guid: 974a18b8d382e7e49970efa5bd60d332, type: 3}
       propertyPath: m_Sprite
       value: 
@@ -767,8 +803,41 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 4994556190344914593, guid: 974a18b8d382e7e49970efa5bd60d332, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 974a18b8d382e7e49970efa5bd60d332, type: 3}
+--- !u!1 &2271543175021472386 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6582105824262927089, guid: 974a18b8d382e7e49970efa5bd60d332, type: 3}
+  m_PrefabInstance: {fileID: 4962529339127535731}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &4581798887716098491
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2271543175021472386}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2547376e8bd31d84b90513cbee5aa12b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  projectileSpawnPoint: {fileID: 0}
+  attackColliderAOE: {fileID: 8192876364673747752}
+--- !u!114 &7408360938316092071
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2271543175021472386}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9d89f61eb3dc68c4b9974c03d74fe8c8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  supportUnitType: 1
 --- !u!4 &2688804089757113189 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7029836679232979734, guid: 974a18b8d382e7e49970efa5bd60d332, type: 3}
@@ -779,3 +848,14 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 840249482380667612, guid: 974a18b8d382e7e49970efa5bd60d332, type: 3}
   m_PrefabInstance: {fileID: 4962529339127535731}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &8192876364673747752 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3849596373501743963, guid: 974a18b8d382e7e49970efa5bd60d332, type: 3}
+  m_PrefabInstance: {fileID: 4962529339127535731}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 84c86b582819134419491aa81841c0d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

@@ -16,11 +16,13 @@ public class UnitAI_HumanCavalry : UnitAI
 
     private float unitInitialDamage;
     private float unitInitialMoveSpeed;
+    private UnitBuffManager unitBuffManager;
 
     protected void Start() {
         gallopTimer = gallopTriggerTime;
         unitInitialDamage = unitAttack.GetAttackDamage();
         unitInitialMoveSpeed = unitMovement.GetMoveSpeed();
+        unitBuffManager = GetComponent<UnitBuffManager>();
     }
 
     public override void OnNetworkSpawn() {
@@ -42,9 +44,9 @@ public class UnitAI_HumanCavalry : UnitAI
             if (gallopTimer < 0 && !galloping.Value) {
                 gallopTimer = gallopTriggerTime;
                 galloping.Value = true;
-                unitMovement.BuffMoveSpeed(unitInitialMoveSpeed * gallopMoveSpeedMultiplier);
-                unitAttack.BuffAttackDamage(unitInitialDamage * gallopDamageBuffMultiplier);
-                unitAttack.BuffAttackKnockbackAbsolute(gallopKnockbackBuffAbsolute);
+                unitBuffManager.BuffMoveSpeed(gallopMoveSpeedMultiplier);
+                unitBuffManager.BuffAttackDamage(unitInitialDamage * gallopDamageBuffMultiplier);
+                unitBuffManager.BuffAttackKnockbackAbsolute(gallopKnockbackBuffAbsolute);
                 unitAttack.SetAttackTimer(0f);
             }
         }
@@ -64,9 +66,9 @@ public class UnitAI_HumanCavalry : UnitAI
 
     private void RemoveGallopBuffs() {
         gallopTimer = gallopTriggerTime;
-        unitAttack.DebuffAttackDamage(unitInitialDamage * gallopDamageBuffMultiplier);
-        unitAttack.DebuffAttackKnockbackAbsolute(gallopKnockbackBuffAbsolute);
-        unitMovement.DebuffMoveSpeed(unitInitialMoveSpeed * gallopMoveSpeedMultiplier);
+        unitBuffManager.ResetAttackDamage();
+        unitBuffManager.DebuffAttackKnockbackAbsolute(gallopKnockbackBuffAbsolute);
+        unitBuffManager.ResetMoveSpeed();
         unitAttack.InvokeOnUnitAttackEnded();
     }
 
