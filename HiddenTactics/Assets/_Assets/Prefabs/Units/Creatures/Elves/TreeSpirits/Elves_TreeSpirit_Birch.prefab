@@ -368,6 +368,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2bf9678b97d092a4b8df0ff7fa2efd93, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &2663778500645625813
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7228251882027103337}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ca5c99d953b0554b9b73a5f3f32a906, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  projectileSpawnPoint: {fileID: 8767532937672996488}
+  attackColliderAOE: {fileID: 755264522738636227}
+  dieHealMultiplier: 5
 --- !u!114 &3185398235545528021
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -420,20 +435,6 @@ MonoBehaviour:
       Version: 
   gizmoViewMode: 2
   showBehaviorDesignerGizmo: 1
---- !u!114 &2663778500645625813
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7228251882027103337}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2ca5c99d953b0554b9b73a5f3f32a906, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  projectileSpawnPoint: {fileID: 8767532937672996488}
-  attackColliderAOE: {fileID: 755264522738636227}
 --- !u!4 &8767532937672996488 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5767867997887919187, guid: e6d0e8717f6dc0049bda6c0f472ac28b, type: 3}

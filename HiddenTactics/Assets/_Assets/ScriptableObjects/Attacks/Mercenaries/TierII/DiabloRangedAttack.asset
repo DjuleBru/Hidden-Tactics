@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   attackType: 1
   attackDecomposition: 0
-  attackHasAOE: 0
+  attackHasAOE: 1
   attackHasAOECollider: 0
   projectilePrefab: {fileID: 2487143347385034294, guid: d27d2214ae81fac43acfc91f057f9418, type: 3}
   attackTargetTypes: 00000000010000000200000003000000
@@ -22,14 +22,16 @@ MonoBehaviour:
   - {x: 0, y: 0}
   - {x: 1, y: 0}
   - {x: 2, y: 0}
+  - {x: 3, y: 0}
+  - {x: 4, y: 0}
   meleeAttackTargetingRange: 0
   meleeAttackRange: 0
   attackDamage: 5
-  attackRate: 2
-  attackKnockback: 10000
+  attackRate: 5
+  attackKnockback: 15000
   attackDazedTime: 0.25
-  attackAOE: 0.5
+  attackAOE: 1.5
   meleeAttackAnimationHitDelay: 0.3
   meleeAttackAnimationDuration: 0.4
   attackSpecialList: 02000000
-  flamedTime: 4
+  specialEffectDuration: 3

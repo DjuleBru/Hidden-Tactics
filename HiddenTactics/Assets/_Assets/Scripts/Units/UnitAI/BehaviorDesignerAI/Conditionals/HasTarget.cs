@@ -17,11 +17,16 @@ public class HasTarget : Conditional {
        if (attackMode == UnitTargetingSystem.AttackMode.mainAttack) {
             hasMeleeTarget = unitTargetingSystem.GetMainAttackTarget() != null;
        }
+
        if(attackMode == UnitTargetingSystem.AttackMode.sideAttack) {
             hasMeleeTarget = unitTargetingSystem.GetSideAttackTarget() != null;
        }
 
-       if (hasMeleeTarget) {
+       if (attackMode == UnitTargetingSystem.AttackMode.specialAttack) {
+            hasMeleeTarget = unitTargetingSystem.GetSpecialAttackTarget() != null;
+       }
+
+        if (hasMeleeTarget) {
             return TaskStatus.Success;
        } else {
             return TaskStatus.Failure;

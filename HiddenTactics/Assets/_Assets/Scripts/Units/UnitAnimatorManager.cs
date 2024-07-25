@@ -49,6 +49,7 @@ public class UnitAnimatorManager : NetworkBehaviour
         unitAttack.OnUnitAttack += UnitAttack_OnUnitAttack;
         unitAttack.OnUnitAttackStarted += UnitAttack_OnUnitAttackStarted;
         unitAttack.OnUnitAttackEnded += UnitAttack_OnUnitAttackEnded;
+
     }
 
     protected virtual void Update() {
@@ -104,6 +105,10 @@ public class UnitAnimatorManager : NetworkBehaviour
             return;
         }
 
+        if(unitAI.GetState() == UnitAI.State.jumping) {
+            unitAnimator.SetTrigger("Jump");
+        }
+
         if (unitAI.IsIdle()) {
             SetUnitWatchDirectionBasedOnGridPosition();
         }
@@ -141,6 +146,10 @@ public class UnitAnimatorManager : NetworkBehaviour
 
         if(unitAttack.GetActiveAttackSO().attackType == AttackSO.AttackType.melee) {
             unitAnimator.SetTrigger("BaseAttack");
+        }
+
+        if (unitAttack.GetActiveAttackSO().attackType == AttackSO.AttackType.special1Melee) {
+            unitAnimator.SetTrigger("Special1");
         }
 
         if (unitAttack.GetActiveAttackSO().attackType == AttackSO.AttackType.healAllyMeleeTargeting || unitAttack.GetActiveAttackSO().attackType == AttackSO.AttackType.healAllyRangedTargeting) {
@@ -225,6 +234,10 @@ public class UnitAnimatorManager : NetworkBehaviour
 
         unitAnimator.SetBool("Walking", walking);
         unitAnimator.SetBool("Idle", idle);
+    }
+
+    public virtual void SetJumpTrigger() {
+        unitAnimator.SetTrigger("Jump");
     }
 
     public virtual void SetWalking()

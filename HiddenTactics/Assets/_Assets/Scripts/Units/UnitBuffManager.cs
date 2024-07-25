@@ -28,6 +28,8 @@ public class UnitBuffManager : NetworkBehaviour
     private UnitAI unitAI;
     private Unit unit;
 
+    
+
     private void Awake() {
         unitAttack = GetComponent<UnitAttack>();
         unitMovement = GetComponent<UnitMovement>();
@@ -149,6 +151,8 @@ public class UnitBuffManager : NetworkBehaviour
         }
     }
 
+    #region ATTACK RATE
+
     [ServerRpc(RequireOwnership = false)]
     private void BuffAttackRateServerRpc(float attackRatebuff) {
 
@@ -174,6 +178,9 @@ public class UnitBuffManager : NetworkBehaviour
         OnAttackRateDebuffed?.Invoke(this, EventArgs.Empty);
     }
 
+    #endregion
+
+    #region ATTACK DAMAGE
     [ServerRpc(RequireOwnership = false)]
     private void BuffAttackDamageServerRpc(float attackDamageBuff) {
         attackDamageMultiplier += attackDamageBuff;
@@ -199,11 +206,19 @@ public class UnitBuffManager : NetworkBehaviour
     }
 
 
+    #endregion
+
+    #region MOVE SPEED
     [ServerRpc(RequireOwnership = false)]
     private void BuffMoveSpeedServerRpc(float moveSpeedBuff) {
         moveSpeedMultiplier += moveSpeedBuff;
         unitMovement.SetMoveSpeedMultiplier(moveSpeedMultiplier);
-        BuffMoveSpeedClientRpc();
+
+        if(unitMovement.GetMoveSpeedMultiplier() > 1) {
+            BuffMoveSpeedClientRpc();
+        } else {
+            ResetMoveSpeedClientRpc();
+        }
     }
 
     [ClientRpc]
@@ -222,4 +237,5 @@ public class UnitBuffManager : NetworkBehaviour
     private void ResetMoveSpeedClientRpc() {
         OnMoveSpeedDebuffed?.Invoke(this, EventArgs.Empty);
     }
+    #endregion
 }

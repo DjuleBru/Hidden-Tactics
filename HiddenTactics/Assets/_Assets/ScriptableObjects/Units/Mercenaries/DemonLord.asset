@@ -13,11 +13,15 @@ MonoBehaviour:
   m_Name: DemonLord
   m_EditorClassIdentifier: 
   unitTagList: 
-  HP: 10
+  unitTargetType: 0
+  HP: 200
   armor: 0
-  mass: 60
+  mass: 300
   moveType: 0
-  unitMoveSpeed: 80
-  mainAttackSO: {fileID: 11400000, guid: 385580abebce0f4498364c7ce3150c9e, type: 2}
-  sideAttackSO: {fileID: 11400000, guid: 1665b88c4be65264181bcc853277a35e, type: 2}
+  unitMoveSpeed: 70
+  isGarrisonedUnit: 0
+  mainWeaponSO: {fileID: 0}
+  mainAttackSO: {fileID: 11400000, guid: 072152632f093f34a9e0082d1093a89d, type: 2}
+  sideAttackSO: {fileID: 0}
   specialAttackSO: {fileID: 0}
+  damageToVillages: 0

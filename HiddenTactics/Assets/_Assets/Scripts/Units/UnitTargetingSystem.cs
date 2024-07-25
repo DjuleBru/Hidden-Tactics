@@ -9,20 +9,25 @@ public class UnitTargetingSystem : NetworkBehaviour
     protected Unit unit;
     protected List<GridPosition> mainAttackGridPositionTargetList;
     protected List<GridPosition> sideAttackGridPositionTargetList;
+    protected List<GridPosition> specialAttackGridPositionTargetList;
 
     protected List<ITargetable> mainAttackITargerableList = new List<ITargetable>();
     protected List<ITargetable> sideAttackITargetableList = new List<ITargetable>();
+    protected List<ITargetable> specialAttackITargetableList = new List<ITargetable>();
 
     public enum AttackMode {
         mainAttack,
         sideAttack,
+        specialAttack,
     }
 
     protected AttackSO mainAttackSO;
     protected AttackSO sideAttackSO;
+    protected AttackSO specialAttackSO;
 
     protected ITargetable mainAttackITargetable;
     protected ITargetable sideAttackITargetable;
+    protected ITargetable specialAttackITargetable;
 
     protected float distanceToClosestTargetITargetable;
     protected bool ITargetableIsInRange;
@@ -35,6 +40,7 @@ public class UnitTargetingSystem : NetworkBehaviour
 
         mainAttackSO = unit.GetUnitSO().mainAttackSO;
         sideAttackSO = unit.GetUnitSO().sideAttackSO;
+        specialAttackSO = unit.GetUnitSO().specialAttackSO;
     }
 
     protected void Start() {
@@ -42,6 +48,9 @@ public class UnitTargetingSystem : NetworkBehaviour
         mainAttackGridPositionTargetList = FillGridPositionAttackTargetList(mainAttackSO);
         if(sideAttackSO != null) {
             sideAttackGridPositionTargetList = FillGridPositionAttackTargetList(sideAttackSO);
+        }
+        if(specialAttackSO != null) {
+            specialAttackGridPositionTargetList = FillGridPositionAttackTargetList(specialAttackSO);
         }
     }
 
@@ -58,11 +67,17 @@ public class UnitTargetingSystem : NetworkBehaviour
             if (sideAttackSO != null) {
                 sideAttackITargetableList = FindAttackTargetList(sideAttackSO, sideAttackGridPositionTargetList);
             }
+            if (specialAttackSO != null) {
+                specialAttackITargetableList = FindAttackTargetList(specialAttackSO, specialAttackGridPositionTargetList);
+            }
 
             mainAttackITargetable = FindAttackTarget(mainAttackSO, mainAttackITargerableList, mainAttackITargetable);
 
             if (sideAttackSO != null) {
                 sideAttackITargetable = FindAttackTarget(sideAttackSO, sideAttackITargetableList, sideAttackITargetable);
+            }
+            if (specialAttackSO != null) {
+                specialAttackITargetable = FindAttackTarget(specialAttackSO, specialAttackITargetableList, specialAttackITargetable);
             }
         }
     }
@@ -77,6 +92,12 @@ public class UnitTargetingSystem : NetworkBehaviour
         if (sideAttackITargetable != null) {
             if (sideAttackITargetable.GetIsDead()) {
                 sideAttackITargetable = null;
+            }
+        }
+
+        if (specialAttackITargetable != null) {
+            if (specialAttackITargetable.GetIsDead()) {
+                specialAttackITargetable = null;
             }
         }
     }
@@ -94,7 +115,6 @@ public class UnitTargetingSystem : NetworkBehaviour
                 // Melee attack : constantly re-evaluate attack target
                 target = FindClosestAttackTarget(targetList);
             }
-
 
             if (attackSO.attackType == AttackSO.AttackType.healAllyRangedTargeting) {
                 //  heal : constantly re-evaluate attack target
@@ -120,7 +140,7 @@ public class UnitTargetingSystem : NetworkBehaviour
         List<ITargetable> targetUnitList = new List<ITargetable>();
 
         if(attackSO.attackType == AttackSO.AttackType.melee) {
-            targetUnitList = GetMeleeAttackTargets(attackSO);
+            targetUnitList = GetMeleeAttackTargetList(attackSO);
         }
 
         if (attackSO.attackType == AttackSO.AttackType.healAllyMeleeTargeting) {
@@ -138,9 +158,8 @@ public class UnitTargetingSystem : NetworkBehaviour
         return targetUnitList;
     }
 
-    protected List<ITargetable> GetMeleeAttackTargets(AttackSO attackSO) {
+    protected List<ITargetable> GetMeleeAttackTargetList(AttackSO attackSO) {
         float attackTargetingRange = attackSO.meleeAttackTargetingRange;
-
         Collider2D[] colliderArray = Physics2D.OverlapCircleAll(transform.position, attackTargetingRange);
         List<ITargetable> targetItargetableList = new List<ITargetable>();
 
@@ -336,6 +355,10 @@ public class UnitTargetingSystem : NetworkBehaviour
 
     public ITargetable GetSideAttackTarget() {
         return sideAttackITargetable;
+    }
+
+    public ITargetable GetSpecialAttackTarget() {
+        return specialAttackITargetable;
     }
 
     public ITargetable GetRandomMainAttackTarget() {

@@ -43,7 +43,6 @@ public class SupportUnit : NetworkBehaviour {
     }
 
     protected void BattleManager_OnStateChanged(object sender, System.EventArgs e) {
-        Debug.Log("phase changed");
 
         // Buffs activate at the beginning of the battle phase
         if (BattleManager.Instance.IsBattlePhase()) {
@@ -62,7 +61,6 @@ public class SupportUnit : NetworkBehaviour {
     }
 
     protected void Unit_OnUnitPlaced(object sender, System.EventArgs e) {
-        Debug.Log(unit.IsOwnedByPlayer());
         if(unit.IsOwnedByPlayer()) {
             HideBuffedUnitBuffs();
         }
@@ -215,7 +213,6 @@ public class SupportUnit : NetworkBehaviour {
     }
 
     public void ShowBuffedUnitBuffs() {
-        Debug.Log("trying to shows");
         ShowBuffedUnitsInSurroundingGridPositions();
 
         foreach (Unit unit in unitsBuffedList) {
@@ -230,7 +227,6 @@ public class SupportUnit : NetworkBehaviour {
     }
 
     public void HideBuffedUnitBuffs() {
-        Debug.Log("trying to hide");
         ShowBuffedUnitsInSurroundingGridPositions();
 
         foreach (Unit unit in unitsBuffedList) {

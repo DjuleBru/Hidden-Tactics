@@ -28,6 +28,7 @@ public class UnitAI : NetworkBehaviour
         idle,
         blockedByBuilding,
         waiting,
+        jumping,
         moveForwards,
         moveToMeleeTarget,
         attackingMelee,
@@ -250,6 +251,7 @@ public class UnitAI : NetworkBehaviour
     }
 
     public void ChangeState(State newState) {
+        if(state.Value == newState) return;
         state.Value = newState;
     }
 

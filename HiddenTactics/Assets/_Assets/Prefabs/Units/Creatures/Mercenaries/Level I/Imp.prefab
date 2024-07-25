@@ -24,6 +24,14 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 59680973, guid: 1bb9dd2d39304954faace378bb798272, type: 3}
     - target: {fileID: 625947453899721624, guid: e6d0e8717f6dc0049bda6c0f472ac28b, type: 3}
+      propertyPath: m_SortingLayer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 625947453899721624, guid: e6d0e8717f6dc0049bda6c0f472ac28b, type: 3}
+      propertyPath: m_SortingLayerID
+      value: 1393400491
+      objectReference: {fileID: 0}
+    - target: {fileID: 625947453899721624, guid: e6d0e8717f6dc0049bda6c0f472ac28b, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 0}
@@ -31,6 +39,10 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 777035283, guid: 31ba3a23b4ae5cb4b9ddde3b6c8eff97, type: 3}
+    - target: {fileID: 1917477069857370320, guid: e6d0e8717f6dc0049bda6c0f472ac28b, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 2.75
+      objectReference: {fileID: 0}
     - target: {fileID: 3335509450031613311, guid: e6d0e8717f6dc0049bda6c0f472ac28b, type: 3}
       propertyPath: m_Controller
       value: 
@@ -83,6 +95,10 @@ PrefabInstance:
       propertyPath: GlobalObjectIdHash
       value: 951099334
       objectReference: {fileID: 0}
+    - target: {fileID: 5424569212269507237, guid: e6d0e8717f6dc0049bda6c0f472ac28b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5614006768863344306, guid: e6d0e8717f6dc0049bda6c0f472ac28b, type: 3}
       propertyPath: m_Name
       value: Imp
@@ -107,5 +123,76 @@ PrefabInstance:
       propertyPath: upgradedBodyMaterial
       value: 
       objectReference: {fileID: 2100000, guid: dc91cfa391581c643a178247a7c205f0, type: 2}
+    - target: {fileID: 7574386858778582788, guid: e6d0e8717f6dc0049bda6c0f472ac28b, type: 3}
+      propertyPath: shadowGameObjectList.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7574386858778582788, guid: e6d0e8717f6dc0049bda6c0f472ac28b, type: 3}
+      propertyPath: shadowGameObjectList.Array.data[0]
+      value: 
+      objectReference: {fileID: 5639864222797539396}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e6d0e8717f6dc0049bda6c0f472ac28b, type: 3}
+--- !u!1 &5639864222797539396 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7486054614370019999, guid: e6d0e8717f6dc0049bda6c0f472ac28b, type: 3}
+  m_PrefabInstance: {fileID: 3001400264058651355}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &7228251882027103337 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5614006768863344306, guid: e6d0e8717f6dc0049bda6c0f472ac28b, type: 3}
+  m_PrefabInstance: {fileID: 3001400264058651355}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &3461521355342562344
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7228251882027103337}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d7b55c7ecdb49a4a89fa5e6f9022861, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  startWhenEnabled: 1
+  asynchronousLoad: 0
+  pauseWhenDisabled: 0
+  restartWhenComplete: 0
+  logTaskChanges: 0
+  group: 0
+  resetValuesOnRestart: 0
+  externalBehavior: {fileID: 11400000, guid: d0df7e15f4c594245b1c6e86783e7b0e, type: 2}
+  mBehaviorSource:
+    behaviorName: Behavior
+    behaviorDescription: 
+    mTaskData:
+      types: []
+      parentIndex: 
+      startIndex: 
+      variableStartIndex: 
+      JSONSerialization: '{"Variables":[{"Type":"BehaviorDesigner.Runtime.SharedInt","Name":"ammo","IsShared":true,"Int32mValue":1}]}'
+      fieldSerializationData:
+        typeName: []
+        fieldNameHash: 
+        startIndex: 
+        dataPosition: 
+        unityObjects: []
+        byteData: 
+        byteDataArray: 
+      Version: 1.7.8
+  gizmoViewMode: 2
+  showBehaviorDesignerGizmo: 1
+--- !u!114 &5700894912101909104
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7228251882027103337}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 84fcf11a80ec03b4cb3efb63f812986f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ammoMax: 1

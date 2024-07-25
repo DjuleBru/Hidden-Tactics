@@ -9,6 +9,7 @@ public class UnitAttack : NetworkBehaviour
     public event EventHandler OnUnitAttack;
     public event EventHandler OnUnitAttackStarted;
     public event EventHandler OnUnitAttackEnded;
+    public event EventHandler OnUnitDecomposedAttackEnded;
 
     [SerializeField] protected Transform projectileSpawnPoint;
     [SerializeField] protected AttackColliderAOE attackColliderAOE;
@@ -90,7 +91,7 @@ public class UnitAttack : NetworkBehaviour
         if (attackTimer < 0) {
             attackTimer = attackRate;
 
-            if (activeAttackSO.attackType == AttackSO.AttackType.melee) {
+            if (activeAttackSO.attackType == AttackSO.AttackType.melee || activeAttackSO.attackType == AttackSO.AttackType.special1Melee) {
                 StartCoroutine(MeleeAttack(attackTarget));
             }
 
@@ -122,7 +123,7 @@ public class UnitAttack : NetworkBehaviour
 
                 Shoot(attackTarget);
 
-                OnUnitAttackEnded?.Invoke(this, EventArgs.Empty);
+                OnUnitDecomposedAttackEnded?.Invoke(this, EventArgs.Empty);
             }
         }
     }
@@ -132,7 +133,6 @@ public class UnitAttack : NetworkBehaviour
         unitAI.SetAttackStarted(true);
 
         yield return new WaitForSeconds(attackAnimationHitDelay);
-
 
         if (!unit.GetIsDead() && !target.GetIsDead()) {
             // Unit is still alive on attack animation hit and target is still alive
@@ -187,6 +187,11 @@ public class UnitAttack : NetworkBehaviour
         InflictDamage(target, projectileHitPosition);
     }
 
+    public void UnitHasLanded(Vector3 landPosition) {
+        if (!IsServer) return;
+        InflictAOEDamage(landPosition);
+    }
+
     protected void InflictDamage(ITargetable target, Vector3 damageHitPosition) {
         if (!IsServer) return;
         PerformAllDamageActions(target, damageHitPosition);
@@ -215,6 +220,37 @@ public class UnitAttack : NetworkBehaviour
                     if (unitAOETarget != (target as MonoBehaviour)) {
                         PerformAllDamageActions(unitAOETarget, damageHitPosition);
                     }
+                }
+            }
+        }
+
+        OnUnitAttackEnded?.Invoke(this, EventArgs.Empty);
+    }
+
+    protected void InflictAOEDamage(Vector3 damageHitPosition) {
+        if (!IsServer) return;
+
+        if (attackHasAOE) {
+            // Attack has one form of AOE
+
+            if (attackAOE != 0) {
+                // Attack AOE is a circle around damageHitPosition
+
+                foreach (Unit unitAOETarget in FindAOEAttackTargets(damageHitPosition, attackAOE)) {
+                    // Don't damage target unit twice
+                    PerformAllDamageActions(unitAOETarget, damageHitPosition);
+                }
+            }
+
+            if (attackHasAOECollider) {
+                // Attack AOE uses a specific collider
+                List<Collider2D> collidersInAttackAOEList = attackColliderAOE.GetCollidersInAttackAOEList();
+                List<Unit> unitsInAttackAOE = FindTargetUnitsInColliderList(collidersInAttackAOEList);
+
+                foreach (Unit unitAOETarget in unitsInAttackAOE) {
+                    // Don't damage target unit twice
+                    PerformAllDamageActions(unitAOETarget, damageHitPosition);
+                    
                 }
             }
         }
@@ -260,6 +296,11 @@ public class UnitAttack : NetworkBehaviour
         //Fear
         if (attackSpecialList.Contains(AttackSO.UnitAttackSpecial.fear)) {
             (target as Unit).TakeSpecial(AttackSO.UnitAttackSpecial.fear, activeAttackSO.specialEffectDuration);
+        }
+
+        //Poison
+        if (attackSpecialList.Contains(AttackSO.UnitAttackSpecial.poison)) {
+            (target as Unit).TakeSpecial(AttackSO.UnitAttackSpecial.poison, activeAttackSO.specialEffectDuration);
         }
     }
 

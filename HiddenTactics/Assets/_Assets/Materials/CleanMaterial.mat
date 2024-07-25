@@ -22,7 +22,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _ColorRampTex:
-        m_Texture: {fileID: 2800000, guid: 279657edc397ece4b8029c727adf6ddc, type: 3}
+        m_Texture: {fileID: 2800000, guid: 359431ef2af87794198688f7c632c1e3, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ColorRampTexGradient:
@@ -93,7 +93,7 @@ Material:
     - _ColorChangeTolerance2: 0.25
     - _ColorChangeTolerance3: 0.25
     - _ColorRampBlend: 1
-    - _ColorRampLuminosity: 0
+    - _ColorRampLuminosity: 0.02
     - _ColorRampOutline: 0
     - _ColorSwapBlend: 1
     - _ColorSwapBlueLuminosity: 0.5
@@ -142,12 +142,12 @@ Material:
     - _HologramStripesAmount: 0.1
     - _HologramStripesSpeed: 4.5
     - _HologramUnmodAmount: 0
-    - _HsvBright: 1
-    - _HsvSaturation: 1
-    - _HsvShift: 180
-    - _InnerOutlineAlpha: 0.499
+    - _HsvBright: 0.83
+    - _HsvSaturation: 0.89
+    - _HsvShift: 285
+    - _InnerOutlineAlpha: 0
     - _InnerOutlineGlow: 1
-    - _InnerOutlineThickness: 1.73
+    - _InnerOutlineThickness: 1.37
     - _MaxXUV: 1
     - _MaxYUV: 1
     - _MinXUV: 0
@@ -237,7 +237,7 @@ Material:
     - _HologramStripeColor: {r: 0, g: 1, b: 1, a: 1}
     - _InnerOutlineColor: {r: 0.05952382, g: 1, b: 0, a: 1}
     - _OutlineColor: {r: 1, g: 1, b: 1, a: 1}
-    - _OverlayColor: {r: 1, g: 1, b: 1, a: 1}
+    - _OverlayColor: {r: 0, g: 0.7075472, b: 0.0045779743, a: 1}
     - _ShadowColor: {r: 0, g: 0, b: 0, a: 1}
     - _ShineColor: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []

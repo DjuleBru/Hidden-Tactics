@@ -10,6 +10,7 @@ public class UnitUI : NetworkBehaviour
     private UnitHP unitHP;
     [SerializeField] private GameObject unitHPBarGameObject;
     [SerializeField] private Image unitHPBarImage;
+    [SerializeField] private Image unitPoisonBarImage;
     [SerializeField] private Image unitHPBarDamageImage;
     [SerializeField] private Image unitHPBarHealImage;
     [SerializeField] private Image unitTargetImage;
@@ -55,6 +56,13 @@ public class UnitUI : NetworkBehaviour
 
         debug = unitHPBarIsActive.ToString();
 
+        if (unit.GetIsPoisoned())
+        {
+            unitPoisonBarImage.fillAmount = unit.GetPoisonedDurationNormalized();
+        } else {
+            unitPoisonBarImage.fillAmount = 0;
+        }
+
         if (!updateHPBarFinished) {
             updateHPBarTimer -= Time.deltaTime;
             damageBarUpdateTimer -= Time.deltaTime;
@@ -75,8 +83,8 @@ public class UnitUI : NetworkBehaviour
             }
 
         } else {
-            if (!unitHPBarIsActive) return;
 
+            if (!unitHPBarIsActive || unitHP.GetHP() <= unitHP.GetMaxHP()) return;
 
             hideHPBarTimer -= Time.deltaTime;
             if(hideHPBarTimer < 0) {

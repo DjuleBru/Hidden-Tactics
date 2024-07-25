@@ -222,7 +222,7 @@ public class GridHoverManager : MonoBehaviour
         SupportUnit.SupportType supportType = troopSO.supportType;
 
         if (troopMainAttackSO != null) {
-                ShowRangedAttackSOAttackTiles(troopMainAttackSO, troopMainAttackSO.attackType, true);
+            ShowRangedAttackSOAttackTiles(troopMainAttackSO, troopMainAttackSO.attackType, true);
         }
 
         if (troopSideAttackSO != null) {
@@ -249,11 +249,15 @@ public class GridHoverManager : MonoBehaviour
             if (rangedAttackGridPosition == currentHoveredGridPosition) continue;
             if (!BattleGrid.Instance.IsValidGridPosition(rangedAttackGridPosition)) continue;
 
-            if(attackType == AttackSO.AttackType.ranged) {
+            if (attackType == AttackSO.AttackType.ranged) {
                 SetGridObjectVisualAsAttackTarget(rangedAttackGridPosition);
                 HandleSettingUnitsAsRangedAttackTarget(rangedAttackGridPosition);
             }
+
             if(attackType == AttackSO.AttackType.healAllyRangedTargeting) {
+                SetGridObjectVisualAsHealTarget(rangedAttackGridPosition);
+            }
+            if (attackType == AttackSO.AttackType.healAllyMeleeTargeting) {
                 SetGridObjectVisualAsHealTarget(rangedAttackGridPosition);
             }
         }

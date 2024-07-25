@@ -72,7 +72,7 @@ public class BattleGrid : MonoBehaviour
         Vector3 nextWorldPosition = Vector3.zero;
 
         if (unit.IsOwnedByPlayer()) {
-            nextGridPosition = new GridPosition(unitGridPosition.x + 1, unitGridPosition.y);
+            nextGridPosition = new GridPosition(unitGridPosition.x + 2, unitGridPosition.y);
 
             //Unit reached end on battlefield
             if (nextGridPosition.x == 12) {
@@ -87,7 +87,7 @@ public class BattleGrid : MonoBehaviour
             }
         } else {
 
-            nextGridPosition = new GridPosition(unitGridPosition.x - 1, unitGridPosition.y);
+            nextGridPosition = new GridPosition(unitGridPosition.x - 2, unitGridPosition.y);
 
             //Unit reached end on battlefield
             if (nextGridPosition.x == -1) {

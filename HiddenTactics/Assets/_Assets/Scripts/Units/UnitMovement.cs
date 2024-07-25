@@ -184,8 +184,20 @@ public class UnitMovement : NetworkBehaviour {
 
     public void MoveToTarget(Vector3 targetPosition) {
         canMove = true;
-
         destinationPoint = targetPosition;
+    }
+
+    public void MoveBehindTarget(Vector3 targetPosition, float distanceBehind) {
+        canMove = true;
+        Vector3 destinationPointBehindTarget = targetPosition;
+
+        if(unit.IsOwnedByPlayer()) {
+            destinationPointBehindTarget += new Vector3(distanceBehind, 0, 0);
+        } else {
+            destinationPointBehindTarget -= new Vector3(distanceBehind, 0, 0);
+        }
+
+        destinationPoint = destinationPointBehindTarget;
     }
 
     private void SetMoveForwardsPoint() {
@@ -226,7 +238,9 @@ public class UnitMovement : NetworkBehaviour {
     public void SetMoveSpeedMultiplier(float moveSpeedMultiplier) {
         this.moveSpeedMultiplier = moveSpeedMultiplier;
     }
-
+    public float GetMoveSpeedMultiplier() {
+        return moveSpeedMultiplier;
+    }
     public void BuffMoveSpeed(float moveSpeedBuff) {
         BuffMoveSpeedServerRpc(moveSpeedBuff);
 

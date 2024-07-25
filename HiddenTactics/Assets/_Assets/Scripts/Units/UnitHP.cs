@@ -12,8 +12,13 @@ public class UnitHP : NetworkBehaviour, IDamageable
 
     protected bool burning;
     protected float burningTimer;
-    protected float burningTick = .7f;
+    protected float burningTick = .5f;
     protected float burningDamage = 1f;
+
+    protected bool poisoned;
+    protected float poisonedTimer;
+    protected float poisonedTick = 1f;
+    protected float poisonedDamage = .5f;
 
     protected int garrisonedProtectionChance = 50;
 
@@ -35,8 +40,11 @@ public class UnitHP : NetworkBehaviour, IDamageable
     protected virtual void Start() {
         unit.OnUnitReset += Unit_OnUnitReset;
         unit.OnUnitFlamed += Unit_OnUnitFlamed;
-        unit.OnUnitFlamedEnded += Unit_OnUnitSpecialEnded;
+        unit.OnUnitFlamedEnded += Unit_OnUnitFlamedEnded;
+        unit.OnUnitPoisoned += Unit_OnUnitPoisoned;
+        unit.OnUnitPoisonedEnded += Unit_OnUnitPoisonedEnded;
     }
+
 
     protected virtual void Update() {
         if (!IsServer) return;
@@ -49,9 +57,18 @@ public class UnitHP : NetworkBehaviour, IDamageable
                 TakeDamageServerRpc(burningDamage);
             }
         }
+
+        if (poisoned) {
+            poisonedTimer += Time.deltaTime;
+
+            if (poisonedTimer >= poisonedTick) {
+                poisonedTimer = 0f;
+                TakeDamageServerRpc(poisonedDamage);
+            }
+        }
     }
 
-    private void Unit_OnUnitSpecialEnded(object sender, EventArgs e) {
+    private void Unit_OnUnitFlamedEnded(object sender, EventArgs e) {
         burning = false;
     }
 
@@ -61,6 +78,18 @@ public class UnitHP : NetworkBehaviour, IDamageable
         }
 
         burning = true;
+    }
+
+    private void Unit_OnUnitPoisonedEnded(object sender, EventArgs e) {
+        poisoned = false;
+    }
+
+    private void Unit_OnUnitPoisoned(object sender, Unit.OnUnitSpecialEventArgs e) {
+        if (!poisoned) {
+            poisonedTimer = 0f;
+        }
+
+        poisoned = true;
     }
 
     protected void Unit_OnUnitReset(object sender, System.EventArgs e) {

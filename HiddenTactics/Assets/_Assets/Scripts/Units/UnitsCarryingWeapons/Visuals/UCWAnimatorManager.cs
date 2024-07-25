@@ -29,8 +29,9 @@ public class UCWAnimatorManager : UnitAnimatorManager
         base.OnNetworkSpawn();
         ucw.OnLegendaryStateChanged += Ucw_OnLegendaryStateChanged;
         ucw.OnMagicStateChanged += Ucw_OnMagicStateChanged;
-
+        unitAttack.OnUnitDecomposedAttackEnded += UnitAttack_OnUnitDecomposedAttackEnded;
     }
+
 
     public override void SetAttackTrigger() {
         if(ucw.GetIsMountedUnit() && !ucw.GetMountAttackAnimation()) {
@@ -87,7 +88,7 @@ public class UCWAnimatorManager : UnitAnimatorManager
         SetAttackStartTrigger();
     }
 
-    protected override void UnitAttack_OnUnitAttackEnded(object sender, System.EventArgs e) {
+    private void UnitAttack_OnUnitDecomposedAttackEnded(object sender, EventArgs e) {
         base.UnitAttack_OnUnitAttackEnded(sender, e);
         OnUcwAttackEnd?.Invoke(this, EventArgs.Empty);
         SetAttackEndTrigger();

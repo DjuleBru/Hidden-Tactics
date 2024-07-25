@@ -22,6 +22,7 @@ public class SetAttackSO : Action {
             attackSO = unit.GetUnitSO().sideAttackSO;
         }
     }
+
     public override TaskStatus OnUpdate() {
 
         unitAttack.SetActiveAttackSO(attackSO);

@@ -30,6 +30,8 @@ public class UnitVisual : NetworkBehaviour
     [FoldoutGroup("Upgrade visual attributes"), ShowIf("upgradeReplacesBody"), ShowIf("upgradeReplacesBody")]
     [SerializeField] protected AnimatorOverrideController upgradedBodyAnimator;
 
+    [SerializeField] protected TrailRenderer trailRenderer;
+
     public event EventHandler OnUnitVisualPlacingMaterialSet;
 
     protected virtual void Awake() {
@@ -37,6 +39,10 @@ public class UnitVisual : NetworkBehaviour
         bodyAnimator = GetComponent<Animator>();
         activeBodyAnimator = bodyAnimator.runtimeAnimatorController;
     
+        if(trailRenderer != null ) {
+            DisableTrailRenderer();
+        }
+
         selectedUnitSpriteRenderer.enabled = false;
     }
 
@@ -170,6 +176,14 @@ public class UnitVisual : NetworkBehaviour
         } else {
             selectedUnitSpriteRenderer.enabled = false;
         }
+    }
+
+    public void EnableTrailRenderer() {
+        trailRenderer.enabled = true;
+    }
+
+    public void DisableTrailRenderer() {
+        trailRenderer.enabled = false;
     }
 
 }

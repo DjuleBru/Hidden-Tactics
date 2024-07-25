@@ -47,6 +47,10 @@ public class UnitStatusEffectVisuals : NetworkBehaviour
         unit.OnUnitFlamed += Unit_OnUnitFlamed;
         unit.OnUnitFlamedEnded += Unit_OnUnitFlameEnded;
 
+
+        unit.OnUnitPoisoned += Unit_OnUnitPoisoned;
+        unit.OnUnitPoisonedEnded += Unit_OnUnitPoisonedEnded;
+
         unit.OnUnitScared += Unit_OnUnitScared;
         unit.OnUnitScaredEnded += Unit_OnUnitScaredEnded;
 
@@ -199,6 +203,17 @@ public class UnitStatusEffectVisuals : NetworkBehaviour
 
         fireFXAnimator.ResetTrigger("Effect_End");
         fireFXAnimator.SetTrigger("Effect_Start");
+    }
+
+    private void Unit_OnUnitPoisonedEnded(object sender, EventArgs e) {
+        poisonFXAnimator.ResetTrigger("Effect_Start");
+        poisonFXAnimator.SetTrigger("Effect_End");
+    }
+
+    private void Unit_OnUnitPoisoned(object sender, Unit.OnUnitSpecialEventArgs e) {
+
+        poisonFXAnimator.ResetTrigger("Effect_End");
+        poisonFXAnimator.SetTrigger("Effect_Start");
     }
 
     private void Unit_OnUnitScaredEnded(object sender, EventArgs e) {

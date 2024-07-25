@@ -21,8 +21,10 @@ public class Unit : NetworkBehaviour, ITargetable {
 
     public event EventHandler<OnUnitSpecialEventArgs> OnUnitDazed;
     public event EventHandler<OnUnitSpecialEventArgs> OnUnitFlamed;
+    public event EventHandler<OnUnitSpecialEventArgs> OnUnitPoisoned;
     public event EventHandler<OnUnitSpecialEventArgs> OnUnitScared;
     public event EventHandler OnUnitFlamedEnded;
+    public event EventHandler OnUnitPoisonedEnded;
     public event EventHandler OnUnitScaredEnded;
 
 
@@ -36,6 +38,11 @@ public class Unit : NetworkBehaviour, ITargetable {
     private bool burning;
     private float burningTimer;
     private float burningDuration;
+
+    private bool poisoned;
+    private float poisonedTimer;
+    private float poisonedDuration;
+    private float poisonedMaxDuration = 10f;
 
     private bool scared;
     private float scaredTimer;
@@ -105,6 +112,16 @@ public class Unit : NetworkBehaviour, ITargetable {
                 scaredTimer = 0;
                 scared = false;
                 RemoveSpecial(AttackSO.UnitAttackSpecial.fear);
+            }
+        }
+
+        if (poisoned) {
+            poisonedTimer += Time.deltaTime;
+
+            if (poisonedTimer >= poisonedDuration) {
+                poisonedTimer = 0;
+                poisoned = false;
+                RemoveSpecial(AttackSO.UnitAttackSpecial.poison);
             }
         }
     }
@@ -233,6 +250,20 @@ public class Unit : NetworkBehaviour, ITargetable {
                 effectDuration = duration
             });
         }
+
+        if (specialEffect == AttackSO.UnitAttackSpecial.poison) {
+            poisoned = true;
+            poisonedTimer = 0f;
+            poisonedDuration += duration;
+
+            if(poisonedDuration > poisonedMaxDuration) {
+                poisonedDuration = poisonedMaxDuration;
+            }
+
+            OnUnitPoisoned?.Invoke(this, new OnUnitSpecialEventArgs {
+                effectDuration = duration
+            });
+        }
     }
 
     public void RemoveAllSpecialEffects() {
@@ -258,8 +289,13 @@ public class Unit : NetworkBehaviour, ITargetable {
         if (specialEffect == AttackSO.UnitAttackSpecial.fear) {
             OnUnitScaredEnded?.Invoke(this, EventArgs.Empty);
         }
+
         if (specialEffect == AttackSO.UnitAttackSpecial.fire) {
             OnUnitFlamedEnded?.Invoke(this, EventArgs.Empty);
+        }
+
+        if (specialEffect == AttackSO.UnitAttackSpecial.poison) {
+            OnUnitPoisonedEnded?.Invoke(this, EventArgs.Empty);
         }
     }
 
@@ -267,7 +303,6 @@ public class Unit : NetworkBehaviour, ITargetable {
         OnUnitDied?.Invoke(this, EventArgs.Empty);
         unitIsDead = true;
         collider2d.enabled = false;
-        OnUnitFlamedEnded?.Invoke(this, EventArgs.Empty);
 
         RemoveUnitFromBattlePhaseUnitList();
         RemoveAllSpecialEffects();
@@ -316,6 +351,15 @@ public class Unit : NetworkBehaviour, ITargetable {
 
     public bool GetUnitIsAdditionalUnit() {
         return isAdditionalUnit;
+    }
+
+    public bool GetIsPoisoned() {
+        return poisoned;
+    }
+
+    public float GetPoisonedDurationNormalized() {
+        Debug.Log(poisonedTimer / poisonedMaxDuration);
+        return (poisonedDuration - poisonedTimer) / poisonedMaxDuration;
     }
 
     public UnitSO GetUnitSO() {
@@ -462,6 +506,14 @@ public class Unit : NetworkBehaviour, ITargetable {
     public void DebugModeStartFunction() {
         OnUnitPlaced?.Invoke(this, EventArgs.Empty);
         unitIsBought = true;
+        collider2d.enabled = true;
+    }
+
+    public void DisableCollider() {
+        collider2d.enabled = false;
+    }
+
+    public void EnableCollider() {
         collider2d.enabled = true;
     }
 
