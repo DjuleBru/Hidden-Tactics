@@ -140,6 +140,7 @@ public class UnitAnimatorManager : NetworkBehaviour
     }
 
     protected virtual void UnitAttack_OnUnitAttack(object sender, System.EventArgs e) {
+
         if(unitAttack.GetActiveAttackSO().attackType == AttackSO.AttackType.ranged) {
             unitAnimator.SetTrigger("RangedAttack");
         }

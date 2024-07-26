@@ -21,11 +21,11 @@ public class Jump : Action {
         Vector3 closestPointOnTargetCollider = Vector3.zero;
         Collider2D targetCollider = (targetingSystem.GetSpecialAttackTarget() as MonoBehaviour).GetComponent<Collider2D>();
         closestPointOnTargetCollider = targetCollider.ClosestPoint(transform.position);
-        //unitMovement.MoveBehindTarget(closestPointOnTargetCollider, distanceBehindTarget);
 
         unitAI.ChangeState(UnitAI.State.jumping);
 
-        unitAI.Jump(new Vector2(300000, 0));
+        Vector3 jumpDir = (closestPointOnTargetCollider - transform.position).normalized;
+        unitAI.Jump(jumpDir);
 
         return TaskStatus.Success;
     }

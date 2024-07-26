@@ -22,6 +22,7 @@ public class AttackSO : ScriptableObject
         shock,
         bleed,
         fear,
+        webbed,
     }
 
     public AttackType attackType;

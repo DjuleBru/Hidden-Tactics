@@ -187,9 +187,10 @@ public class UnitAttack : NetworkBehaviour
         InflictDamage(target, projectileHitPosition);
     }
 
-    public void UnitHasLanded(Vector3 landPosition) {
+    public void UnitHasLanded(Vector3 landPosition, ITargetable target) {
         if (!IsServer) return;
         InflictAOEDamage(landPosition);
+        InflictDamage(target, transform.position);
     }
 
     protected void InflictDamage(ITargetable target, Vector3 damageHitPosition) {
@@ -301,6 +302,11 @@ public class UnitAttack : NetworkBehaviour
         //Poison
         if (attackSpecialList.Contains(AttackSO.UnitAttackSpecial.poison)) {
             (target as Unit).TakeSpecial(AttackSO.UnitAttackSpecial.poison, activeAttackSO.specialEffectDuration);
+        }
+
+        //Webbes
+        if (attackSpecialList.Contains(AttackSO.UnitAttackSpecial.webbed)) {
+            (target as Unit).TakeSpecial(AttackSO.UnitAttackSpecial.webbed, activeAttackSO.specialEffectDuration);
         }
     }
 

@@ -9,11 +9,12 @@ public class UnitAI_Jump : UnitAI
     private UnitBuffManager unitBuffManager;
     [SerializeField] private UnitVisual unitVisual;
     [SerializeField] private float jumpAnimationTime;
-    [SerializeField] private float jumpMoveSpeedBuff;
     [SerializeField] private GameObject jumpLandExplosion;
+    [SerializeField] private float jumpForce;
 
     private float jumpTimer;
     private bool jumping;
+    [SerializeField] private bool jumpTargetsEnemy;
 
     protected override void Awake() {
         base.Awake();
@@ -65,11 +66,19 @@ public class UnitAI_Jump : UnitAI
         base.ChangeStateClientRpc();
     }
 
-    public void Jump(Vector2 jumpForce) {
+    public void Jump(Vector3 jumpDir) {
+        Vector3 jumpForceVector3 = new Vector3();
+
+        if (jumpTargetsEnemy) {
+            jumpForceVector3 = jumpDir * jumpForce;
+        } else {
+            jumpForceVector3 = new Vector3(jumpForce, 0, 0);
+        }
+
         unit.TakeDazed(jumpAnimationTime);
-        unit.TakeKnockBack(jumpForce);
+        unit.TakeKnockBack(jumpForceVector3);
+
         unitAttack.SetActiveAttackSO(unit.GetUnitSO().specialAttackSO);
-        unitBuffManager.BuffMoveSpeed(jumpMoveSpeedBuff);
         unitVisual.EnableTrailRenderer();
         unit.DisableCollider();
         jumpTimer = jumpAnimationTime;
@@ -77,11 +86,15 @@ public class UnitAI_Jump : UnitAI
     }
 
     private void Land() {
-        unitBuffManager.BuffMoveSpeed(-jumpMoveSpeedBuff);
         unit.EnableCollider();
-        unitAttack.UnitHasLanded(transform.position);
+
+        unitAttack.UnitHasLanded(transform.position, unitTargetingSystem.GetSpecialAttackTarget());
         StartCoroutine(PostLandingCoroutine());
-        SpawnProjectileHitVisualGameObjectServerRpc();
+
+        if(unitAttack.GetActiveAttackSO().attackHasAOE) { 
+            SpawnProjectileHitVisualGameObjectServerRpc();
+        }
+
         ChangeState(State.moveToMeleeTarget);
         jumping = false;
     }

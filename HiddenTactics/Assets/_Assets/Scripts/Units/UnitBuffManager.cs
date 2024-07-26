@@ -28,7 +28,7 @@ public class UnitBuffManager : NetworkBehaviour
     private UnitAI unitAI;
     private Unit unit;
 
-    
+    private bool webbed;
 
     private void Awake() {
         unitAttack = GetComponent<UnitAttack>();
@@ -41,6 +41,8 @@ public class UnitBuffManager : NetworkBehaviour
         if (unit.GetUnitIsOnlyVisual()) return;
         unitAI.OnStateChanged += UnitAI_OnStateChanged;
         unit.OnUnitReset += Unit_OnUnitReset;
+        unit.OnUnitWebbed += Unit_OnUnitWebbed;
+        unit.OnUnitWebbedEnded += Unit_OnUnitWebbedEnded;
     }
 
     private void Unit_OnUnitReset(object sender, EventArgs e) {
@@ -51,6 +53,22 @@ public class UnitBuffManager : NetworkBehaviour
         if (unitAI.IsDead()) {
             ResetBuffs();
         }
+    }
+
+    private void Unit_OnUnitWebbedEnded(object sender, EventArgs e) {
+        if(webbed) {
+            BuffMoveSpeed(.75f);
+        }
+        webbed = false;
+    }
+
+    private void Unit_OnUnitWebbed(object sender, Unit.OnUnitSpecialEventArgs e) {
+
+        if(!webbed) {
+            BuffMoveSpeed(-.75f);
+        }
+
+        webbed = true;
     }
 
     public void AddBuffedBySupportUnit(float buffMultiplier, SupportUnit.SupportUnitType unitType) {
@@ -213,6 +231,8 @@ public class UnitBuffManager : NetworkBehaviour
     private void BuffMoveSpeedServerRpc(float moveSpeedBuff) {
         moveSpeedMultiplier += moveSpeedBuff;
         unitMovement.SetMoveSpeedMultiplier(moveSpeedMultiplier);
+
+        Debug.Log(moveSpeedMultiplier);
 
         if(unitMovement.GetMoveSpeedMultiplier() > 1) {
             BuffMoveSpeedClientRpc();

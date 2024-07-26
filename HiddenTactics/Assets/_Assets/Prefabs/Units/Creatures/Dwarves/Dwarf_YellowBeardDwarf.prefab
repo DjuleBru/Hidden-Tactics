@@ -316,8 +316,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   unitVisual: {fileID: 4664248261099953631}
   jumpAnimationTime: 0.6
-  jumpMoveSpeedBuff: 12
   jumpLandExplosion: {fileID: 1005379322125145110, guid: 5ef2263d08c517a4d94fe0ec360f530b, type: 3}
+  jumpForce: 300000
+  jumpMoveSpeedBuff: 0
+  jumpTargetsEnemy: 0
 --- !u!114 &4016416873011797583
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -196,7 +196,7 @@ public class UnitTargetingSystem : NetworkBehaviour
         foreach (GridPosition relativeTargetGridPosition in attackGridPositionTargetList) {
             GridPosition targetGridPosition = new GridPosition(unit.GetCurrentGridPosition().x + relativeTargetGridPosition.x, unit.GetCurrentGridPosition().y + relativeTargetGridPosition.y);
 
-            if(!BattleGrid.Instance.IsValidGridPosition(targetGridPosition)) {
+            if (!BattleGrid.Instance.IsValidGridPosition(targetGridPosition)) {
                 // Target grid position is not a valid grid position
                 continue;
             }

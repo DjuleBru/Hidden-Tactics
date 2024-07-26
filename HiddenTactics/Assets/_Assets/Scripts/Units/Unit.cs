@@ -23,9 +23,11 @@ public class Unit : NetworkBehaviour, ITargetable {
     public event EventHandler<OnUnitSpecialEventArgs> OnUnitFlamed;
     public event EventHandler<OnUnitSpecialEventArgs> OnUnitPoisoned;
     public event EventHandler<OnUnitSpecialEventArgs> OnUnitScared;
+    public event EventHandler<OnUnitSpecialEventArgs> OnUnitWebbed;
     public event EventHandler OnUnitFlamedEnded;
     public event EventHandler OnUnitPoisonedEnded;
     public event EventHandler OnUnitScaredEnded;
+    public event EventHandler OnUnitWebbedEnded;
 
 
     [SerializeField] private Transform projectileTarget;
@@ -42,11 +44,18 @@ public class Unit : NetworkBehaviour, ITargetable {
     private bool poisoned;
     private float poisonedTimer;
     private float poisonedDuration;
+    private NetworkVariable<float> poisonedDurationNormalized = new NetworkVariable<float>();
+    private NetworkVariable<float> scaredDurationNormalized = new NetworkVariable<float>();
+    private NetworkVariable<float> burningDurationNormalized = new NetworkVariable<float>();
     private float poisonedMaxDuration = 10f;
 
     private bool scared;
     private float scaredTimer;
     private float scaredDuration;
+
+    private bool webbed;
+    private float webbedTimer;
+    private float webbedDuration;
 
     [SerializeField] protected UnitSO unitSO;
     protected Troop parentTroop;
@@ -82,6 +91,7 @@ public class Unit : NetworkBehaviour, ITargetable {
     }
 
     protected void Update() {
+        if (unitIsOnlyVisual) return;
         HandlePositionOnGrid();
 
         if(IsServer && BattleManager.Instance.IsBattlePhase()) {
@@ -103,6 +113,7 @@ public class Unit : NetworkBehaviour, ITargetable {
                 burning = false;
                 RemoveSpecial(AttackSO.UnitAttackSpecial.fire);
             }
+            burningDurationNormalized.Value = (burningDuration - burningTimer) / burningDuration;
         }
 
         if (scared) {
@@ -112,6 +123,18 @@ public class Unit : NetworkBehaviour, ITargetable {
                 scaredTimer = 0;
                 scared = false;
                 RemoveSpecial(AttackSO.UnitAttackSpecial.fear);
+            }
+
+            scaredDurationNormalized.Value = (scaredDuration - scaredTimer) / scaredDuration;
+        }
+
+        if (webbed) {
+            webbedTimer += Time.deltaTime;
+
+            if (webbedTimer >= webbedDuration) {
+                webbedTimer = 0;
+                webbed = false;
+                RemoveSpecial(AttackSO.UnitAttackSpecial.webbed);
             }
         }
 
@@ -123,6 +146,8 @@ public class Unit : NetworkBehaviour, ITargetable {
                 poisoned = false;
                 RemoveSpecial(AttackSO.UnitAttackSpecial.poison);
             }
+
+            poisonedDurationNormalized.Value = (poisonedDuration - poisonedTimer) / poisonedMaxDuration;
         }
     }
 
@@ -251,6 +276,18 @@ public class Unit : NetworkBehaviour, ITargetable {
             });
         }
 
+        if (specialEffect == AttackSO.UnitAttackSpecial.webbed) {
+            if(!webbed) {
+                OnUnitWebbed?.Invoke(this, new OnUnitSpecialEventArgs {
+                    effectDuration = duration
+                });
+            }
+
+            webbed = true;
+            webbedTimer = 0f;
+            webbedDuration = duration;
+        }
+
         if (specialEffect == AttackSO.UnitAttackSpecial.poison) {
             poisoned = true;
             poisonedTimer = 0f;
@@ -273,6 +310,7 @@ public class Unit : NetworkBehaviour, ITargetable {
         RemoveSpecial(AttackSO.UnitAttackSpecial.shock);
         RemoveSpecial(AttackSO.UnitAttackSpecial.bleed);
         RemoveSpecial(AttackSO.UnitAttackSpecial.poison);
+        RemoveSpecial(AttackSO.UnitAttackSpecial.webbed);
     }
 
     public void RemoveSpecial(AttackSO.UnitAttackSpecial specialEffect) {
@@ -296,6 +334,10 @@ public class Unit : NetworkBehaviour, ITargetable {
 
         if (specialEffect == AttackSO.UnitAttackSpecial.poison) {
             OnUnitPoisonedEnded?.Invoke(this, EventArgs.Empty);
+        }
+
+        if (specialEffect == AttackSO.UnitAttackSpecial.webbed) {
+            OnUnitWebbedEnded?.Invoke(this, EventArgs.Empty);
         }
     }
 
@@ -358,8 +400,15 @@ public class Unit : NetworkBehaviour, ITargetable {
     }
 
     public float GetPoisonedDurationNormalized() {
-        Debug.Log(poisonedTimer / poisonedMaxDuration);
-        return (poisonedDuration - poisonedTimer) / poisonedMaxDuration;
+        return poisonedDurationNormalized.Value;
+    }
+
+    public float GetScaredDurationNormalized() {
+        return scaredDurationNormalized.Value;
+    }
+
+    public float GetBurningDurationNormalized() {
+        return burningDurationNormalized.Value;
     }
 
     public UnitSO GetUnitSO() {
@@ -436,6 +485,7 @@ public class Unit : NetworkBehaviour, ITargetable {
 
         if(debugMode) {
             unitPositionInTroop = transform.position - parentTroop.transform.position;
+            BattleGrid.Instance.AddUnitAtGridPosition(currentGridPosition,this);
         }
     }
 

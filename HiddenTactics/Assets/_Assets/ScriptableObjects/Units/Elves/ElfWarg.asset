@@ -12,4 +12,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4bc7b5eb9df2cac4eae406c9d717c5aa, type: 3}
   m_Name: ElfWarg
   m_EditorClassIdentifier: 
-  unitMoveSpeed: 10
+  unitTagList: 
+  unitTargetType: 0
+  HP: 80
+  armor: 0
+  mass: 80
+  moveType: 0
+  unitMoveSpeed: 130
+  isGarrisonedUnit: 0
+  mainWeaponSO: {fileID: 0}
+  mainAttackSO: {fileID: 11400000, guid: d55e0dffcdde0f54b9c7fe3498612c26, type: 2}
+  sideAttackSO: {fileID: 0}
+  specialAttackSO: {fileID: 11400000, guid: 8f18969a89eaeb54399c1f7c7ccad753, type: 2}
+  damageToVillages: 0
