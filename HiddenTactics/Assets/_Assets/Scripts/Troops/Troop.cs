@@ -27,6 +27,8 @@ public class Troop : NetworkBehaviour, IPlaceable {
 
     private List<Unit> allUnitsInTroop;
     private List<Unit> additionalUnitsInTroop;
+    private List<Unit> spawnedUnitsInTroop;
+    private int spawnedUnitActivatedIndex;
 
     [SerializeField] private List<Transform> baseUnitPositions = new List<Transform>();
     [SerializeField] private List<Transform> additionalUnitPositions = new List<Transform>();
@@ -34,6 +36,7 @@ public class Troop : NetworkBehaviour, IPlaceable {
     [SerializeField] private List<Transform> additionalUnit1Positions = new List<Transform>();
     [SerializeField] private List<Transform> baseUnit2Positions = new List<Transform>();
     [SerializeField] private List<Transform> additionalUnit2Positions = new List<Transform>();
+    [SerializeField] private List<Transform> spawnedUnitPositions = new List<Transform>();
     [SerializeField] private Transform allUnitsMiddlePoint;
 
     private GridPosition currentGridPosition;
@@ -45,11 +48,21 @@ public class Troop : NetworkBehaviour, IPlaceable {
     private void Awake() {
         allUnitsInTroop = new List<Unit>();
         additionalUnitsInTroop = new List<Unit>();
+        spawnedUnitsInTroop = new List<Unit>();
 
         foreach (Transform position in baseUnitPositions) {
             position.gameObject.SetActive(false);
         }
         foreach (Transform position in additionalUnitPositions) {
+            position.gameObject.SetActive(false);
+        }
+        foreach (Transform position in additionalUnit1Positions) {
+            position.gameObject.SetActive(false);
+        }
+        foreach (Transform position in additionalUnit2Positions) {
+            position.gameObject.SetActive(false);
+        }
+        foreach (Transform position in spawnedUnitPositions) {
             position.gameObject.SetActive(false);
         }
 
@@ -100,11 +113,12 @@ public class Troop : NetworkBehaviour, IPlaceable {
             UpdateTroopServerRpc();
             troopWasPlacedThisPreparationPhase = false;
         }
-
-        if(BattleManager.Instance.IsPreparationPhase()) {
+        if (BattleManager.Instance.IsBattlePhaseEnding()) {
+            DeactivateAllDynamicallySpawnedUnits();
+        }
+        if (BattleManager.Instance.IsPreparationPhase()) {
             troopHP = maxTroopHP;
             OnTroopHPChanged?.Invoke(this, EventArgs.Empty);
-
         } 
     }
 
@@ -268,7 +282,7 @@ public class Troop : NetworkBehaviour, IPlaceable {
         foreach(Unit unit in allUnitsInTroop) {
             unit.SetInitialUnitPosition(currentGridPosition);
 
-            if (!additionalUnitsInTroop.Contains(unit)) {
+            if (!additionalUnitsInTroop.Contains(unit) && !spawnedUnitsInTroop.Contains(unit)) {
                 unit.ActivateAdditionalUnit();
                 troopHP += unit.GetComponent<UnitHP>().GetHP();
                 maxTroopHP = troopHP;
@@ -287,6 +301,31 @@ public class Troop : NetworkBehaviour, IPlaceable {
         transform.position = troopWorldPosition - troopCenterPoint.localPosition;
 
     }
+
+    public void ActivateNextSpawnedUnit(Vector3 spawnPosition) {
+
+        if (!BattleManager.Instance.IsBattlePhase()) {
+            return;
+        }
+
+        if (spawnedUnitActivatedIndex < spawnedUnitsInTroop.Count) {
+            spawnedUnitsInTroop[spawnedUnitActivatedIndex].transform.position = spawnPosition;
+            spawnedUnitsInTroop[spawnedUnitActivatedIndex].ActivateSpawnedUnit();
+            spawnedUnitActivatedIndex++;
+        } else {
+            Debug.LogWarning("no more units to spawn");
+        }
+    }
+
+    public void DeactivateAllDynamicallySpawnedUnits() {
+        spawnedUnitActivatedIndex = 0;
+
+        foreach (Unit unit in spawnedUnitsInTroop) {
+            unit.DeactivateDynamicallySpawnedUnit();
+            unit.transform.localPosition = Vector3.zero;
+        }
+    }
+
     public void AddUnitToUnitInTroopList(Unit unit) {
         allUnitsInTroop.Add(unit);
 
@@ -300,6 +339,12 @@ public class Troop : NetworkBehaviour, IPlaceable {
 
     public void AddUnitToAdditionalUnitsInTroopList(Unit unit) {
         additionalUnitsInTroop.Add(unit);
+    }
+
+    public void AddUnitToSpawnedUnitsInTroopList(Unit unit) {
+        if(!spawnedUnitsInTroop.Contains(unit)) {
+            spawnedUnitsInTroop.Add(unit);
+        }
     }
 
     public List<Unit> GetUnitsInAdditionalUnitsInTroopList() {
@@ -356,6 +401,9 @@ public class Troop : NetworkBehaviour, IPlaceable {
 
     public List<Transform> GetAdditionalUnit2Positions() {
         return additionalUnit2Positions;
+    }
+    public List<Transform> GetSpawnedUnitsPositions() {
+        return spawnedUnitPositions;
     }
 
     private void UnitHP_OnHealthChanged(object sender, UnitHP.OnHealthChangedEventArgs e) {

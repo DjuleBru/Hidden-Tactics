@@ -18,6 +18,7 @@ public class Unit : NetworkBehaviour, ITargetable {
     public event EventHandler OnUnitSold;
     public event EventHandler OnUnitSetAsAdditionalUnit;
     public event EventHandler OnAdditionalUnitActivated;
+    public event EventHandler OnUnitDynamicallySpawned;
 
     public event EventHandler<OnUnitSpecialEventArgs> OnUnitDazed;
     public event EventHandler<OnUnitSpecialEventArgs> OnUnitFlamed;
@@ -72,6 +73,7 @@ public class Unit : NetworkBehaviour, ITargetable {
     protected bool unitIsDead;
     protected bool unitIsPlaced;
     protected bool isAdditionalUnit;
+    protected bool isSpawnedUnit;
     protected bool unitIsBought;
     protected bool unitIsOnlyVisual;
 
@@ -193,10 +195,6 @@ public class Unit : NetworkBehaviour, ITargetable {
     }
     protected virtual void ParentTroop_OnTroopPlaced(object sender, System.EventArgs e) {
 
-        if (!isAdditionalUnit) {
-            unitIsPlaced = true;
-            collider2d.enabled = true;
-        }
 
         if(unitSO.isGarrisonedUnit) {
             collider2d.enabled = false;
@@ -204,7 +202,13 @@ public class Unit : NetworkBehaviour, ITargetable {
         }
 
         currentGridPosition = parentTroop.GetIPlaceableGridPosition();
-        OnUnitPlaced?.Invoke(this, EventArgs.Empty);
+
+        if (!isAdditionalUnit && !isSpawnedUnit) {
+            unitIsPlaced = true;
+            collider2d.enabled = true;
+            OnUnitPlaced?.Invoke(this, EventArgs.Empty);
+        }
+
     }
 
     public void SetParentBuilding() {
@@ -395,6 +399,10 @@ public class Unit : NetworkBehaviour, ITargetable {
         return isAdditionalUnit;
     }
 
+    public bool GetUnitIsDynamicallySpawnedUnit() {
+        return isSpawnedUnit;
+    }
+
     public bool GetIsPoisoned() {
         return poisoned;
     }
@@ -509,6 +517,21 @@ public class Unit : NetworkBehaviour, ITargetable {
         GetComponent<UnitHP>().enabled = false;
     }
 
+    public void SetUnitAsSpawnedUnit() {
+        isSpawnedUnit = true;
+        parentTroop.AddUnitToSpawnedUnitsInTroopList(this);
+
+        OnUnitSetAsAdditionalUnit?.Invoke(this, EventArgs.Empty);
+
+        unitVisual.gameObject.SetActive(false);
+        GetComponent<Collider2D>().enabled = false;
+        GetComponent<UnitMovement>().enabled = false;
+        GetComponent<UnitAI>().enabled = false;
+        GetComponent<UnitAttack>().enabled = false;
+        GetComponent<UnitTargetingSystem>().enabled = false;
+        GetComponent<UnitHP>().enabled = false;
+    }
+
     #endregion
 
     public void InvokeOnUnitPlaced() {
@@ -547,6 +570,58 @@ public class Unit : NetworkBehaviour, ITargetable {
         GetComponent<UnitAttack>().enabled = true;
         GetComponent<UnitTargetingSystem>().enabled = true;
         GetComponent<UnitHP>().enabled = true;
+    }
+
+    public void ActivateSpawnedUnit() {
+        if (IsServer) {
+            if (!BattleManager.Instance.GetUnitsInBattlefieldList().Contains(this)) {
+                BattleManager.Instance.AddUnitToUnitListInBattlefield(this);
+            }
+        }
+
+        ActivateSpawnedUnitServerRpc();
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void ActivateSpawnedUnitServerRpc() {
+        ActivateSpawnedUnitClientRpc();
+    }
+
+    [ClientRpc]
+    private void ActivateSpawnedUnitClientRpc() {
+        unitIsBought = true;
+        OnUnitDynamicallySpawned?.Invoke(this, EventArgs.Empty);
+
+        unitVisual.gameObject.SetActive(true);
+        GetComponent<Collider2D>().enabled = true;
+        GetComponent<UnitMovement>().enabled = true;
+        GetComponent<UnitAI>().enabled = true;
+        GetComponent<UnitAttack>().enabled = true;
+        GetComponent<UnitTargetingSystem>().enabled = true;
+        GetComponent<UnitHP>().enabled = true;
+
+        currentGridPosition = BattleGrid.Instance.GetGridPosition(transform.position);
+        BattleGrid.Instance.AddUnitAtGridPosition(currentGridPosition, this);
+    }
+
+    public void DeactivateDynamicallySpawnedUnit() {
+        if (IsServer) {
+            if (!BattleManager.Instance.GetUnitsInBattlefieldList().Contains(this)) {
+                BattleManager.Instance.RemoveUnitFromUnitListInBattlefield(this);
+            }
+        }
+
+        DeactivateDynamicallySpawnedUnitServerRpc();
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void DeactivateDynamicallySpawnedUnitServerRpc() {
+        DeactivateDynamicallySpawnedUnitClientRpc();
+    }
+
+    [ClientRpc]
+    private void DeactivateDynamicallySpawnedUnitClientRpc() {
+        SetUnitAsSpawnedUnit();
     }
 
     public void DestroySelf() {

@@ -67,7 +67,6 @@ public class BattleGrid : MonoBehaviour
     public Vector3 GetMoveForwardsNextGridPosition(Unit unit) {
         // Recompose where the unit should be : current grid position for X, initial grid position for Y
         GridPosition unitGridPosition = new GridPosition (unit.GetCurrentGridPosition().x, unit.GetInitialUnitGridPosition().y);
-
         GridPosition nextGridPosition = new GridPosition(0, 0);
         Vector3 nextWorldPosition = Vector3.zero;
 

@@ -34,6 +34,8 @@ public class UnitVisual : NetworkBehaviour
 
     public event EventHandler OnUnitVisualPlacingMaterialSet;
 
+    protected bool unitIsSpawnedDynamically;
+
     protected virtual void Awake() {
         unit = GetComponentInParent<Unit>();
         bodyAnimator = GetComponent<Animator>();
@@ -48,7 +50,8 @@ public class UnitVisual : NetworkBehaviour
 
     public override void OnNetworkSpawn() {
         unit.OnUnitUpgraded += Unit_OnUnitUpgraded;
-        unit.OnAdditionalUnitActivated += Unit_OnAdditionalUnitBought;
+        unit.OnAdditionalUnitActivated += Unit_OnAdditionalUnitActivated;
+        unit.OnUnitDynamicallySpawned += Unit_OnUnitDynamicallySpawned;
         unit.OnUnitPlaced += Unit_OnUnitPlaced;
         unit.OnUnitSetAsAdditionalUnit += Unit_OnUnitSetAsAdditionalUnit;
         unit.OnUnitDied += Unit_OnUnitDied;
@@ -56,12 +59,16 @@ public class UnitVisual : NetworkBehaviour
         unit.OnUnitReset += Unit_OnUnitReset;
     }
 
+
     protected virtual void Start() {
         if (!unit.GetUnitIsOnlyVisual())
         {
             if (!unit.IsOwnedByPlayer()) return;
-            ChangeSpriteRendererListMaterial(allVisualsSpriteRendererList, placingUnitMaterial);
-            OnUnitVisualPlacingMaterialSet?.Invoke(this, EventArgs.Empty);
+
+            if(!unitIsSpawnedDynamically && !unit.GetUnitIsDynamicallySpawnedUnit()) {
+                ChangeSpriteRendererListMaterial(allVisualsSpriteRendererList, placingUnitMaterial);
+                OnUnitVisualPlacingMaterialSet?.Invoke(this, EventArgs.Empty);
+            }
         } else
         {
             ChangeSpriteRendererListMaterial(allVisualsSpriteRendererList, cleanMaterial);
@@ -88,7 +95,7 @@ public class UnitVisual : NetworkBehaviour
         }
     }
 
-    protected void Unit_OnAdditionalUnitBought(object sender, System.EventArgs e) {
+    protected void Unit_OnAdditionalUnitActivated(object sender, System.EventArgs e) {
         ChangeSpriteRendererListMaterial(allVisualsSpriteRendererList, cleanMaterial);
 
         //Activate shadows
@@ -97,6 +104,15 @@ public class UnitVisual : NetworkBehaviour
         }
     }
 
+    private void Unit_OnUnitDynamicallySpawned(object sender, EventArgs e) {
+        unitIsSpawnedDynamically = true;
+        ChangeSpriteRendererListMaterial(allVisualsSpriteRendererList, cleanMaterial);
+
+        //Activate shadows
+        foreach (GameObject shadowGameObject in shadowGameObjectList) {
+            shadowGameObject.SetActive(true);
+        }
+    }
     protected virtual void Unit_OnUnitPlaced(object sender, System.EventArgs e) {
         ChangeSpriteRendererListMaterial(allVisualsSpriteRendererList, cleanMaterial);
     }

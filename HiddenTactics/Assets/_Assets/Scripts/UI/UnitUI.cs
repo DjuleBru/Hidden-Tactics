@@ -186,7 +186,9 @@ public class UnitUI : NetworkBehaviour
     }
 
     private void Unit_OnUnitReset(object sender, System.EventArgs e) {
-        if (!unit.GetUnitIsBought()) return;
+        if (!unit.GetUnitIsBought() || unit.GetUnitIsDynamicallySpawnedUnit()) return;
+        unitHPBarGameObject.SetActive(true);
+        hideHPBarTimer = hideHPBarDuration;
         StartCoroutine(RefillHPBars());
     }
 

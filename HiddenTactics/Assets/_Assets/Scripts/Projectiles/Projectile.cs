@@ -17,6 +17,7 @@ public class Projectile : NetworkBehaviour
     protected float trajectoryMaxRelativeHeight;
     [SerializeField] protected float projectileMaxMoveSpeed;
     [SerializeField] protected float projectileTrajectoryYCurve = .2f;
+    [SerializeField] protected bool keepProjectileVisualOnHit;
 
     protected float projectileMoveSpeed;
 
@@ -171,19 +172,24 @@ public class Projectile : NetworkBehaviour
         transform.position = nextPosition;
     }
 
-    private void ProjectileHasHit() {
+    protected virtual void ProjectileHasHit() {
         projectileHasHit = true;
         StartCoroutine(DestroyProjectile());
         unitAttackOrigin.ProjectileHasHit(target, transform.position);
     }
 
     protected IEnumerator DestroyProjectile() {
+
         if(IsServer) {
             if(projectileHitVisualPrefab != null) {
                 SpawnProjectileHitVisualGameObjectServerRpc();
             }
         }
-        projectileVisual.gameObject.SetActive(false);
+
+        if(!keepProjectileVisualOnHit) {
+            projectileVisual.gameObject.SetActive(false);
+        }
+
         yield return new WaitForSeconds(.5f);
 
         if(IsServer) {

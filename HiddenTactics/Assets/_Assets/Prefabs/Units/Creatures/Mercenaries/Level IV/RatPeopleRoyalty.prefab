@@ -9,11 +9,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 579011395201113408, guid: e6d0e8717f6dc0049bda6c0f472ac28b, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.15625
+      value: 0.3125
       objectReference: {fileID: 0}
     - target: {fileID: 579011395201113408, guid: e6d0e8717f6dc0049bda6c0f472ac28b, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.06649994
+      value: 0.058799945
       objectReference: {fileID: 0}
     - target: {fileID: 625947453899721624, guid: e6d0e8717f6dc0049bda6c0f472ac28b, type: 3}
       propertyPath: m_Sprite
@@ -89,11 +89,11 @@ PrefabInstance:
       objectReference: {fileID: 11400000, guid: 9c5de551149baeb4393ba302f08515ce, type: 2}
     - target: {fileID: 7249842218541377443, guid: e6d0e8717f6dc0049bda6c0f472ac28b, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.15625
+      value: -0.3125
       objectReference: {fileID: 0}
     - target: {fileID: 7249842218541377443, guid: e6d0e8717f6dc0049bda6c0f472ac28b, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.05000019
+      value: -0.014999986
       objectReference: {fileID: 0}
     - target: {fileID: 7249842218541377443, guid: e6d0e8717f6dc0049bda6c0f472ac28b, type: 3}
       propertyPath: m_LocalPosition.z
@@ -101,19 +101,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7249842218541377443, guid: e6d0e8717f6dc0049bda6c0f472ac28b, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.78167576
+      value: 0.79623723
       objectReference: {fileID: 0}
     - target: {fileID: 7249842218541377443, guid: e6d0e8717f6dc0049bda6c0f472ac28b, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.59117675
+      value: 0.59783185
       objectReference: {fileID: 0}
     - target: {fileID: 7249842218541377443, guid: e6d0e8717f6dc0049bda6c0f472ac28b, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.11987485
+      value: -0.05569181
       objectReference: {fileID: 0}
     - target: {fileID: 7249842218541377443, guid: e6d0e8717f6dc0049bda6c0f472ac28b, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.15850295
+      value: 0.07417452
       objectReference: {fileID: 0}
     - target: {fileID: 7574386858778582788, guid: e6d0e8717f6dc0049bda6c0f472ac28b, type: 3}
       propertyPath: upgradedBodyMaterial
@@ -121,3 +121,61 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: dc91cfa391581c643a178247a7c205f0, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e6d0e8717f6dc0049bda6c0f472ac28b, type: 3}
+--- !u!1 &7228251882027103337 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5614006768863344306, guid: e6d0e8717f6dc0049bda6c0f472ac28b, type: 3}
+  m_PrefabInstance: {fileID: 3001400264058651355}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &4882608929057611024
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7228251882027103337}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 84fcf11a80ec03b4cb3efb63f812986f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ammoMax: 8
+--- !u!114 &6210901711494537187
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7228251882027103337}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d7b55c7ecdb49a4a89fa5e6f9022861, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  startWhenEnabled: 1
+  asynchronousLoad: 0
+  pauseWhenDisabled: 0
+  restartWhenComplete: 0
+  logTaskChanges: 0
+  group: 0
+  resetValuesOnRestart: 0
+  externalBehavior: {fileID: 11400000, guid: d0df7e15f4c594245b1c6e86783e7b0e, type: 2}
+  mBehaviorSource:
+    behaviorName: Behavior
+    behaviorDescription: 
+    mTaskData:
+      types: []
+      parentIndex: 
+      startIndex: 
+      variableStartIndex: 
+      JSONSerialization: '{"Variables":[{"Type":"BehaviorDesigner.Runtime.SharedInt","Name":"ammo","IsShared":true,"Int32mValue":1}]}'
+      fieldSerializationData:
+        typeName: []
+        fieldNameHash: 
+        startIndex: 
+        dataPosition: 
+        unityObjects: []
+        byteData: 
+        byteDataArray: 
+      Version: 1.7.8
+  gizmoViewMode: 2
+  showBehaviorDesignerGizmo: 1

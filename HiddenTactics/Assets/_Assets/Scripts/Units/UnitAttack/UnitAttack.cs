@@ -176,6 +176,7 @@ public class UnitAttack : NetworkBehaviour
     }
 
     protected void Shoot(ITargetable target) {
+        if (target as MonoBehaviour == null) return;
         NetworkObject targetUnitNetworkObject = (target as MonoBehaviour).GetComponent<NetworkObject>();
         if(IsServer) {
             SpawnProjectileServerRpc(targetUnitNetworkObject);
