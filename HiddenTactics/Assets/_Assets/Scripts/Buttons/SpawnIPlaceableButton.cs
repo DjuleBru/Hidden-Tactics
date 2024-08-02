@@ -9,11 +9,7 @@ public class SpawnIPlaceableButton : MonoBehaviour
     protected TroopSO troopToSpawnSO;
     protected BuildingSO buildingToSpawnSO;
 
-    protected Button spawnIPlaceableButton;
-
-    protected void Awake() {
-        spawnIPlaceableButton = GetComponent<Button>();
-    }
+    [SerializeField] protected Button spawnIPlaceableButton;
 
     protected virtual void SpawnTroopButton() {
         Debug.Log("click");
@@ -31,29 +27,40 @@ public class SpawnIPlaceableButton : MonoBehaviour
     }
 
     protected virtual bool CheckSpawnConditions() {
+        // Check if player can pay ! 
+        bool playerCanPay = false;
+        bool validGridPositionsLeft = false;
 
         if(troopToSpawnSO != null) {
             if(PlayerGoldManager.Instance.CanSpendGold(troopToSpawnSO.spawnTroopCost, NetworkManager.Singleton.LocalClientId)) {
-                return true;
+                playerCanPay = true;
             } else {
-                return false; 
+                playerCanPay = false; 
             }
         }
 
         if(buildingToSpawnSO != null) {
             if (PlayerGoldManager.Instance.CanSpendGold(buildingToSpawnSO.spawnBuildingCost, NetworkManager.Singleton.LocalClientId)) {
-                return true;
+                playerCanPay = true;
             }
             else {
-                return false;
+                playerCanPay = false;
             }
         }
-        return false;
+
+
+        // Check if there are spots remaining on the battlefield
+        if(BattleGrid.Instance.ValidGridPositionLeft()) {
+            validGridPositionsLeft = true;
+        } else {
+            validGridPositionsLeft = false;
+        }
+
+        return validGridPositionsLeft && playerCanPay;
     }
 
     public virtual void SetTroopToSpawn(TroopSO troopSO) {
         troopToSpawnSO = troopSO;
-        //Debug.Log("setting troop to " + troopSO);
 
         spawnIPlaceableButton.onClick.AddListener(() => {
             SpawnTroopButton();

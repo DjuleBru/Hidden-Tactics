@@ -62,6 +62,8 @@ public class UnitMovement : NetworkBehaviour {
     public override void OnNetworkSpawn() {
         unit.OnUnitPlaced += Unit_OnUnitPlaced;
         unit.OnUnitReset += Unit_OnUnitReset;
+        unit.OnUnitDynamicallySpawned += Unit_OnUnitDynamicallySpawned;
+        unit.OnAdditionalUnitActivated += Unit_OnAdditionalUnitActivated;
     }
 
 
@@ -336,5 +338,13 @@ public class UnitMovement : NetworkBehaviour {
         ResetSpeed();
 
         moveForwardsPoint = BattleGrid.Instance.GetMoveForwardsCustomGridPosition(this.unit, unit.GetInitialUnitGridPosition());
+    }
+
+    private void Unit_OnUnitDynamicallySpawned(object sender, EventArgs e) {
+        SetMoveForwardsPoint();
+    }
+
+    private void Unit_OnAdditionalUnitActivated(object sender, EventArgs e) {
+        SetMoveForwardsPoint();
     }
 }

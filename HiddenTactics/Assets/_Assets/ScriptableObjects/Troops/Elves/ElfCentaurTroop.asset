@@ -12,12 +12,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44a693b538d454945879116c3a121ddd, type: 3}
   m_Name: ElfCentaurTroop
   m_EditorClassIdentifier: 
+  troopName: Centaur
   troopIllustrationSlotSprite: {fileID: 21300000, guid: c2db728954780304b807829bc19d904c, type: 3}
   troopDescriptionSlotSprite: {fileID: 0}
+  troopTypeIconSprite: {fileID: 21300000, guid: e7920be881996114f989c68f2c5ae8f7, type: 3}
   troopPrefab: {fileID: 2495463524177989710, guid: d0e135ea80759cc438ba09f6bd30b80f, type: 3}
   unitPrefab: {fileID: 7228251882027103337, guid: a4abeb89423b73a44b6cbd7fef1bb50c, type: 3}
-  mainTroopAttackSO: {fileID: 0}
+  additionalUnit1Prefab: {fileID: 0}
+  additionalUnit2Prefab: {fileID: 0}
+  spawnedUnitPrefab: {fileID: 0}
   spawnTroopCost: 0
   upgradeTroopCost: 0
   buyAdditionalUnitsCost: 0
+  buffedGridPositions: []
+  supportType: 0
+  buffAmount: 0
   troopIsImplemented: 1

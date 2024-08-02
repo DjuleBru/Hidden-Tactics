@@ -39,7 +39,7 @@ public class PlayerActionsManager : NetworkBehaviour {
 
                 if (Input.GetMouseButtonDown(0)) {
                     // Player is trying to place troop : check if troop placement conditions are met
-                    if (PlayerAction_SpawnTroop.LocalInstance.IsValidIPlaceableSpawningTarget()) {
+                    if (PlayerAction_SpawnTroop.LocalInstance.IsMousePositionValidIPlaceableSpawningTarget()) {
                         PlayerAction_SpawnTroop.LocalInstance.PlaceIPlaceableList();
                         PlayerStateUI.Instance.ResetPlayerGoldChangingUI();
                         ChangeAction(Action.Idle);

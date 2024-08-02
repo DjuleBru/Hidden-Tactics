@@ -101,19 +101,13 @@ public class PlayerAction_SelectTroop : NetworkBehaviour {
 
     public void DeselectTroop() {
         if(selectedTroop != null) {
-            selectedTroop.GetTroopUI().HideTroopSelectedUI();
-            foreach (Unit unit in selectedTroop.GetUnitInTroopList()) {
-                unit.GetUnitVisual().SetUnitSelected(false);
-            }
+            selectedTroop.SetTroopSelected(false);
             selectedTroop = null;
         }
     }
 
     public void SelectTroop() {
-        selectedTroop.GetTroopUI().ShowTroopSelectedUI();
-        foreach(Unit unit in selectedTroop.GetUnitInTroopList()) {
-            unit.GetUnitVisual().SetUnitSelected(true);
-        }
+        selectedTroop.SetTroopSelected(true);
     }
 
     public bool IsTroopSelected(Troop troop) {

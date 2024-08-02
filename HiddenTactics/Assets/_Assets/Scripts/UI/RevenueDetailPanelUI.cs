@@ -41,7 +41,9 @@ public class RevenueDetailPanelUI : MonoBehaviour
     }
 
     private void UpdateRevenueDetailBreakdown() {
-        foreach(Transform child in revenueDetailContainer) {
+        revenueDetailTemplate.gameObject.SetActive(false);
+
+        foreach (Transform child in revenueDetailContainer) {
             if(child != revenueDetailTemplate) {
                 Destroy(child.gameObject);
             }

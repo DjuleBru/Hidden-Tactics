@@ -53,6 +53,15 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""EnableTacticalView"",
+                    ""type"": ""Button"",
+                    ""id"": ""b57cdccf-21fa-436d-a518-7ae6f91fb5d2"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -132,6 +141,17 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""action"": ""ShowIPlaceableIcons"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""3387bb9b-0883-4777-8cc4-2585d0c4b141"",
+                    ""path"": ""<Keyboard>/t"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""EnableTacticalView"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -143,6 +163,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_Player_MoveCamera = m_Player.FindAction("MoveCamera", throwIfNotFound: true);
         m_Player_Zoom = m_Player.FindAction("Zoom", throwIfNotFound: true);
         m_Player_ShowIPlaceableIcons = m_Player.FindAction("ShowIPlaceableIcons", throwIfNotFound: true);
+        m_Player_EnableTacticalView = m_Player.FindAction("EnableTacticalView", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -207,6 +228,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_MoveCamera;
     private readonly InputAction m_Player_Zoom;
     private readonly InputAction m_Player_ShowIPlaceableIcons;
+    private readonly InputAction m_Player_EnableTacticalView;
     public struct PlayerActions
     {
         private @PlayerInputActions m_Wrapper;
@@ -214,6 +236,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         public InputAction @MoveCamera => m_Wrapper.m_Player_MoveCamera;
         public InputAction @Zoom => m_Wrapper.m_Player_Zoom;
         public InputAction @ShowIPlaceableIcons => m_Wrapper.m_Player_ShowIPlaceableIcons;
+        public InputAction @EnableTacticalView => m_Wrapper.m_Player_EnableTacticalView;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -232,6 +255,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @ShowIPlaceableIcons.started += instance.OnShowIPlaceableIcons;
             @ShowIPlaceableIcons.performed += instance.OnShowIPlaceableIcons;
             @ShowIPlaceableIcons.canceled += instance.OnShowIPlaceableIcons;
+            @EnableTacticalView.started += instance.OnEnableTacticalView;
+            @EnableTacticalView.performed += instance.OnEnableTacticalView;
+            @EnableTacticalView.canceled += instance.OnEnableTacticalView;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -245,6 +271,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @ShowIPlaceableIcons.started -= instance.OnShowIPlaceableIcons;
             @ShowIPlaceableIcons.performed -= instance.OnShowIPlaceableIcons;
             @ShowIPlaceableIcons.canceled -= instance.OnShowIPlaceableIcons;
+            @EnableTacticalView.started -= instance.OnEnableTacticalView;
+            @EnableTacticalView.performed -= instance.OnEnableTacticalView;
+            @EnableTacticalView.canceled -= instance.OnEnableTacticalView;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -267,5 +296,6 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         void OnMoveCamera(InputAction.CallbackContext context);
         void OnZoom(InputAction.CallbackContext context);
         void OnShowIPlaceableIcons(InputAction.CallbackContext context);
+        void OnEnableTacticalView(InputAction.CallbackContext context);
     }
 }

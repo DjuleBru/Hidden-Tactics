@@ -24,6 +24,7 @@ public class Troop : NetworkBehaviour, IPlaceable {
     [SerializeField] private TroopSO troopSO;
     [SerializeField] private Transform troopCenterPoint;
     [SerializeField] private TroopUI troopUI;
+    [SerializeField] private TroopTypeUI troopTypeUI;
 
     private List<Unit> allUnitsInTroop;
     private List<Unit> additionalUnitsInTroop;
@@ -92,6 +93,11 @@ public class Troop : NetworkBehaviour, IPlaceable {
                 unit.DebugModeStartFunction();
             }
         }
+
+        GridPosition newGridPosition = BattleGrid.Instance.GetFirstValidGridPosition();
+        BattleGrid.Instance.IPlaceableMovedGridPosition(this, currentGridPosition, newGridPosition);
+
+        currentGridPosition = newGridPosition;
     }
 
     public override void OnNetworkSpawn() {
@@ -99,12 +105,12 @@ public class Troop : NetworkBehaviour, IPlaceable {
     }
 
     private void Update() {
-        if(!isPlaced) {
+        HandleAllUnitsMiddlePoint();
+        if (!isPlaced) {
             HandlePositioningOnGrid();
             HandleIPlaceablePositionDuringPlacement();
         } else {
             HandleIPlaceablePosition();
-            HandleAllUnitsMiddlePoint();
         }
     }
 
@@ -129,7 +135,7 @@ public class Troop : NetworkBehaviour, IPlaceable {
 
         // Grid position is not a valid position
         if (!BattleGrid.Instance.IsValidPlayerGridPosition(newGridPosition)) return;
-        if (!PlayerAction_SpawnTroop.LocalInstance.IsValidIPlaceableSpawningTarget()) return;
+        if (!PlayerAction_SpawnTroop.LocalInstance.IsMousePositionValidIPlaceableSpawningTarget()) return;
 
         // Troop was not set at a grid position yet
         if (currentGridPosition == null) {
@@ -165,7 +171,7 @@ public class Troop : NetworkBehaviour, IPlaceable {
             int allUnitsCount = 0;
 
             foreach (Unit unit in allUnitsInTroop) {
-                if (unit.GetUnitIsBought() && !unit.GetIsDead()) {
+                if (unit.GetUnitIsBought() && !unit.GetIsDead() && !unit.GetUnitIsDynamicallySpawnedUnit()) {
                     allUnitsSum += unit.transform.position;
                     allUnitsCount++;
                 }
@@ -268,7 +274,6 @@ public class Troop : NetworkBehaviour, IPlaceable {
     }
 
     public void PlaceIPlaceable() {
-
         if (!isOwnedByPlayer) {
             gameObject.SetActive(true);
         }
@@ -290,6 +295,7 @@ public class Troop : NetworkBehaviour, IPlaceable {
         }
 
         isPlaced = true;
+        Debug.Log("troop placed sent !");
         OnTroopPlaced?.Invoke(this, null);
         OnAnyTroopPlaced?.Invoke(this, EventArgs.Empty);
     }
@@ -300,6 +306,47 @@ public class Troop : NetworkBehaviour, IPlaceable {
         currentGridPosition = troopGridPosition;
         transform.position = troopWorldPosition - troopCenterPoint.localPosition;
 
+    }
+
+    public void SetTroopHovered(bool hovered) {
+
+        if(hovered) {
+            troopTypeUI.SetUIHovered();
+        } else {
+            troopTypeUI.SetUIUnHovered();
+        }
+
+        foreach (Unit unit in allUnitsInTroop) {
+            unit.GetUnitVisual().SetUnitHovered(hovered);
+
+            if (unit.GetComponent<SupportUnit>() != null) {
+                if(hovered) {
+                    unit.GetComponent<SupportUnit>().HideBuffedUnitBuffs();
+                } else {
+                    unit.GetComponent<SupportUnit>().ShowBuffedUnitBuffs();
+                }
+            }
+        }
+    }
+
+    public void SetTroopSelected(bool selected) {
+        troopTypeUI.SetUISelected(selected);
+
+        if(selected) {
+            troopUI.ShowTroopSelectedUI();
+
+            foreach (Unit unit in allUnitsInTroop) {
+                unit.GetUnitVisual().SetUnitSelected(true);
+            }
+
+        } else {
+
+            troopUI.HideTroopSelectedUI();
+
+            foreach (Unit unit in allUnitsInTroop) {
+                unit.GetUnitVisual().SetUnitSelected(false);
+            }
+        }
     }
 
     public void ActivateNextSpawnedUnit(Vector3 spawnPosition) {

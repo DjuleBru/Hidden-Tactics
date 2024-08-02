@@ -9,8 +9,11 @@ public class UnitVisual : NetworkBehaviour
 {
     [SerializeField] protected Unit unit;
     [SerializeField] protected List<SpriteRenderer> allVisualsSpriteRendererList;
+    [SerializeField] protected SpriteRenderer baseOutlineSpriteRenderer;
+    [SerializeField] protected SpriteRenderer baseCircleSpriteRenderer;
     [SerializeField] protected SpriteRenderer selectedUnitSpriteRenderer;
     [SerializeField] protected List<GameObject> shadowGameObjectList;
+    [SerializeField] protected GameObject shadowBaseGameObject;
 
     [SerializeField] protected Material cleanMaterial;
     [SerializeField] protected Material invisibleMaterial;
@@ -45,6 +48,8 @@ public class UnitVisual : NetworkBehaviour
             DisableTrailRenderer();
         }
 
+        baseOutlineSpriteRenderer.enabled = false;
+        baseCircleSpriteRenderer.enabled = false;
         selectedUnitSpriteRenderer.enabled = false;
     }
 
@@ -57,8 +62,9 @@ public class UnitVisual : NetworkBehaviour
         unit.OnUnitDied += Unit_OnUnitDied;
         unit.OnUnitFell += Unit_OnUnitFell;
         unit.OnUnitReset += Unit_OnUnitReset;
+        SettingsManager.Instance.OnTacticalViewEnabled += SettingsManager_OnTacticalViewEnabled;
+        SettingsManager.Instance.OnTacticalViewDisabled += SettingsManager_OnTacticalViewDisabled;
     }
-
 
     protected virtual void Start() {
         if (!unit.GetUnitIsOnlyVisual())
@@ -66,23 +72,66 @@ public class UnitVisual : NetworkBehaviour
             if (!unit.IsOwnedByPlayer()) return;
 
             if(!unitIsSpawnedDynamically && !unit.GetUnitIsDynamicallySpawnedUnit()) {
-                ChangeSpriteRendererListMaterial(allVisualsSpriteRendererList, placingUnitMaterial);
+                // Unit is a basic unit
+
+                if(SettingsManager.Instance.GetTacticalViewSetting()) {
+
+                    ChangeSpriteRendererListMaterial(allVisualsSpriteRendererList, invisibleMaterial); 
+                    foreach (GameObject shadowGameObject in shadowGameObjectList) {
+                        shadowGameObject.SetActive(false);
+                    }
+
+                } else {
+                    ChangeSpriteRendererListMaterial(allVisualsSpriteRendererList, placingUnitMaterial);
+                }
+
                 OnUnitVisualPlacingMaterialSet?.Invoke(this, EventArgs.Empty);
             }
         } else
+        // Unit is only visual : main menu, etc.
         {
             ChangeSpriteRendererListMaterial(allVisualsSpriteRendererList, cleanMaterial);
+        }
+    }
+    
+    private void SettingsManager_OnTacticalViewDisabled(object sender, EventArgs e) {
+
+        if (unit.GetUnitIsPlaced()) {
+
+            ChangeSpriteRendererListMaterial(allVisualsSpriteRendererList, cleanMaterial);
+
+        } else {
+
+            if (!unit.IsOwnedByPlayer() || unit.GetUnitIsBought()) return;
+            if (unitIsSpawnedDynamically || unit.GetUnitIsDynamicallySpawnedUnit()) return;
+
+            ChangeSpriteRendererListMaterial(allVisualsSpriteRendererList, placingUnitMaterial);
+        }
+        foreach (GameObject shadowGameObject in shadowGameObjectList) {
+            shadowGameObject.SetActive(true);
+        }
+    }
+
+    private void SettingsManager_OnTacticalViewEnabled(object sender, EventArgs e) {
+        ChangeSpriteRendererListMaterial(allVisualsSpriteRendererList, invisibleMaterial);
+        foreach (GameObject shadowGameObject in shadowGameObjectList) {
+            shadowGameObject.SetActive(false);
         }
     }
 
     private void Unit_OnUnitReset(object sender, System.EventArgs e) {
         ChangeSpriteRendererListMaterial(allVisualsSpriteRendererList, cleanMaterial);
         ChangeSpriteRendererListSortingOrder(allVisualsSpriteRendererList, 0);
+
+        foreach(GameObject shadowGameObject in shadowGameObjectList) {
+            shadowGameObject.SetActive(true);
+        }
     }
 
     private void Unit_OnUnitDied(object sender, System.EventArgs e) {
         ChangeSpriteRendererListMaterial(allVisualsSpriteRendererList, cleanMaterial);
         ChangeSpriteRendererListSortingOrder(allVisualsSpriteRendererList, -10);
+        shadowBaseGameObject.SetActive(false);
     }
 
     protected virtual void Unit_OnUnitUpgraded(object sender, System.EventArgs e) {
@@ -113,7 +162,10 @@ public class UnitVisual : NetworkBehaviour
             shadowGameObject.SetActive(true);
         }
     }
+
     protected virtual void Unit_OnUnitPlaced(object sender, System.EventArgs e) {
+        SetSelectedSpriteColor();
+        if (SettingsManager.Instance.GetTacticalViewSetting()) return;
         ChangeSpriteRendererListMaterial(allVisualsSpriteRendererList, cleanMaterial);
     }
 
@@ -131,6 +183,35 @@ public class UnitVisual : NetworkBehaviour
         unitGoldBurstPS.emission.SetBurst(0, burst);
         unitGoldBurstPS.Play();
 
+    }
+
+
+    private void SetSelectedSpriteColor() {
+        FactionSO deckFactionSO = DeckManager.LocalInstance.GetDeckSelected().deckFactionSO;
+
+        if (!unit.IsOwnedByPlayer()) {
+            PlayerCustomizationData opponentCustomizationData = HiddenTacticsMultiplayer.Instance.GetLocalOpponentCustomizationData();
+            deckFactionSO = PlayerCustomizationDataManager.Instance.GetFactionSOFromId(opponentCustomizationData.factionID);
+        }
+
+        if (!HiddenTacticsMultiplayer.Instance.GetPlayerAndOpponentSameFaction()) {
+            baseOutlineSpriteRenderer.color = deckFactionSO.color_differentPlayerFaction_outline;
+            baseCircleSpriteRenderer.color = deckFactionSO.color_differentPlayerFaction_fill;
+            selectedUnitSpriteRenderer.color = deckFactionSO.color_differentPlayerFaction_outline;
+        }
+
+        else {
+            if (unit.IsOwnedByPlayer()) {
+                baseOutlineSpriteRenderer.color = deckFactionSO.color_differentPlayerFaction_outline;
+                selectedUnitSpriteRenderer.color = deckFactionSO.color_differentPlayerFaction_outline;
+                baseCircleSpriteRenderer.color = deckFactionSO.color_differentPlayerFaction_fill;
+            }
+            else {
+                baseOutlineSpriteRenderer.color = deckFactionSO.color_samePlayerFaction_Opponent_outline;
+                selectedUnitSpriteRenderer.color = deckFactionSO.color_samePlayerFaction_Opponent_outline;
+                baseCircleSpriteRenderer.color = deckFactionSO.color_samePlayerFaction_Opponent_fill;
+            }
+        }
     }
 
     protected virtual void ChangeSpriteRendererListMaterial(List<SpriteRenderer> spriteRendererList, Material material) {
@@ -178,19 +259,29 @@ public class UnitVisual : NetworkBehaviour
 
     public void SetUnitHovered(bool hovered) {
         if (hovered) {
-            selectedUnitSpriteRenderer.enabled = true;
-            selectedUnitSpriteRenderer.material = placingUnitMaterial;
-        } else {
+            baseOutlineSpriteRenderer.enabled = true;
+            baseCircleSpriteRenderer.enabled = true;
             selectedUnitSpriteRenderer.enabled = false;
+            shadowBaseGameObject.SetActive(false);
+        } else {
+            baseOutlineSpriteRenderer.enabled = false;
+            baseCircleSpriteRenderer.enabled = false;
+            selectedUnitSpriteRenderer.enabled = false;
+            shadowBaseGameObject.SetActive(true);
         }
     }
 
     public void SetUnitSelected(bool selected) {
         if (selected) {
+            baseOutlineSpriteRenderer.enabled = true;
+            baseCircleSpriteRenderer.enabled = true;
             selectedUnitSpriteRenderer.enabled = true;
-            selectedUnitSpriteRenderer.material = cleanMaterial;
+            shadowBaseGameObject.SetActive(false);
         } else {
+            baseOutlineSpriteRenderer.enabled = false;
+            baseCircleSpriteRenderer.enabled = false;
             selectedUnitSpriteRenderer.enabled = false;
+            shadowBaseGameObject.SetActive(true);
         }
     }
 
@@ -200,6 +291,12 @@ public class UnitVisual : NetworkBehaviour
 
     public void DisableTrailRenderer() {
         trailRenderer.enabled = false;
+    }
+
+    public override void OnDestroy() {
+        if (unit.GetUnitIsOnlyVisual()) return;
+        SettingsManager.Instance.OnTacticalViewEnabled -= SettingsManager_OnTacticalViewEnabled;
+        SettingsManager.Instance.OnTacticalViewDisabled -= SettingsManager_OnTacticalViewDisabled;
     }
 
 }

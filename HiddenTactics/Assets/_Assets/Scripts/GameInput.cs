@@ -10,19 +10,22 @@ public class GameInput : MonoBehaviour
     private PlayerInputActions playerInputActions;
 
     public event EventHandler OnShowIPlaceableIconPerformed;
-    public bool showIPlaceableIcon;
+    public event EventHandler OnTacticalViewPerformed;
 
     private void Awake() {
         Instance = this;
-        showIPlaceableIcon = true;
 
         playerInputActions = new PlayerInputActions();
         playerInputActions.Player.Enable();
         playerInputActions.Player.ShowIPlaceableIcons.performed += ShowIPlaceableIcons_performed;
+        playerInputActions.Player.EnableTacticalView.performed += EnableTacticalView_performed;
+    }
+
+    private void EnableTacticalView_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj) {
+        OnTacticalViewPerformed?.Invoke(this, EventArgs.Empty);
     }
 
     private void ShowIPlaceableIcons_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj) {
-        showIPlaceableIcon = !showIPlaceableIcon;
         OnShowIPlaceableIconPerformed?.Invoke(this, EventArgs.Empty);
     }
 
@@ -38,7 +41,4 @@ public class GameInput : MonoBehaviour
         return zoomInput;
     }
 
-    public bool GetShowIPlaceableIconSetting() {
-        return showIPlaceableIcon;
-    }
 }

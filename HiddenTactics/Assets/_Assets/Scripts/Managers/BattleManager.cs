@@ -188,7 +188,6 @@ public class BattleManager : NetworkBehaviour
 
     public void SetBattlePhase() {
         state.Value = State.BattlePhase;
-        OnStateChanged?.Invoke(this, EventArgs.Empty);
     }
 
     public void SetPreparationPhase() {

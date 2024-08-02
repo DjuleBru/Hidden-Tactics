@@ -57,10 +57,12 @@ public class UnitAnimatorManager : NetworkBehaviour
             if(unitAnimator.GetCurrentAnimatorStateInfo(0).IsName("Idle") | unitAnimator.GetCurrentAnimatorStateInfo(0).IsName("Walk") | unitAnimator.GetCurrentAnimatorStateInfo(0).IsName("Attack_Start")) {
                 UpdateAnimatorParameters();
             }
+
             if (unitAnimator.GetCurrentAnimatorStateInfo(0).normalizedTime > .95 && unitAnimator.GetCurrentAnimatorStateInfo(0).IsName("Attack")) {
                 // Unit animator has finished playing Attack animation
                 UpdateAnimatorParameters();
             }
+            return;
         }
 
         if (movingForwards) {
@@ -92,14 +94,14 @@ public class UnitAnimatorManager : NetworkBehaviour
     }
 
     protected void Unit_OnUnitPlaced(object sender, System.EventArgs e) {
-        SetUnitWatchDirectionBasedOnGridPosition();
+        SetUnitWatchDirectionBasedOnPlayerOwnance();
     }
 
     protected virtual void UnitAI_OnStateChanged(object sender, System.EventArgs e) {
         if (unitAI.IsDead() | unitAI.IsFallen()) {
             UpdateAnimatorParameters();
             if(unitAI.IsFallen()) {
-                SetUnitWatchDirectionBasedOnGridPosition();
+                SetUnitWatchDirectionBasedOnPlayerOwnance();
             }
             movingForwards = false;
             return;
@@ -110,12 +112,12 @@ public class UnitAnimatorManager : NetworkBehaviour
         }
 
         if (unitAI.IsIdle()) {
-            SetUnitWatchDirectionBasedOnGridPosition();
+            SetUnitWatchDirectionBasedOnPlayerOwnance();
         }
 
         if(unitAI.IsMovingForwards()) {
             movingForwards = true;
-            SetUnitWatchDirectionBasedOnGridPosition();
+            SetUnitWatchDirectionBasedOnPlayerOwnance();
         } else {
             movingForwards = false;
         }
@@ -124,8 +126,8 @@ public class UnitAnimatorManager : NetworkBehaviour
         unitAIStateHasChanged = true;
     }
 
-    protected void SetUnitWatchDirectionBasedOnGridPosition() {
-        if(unit.GetParentTroop().GetIPlaceableGridPosition().x >= BattleGrid.Instance.GetGridWidth()/2) {
+    protected void SetUnitWatchDirectionBasedOnPlayerOwnance() {
+        if(!unit.IsOwnedByPlayer()) {
             SetXY(-1,-1);
         } else {
             SetXY(1,-1);
@@ -235,6 +237,8 @@ public class UnitAnimatorManager : NetworkBehaviour
 
         unitAnimator.SetBool("Walking", walking);
         unitAnimator.SetBool("Idle", idle);
+
+        SetUnitWatchDirectionBasedOnPlayerOwnance();
     }
 
     public virtual void SetJumpTrigger() {

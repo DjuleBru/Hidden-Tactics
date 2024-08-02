@@ -12,11 +12,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44a693b538d454945879116c3a121ddd, type: 3}
   m_Name: ElfWildFireTroop
   m_EditorClassIdentifier: 
+  troopName: WildFires
   troopIllustrationSlotSprite: {fileID: 21300000, guid: 27de9c7eed54a8742a75467da30e4e08, type: 3}
   troopDescriptionSlotSprite: {fileID: 0}
+  troopTypeIconSprite: {fileID: 21300000, guid: f6a936248289b084ca34e4346460645f, type: 3}
   troopPrefab: {fileID: 2495463524177989710, guid: bed44b984342f794a9fc6ac34004411c, type: 3}
   unitPrefab: {fileID: 7228251882027103337, guid: 087bb623f59af9146abbad59562d31b6, type: 3}
-  mainTroopAttackSO: {fileID: 0}
+  additionalUnit1Prefab: {fileID: 0}
+  additionalUnit2Prefab: {fileID: 0}
+  spawnedUnitPrefab: {fileID: 0}
   spawnTroopCost: 0
   upgradeTroopCost: 0
   buyAdditionalUnitsCost: 0
+  buffedGridPositions: []
+  supportType: 0
+  buffAmount: 0
+  troopIsImplemented: 0

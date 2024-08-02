@@ -5,6 +5,7 @@ using UnityEngine;
 [CreateAssetMenu()]
 public class TroopSO : ScriptableObject {
 
+    public string troopName;
     public Sprite troopIllustrationSlotSprite;
     public Sprite troopDescriptionSlotSprite;
     public Sprite troopTypeIconSprite;

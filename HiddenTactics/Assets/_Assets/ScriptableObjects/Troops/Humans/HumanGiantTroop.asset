@@ -12,12 +12,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44a693b538d454945879116c3a121ddd, type: 3}
   m_Name: HumanGiantTroop
   m_EditorClassIdentifier: 
+  troopName: Giants
   troopIllustrationSlotSprite: {fileID: 21300000, guid: 3f54362a1e31c7a4e8aa98c166592e49, type: 3}
   troopDescriptionSlotSprite: {fileID: 0}
+  troopTypeIconSprite: {fileID: 21300000, guid: e7920be881996114f989c68f2c5ae8f7, type: 3}
   troopPrefab: {fileID: 2495463524177989710, guid: d8f2d5b5ba8ca8a4582b91f43edbac14, type: 3}
   unitPrefab: {fileID: 7228251882027103337, guid: 31b99ba45300ce54fa3292d37770b1aa, type: 3}
-  mainTroopAttackSO: {fileID: 11400000, guid: 7b735deec11654243a3d702854c9ff3a, type: 2}
+  additionalUnit1Prefab: {fileID: 0}
+  additionalUnit2Prefab: {fileID: 0}
+  spawnedUnitPrefab: {fileID: 0}
   spawnTroopCost: 25
   upgradeTroopCost: 0
   buyAdditionalUnitsCost: 0
+  buffedGridPositions: []
+  supportType: 0
+  buffAmount: 0
   troopIsImplemented: 1

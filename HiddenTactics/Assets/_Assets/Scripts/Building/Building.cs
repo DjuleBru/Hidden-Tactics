@@ -52,7 +52,7 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
 
         // Grid position is not a valid position
         if (!BattleGrid.Instance.IsValidPlayerGridPosition(newGridPosition)) return;
-        if (!PlayerAction_SpawnTroop.LocalInstance.IsValidIPlaceableSpawningTarget()) return;
+        if (!PlayerAction_SpawnTroop.LocalInstance.IsValidIPlaceableSpawningTarget(newGridPosition)) return;
 
         // building was not set at a grid position yet
         if (currentGridPosition == null) {

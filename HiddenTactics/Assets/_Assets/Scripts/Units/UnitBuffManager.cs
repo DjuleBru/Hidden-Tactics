@@ -232,8 +232,6 @@ public class UnitBuffManager : NetworkBehaviour
         moveSpeedMultiplier += moveSpeedBuff;
         unitMovement.SetMoveSpeedMultiplier(moveSpeedMultiplier);
 
-        Debug.Log(moveSpeedMultiplier);
-
         if(unitMovement.GetMoveSpeedMultiplier() > 1) {
             BuffMoveSpeedClientRpc();
         } else {

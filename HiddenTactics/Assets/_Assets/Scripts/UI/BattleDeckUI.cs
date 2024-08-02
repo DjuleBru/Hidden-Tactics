@@ -98,7 +98,6 @@ public class BattleDeckUI : MonoBehaviour
                 continue;
             }
             troopsItemTemplateVisualUIList[i].SetTroopSO(troopSO);
-            troopsItemTemplateVisualUIList[i].GetComponentInChildren<SpawnIPlaceableButton>().SetTroopToSpawn(troopSO);
             i++;
         }
 
@@ -109,7 +108,6 @@ public class BattleDeckUI : MonoBehaviour
                 continue;
             }
             buildingsItemTemplateVisualUIList[i].SetBuildingSO(buildingSO);
-            buildingsItemTemplateVisualUIList[i].GetComponentInChildren<SpawnIPlaceableButton>().SetBuildingToSpawn(buildingSO);
             i++;
         }
     }

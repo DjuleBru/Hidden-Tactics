@@ -199,6 +199,7 @@ public class GridSystem
 
     public bool IsValidPlayerGridPosition(GridPosition gridPosition) {
         // Returns true if grid position is on player side of the battlefield
+
         if (gridPosition.x < 0 || gridPosition.y < 0 || gridPosition.x >= playerBattlefieldWidth || gridPosition.y >= gridObjectArray.GetLength(1)) {
             return false;
         }

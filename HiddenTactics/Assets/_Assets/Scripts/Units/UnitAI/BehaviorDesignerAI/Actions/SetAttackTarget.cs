@@ -15,7 +15,6 @@ public class SetAttackTarget : Action {
         unitTargetingSystem = GetComponent<UnitTargetingSystem>();
     }
     public override TaskStatus OnUpdate() {
-
         if(randomTarget) {
 
             if (attackMode == UnitTargetingSystem.AttackMode.mainAttack) {

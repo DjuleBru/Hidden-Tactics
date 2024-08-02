@@ -123,8 +123,9 @@ public class UnitStatusEffectVisuals : NetworkBehaviour
     }
 
     public void ActivateBuffVisuals(SupportUnit.SupportType supportType) {
+        Debug.Log("activate buff visual " + supportType);
 
-        if(supportType == SupportUnit.SupportType.attackSpeed) {
+        if (supportType == SupportUnit.SupportType.attackSpeed) {
             attackSpeedBuffAnimator.Play("Effect_Start");
             attackSpeedBuffAnimator.ResetTrigger("Effect_End");
             attackSpeedBuffBaseSpriteRenderer.enabled = true;

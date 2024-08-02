@@ -1,17 +1,21 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class ItemTemplateUI_BattleDeck : ItemTemplateUI {
+public class ItemTemplateUI_BattleDeck : ItemTemplateUI, IPointerEnterHandler, IPointerExitHandler {
 
     [SerializeField] protected Button unlockTroopButton;
     [SerializeField] protected Button recruitTroopButton;
+    [SerializeField] protected SpawnIPlaceableButton spawnIPlaceableButton;
 
     [SerializeField] private bool isBuilding;
     [SerializeField] private bool isSpell;
     [SerializeField] private bool isTroop;
     [SerializeField] private bool isMercenary;
+
+    private Color unHoveredColor;
 
     private void Awake() {
         unlockTroopButton.onClick.AddListener(() => {
@@ -24,6 +28,8 @@ public class ItemTemplateUI_BattleDeck : ItemTemplateUI {
         } else {
             recruitTroopButton.gameObject.SetActive(false);
         }
+
+        unHoveredColor = backgroundImage.color;
     }
 
     public override void SetTroopSO(TroopSO troopSO) {
@@ -35,6 +41,7 @@ public class ItemTemplateUI_BattleDeck : ItemTemplateUI {
             recruitTroopButton.gameObject.SetActive(false);
 
         } else {
+            spawnIPlaceableButton.SetTroopToSpawn(troopSO);
             illustrationImage.gameObject.SetActive(true);
             unlockTroopButton.gameObject.SetActive(false);
             recruitTroopButton.gameObject.SetActive(true);
@@ -61,6 +68,7 @@ public class ItemTemplateUI_BattleDeck : ItemTemplateUI {
             unlockTroopButton.gameObject.SetActive(true);
 
         } else {
+            spawnIPlaceableButton.SetBuildingToSpawn(buildingSO);
             illustrationImage.gameObject.SetActive(true);
             unlockTroopButton.gameObject.SetActive(false);
 
@@ -91,4 +99,13 @@ public class ItemTemplateUI_BattleDeck : ItemTemplateUI {
         return illustrationImage;
     }
 
+    public void OnPointerExit(PointerEventData eventData) {
+        backgroundImage.color = unHoveredColor;
+        outlineImage.color = unHoveredColor;
+    }
+
+    public void OnPointerEnter(PointerEventData eventData) {
+        backgroundImage.color = Color.white;
+        outlineImage.color = Color.white;
+    }
 }

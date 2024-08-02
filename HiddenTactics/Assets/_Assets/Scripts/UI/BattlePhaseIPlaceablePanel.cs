@@ -12,6 +12,13 @@ public class BattlePhaseIPlaceablePanel : MonoBehaviour
 
     private List<BattlePhaseIPlaceableSlotTemplateUI> iPlaceableSlotTemplateUIList = new List<BattlePhaseIPlaceableSlotTemplateUI>();
 
+
+    [SerializeField] private Image backgroundImage;
+    [SerializeField] private Image border;
+    [SerializeField] private Image borderShadow;
+    [SerializeField] private Image cardBackgroundImage;
+    [SerializeField] private Image cardOutlineImage;
+
     [SerializeField] private Transform iPlaceableCardContainer;
     [SerializeField] private Transform iPlaceableCardTemplate;
     [SerializeField] private HorizontalLayoutGroup horizontalLayoutGroup;
@@ -26,6 +33,17 @@ public class BattlePhaseIPlaceablePanel : MonoBehaviour
     private void Start() {
         Troop.OnAnyTroopPlaced += Troop_OnAnyTroopPlaced;
         Troop.OnAnyTroopSelled += Troop_OnAnyTroopSelled;
+
+        Deck playerDeck = DeckManager.LocalInstance.GetDeckSelected();
+        SetPanelVisuals(playerDeck);
+    }
+    private void SetPanelVisuals(Deck playerDeck) {
+        backgroundImage.sprite = playerDeck.deckFactionSO.panelBackground;
+        borderShadow.sprite = playerDeck.deckFactionSO.panelBackgroundBorderSimple;
+        border.sprite = playerDeck.deckFactionSO.panelBackgroundBorderSimple;
+
+        cardBackgroundImage.sprite = playerDeck.deckFactionSO.panelBackground;
+        cardOutlineImage.sprite = playerDeck.deckFactionSO.panelBackgroundBorderSimple;
     }
 
     private void Troop_OnAnyTroopSelled(object sender, System.EventArgs e) {

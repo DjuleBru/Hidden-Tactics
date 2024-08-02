@@ -351,7 +351,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3046867917180884193}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -0.049, y: 0.138, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -399,7 +399,7 @@ SpriteRenderer:
   m_SortingLayerID: -428917639
   m_SortingLayer: 7
   m_SortingOrder: 2
-  m_Sprite: {fileID: 21300000, guid: ea16069800bdec44e92575a0128fa49c, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 8f79b628c0c1c7941a7c0b5487c2f091, type: 3}
   m_Color: {r: 0, g: 0.2235856, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -702,15 +702,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   unit: {fileID: 6221209888615918512}
-  unitHPBarGameObject: {fileID: 1239429430629773935}
+  unitPoisonBarImage: {fileID: 0}
+  unitPoisonBarGameObject: {fileID: 0}
+  unitBurningBarImage: {fileID: 0}
+  unitBurningBarGameObject: {fileID: 0}
+  unitFearBarImage: {fileID: 0}
+  unitFearBarGameObject: {fileID: 0}
   unitHPBarImage: {fileID: 3523552392977486113}
+  unitHPBarGameObject: {fileID: 1239429430629773935}
   unitHPBarDamageImage: {fileID: 8914057789915125774}
+  unitHPBarHealImage: {fileID: 0}
   unitTargetImage: {fileID: 2683922162569287766}
   meleeTargetSprite: {fileID: -1656188105, guid: ab49c36e9d22c2647a0701b78dcb0d9d, type: 3}
   rangedTargetSprite: {fileID: -1803219836, guid: ab49c36e9d22c2647a0701b78dcb0d9d, type: 3}
   healTargetSprite: {fileID: -1600217160, guid: ab49c36e9d22c2647a0701b78dcb0d9d, type: 3}
   armorTargetSprite: {fileID: -368315034, guid: ab49c36e9d22c2647a0701b78dcb0d9d, type: 3}
   coinSprite: {fileID: -1463619571, guid: 7e66a88849e83c548b81ed8c15ecd48a, type: 3}
+  webbedSprite: {fileID: 0}
+  debug: 
 --- !u!1 &6220047560856617129
 GameObject:
   m_ObjectHideFlags: 0
@@ -790,6 +799,7 @@ MonoBehaviour:
   shadowGameObjectList:
   - {fileID: 9072738074909713577}
   - {fileID: 5858313138869206163}
+  shadowBaseGameObject: {fileID: 0}
   cleanMaterial: {fileID: 2100000, guid: 5472c483cff72494e8e1f9233fc2308a, type: 2}
   invisibleMaterial: {fileID: 2100000, guid: 0fd6a58cd0afa51469b9baca76fc6c55, type: 2}
   placingUnitMaterial: {fileID: 2100000, guid: 684a5a5301c6bfd4eb68f6d32d5b9a09, type: 2}
@@ -797,6 +807,7 @@ MonoBehaviour:
   upgradedBodyMaterial: {fileID: 0}
   upgradeReplacesBody: 0
   upgradedBodyAnimator: {fileID: 0}
+  trailRenderer: {fileID: 0}
 --- !u!114 &6957975202901132030
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1117,6 +1128,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8ad0a9271ef8481489aeb7229461f261, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  debug: 
 --- !u!114 &3946721418048361259
 MonoBehaviour:
   m_ObjectHideFlags: 0

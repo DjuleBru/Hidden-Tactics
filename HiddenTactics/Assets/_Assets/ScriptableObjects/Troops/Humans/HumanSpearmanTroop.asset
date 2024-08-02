@@ -12,13 +12,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44a693b538d454945879116c3a121ddd, type: 3}
   m_Name: HumanSpearmanTroop
   m_EditorClassIdentifier: 
+  troopName: Spearmen
   troopIllustrationSlotSprite: {fileID: 21300000, guid: b05a42f6c6f6fd34983d70ae447376a1, type: 3}
   troopDescriptionSlotSprite: {fileID: 0}
-  troopTypeIconSprite: {fileID: -821388396, guid: 3fde48489c07f3c449d83ee74d20c7f3, type: 3}
+  troopTypeIconSprite: {fileID: 21300000, guid: e7920be881996114f989c68f2c5ae8f7, type: 3}
   troopPrefab: {fileID: 2495463524177989710, guid: f5170a040ae3af7449cbc4cdcf7c721c, type: 3}
   unitPrefab: {fileID: 6582105824262927089, guid: 974a18b8d382e7e49970efa5bd60d332, type: 3}
-  mainTroopAttackSO: {fileID: 11400000, guid: d24a06116e94ec54a92c3a396eff3009, type: 2}
+  additionalUnit1Prefab: {fileID: 0}
+  additionalUnit2Prefab: {fileID: 0}
+  spawnedUnitPrefab: {fileID: 0}
   spawnTroopCost: 0
   upgradeTroopCost: 0
   buyAdditionalUnitsCost: 0
+  buffedGridPositions: []
+  supportType: 0
+  buffAmount: 0
   troopIsImplemented: 1

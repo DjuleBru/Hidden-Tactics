@@ -205,6 +205,11 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
         return isMultiplayer;
     }
 
+    public bool GetPlayerAndOpponentSameFaction() {
+        if(GetLocalPlayerCustomizationData().factionID == GetLocalOpponentCustomizationData().factionID) return true;
+        return false;
+    }
+
     #region HANDLE IPLACEABLES
     public void DestroyIPlaceable(NetworkObjectReference iPlaceableNetworkObjectReference) {
         DestroyIPlaceableServerRpc(iPlaceableNetworkObjectReference);

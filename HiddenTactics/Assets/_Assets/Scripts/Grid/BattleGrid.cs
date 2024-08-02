@@ -188,6 +188,37 @@ public class BattleGrid : MonoBehaviour
         RemoveIPlaceableAtGridPosition(fromGridPosition, iPlaceable);
         AddIPlaceableAtGridPosition(toGridPosition, iPlaceable);
     }
+
+    public bool ValidGridPositionLeft() {
+
+        for (int x = 0; x < gridSystem.width; x++) {
+            for (int y = 0; y < gridSystem.height; y++) {
+
+                GridPosition gridPosition = new GridPosition(x, y);
+                if (PlayerAction_SpawnTroop.LocalInstance.IsValidIPlaceableSpawningTarget(gridPosition) && IsValidPlayerGridPosition(gridPosition)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    public GridPosition GetFirstValidGridPosition() {
+        GridPosition gridPosition = new GridPosition(0, 0);
+
+        for (int x = 0; x < gridSystem.width; x++) {
+            for (int y = 0; y < gridSystem.height; y++) {
+
+                gridPosition = new GridPosition(x, y);
+                if(PlayerAction_SpawnTroop.LocalInstance.IsValidIPlaceableSpawningTarget(gridPosition) && IsValidPlayerGridPosition(gridPosition)) {
+                    return gridPosition;
+                }
+            }
+        }
+        return gridPosition;
+    }
+
     #endregion
 
     #region UNIT

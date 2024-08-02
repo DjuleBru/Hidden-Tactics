@@ -481,7 +481,6 @@ public class Unit : NetworkBehaviour, ITargetable {
     public void SetPosition(Vector3 positionInTroop, bool debugMode) {
         
         if(parentTroop.IsOwnedByPlayer()) {
-
             unitPositionInTroop = positionInTroop;
         } else {
             //Mirror x position in troop
@@ -519,9 +518,8 @@ public class Unit : NetworkBehaviour, ITargetable {
 
     public void SetUnitAsSpawnedUnit() {
         isSpawnedUnit = true;
+        unitIsBought = false;
         parentTroop.AddUnitToSpawnedUnitsInTroopList(this);
-
-        OnUnitSetAsAdditionalUnit?.Invoke(this, EventArgs.Empty);
 
         unitVisual.gameObject.SetActive(false);
         GetComponent<Collider2D>().enabled = false;
@@ -530,6 +528,8 @@ public class Unit : NetworkBehaviour, ITargetable {
         GetComponent<UnitAttack>().enabled = false;
         GetComponent<UnitTargetingSystem>().enabled = false;
         GetComponent<UnitHP>().enabled = false;
+
+        OnUnitSetAsAdditionalUnit?.Invoke(this, EventArgs.Empty);
     }
 
     #endregion
@@ -543,18 +543,14 @@ public class Unit : NetworkBehaviour, ITargetable {
     }
 
     public void ActivateAdditionalUnit() {
-
-        if(IsServer) {
-            if (!BattleManager.Instance.GetUnitsInBattlefieldList().Contains(this)) {
-                BattleManager.Instance.AddUnitToUnitListInBattlefield(this);
-            }
-        }
-
         ActivateAdditionalUnitServerRpc();
     }
 
     [ServerRpc(RequireOwnership = false)]
     private void ActivateAdditionalUnitServerRpc() {
+        if (!BattleManager.Instance.GetUnitsInBattlefieldList().Contains(this)) {
+            BattleManager.Instance.AddUnitToUnitListInBattlefield(this);
+        }
         ActivateAdditionalUnitClientRpc();
     }
 
@@ -573,24 +569,23 @@ public class Unit : NetworkBehaviour, ITargetable {
     }
 
     public void ActivateSpawnedUnit() {
-        if (IsServer) {
-            if (!BattleManager.Instance.GetUnitsInBattlefieldList().Contains(this)) {
-                BattleManager.Instance.AddUnitToUnitListInBattlefield(this);
-            }
-        }
-
         ActivateSpawnedUnitServerRpc();
     }
 
     [ServerRpc(RequireOwnership = false)]
     private void ActivateSpawnedUnitServerRpc() {
+
+        if (!BattleManager.Instance.GetUnitsInBattlefieldList().Contains(this)) {
+            BattleManager.Instance.AddUnitToUnitListInBattlefield(this);
+            unitPositionInTroop = transform.localPosition;
+        }
+
         ActivateSpawnedUnitClientRpc();
     }
 
     [ClientRpc]
     private void ActivateSpawnedUnitClientRpc() {
         unitIsBought = true;
-        OnUnitDynamicallySpawned?.Invoke(this, EventArgs.Empty);
 
         unitVisual.gameObject.SetActive(true);
         GetComponent<Collider2D>().enabled = true;
@@ -602,6 +597,8 @@ public class Unit : NetworkBehaviour, ITargetable {
 
         currentGridPosition = BattleGrid.Instance.GetGridPosition(transform.position);
         BattleGrid.Instance.AddUnitAtGridPosition(currentGridPosition, this);
+
+        OnUnitDynamicallySpawned?.Invoke(this, EventArgs.Empty);
     }
 
     public void DeactivateDynamicallySpawnedUnit() {

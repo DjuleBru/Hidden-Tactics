@@ -31,6 +31,8 @@ public class UnitUI : NetworkBehaviour
     [SerializeField] private Sprite coinSprite;
     [SerializeField] private Sprite webbedSprite;
 
+    [SerializeField] private SpriteRenderer selectedCircleSpriteRenderer;
+
     private float damageBarUpdateTimer;
     private float damageBarUpdateRate = 1f;
 
@@ -61,6 +63,7 @@ public class UnitUI : NetworkBehaviour
         unitFearBarGameObject.SetActive(false);
         unitPoisonBarGameObject.SetActive(false);
         unitBurningBarGameObject.SetActive(false);
+
     }
 
     public override void OnNetworkSpawn() {

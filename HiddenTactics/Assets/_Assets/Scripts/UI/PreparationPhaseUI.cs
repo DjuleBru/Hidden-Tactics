@@ -8,6 +8,7 @@ public class PreparationPhaseUI : MonoBehaviour
 {
 
     [SerializeField] Image preparationPhaseTimerImage;
+    [SerializeField] Animator preparationPhasePanelAnimator;
     [SerializeField] Button playerReadyButton;
 
     [SerializeField] private TextMeshProUGUI turnText;
@@ -32,7 +33,12 @@ public class PreparationPhaseUI : MonoBehaviour
     private void BattleManager_OnStateChanged(object sender, System.EventArgs e) {
         if (BattleManager.Instance.IsPreparationPhase()) {
             Show();
-            turnText.text = ConvertIntToRomanNumber(BattleManager.Instance.GetCurrentTurn()) + "/" + ConvertIntToRomanNumber(BattleManager.Instance.GetMaxTurns());
+            turnText.text = ConvertIntToRomanNumber(BattleManager.Instance.GetCurrentTurn() +1) + "/" + ConvertIntToRomanNumber(BattleManager.Instance.GetMaxTurns());
+            return;
+        }
+
+        if(BattleManager.Instance.IsBattlePhaseStarting()) {
+            Hide();
             return;
         }
 
@@ -41,15 +47,16 @@ public class PreparationPhaseUI : MonoBehaviour
             return;
         }
 
-        Hide();
     }
 
     public void Show() {
-        gameObject.SetActive(true);
+        preparationPhasePanelAnimator.ResetTrigger("SlideUp");
+        preparationPhasePanelAnimator.SetTrigger("SlideDown");
     }
 
     private void Hide() {
-        gameObject.SetActive(false);
+        preparationPhasePanelAnimator.ResetTrigger("SlideDown");
+        preparationPhasePanelAnimator.SetTrigger("SlideUp");
     }
 
     

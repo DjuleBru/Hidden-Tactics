@@ -13,11 +13,15 @@ MonoBehaviour:
   m_Name: GreenSkinsAxe
   m_EditorClassIdentifier: 
   unitTagList: 
-  HP: 10
+  unitTargetType: 0
+  HP: 15
   armor: 0
   mass: 50
   moveType: 0
   unitMoveSpeed: 90
+  isGarrisonedUnit: 0
+  mainWeaponSO: {fileID: 0}
   mainAttackSO: {fileID: 11400000, guid: 49b8bd27c6e34dd4197ec1646f53c589, type: 2}
   sideAttackSO: {fileID: 0}
   specialAttackSO: {fileID: 0}
+  damageToVillages: 0

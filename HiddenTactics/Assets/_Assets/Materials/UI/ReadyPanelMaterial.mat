@@ -10,7 +10,7 @@ Material:
   m_Name: ReadyPanelMaterial
   m_Shader: {fileID: 4800000, guid: a36b7719ff0465b42ab1407d67672c5f, type: 3}
   m_ValidKeywords:
-  - GRADIENT_ON
+  - GLOW_ON
   - SHINE_ON
   m_InvalidKeywords: []
   m_LightmapFlags: 4
@@ -119,7 +119,7 @@ Material:
     - _GhostTransparency: 0
     - _GlitchAmount: 12.3
     - _GlitchSize: 1
-    - _Glow: 10
+    - _Glow: 0.5
     - _GlowGlobal: 1
     - _GradBlend: 0.887
     - _GradBoostX: 1.2
@@ -217,7 +217,7 @@ Material:
     - _ZoomUvAmount: 0.5
     m_Colors:
     - _AlphaOutlineColor: {r: 1, g: 1, b: 1, a: 1}
-    - _Color: {r: 0.6901961, g: 0.8509804, b: 0.69411767, a: 1}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _ColorChangeNewCol: {r: 1, g: 1, b: 0, a: 1}
     - _ColorChangeNewCol2: {r: 1, g: 1, b: 0, a: 1}
     - _ColorChangeNewCol3: {r: 1, g: 1, b: 0, a: 1}
@@ -228,7 +228,7 @@ Material:
     - _ColorSwapGreen: {r: 1, g: 1, b: 1, a: 1}
     - _ColorSwapRed: {r: 1, g: 1, b: 1, a: 1}
     - _FadeBurnColor: {r: 1, g: 1, b: 0, a: 1}
-    - _GlowColor: {r: 1, g: 1, b: 1, a: 1}
+    - _GlowColor: {r: 0.17054816, g: 0.9622642, b: 0, a: 1}
     - _GradBotLeftCol: {r: 0.6901961, g: 0.8509804, b: 0.69411767, a: 1}
     - _GradBotRightCol: {r: 0.56078434, g: 0.79607844, b: 0.5529412, a: 1}
     - _GradTopLeftCol: {r: 0.56078434, g: 0.7960785, b: 0.5529412, a: 1}

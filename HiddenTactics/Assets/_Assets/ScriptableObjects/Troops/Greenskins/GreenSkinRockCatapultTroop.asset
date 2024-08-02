@@ -12,12 +12,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44a693b538d454945879116c3a121ddd, type: 3}
   m_Name: GreenSkinRockCatapultTroop
   m_EditorClassIdentifier: 
+  troopName: Rock Catapult
   troopIllustrationSlotSprite: {fileID: 21300000, guid: db07e329219ab3c43bbbf25e922d9db0, type: 3}
   troopDescriptionSlotSprite: {fileID: 0}
+  troopTypeIconSprite: {fileID: 21300000, guid: 5257bbe50269dea4881bc0ca050177ea, type: 3}
   troopPrefab: {fileID: 2495463524177989710, guid: c975bf817db21d44683f0a7dc26c55b3, type: 3}
   unitPrefab: {fileID: 7228251882027103337, guid: a44d40962818e3b438587c9ce51bd6d0, type: 3}
-  mainTroopAttackSO: {fileID: 0}
+  additionalUnit1Prefab: {fileID: 0}
+  additionalUnit2Prefab: {fileID: 0}
+  spawnedUnitPrefab: {fileID: 0}
   spawnTroopCost: 0
   upgradeTroopCost: 0
   buyAdditionalUnitsCost: 0
+  buffedGridPositions: []
+  supportType: 0
+  buffAmount: 0
   troopIsImplemented: 1

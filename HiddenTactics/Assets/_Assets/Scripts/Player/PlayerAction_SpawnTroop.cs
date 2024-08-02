@@ -76,11 +76,16 @@ public class PlayerAction_SpawnTroop : NetworkBehaviour {
         SpawnBuildingServerRpc(buildingListSOIndex, NetworkManager.Singleton.LocalClientId);
     }
 
-    public bool IsValidIPlaceableSpawningTarget() {
+    public bool IsMousePositionValidIPlaceableSpawningTarget() {
         GridPosition iPlaceableSpawnGridPosition = MousePositionManager.Instance.GetMouseGridPosition();
 
         // If it is a player grid position AND nothing is on the grid position
-        return (BattleGrid.Instance.IsValidPlayerGridPosition(iPlaceableSpawnGridPosition) && BattleGrid.Instance.GetIPlaceableSpawnedAtGridPosition(iPlaceableSpawnGridPosition) == null);
+        return (BattleGrid.Instance.IsValidPlayerGridPosition(iPlaceableSpawnGridPosition) && BattleGrid.Instance.GetIPlaceableSpawnedAtGridPosition(iPlaceableSpawnGridPosition) == null && iPlaceableSpawnGridPosition.x != 0);
+    }
+
+    public bool IsValidIPlaceableSpawningTarget(GridPosition gridPosition) {
+        // If it is a player grid position AND nothing is on the grid position
+        return (BattleGrid.Instance.IsValidPlayerGridPosition(gridPosition) && BattleGrid.Instance.GetIPlaceableSpawnedAtGridPosition(gridPosition) == null && gridPosition.x != 0);
     }
 
     public void PlaceIPlaceableList() {

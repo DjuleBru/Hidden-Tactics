@@ -7,8 +7,10 @@ using UnityEngine.UI;
 public class BattlePhaseUI : MonoBehaviour
 {
     [SerializeField] Image battlePhaseTimerImage;
+    [SerializeField] Animator battlePhasePanelAnimator;
     [SerializeField] Button playerSpeedUpButton;
     [SerializeField] GameObject playerSpeedUpGameObject;
+    [SerializeField] GameObject battlePhaseIPlaceablePanel;
 
     [SerializeField] GameObject playerSpeedUpIndicator;
     [SerializeField] GameObject opponentSpeedUpIndicator;
@@ -22,6 +24,7 @@ public class BattlePhaseUI : MonoBehaviour
         });
 
         playerSpeedUpGameObject.SetActive(false);
+        Hide();
     }
 
     private void Start() {
@@ -42,9 +45,10 @@ public class BattlePhaseUI : MonoBehaviour
 
         if (BattleManager.Instance.IsBattlePhase()) {
             Show(); 
-            turnText.text = ConvertIntToRomanNumber(BattleManager.Instance.GetCurrentTurn()) + "/" + ConvertIntToRomanNumber(BattleManager.Instance.GetMaxTurns());
+            turnText.text = ConvertIntToRomanNumber(BattleManager.Instance.GetCurrentTurn() +1 ) + "/" + ConvertIntToRomanNumber(BattleManager.Instance.GetMaxTurns());
             playerSpeedUpGameObject.SetActive(false);
-        } else {
+        }
+        if(BattleManager.Instance.IsBattlePhaseEnding()) {
             Hide();
         }
     }
@@ -68,12 +72,18 @@ public class BattlePhaseUI : MonoBehaviour
     }
 
     public void Show() {
+        battlePhasePanelAnimator.SetTrigger("SlideDown");
+        battlePhasePanelAnimator.ResetTrigger("SlideUp");
+        //battlePhaseIPlaceablePanel.gameObject.SetActive(true);
         gameObject.SetActive(true);
     }
 
     private void Hide() {
-        gameObject.SetActive(false);
+        battlePhasePanelAnimator.SetTrigger("SlideUp");
+        battlePhasePanelAnimator.ResetTrigger("SlideDown");
+        //battlePhaseIPlaceablePanel.gameObject.SetActive(false);
     }
+
     private string ConvertIntToRomanNumber(int intToConvert) {
         if (intToConvert == 0) {
             return "I";

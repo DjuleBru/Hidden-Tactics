@@ -195,7 +195,7 @@ public class UnitTargetingSystem : NetworkBehaviour
 
         foreach (GridPosition relativeTargetGridPosition in attackGridPositionTargetList) {
             GridPosition targetGridPosition = new GridPosition(unit.GetCurrentGridPosition().x + relativeTargetGridPosition.x, unit.GetCurrentGridPosition().y + relativeTargetGridPosition.y);
-
+            
             if (!BattleGrid.Instance.IsValidGridPosition(targetGridPosition)) {
                 // Target grid position is not a valid grid position
                 continue;
@@ -217,6 +217,16 @@ public class UnitTargetingSystem : NetworkBehaviour
                 if (unit.IsOwnedByPlayer() != this.unit.IsOwnedByPlayer() && !unit.GetIsDead() && unit.GetUnitIsBought() && attackSO.attackTargetTypes.Contains(unit.GetTargetType())) {
                     // target unit is not from the same team AND Unit is not dead AND unit is bought AND unit is targetable (air vs ground)
                     targetItargetableList.Add(unit);
+
+                    // Add other units that are in the same troop and nearby
+                    List<Unit> otherTargetItargetableList = GetUnitListCloseToUnit(attackSO, unit) ;
+
+                    foreach(Unit closeUnit in otherTargetItargetableList) {
+                        if (!targetItargetableList.Contains(closeUnit)) {
+                            targetItargetableList.Add(closeUnit);
+                        }
+                    }
+
                 }
             }
 
@@ -231,6 +241,36 @@ public class UnitTargetingSystem : NetworkBehaviour
         }
         return targetItargetableList;
     }
+
+    protected List<Unit> GetUnitListCloseToUnit(AttackSO attackSO, Unit unit) {
+        float attackTargetingRange = 3f;
+        Collider2D[] colliderArray = Physics2D.OverlapCircleAll(unit.transform.position, attackTargetingRange);
+        List<Unit> targetItargetableList = new List<Unit>();
+
+        foreach (Collider2D collider in colliderArray) {
+            if (collider.TryGetComponent<Unit>(out Unit targetITargetable)) {
+                // Collider is targetable
+
+                if (targetITargetable.IsOwnedByPlayer() != this.unit.IsOwnedByPlayer() && unit.GetUnitIsBought() && !targetITargetable.GetIsDead()) {
+                    // targetable is not from the same team AND targetable is not dead
+
+
+                    if (attackSO.attackTargetTypes.Contains(targetITargetable.GetTargetType())) {
+                        // target can be targeted (air unit vs ground unit vs garrisoned unit, building, village)
+
+
+                        if (targetITargetable.GetCurrentGridPosition().y == unit.GetCurrentGridPosition().y) {
+                            // target unit is on the same row as this unit
+                            targetItargetableList.Add(targetITargetable as Unit);
+                        }
+                    }
+                }
+            };
+        }
+
+        return targetItargetableList;
+    }
+
     protected virtual List<ITargetable> GetAllyRangedHealTargets(List<GridPosition> attackGridPositionTargetList, AttackSO attackSO) {
         
         int index = 0;

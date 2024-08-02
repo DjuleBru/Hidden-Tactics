@@ -12,12 +12,9 @@ public class ReadyPanelButtonUI : MonoBehaviour, IPointerEnterHandler, IPointerE
 
     [SerializeField] Material readyMaterial;
     [SerializeField] Material unreadyMaterial;
-    [SerializeField] Color readyColor;
-    [SerializeField] Color unreadyColor;
 
     private void Awake() {
         button = GetComponent<Button>();
-        button.GetComponent<Image>().color = unreadyColor;
         buttonOutlineImage.material = unreadyMaterial;
     }
 
@@ -27,17 +24,14 @@ public class ReadyPanelButtonUI : MonoBehaviour, IPointerEnterHandler, IPointerE
     }
 
     private void BattleManager_OnStateChanged(object sender, System.EventArgs e) {
-        button.GetComponent<Image>().color = unreadyColor;
         buttonOutlineImage.material = unreadyMaterial;
     }
 
     public void HandleButtonClickVisual() {
         if (Player.LocalInstance.GetPlayerReady()) {
-            button.GetComponent<Image>().color = readyColor;
             buttonOutlineImage.material = readyMaterial;
         }
         else {
-            button.GetComponent<Image>().color = unreadyColor;
             buttonOutlineImage.material = unreadyMaterial;
         }
     }

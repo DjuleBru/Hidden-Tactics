@@ -12,12 +12,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44a693b538d454945879116c3a121ddd, type: 3}
   m_Name: HumanBowGarrisoned_ArcherTowerTroop
   m_EditorClassIdentifier: 
+  troopName: Archers
   troopIllustrationSlotSprite: {fileID: 0}
   troopDescriptionSlotSprite: {fileID: 0}
+  troopTypeIconSprite: {fileID: 21300000, guid: e7920be881996114f989c68f2c5ae8f7, type: 3}
   troopPrefab: {fileID: 2495463524177989710, guid: fdc6c47a1f4f52248956644435961935, type: 3}
   unitPrefab: {fileID: 6582105824262927089, guid: e3bb34a0740088f44b2da27e83131dc2, type: 3}
-  mainTroopAttackSO: {fileID: 11400000, guid: 7869c555994b04542b547d075b1ac9bf, type: 2}
+  additionalUnit1Prefab: {fileID: 0}
+  additionalUnit2Prefab: {fileID: 0}
+  spawnedUnitPrefab: {fileID: 0}
   spawnTroopCost: 0
   upgradeTroopCost: 0
   buyAdditionalUnitsCost: 0
+  buffedGridPositions: []
+  supportType: 0
+  buffAmount: 0
   troopIsImplemented: 1

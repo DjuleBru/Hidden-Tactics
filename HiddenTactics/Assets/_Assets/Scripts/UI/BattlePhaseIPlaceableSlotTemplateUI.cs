@@ -36,7 +36,7 @@ public class BattlePhaseIPlaceableSlotTemplateUI : MonoBehaviour, IPointerEnterH
         this.iPlaceable = iPlaceable;
 
         if (iPlaceable is Troop) {
-            iPlaceableNameText.text = (iPlaceable as Troop).GetTroopSO().name;
+            iPlaceableNameText.text = (iPlaceable as Troop).GetTroopSO().troopName;
             Troop troop = iPlaceable as Troop;
             troop.OnTroopHPChanged += Troop_OnTroopHPChanged;
             iPlaceableTypeIcon.sprite = troop.GetTroopSO().troopTypeIconSprite;
