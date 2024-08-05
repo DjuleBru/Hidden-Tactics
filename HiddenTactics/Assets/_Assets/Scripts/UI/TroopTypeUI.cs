@@ -8,20 +8,22 @@ using UnityEngine.UI;
 public class TroopTypeUI : NetworkBehaviour, IPointerEnterHandler, IPointerExitHandler {
 
     [SerializeField] private Troop troop;
-    [SerializeField] private Image troopTypeIcon;
-    [SerializeField] private Image troopTypeBackground;
-    [SerializeField] private Image troopTypeOutline;
-    [SerializeField] private GameObject troopTypeUIGameObject;
+    [SerializeField] private Building building;
+    private IPlaceable iPlaceable;
+
+    [SerializeField] private Image typeIcon;
+    [SerializeField] private Image typeBackground;
+    [SerializeField] private Image typeOutline;
+    [SerializeField] private GameObject typeUIGameObject;
 
     [SerializeField] private Material cleanMaterial;
-    [SerializeField] private Material placingUnitMaterial;
     [SerializeField] private Material troopSelectedMaterial;
 
     private CanvasGroup canvasGroup;
     private Animator animator;
 
     private Vector3 hoveringOverUnitPosition;
-    private bool tacticalView;
+    private Vector3 UIResetScale = Vector3.one;
     private bool active_PlayerInput;
 
     private float worldIconScaleMultiplier;
@@ -29,108 +31,136 @@ public class TroopTypeUI : NetworkBehaviour, IPointerEnterHandler, IPointerExitH
     [SerializeField] private float battleViewIconScale;
     private float worldIconScale;
 
+    private bool troopIsGarrisoned;
+    private Button button;
+
     private void Awake() {
 
         canvasGroup = GetComponent<CanvasGroup>();
         animator = GetComponent<Animator>();
+        button = GetComponent<Button>();
+        button.onClick.AddListener(() => {
+            SetTroopSelected();
+        });
 
         hoveringOverUnitPosition = transform.localPosition;
-        troopTypeIcon.sprite = troop.GetTroopSO().troopTypeIconSprite;
+
+        if(troop != null) {
+            iPlaceable = troop;
+            typeIcon.sprite = troop.GetTroopSO().troopTypeIconSprite;
+        } else {
+            iPlaceable = building;
+            typeIcon.sprite = building.GetBuildingSO().buildingTypeSprite;
+        }
 
         active_PlayerInput = SettingsManager.Instance.GetShowTacticalIconSetting();
-        tacticalView = SettingsManager.Instance.GetTacticalViewSetting();
 
-        troopTypeUIGameObject.SetActive(tacticalView);
-
-        if(tacticalView) {
-            SetIconTacticalView();
+        // Check if troop is garrisoned: if it is, disable game object
+        
+        if (troop != null) {
+            troopIsGarrisoned = troop.GetTroopSO().isGarrisonedTroop;
+            if (troopIsGarrisoned) {
+                typeUIGameObject.SetActive(false);
+                return;
+            }
         }
+
+        if(SettingsManager.Instance.GetTacticalViewSetting()) {
+            SetIconTacticalView();
+        } else {
+            SetIconStandardView();
+            typeUIGameObject.SetActive(active_PlayerInput);
+        }
+
     }
 
     private void Start() {
-        BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
-
         SettingsManager.Instance.OnTacticalViewDisabled += SettingsManager_OnTacticalViewDisabled;
         SettingsManager.Instance.OnTacticalViewEnabled += SettingsManager_OnTacticalViewEnabled;
         SettingsManager.Instance.OnShowTacticalIconsDisabled += SettingsManager_OnShowTacticalIconsDisabled;
         SettingsManager.Instance.OnShowTacticalIconsEnabled += SettingsManager_OnShowTacticalIconsEnabled;
-
-        if(troop.IsOwnedByPlayer()) {
-            worldIconScale = tacticalViewIconScale;
-            transform.localScale = Vector3.one * worldIconScale;
-            transform.localPosition = Vector3.zero;
-        }
+        BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
 
         SetBackgroundSprite();
+    }
 
-        canvasGroup.alpha = .6f;
+    private void BattleManager_OnStateChanged(object sender, System.EventArgs e) {
+        if(!BattleManager.Instance.IsPreparationPhase()) {
+            SetIconStandardView();
+        }
     }
 
     public override void OnNetworkSpawn() {
-        troop.OnTroopPlaced += Troop_OnTroopPlaced;
-        troop.OnTroopHPChanged += Troop_OnTroopHPChanged;
+        if(troop != null) {
+            troop.OnTroopPlaced += Troop_OnTroopPlaced;
+            troop.OnTroopHPChanged += Troop_OnTroopHPChanged;
+        } else {
+            building.OnBuildingPlaced += Building_OnBuildingPlaced;
+        }
     }
 
 
     private void SetBackgroundSprite() {
         FactionSO deckFactionSO = DeckManager.LocalInstance.GetDeckSelected().deckFactionSO;
 
-        if (!troop.IsOwnedByPlayer()) {
+        if (!iPlaceable.IsOwnedByPlayer()) {
             PlayerCustomizationData opponentCustomizationData = HiddenTacticsMultiplayer.Instance.GetLocalOpponentCustomizationData();
             deckFactionSO = PlayerCustomizationDataManager.Instance.GetFactionSOFromId(opponentCustomizationData.factionID);
         }
         
         if (!HiddenTacticsMultiplayer.Instance.GetPlayerAndOpponentSameFaction()) {
-            troopTypeBackground.sprite = deckFactionSO.troopIconBackgroundSprite_differentPlayerFaction;
+            typeBackground.sprite = deckFactionSO.troopIconBackgroundSprite_differentPlayerFaction;
         }
 
         else {
-            if (troop.IsOwnedByPlayer()) {
-                troopTypeBackground.sprite = deckFactionSO.troopIconBackgroundSprite_differentPlayerFaction;
+            if (iPlaceable.IsOwnedByPlayer()) {
+                typeBackground.sprite = deckFactionSO.troopIconBackgroundSprite_differentPlayerFaction;
             } else {
-                troopTypeBackground.sprite = deckFactionSO.troopIconBackgroundSprite_samePlayerFaction_Opponent;
+                typeBackground.sprite = deckFactionSO.troopIconBackgroundSprite_samePlayerFaction_Opponent;
             }
-        }
-    }
-
-    private void BattleManager_OnStateChanged(object sender, System.EventArgs e) {
-
-        if(BattleManager.Instance.IsBattlePhaseStarting()) {
-            Debug.Log("setting standard view for icon");
-            troopTypeUIGameObject.SetActive(active_PlayerInput);
-            SetIconStandardView();
-        }
-
-        if (BattleManager.Instance.IsBattlePhaseEnding()) {
-            Debug.Log("setting tactical view for icon");
-            troopTypeUIGameObject.SetActive(false);
-            SetIconTacticalView();
         }
     }
 
     private void Troop_OnTroopHPChanged(object sender, System.EventArgs e) {
         if(troop.GetTroopHPNormalized() <= 0) {
-            tacticalView = false;
-            troopTypeUIGameObject.SetActive(tacticalView && active_PlayerInput);
-        } else {
-            if(!tacticalView) {
-                tacticalView = true;
-                troopTypeUIGameObject.SetActive(tacticalView && active_PlayerInput);
-            }
+            typeUIGameObject.SetActive(false);
         }
     }
 
     private void Troop_OnTroopPlaced(object sender, System.EventArgs e) {
-        canvasGroup.alpha = 1f;
-        Debug.Log("troop placed received! is preparation phase ? " + BattleManager.Instance.IsPreparationPhase());
+        if (troopIsGarrisoned) return;
+        if (!troop.IsOwnedByPlayer()) {
+            UIResetScale = new Vector3(-1, 1, 1);
+        }
+        if (SettingsManager.Instance.GetTacticalViewSetting()) {
+            canvasGroup.alpha = 1f;
+        }
 
         if (BattleManager.Instance.IsPreparationPhase()) {
-
-            troopTypeUIGameObject.SetActive(tacticalView);
+            typeUIGameObject.SetActive(active_PlayerInput);
 
         } else {
             SetIconStandardView();
-            troopTypeUIGameObject.SetActive(active_PlayerInput);
+            typeUIGameObject.SetActive(active_PlayerInput);
+        }
+    }
+
+
+    private void Building_OnBuildingPlaced(object sender, System.EventArgs e) {
+        if (!building.IsOwnedByPlayer()) {
+            UIResetScale = new Vector3(-1, 1, 1);
+        }
+        if (SettingsManager.Instance.GetTacticalViewSetting()) {
+            canvasGroup.alpha = 1f;
+        }
+
+        if (BattleManager.Instance.IsPreparationPhase()) {
+            typeUIGameObject.SetActive(active_PlayerInput);
+
+        }
+        else {
+            SetIconStandardView();
+            typeUIGameObject.SetActive(active_PlayerInput);
         }
     }
 
@@ -143,13 +173,15 @@ public class TroopTypeUI : NetworkBehaviour, IPointerEnterHandler, IPointerExitH
         foreach(Unit unit in troop.GetUnitInTroopList()) {
             if(!unit.GetUnitIsBought()) continue;
 
-            unit.GetUnitVisual().SetUnitSelected(true);
+            unit.SetUnitHovered(true);
         }
 
     }
 
     public void OnPointerExit(PointerEventData eventData) {
         if (!BattleManager.Instance.IsBattlePhase()) return;
+        if (troop.GetSelected()) return;
+
         ResetUI();
 
         BattlePhaseIPlaceablePanel.Instance.CloseIPlaceableCard(troop);
@@ -157,88 +189,124 @@ public class TroopTypeUI : NetworkBehaviour, IPointerEnterHandler, IPointerExitH
         foreach (Unit unit in troop.GetUnitInTroopList()) {
             if (!unit.GetUnitIsBought()) continue;
 
-            unit.GetUnitVisual().SetUnitHovered(false);
+            unit.SetUnitHovered(false);
         }
+    }
+
+    private void SetTroopSelected() {
+        if (!BattleManager.Instance.IsBattlePhase()) return;
+        SetUISelected(true);
+        PlayerAction_SelectTroop.LocalInstance.SelectTroop(troop);
     }
 
     public void SetUIHovered() {
         canvasGroup.alpha = 1f;
         animator.SetTrigger("Grow");
         animator.ResetTrigger("Shrink");
+        animator.ResetTrigger("Select");
     }
 
     public void SetUIUnHovered() {
-        canvasGroup.alpha = 1f;
+
+        if (!SettingsManager.Instance.GetTacticalViewSetting()) {
+            canvasGroup.alpha = .7f;
+        }
         animator.SetTrigger("Shrink");
         animator.ResetTrigger("Grow");
+        animator.ResetTrigger("Select");
     }
 
     public void ResetUI() {
-        canvasGroup.alpha = .8f;
+        if (!SettingsManager.Instance.GetTacticalViewSetting()) {
+            canvasGroup.alpha = .7f;
+        }
+
         animator.SetTrigger("Shrink");
         animator.ResetTrigger("Grow");
+        animator.ResetTrigger("Select");
     }
 
     public void SetUISelected(bool selected) {
         if(selected) {
-            troopTypeOutline.material = troopSelectedMaterial;
-            troopTypeBackground.material = troopSelectedMaterial;
+            canvasGroup.alpha = 1f;
+            typeOutline.material = troopSelectedMaterial;
+            typeBackground.material = troopSelectedMaterial;
+            animator.SetTrigger("Select");
+            animator.ResetTrigger("Shrink");
+            animator.ResetTrigger("Grow");
         } else {
-            troopTypeOutline.material = cleanMaterial;
-            troopTypeBackground.material = cleanMaterial;
+            typeOutline.material = cleanMaterial;
+            typeBackground.material = cleanMaterial;
             SetUIUnHovered();
         }
     }
 
     private void SetIconTacticalView() {
-        Debug.Log("set icon tactical view");
+        if (troopIsGarrisoned) return;
+
+        typeUIGameObject.SetActive(true);
+
         canvasGroup.alpha = 1f;
         animator.SetTrigger("Shrink");
+        animator.ResetTrigger("Grow");
+        animator.ResetTrigger("Select");
+
         transform.localPosition = Vector3.zero;
+
         worldIconScale = tacticalViewIconScale;
-        transform.localScale = Vector3.one * worldIconScale;
+        transform.localScale = UIResetScale * worldIconScale;
     }
 
     private void SetIconStandardView() {
-        Debug.Log("set icon standards view");
-        canvasGroup.alpha = .8f;
+        if (troopIsGarrisoned) return;
+
+        canvasGroup.alpha = .7f;
         transform.position = transform.parent.position;
+
         transform.localPosition = hoveringOverUnitPosition;
+
         worldIconScale = battleViewIconScale;
-        transform.localScale = Vector3.one * worldIconScale;
+        transform.localScale = UIResetScale * worldIconScale;
 
         if(active_PlayerInput) {
-            troopTypeUIGameObject.SetActive(true);
+            typeUIGameObject.SetActive(true);
         }
     }
 
     private void SettingsManager_OnShowTacticalIconsEnabled(object sender, System.EventArgs e) {
+        if (troopIsGarrisoned) return;
+
         active_PlayerInput = SettingsManager.Instance.GetShowTacticalIconSetting();
 
-        if(tacticalView) {
-            troopTypeUIGameObject.SetActive(true);
+        if(SettingsManager.Instance.GetTacticalViewSetting()) {
+            typeUIGameObject.SetActive(true);
         } else {
-            troopTypeUIGameObject.SetActive(active_PlayerInput);
+            typeUIGameObject.SetActive(active_PlayerInput);
         }
     }
 
     private void SettingsManager_OnShowTacticalIconsDisabled(object sender, System.EventArgs e) {
+        if (troopIsGarrisoned) return;
+
         active_PlayerInput = SettingsManager.Instance.GetShowTacticalIconSetting();
-        troopTypeUIGameObject.SetActive(active_PlayerInput);
+        typeUIGameObject.SetActive(active_PlayerInput);
     }
 
     private void SettingsManager_OnTacticalViewEnabled(object sender, System.EventArgs e) {
+        if (troopIsGarrisoned) return;
 
-        tacticalView = true;
-        troopTypeUIGameObject.SetActive(true);
+        typeUIGameObject.SetActive(true);
+        SetIconTacticalView();
     }
 
     private void SettingsManager_OnTacticalViewDisabled(object sender, System.EventArgs e) {
-        tacticalView = false;
-        troopTypeUIGameObject.SetActive(false);
+        if (troopIsGarrisoned) return;
+
+        typeUIGameObject.SetActive(false);
+        SetIconStandardView();
     }
 
-    private void OnDestroy() {
+    public override void OnDestroy() {
         BattleManager.Instance.OnStateChanged -= BattleManager_OnStateChanged; 
 
         SettingsManager.Instance.OnTacticalViewDisabled -= SettingsManager_OnTacticalViewDisabled;

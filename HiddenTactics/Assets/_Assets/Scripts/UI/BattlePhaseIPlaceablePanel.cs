@@ -33,16 +33,19 @@ public class BattlePhaseIPlaceablePanel : MonoBehaviour
     private void Start() {
         Troop.OnAnyTroopPlaced += Troop_OnAnyTroopPlaced;
         Troop.OnAnyTroopSelled += Troop_OnAnyTroopSelled;
+        Building.OnAnyBuildingPlaced += Building_OnAnyBuildingPlaced;
+        Building.OnAnyBuildingDestroyed += Building_OnAnyBuildingDestroyed;
 
         Deck playerDeck = DeckManager.LocalInstance.GetDeckSelected();
         SetPanelVisuals(playerDeck);
     }
+
     private void SetPanelVisuals(Deck playerDeck) {
         backgroundImage.sprite = playerDeck.deckFactionSO.panelBackground;
         borderShadow.sprite = playerDeck.deckFactionSO.panelBackgroundBorderSimple;
         border.sprite = playerDeck.deckFactionSO.panelBackgroundBorderSimple;
 
-        cardBackgroundImage.sprite = playerDeck.deckFactionSO.panelBackground;
+        cardBackgroundImage.sprite = playerDeck.deckFactionSO.slotBackground;
         cardOutlineImage.sprite = playerDeck.deckFactionSO.panelBackgroundBorderSimple;
     }
 
@@ -58,11 +61,31 @@ public class BattlePhaseIPlaceablePanel : MonoBehaviour
     private void Troop_OnAnyTroopPlaced(object sender, System.EventArgs e) {
         Troop troop = (Troop)sender;
 
-        if (troop.IsOwnedByPlayer() && !playerIPlaceableList.Contains(troop)) {
+        if (troop.IsOwnedByPlayer() && !playerIPlaceableList.Contains(troop) && !troop.GetTroopSO().isGarrisonedTroop) {
             playerIPlaceableList.Add(troop);
             AddIPlaceableCard(troop);
         }
     }
+
+
+    private void Building_OnAnyBuildingDestroyed(object sender, System.EventArgs e) {
+        Building building = (Building)sender;
+
+        if (building.IsOwnedByPlayer()) {
+            playerIPlaceableList.Remove(building);
+            RemoveIPlaceableCard(building);
+        }
+    }
+
+    private void Building_OnAnyBuildingPlaced(object sender, System.EventArgs e) {
+        Building building = (Building)sender;
+
+        if (building.IsOwnedByPlayer() && !playerIPlaceableList.Contains(building)) {
+            playerIPlaceableList.Add(building);
+            AddIPlaceableCard(building);
+        }
+    }
+
 
     private void AddIPlaceableCard(IPlaceable iPlaceableAdded) {
         iPlaceableCardTemplate.gameObject.SetActive(true);

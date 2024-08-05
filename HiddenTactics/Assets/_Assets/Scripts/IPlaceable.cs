@@ -22,6 +22,7 @@ public interface IPlaceable {
 
     void DestroySelf();
 
+    bool GetSelected();
     bool IsOwnedByPlayer();
 
 }

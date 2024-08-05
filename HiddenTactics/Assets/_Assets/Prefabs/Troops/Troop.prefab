@@ -2188,6 +2188,7 @@ GameObject:
   - component: {fileID: 7480012250856967796}
   - component: {fileID: 5925089182326423643}
   - component: {fileID: 3812718612932658632}
+  - component: {fileID: 1281767079702420763}
   m_Layer: 0
   m_Name: TroopTypeUI
   m_TagString: Untagged
@@ -2241,14 +2242,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   troop: {fileID: -7405699509265139040}
-  troopTypeIcon: {fileID: 6705811584262010194}
-  troopTypeBackground: {fileID: 115556211684733227}
-  troopTypeOutline: {fileID: 6673657000351891653}
-  troopTypeUIGameObject: {fileID: 4498549023134165043}
+  building: {fileID: 0}
+  typeIcon: {fileID: 6705811584262010194}
+  typeBackground: {fileID: 115556211684733227}
+  typeOutline: {fileID: 6673657000351891653}
+  typeUIGameObject: {fileID: 4498549023134165043}
   cleanMaterial: {fileID: 2100000, guid: 5472c483cff72494e8e1f9233fc2308a, type: 2}
-  placingUnitMaterial: {fileID: 2100000, guid: 684a5a5301c6bfd4eb68f6d32d5b9a09, type: 2}
   troopSelectedMaterial: {fileID: 2100000, guid: aa328cdf58bcaaa48b5dd94297cfbf1c, type: 2}
-  tacticalViewIconScale: 4
+  tacticalViewIconScale: 3.5
   battleViewIconScale: 2
 --- !u!95 &3812718612932658632
 Animator:
@@ -2260,7 +2261,7 @@ Animator:
   m_GameObject: {fileID: 9126049671416047583}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 22100000, guid: 573be784801906448a07012ab811bdb8, type: 2}
+  m_Controller: {fileID: 9100000, guid: b67340eff61d79442ac908c5e40bd4af, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -2271,3 +2272,47 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &1281767079702420763
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9126049671416047583}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Navigation:
+    m_Mode: 3
+    m_WrapAround: 0
+    m_SelectOnUp: {fileID: 0}
+    m_SelectOnDown: {fileID: 0}
+    m_SelectOnLeft: {fileID: 0}
+    m_SelectOnRight: {fileID: 0}
+  m_Transition: 1
+  m_Colors:
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
+    m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
+    m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
+    m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
+    m_ColorMultiplier: 1
+    m_FadeDuration: 0.1
+  m_SpriteState:
+    m_HighlightedSprite: {fileID: 0}
+    m_PressedSprite: {fileID: 0}
+    m_SelectedSprite: {fileID: 0}
+    m_DisabledSprite: {fileID: 0}
+  m_AnimationTriggers:
+    m_NormalTrigger: Normal
+    m_HighlightedTrigger: Highlighted
+    m_PressedTrigger: Pressed
+    m_SelectedTrigger: Selected
+    m_DisabledTrigger: Disabled
+  m_Interactable: 1
+  m_TargetGraphic: {fileID: 0}
+  m_OnClick:
+    m_PersistentCalls:
+      m_Calls: []

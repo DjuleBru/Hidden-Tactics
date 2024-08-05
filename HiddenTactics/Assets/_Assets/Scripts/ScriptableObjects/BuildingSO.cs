@@ -5,8 +5,11 @@ using UnityEngine;
 [CreateAssetMenu()]
 public class BuildingSO : ScriptableObject
 {
+    public string buildingName;
+
     public Sprite buildingIllustrationSlotSprite;
     public Sprite buildingDescriptionSlotSprite;
+    public Sprite buildingTypeSprite;
 
     public GameObject buildingPrefab;
     public float buildingHP;

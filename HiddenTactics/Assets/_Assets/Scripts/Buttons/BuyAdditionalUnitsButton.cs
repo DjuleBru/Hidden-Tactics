@@ -24,7 +24,7 @@ public class BuyAdditionalUnitsButton : MonoBehaviour, IPointerEnterHandler, IPo
 
     public void OnPointerEnter(PointerEventData eventData) {
         foreach (Unit unit in troop.GetUnitsInAdditionalUnitsInTroopList()) {
-            unit.GetUnitVisual().gameObject.SetActive(true);
+            unit.GetUnitVisual().ShowAsAdditionalUnitToBuy();
             PlayerStateUI.Instance.SetPlayerGoldChangingUI(-troop.GetTroopSO().buyAdditionalUnitsCost);
         }
 
@@ -32,7 +32,7 @@ public class BuyAdditionalUnitsButton : MonoBehaviour, IPointerEnterHandler, IPo
 
     public void OnPointerExit(PointerEventData eventData) {
         foreach (Unit unit in troop.GetUnitsInAdditionalUnitsInTroopList()) {
-            unit.GetUnitVisual().gameObject.SetActive(false);
+            unit.GetUnitVisual().HideAsAdditionalUnitToBuy();
             PlayerStateUI.Instance.ResetPlayerGoldChangingUI();
         }
     }

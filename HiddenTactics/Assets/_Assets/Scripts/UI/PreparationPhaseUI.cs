@@ -9,6 +9,8 @@ public class PreparationPhaseUI : MonoBehaviour
 
     [SerializeField] Image preparationPhaseTimerImage;
     [SerializeField] Animator preparationPhasePanelAnimator;
+    [SerializeField] Animator mercenariesPanelAnimator;
+    [SerializeField] Animator battleDeckUIPanelAnimator;
     [SerializeField] Button playerReadyButton;
 
     [SerializeField] private TextMeshProUGUI turnText;
@@ -52,11 +54,24 @@ public class PreparationPhaseUI : MonoBehaviour
     public void Show() {
         preparationPhasePanelAnimator.ResetTrigger("SlideUp");
         preparationPhasePanelAnimator.SetTrigger("SlideDown");
+        battleDeckUIPanelAnimator.SetTrigger("Show");
+        battleDeckUIPanelAnimator.ResetTrigger("Hide");
+
+        if(!BattleManager.Instance.IsFirstPreparationPhase()) {
+            mercenariesPanelAnimator.SetTrigger("Show");
+            mercenariesPanelAnimator.ResetTrigger("Hide");
+        }
     }
 
     private void Hide() {
         preparationPhasePanelAnimator.ResetTrigger("SlideDown");
         preparationPhasePanelAnimator.SetTrigger("SlideUp");
+
+        mercenariesPanelAnimator.SetTrigger("Hide");
+        battleDeckUIPanelAnimator.SetTrigger("Hide");
+
+        mercenariesPanelAnimator.ResetTrigger("Show");
+        battleDeckUIPanelAnimator.ResetTrigger("Show");
     }
 
     

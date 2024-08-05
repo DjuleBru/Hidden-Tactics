@@ -20,8 +20,7 @@ public class PlayerAction_SelectTroop : NetworkBehaviour {
     }
 
     private void Update() {
-
-        if (PlayerActionsManager.LocalInstance == null) return;
+        if (LocalInstance != this) return;
 
         if (Input.GetMouseButtonDown(1)) {
             DeselectTroop();
@@ -108,6 +107,16 @@ public class PlayerAction_SelectTroop : NetworkBehaviour {
 
     public void SelectTroop() {
         selectedTroop.SetTroopSelected(true);
+    }
+
+    public void SelectTroop(Troop troop) {
+
+        if (selectedTroop != null) {
+            selectedTroop.SetTroopSelected(false);
+        }
+
+        troop.SetTroopSelected(true);
+        selectedTroop = troop;
     }
 
     public bool IsTroopSelected(Troop troop) {

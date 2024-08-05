@@ -90,6 +90,7 @@ public class PlayerAction_SpawnTroop : NetworkBehaviour {
 
     public void PlaceIPlaceableList() {
         foreach(IPlaceable iPlaceable in iPlaceableToSpawnList) {
+
             iPlaceable.PlaceIPlaceable();
             spawnedIPlaceablesDictionary.Add(troopDictionaryInt, iPlaceable);
             spawnedIPlaceableGridPositions.Add(troopDictionaryInt, iPlaceable.GetIPlaceableGridPosition());

@@ -48,8 +48,16 @@ public class Projectile : NetworkBehaviour
 
     protected void Start() {
         trajectoryStartPoint = transform.position;
-
         projectileMoveSpeed = projectileMaxMoveSpeed;
+
+        BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
+    }
+
+    private void BattleManager_OnStateChanged(object sender, EventArgs e) {
+        if(BattleManager.Instance.IsBattlePhaseEnding()) {
+            projectileHasHit = true;
+            StartCoroutine(DestroyProjectile());
+        }
     }
 
     protected virtual void Update() {
@@ -258,5 +266,9 @@ public class Projectile : NetworkBehaviour
     }
     public float GetNextPositionXCorrectionAbsolute() {
         return nextPositionXCorrectionAbsolute;
+    }
+
+    public override void OnDestroy() {
+        BattleManager.Instance.OnStateChanged -= BattleManager_OnStateChanged;
     }
 }

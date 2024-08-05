@@ -20,6 +20,7 @@ public class UnitVisual : NetworkBehaviour
     [SerializeField] protected Material placingUnitMaterial;
 
     [SerializeField] protected ParticleSystem unitGoldBurstPS;
+    [SerializeField] protected ParticleSystem unitPlacedPS;
 
     [FoldoutGroup("Visual Components")]
     protected Animator bodyAnimator;
@@ -62,8 +63,15 @@ public class UnitVisual : NetworkBehaviour
         unit.OnUnitDied += Unit_OnUnitDied;
         unit.OnUnitFell += Unit_OnUnitFell;
         unit.OnUnitReset += Unit_OnUnitReset;
-        SettingsManager.Instance.OnTacticalViewEnabled += SettingsManager_OnTacticalViewEnabled;
-        SettingsManager.Instance.OnTacticalViewDisabled += SettingsManager_OnTacticalViewDisabled;
+        unit.OnUnitHovered += Unit_OnUnitHovered;
+        unit.OnUnitUnhovered += Unit_OnUnitUnhovered;
+        unit.OnUnitSelected += Unit_OnUnitSelected;
+        unit.OnUnitUnselected += Unit_OnUnitUnselected;
+
+        if(!unit.GetUnitIsOnlyVisual()) {
+            SettingsManager.Instance.OnTacticalViewEnabled += SettingsManager_OnTacticalViewEnabled;
+            SettingsManager.Instance.OnTacticalViewDisabled += SettingsManager_OnTacticalViewDisabled;
+        }
     }
 
     protected virtual void Start() {
@@ -164,7 +172,7 @@ public class UnitVisual : NetworkBehaviour
     }
 
     protected virtual void Unit_OnUnitPlaced(object sender, System.EventArgs e) {
-        SetSelectedSpriteColor();
+        SetFactionVisualColor();
         if (SettingsManager.Instance.GetTacticalViewSetting()) return;
         ChangeSpriteRendererListMaterial(allVisualsSpriteRendererList, cleanMaterial);
     }
@@ -185,9 +193,10 @@ public class UnitVisual : NetworkBehaviour
 
     }
 
-
-    private void SetSelectedSpriteColor() {
+    private void SetFactionVisualColor() {
         FactionSO deckFactionSO = DeckManager.LocalInstance.GetDeckSelected().deckFactionSO;
+        ParticleSystem.MainModule ma = unitPlacedPS.main;
+        ma.startColor = deckFactionSO.color_differentPlayerFaction_fill;
 
         if (!unit.IsOwnedByPlayer()) {
             PlayerCustomizationData opponentCustomizationData = HiddenTacticsMultiplayer.Instance.GetLocalOpponentCustomizationData();
@@ -257,7 +266,24 @@ public class UnitVisual : NetworkBehaviour
         }
     }
 
+    private void Unit_OnUnitUnselected(object sender, EventArgs e) {
+        SetUnitSelected(false);
+    }
+
+    private void Unit_OnUnitSelected(object sender, EventArgs e) {
+        SetUnitSelected(true);
+    }
+
+    private void Unit_OnUnitUnhovered(object sender, EventArgs e) {
+        SetUnitHovered(false);
+    }
+
+    private void Unit_OnUnitHovered(object sender, EventArgs e) {
+        SetUnitHovered(true);
+    }
+
     public void SetUnitHovered(bool hovered) {
+        if (!unit.GetUnitIsBought()) return;
         if (hovered) {
             baseOutlineSpriteRenderer.enabled = true;
             baseCircleSpriteRenderer.enabled = true;
@@ -267,11 +293,14 @@ public class UnitVisual : NetworkBehaviour
             baseOutlineSpriteRenderer.enabled = false;
             baseCircleSpriteRenderer.enabled = false;
             selectedUnitSpriteRenderer.enabled = false;
+            if (unit.GetIsDead()) return;
             shadowBaseGameObject.SetActive(true);
         }
     }
 
     public void SetUnitSelected(bool selected) {
+        if (!unit.GetUnitIsBought()) return;
+
         if (selected) {
             baseOutlineSpriteRenderer.enabled = true;
             baseCircleSpriteRenderer.enabled = true;
@@ -285,6 +314,21 @@ public class UnitVisual : NetworkBehaviour
         }
     }
 
+    public void ShowAsAdditionalUnitToBuy() {
+        SetFactionVisualColor();
+        gameObject.SetActive(true);
+        baseOutlineSpriteRenderer.enabled = true;
+        baseCircleSpriteRenderer.enabled = true;
+        selectedUnitSpriteRenderer.enabled = false;
+        GetComponent<UnitAnimatorManager>().SetUnitWatchDirectionBasedOnPlayerOwnance();
+    }
+
+    public void HideAsAdditionalUnitToBuy() {
+        gameObject.SetActive(false);
+        baseOutlineSpriteRenderer.enabled = false;
+        baseCircleSpriteRenderer.enabled = false;
+        selectedUnitSpriteRenderer.enabled = false;
+    }
     public void EnableTrailRenderer() {
         trailRenderer.enabled = true;
     }
@@ -292,6 +336,7 @@ public class UnitVisual : NetworkBehaviour
     public void DisableTrailRenderer() {
         trailRenderer.enabled = false;
     }
+
 
     public override void OnDestroy() {
         if (unit.GetUnitIsOnlyVisual()) return;

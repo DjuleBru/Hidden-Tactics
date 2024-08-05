@@ -48,8 +48,6 @@ public class SettingsManager : MonoBehaviour
     }
 
     private void GameInput_OnShowIPlaceableIconPerformed(object sender, System.EventArgs e) {
-        if (!BattleManager.Instance.IsBattlePhase()) return;
-
         showTacticalIcons = !showTacticalIcons;
 
         if(showTacticalIcons) {

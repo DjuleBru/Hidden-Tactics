@@ -10,6 +10,8 @@ public class SpawnIPlaceableButtonDebug : SpawnIPlaceableButton
     [SerializeField] protected BuildingSO debugBuildingToSpawnSO;
 
     protected void Start() {
+        spawnIPlaceableButton = GetComponent<Button>();
+
         spawnIPlaceableButton.onClick.AddListener(() => {
             if(debugTroopToSpawnSO != null) {
                 SpawnTroopButton();

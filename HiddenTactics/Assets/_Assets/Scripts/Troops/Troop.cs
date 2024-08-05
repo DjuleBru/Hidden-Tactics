@@ -9,6 +9,8 @@ public class Troop : NetworkBehaviour, IPlaceable {
     public event EventHandler OnTroopPlaced;
     public static event EventHandler OnAnyTroopPlaced;
     public static event EventHandler OnAnyTroopSelled;
+    public event EventHandler OnTroopSelected;
+    public event EventHandler OnTroopUnselected;
 
     public event EventHandler OnTroopHPChanged;
     public float maxTroopHP;
@@ -45,6 +47,9 @@ public class Troop : NetworkBehaviour, IPlaceable {
     private Vector3 battlefieldOffset;
 
     private bool troopWasPlacedThisPreparationPhase = true;
+    private bool troopHovered;
+    private bool troopSelected;
+    private bool troopSelled;
 
     private void Awake() {
         allUnitsInTroop = new List<Unit>();
@@ -115,13 +120,22 @@ public class Troop : NetworkBehaviour, IPlaceable {
     }
 
     private void BattleManager_OnStateChanged(object sender, EventArgs e) {
+
         if(BattleManager.Instance.IsBattlePhaseStarting()) {
+
+            if(troopSelled) {
+                DestroyTroop();
+            }
+
             UpdateTroopServerRpc();
+
             troopWasPlacedThisPreparationPhase = false;
         }
+
         if (BattleManager.Instance.IsBattlePhaseEnding()) {
             DeactivateAllDynamicallySpawnedUnits();
         }
+
         if (BattleManager.Instance.IsPreparationPhase()) {
             troopHP = maxTroopHP;
             OnTroopHPChanged?.Invoke(this, EventArgs.Empty);
@@ -245,6 +259,7 @@ public class Troop : NetworkBehaviour, IPlaceable {
     [ClientRpc]
     private void UpdateTroopClientRpc() {
         if (!isOwnedByPlayer && additionalUnitsHaveBeenBought == true) {
+
             foreach (Unit unit in additionalUnitsInTroop) {
                 unit.ActivateAdditionalUnit();
             }
@@ -252,13 +267,13 @@ public class Troop : NetworkBehaviour, IPlaceable {
         }
     }
 
-    public void SellTroop() {
-        OnAnyTroopSelled?.Invoke(this, EventArgs.Empty);
-        StartCoroutine(SellTroopCoroutine());
+    public void SetTroopSelled() {
+        troopSelled = true;
+        SellTroop();
     }
 
-
-    private IEnumerator SellTroopCoroutine() {
+    public void SellTroop() {
+        OnAnyTroopSelled?.Invoke(this, EventArgs.Empty);
 
         foreach (Unit unit in additionalUnitsInTroop) {
             unit.SellUnit();
@@ -267,8 +282,9 @@ public class Troop : NetworkBehaviour, IPlaceable {
         BattleGrid.Instance.RemoveIPlaceableAtGridPosition(currentGridPosition, this);
         BattleGrid.Instance.ResetIPlaceableSpawnedAtGridPosition(currentGridPosition);
 
-        yield return new WaitForSeconds(.1f);
+    }
 
+    private void DestroyTroop() {
         NetworkObject networkObject = GetComponent<NetworkObject>();
         HiddenTacticsMultiplayer.Instance.DestroyIPlaceable(networkObject);
     }
@@ -295,7 +311,6 @@ public class Troop : NetworkBehaviour, IPlaceable {
         }
 
         isPlaced = true;
-        Debug.Log("troop placed sent !");
         OnTroopPlaced?.Invoke(this, null);
         OnAnyTroopPlaced?.Invoke(this, EventArgs.Empty);
     }
@@ -311,13 +326,18 @@ public class Troop : NetworkBehaviour, IPlaceable {
     public void SetTroopHovered(bool hovered) {
 
         if(hovered) {
+            troopHovered = true;
             troopTypeUI.SetUIHovered();
+            BattlePhaseIPlaceablePanel.Instance.OpenIPlaceableCard(this);
         } else {
+            if (troopSelected) return;
+            troopHovered = false;
             troopTypeUI.SetUIUnHovered();
+            BattlePhaseIPlaceablePanel.Instance.CloseIPlaceableCard(this);
         }
 
         foreach (Unit unit in allUnitsInTroop) {
-            unit.GetUnitVisual().SetUnitHovered(hovered);
+            unit.SetUnitHovered(hovered);
 
             if (unit.GetComponent<SupportUnit>() != null) {
                 if(hovered) {
@@ -332,19 +352,26 @@ public class Troop : NetworkBehaviour, IPlaceable {
     public void SetTroopSelected(bool selected) {
         troopTypeUI.SetUISelected(selected);
 
-        if(selected) {
-            troopUI.ShowTroopSelectedUI();
+        if (selected) {
+            troopSelected = true;
+            OnTroopSelected?.Invoke(this, EventArgs.Empty);
+            if (BattleManager.Instance.IsPreparationPhase()) {
+                troopUI.ShowTroopSelectedUI();
+            }
 
             foreach (Unit unit in allUnitsInTroop) {
-                unit.GetUnitVisual().SetUnitSelected(true);
+                unit.SetUnitSelected(selected);
             }
 
         } else {
-
+            troopSelected = false;
+            troopHovered = false;
+            OnTroopUnselected?.Invoke(this, EventArgs.Empty);
             troopUI.HideTroopSelectedUI();
+            BattlePhaseIPlaceablePanel.Instance.CloseIPlaceableCard(this);
 
             foreach (Unit unit in allUnitsInTroop) {
-                unit.GetUnitVisual().SetUnitSelected(false);
+                unit.SetUnitSelected(false);
             }
         }
     }
@@ -462,6 +489,10 @@ public class Troop : NetworkBehaviour, IPlaceable {
 
     public float GetTroopHPNormalized() {
         return troopHP/maxTroopHP;
+    }
+
+    public bool GetSelected() {
+        return troopSelected;
     }
 
     public override void OnDestroy() {

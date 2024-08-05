@@ -31,6 +31,7 @@ public class UnitAI_HumanCavalry : UnitAI
     }
 
     private void Update() {
+        if (!IsServer) return;
         CheckConditionsBeforeSwitch();
     }
 

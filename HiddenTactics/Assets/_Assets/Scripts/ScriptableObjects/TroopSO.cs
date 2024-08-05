@@ -24,7 +24,7 @@ public class TroopSO : ScriptableObject {
     public SupportUnit.SupportType supportType;
     public float buffAmount;
 
-
+    public bool isGarrisonedTroop;
     public bool troopIsImplemented;
 
 }

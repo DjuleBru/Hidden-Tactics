@@ -12,23 +12,32 @@ public class BattlePhaseIPlaceableSlotTemplateUI : MonoBehaviour, IPointerEnterH
 
     [SerializeField] private Image iPlaceableHPBar;
     [SerializeField] private Image iPlaceableTypeIcon;
+    [SerializeField] private Image borderImage;
+    [SerializeField] private Image backgroundImage;
     [SerializeField] private TextMeshProUGUI iPlaceableNameText;
 
     [SerializeField] private Gradient healthGradient = new Gradient();
 
+
+    [SerializeField] private Material cleanMaterial;
+    [SerializeField] private Material selectedMaterial;
+
     private IPlaceable iPlaceable;
+
+    private bool cardOpened;
 
     private void Awake() {
         animator = GetComponent<Animator>();
         canvasGroup = GetComponent<CanvasGroup>();
-        //canvasGroup.alpha = .75f;
     }
 
     public void UpdateHPBar(float iPlaceableHPNormalized) {
         if(iPlaceableHPNormalized > 0) {
             iPlaceableHPBar.color = healthGradient.Evaluate(iPlaceableHPNormalized);
+            iPlaceableNameText.color = healthGradient.Evaluate(iPlaceableHPNormalized);
         } else {
             iPlaceableHPBar.color = Color.black;
+            iPlaceableNameText.color = Color.black;
         }
     }
 
@@ -39,7 +48,31 @@ public class BattlePhaseIPlaceableSlotTemplateUI : MonoBehaviour, IPointerEnterH
             iPlaceableNameText.text = (iPlaceable as Troop).GetTroopSO().troopName;
             Troop troop = iPlaceable as Troop;
             troop.OnTroopHPChanged += Troop_OnTroopHPChanged;
+            troop.OnTroopSelected += Troop_OnTroopSelected;
+            troop.OnTroopUnselected += Troop_OnTroopUnselected;
             iPlaceableTypeIcon.sprite = troop.GetTroopSO().troopTypeIconSprite;
+        }
+
+        if(iPlaceable is Building) {
+            iPlaceableNameText.text = (iPlaceable as Building).GetBuildingSO().buildingName;
+            Building building = iPlaceable as Building;
+            //building.OnTroopSelected += Troop_OnTroopSelected;
+            //troop.OnTroopUnselected += Troop_OnTroopUnselected;
+            iPlaceableTypeIcon.sprite = building.GetBuildingSO().buildingTypeSprite;
+        }
+    }
+
+    private void Troop_OnTroopUnselected(object sender, System.EventArgs e) {
+        borderImage.material = cleanMaterial;
+        backgroundImage.material = cleanMaterial;
+    }
+
+    private void Troop_OnTroopSelected(object sender, System.EventArgs e) {
+        borderImage.material = selectedMaterial;
+        backgroundImage.material = selectedMaterial;
+
+        if(!cardOpened) {
+            OpenIPlaceableCard();
         }
     }
 
@@ -54,8 +87,10 @@ public class BattlePhaseIPlaceableSlotTemplateUI : MonoBehaviour, IPointerEnterH
 
     public void OpenIPlaceableCard() {
         animator.SetTrigger("SlideUp");
+        animator.ResetTrigger("SlideDown");
+        cardOpened = true;
 
-        if(iPlaceable is Troop) {
+        if (iPlaceable is Troop) {
             Troop troop = (Troop)iPlaceable;
             troop.GetComponentInChildren<TroopTypeUI>().SetUIHovered();
 
@@ -68,8 +103,11 @@ public class BattlePhaseIPlaceableSlotTemplateUI : MonoBehaviour, IPointerEnterH
     }
 
     public void CloseIPlaceableCard() {
-        animator.SetTrigger("SlideDown"); 
-        
+        animator.SetTrigger("SlideDown");
+        animator.ResetTrigger("SlideUp");
+
+        cardOpened = false;
+
         if (iPlaceable is Troop) {
             Troop troop = (Troop)iPlaceable;
             troop.GetComponentInChildren<TroopTypeUI>().ResetUI();
@@ -87,6 +125,7 @@ public class BattlePhaseIPlaceableSlotTemplateUI : MonoBehaviour, IPointerEnterH
     }
 
     public void OnPointerExit(PointerEventData eventData) {
+        if (iPlaceable.GetSelected()) return;
         CloseIPlaceableCard();
     }
 }

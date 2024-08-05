@@ -20,6 +20,11 @@ public class Unit : NetworkBehaviour, ITargetable {
     public event EventHandler OnAdditionalUnitActivated;
     public event EventHandler OnUnitDynamicallySpawned;
 
+    public event EventHandler OnUnitHovered;
+    public event EventHandler OnUnitUnhovered;
+    public event EventHandler OnUnitSelected;
+    public event EventHandler OnUnitUnselected;
+
     public event EventHandler<OnUnitSpecialEventArgs> OnUnitDazed;
     public event EventHandler<OnUnitSpecialEventArgs> OnUnitFlamed;
     public event EventHandler<OnUnitSpecialEventArgs> OnUnitPoisoned;
@@ -193,6 +198,7 @@ public class Unit : NetworkBehaviour, ITargetable {
             ResetUnit();
         }
     }
+
     protected virtual void ParentTroop_OnTroopPlaced(object sender, System.EventArgs e) {
 
 
@@ -377,6 +383,22 @@ public class Unit : NetworkBehaviour, ITargetable {
         BattleManager.Instance.RemoveUnitFromUnitsStillInBattleList(this);
     }
 
+    public void SetUnitHovered(bool hovered) {
+        if(hovered) {
+            OnUnitHovered?.Invoke(this, EventArgs.Empty);
+        } else {
+            OnUnitUnhovered?.Invoke(this, EventArgs.Empty);
+        }
+    }
+
+    public void SetUnitSelected(bool selected) {
+        if(selected) {
+            OnUnitSelected?.Invoke(this, EventArgs.Empty);
+        } else {
+            OnUnitUnselected?.Invoke(this, EventArgs.Empty);
+        }
+    }
+
     #region GET PARAMETERS
 
     public Vector3 GetUnitPositionInTroop() {
@@ -557,6 +579,11 @@ public class Unit : NetworkBehaviour, ITargetable {
     [ClientRpc]
     private void ActivateAdditionalUnitClientRpc() {
         unitIsBought = true;
+
+        if(PlayerAction_SelectTroop.LocalInstance.IsTroopSelected(parentTroop)) {
+            OnUnitSelected?.Invoke(this, EventArgs.Empty);
+        }
+
         OnAdditionalUnitActivated?.Invoke(this, EventArgs.Empty);
 
         unitVisual.gameObject.SetActive(true);

@@ -115,7 +115,8 @@ public class GridHoverManager : MonoBehaviour
         // Do not show hovered units if not idle
         if (PlayerActionsManager.LocalInstance.GetCurrentAction() != PlayerActionsManager.Action.Idle) return;
 
-        HandleUnitHover();
+        HandleTroopHover();
+        HandleBuildingHover();
         ShowHoveredTroopRangedAttackTiles();
     }
 
@@ -146,7 +147,7 @@ public class GridHoverManager : MonoBehaviour
        
     }
 
-    private void HandleUnitHover() {
+    private void HandleTroopHover() {
         Troop previousTroopHovered = BattleGrid.Instance.GetTroopAtGridPosition(previousHoveredGridPosition);
 
         if (!PlayerAction_SelectTroop.LocalInstance.IsTroopSelected(previousTroopHovered)) {
@@ -166,7 +167,26 @@ public class GridHoverManager : MonoBehaviour
             }
         }
     }
+    private void HandleBuildingHover() {
+        //Building previousBuildingHovered = BattleGrid.Instance.GetBuildingListAtGridPosition(previousHoveredGridPosition);
 
+        //if (!PlayerAction_SelectTroop.LocalInstance.IsTroopSelected(previousBuildingHovered)) {
+        //    // Previous troop was not selected : unhover
+        //    if (previousBuildingHovered != null) {
+        //        previousBuildingHovered.SetTroopHovered(false);
+        //    }
+
+        //}
+
+        //Troop newTroopHovered = BattleGrid.Instance.GetTroopAtGridPosition(currentHoveredGridPosition);
+        //if (!PlayerAction_SelectTroop.LocalInstance.IsTroopSelected(newTroopHovered)) {
+        //    // New troop was not selected : hover
+
+        //    if (newTroopHovered != null) {
+        //        newTroopHovered.SetTroopHovered(true);
+        //    }
+        //}
+    }
     private void ShowHoveredTroopRangedAttackTiles() {
         Troop newHoveredTroop = BattleGrid.Instance.GetTroopAtGridPosition(currentHoveredGridPosition);
 

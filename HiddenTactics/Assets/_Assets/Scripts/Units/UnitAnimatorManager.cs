@@ -9,6 +9,7 @@ public class UnitAnimatorManager : NetworkBehaviour
 
     protected Animator unitAnimator;
     [SerializeField] protected List<Animator> unitShaderAnimatorList;
+    [SerializeField] protected Animator unitGeneralAnimator;
     protected Unit unit;
     protected UnitAI unitAI;
     protected UnitMovement unitMovement;
@@ -24,6 +25,7 @@ public class UnitAnimatorManager : NetworkBehaviour
 
     protected float X;
     protected float Y;
+    private bool firstSelectionDone;
 
     protected virtual void Awake() {
         unit = GetComponentInParent<Unit>();
@@ -45,11 +47,19 @@ public class UnitAnimatorManager : NetworkBehaviour
         unit.OnUnitReset += Unit_OnUnitReset;
         unitAI.OnStateChanged += UnitAI_OnStateChanged;
         unit.OnUnitPlaced += Unit_OnUnitPlaced;
+        unit.OnUnitSelected += Unit_OnUnitSelected;
+
+        unit.OnAdditionalUnitActivated += Unit_OnAdditionalUnitActivated;
 
         unitAttack.OnUnitAttack += UnitAttack_OnUnitAttack;
         unitAttack.OnUnitAttackStarted += UnitAttack_OnUnitAttackStarted;
         unitAttack.OnUnitAttackEnded += UnitAttack_OnUnitAttackEnded;
+    }
 
+
+    protected void Start() {
+        if (unit.GetUnitIsOnlyVisual()) return;
+        SetUnitWatchDirectionBasedOnPlayerOwnance();
     }
 
     protected virtual void Update() {
@@ -94,7 +104,17 @@ public class UnitAnimatorManager : NetworkBehaviour
     }
 
     protected void Unit_OnUnitPlaced(object sender, System.EventArgs e) {
-        SetUnitWatchDirectionBasedOnPlayerOwnance();
+        if (!unit.GetUnitIsBought()) return;
+        unitGeneralAnimator.SetTrigger("UnitPlaced");
+    }
+
+    private void Unit_OnUnitSelected(object sender, System.EventArgs e) {
+        if (!unit.GetUnitIsBought()) return;
+        if (!firstSelectionDone) {
+            firstSelectionDone = true;
+            return;
+        }
+        unitGeneralAnimator.SetTrigger("UnitSelected");
     }
 
     protected virtual void UnitAI_OnStateChanged(object sender, System.EventArgs e) {
@@ -126,7 +146,7 @@ public class UnitAnimatorManager : NetworkBehaviour
         unitAIStateHasChanged = true;
     }
 
-    protected void SetUnitWatchDirectionBasedOnPlayerOwnance() {
+    public void SetUnitWatchDirectionBasedOnPlayerOwnance() {
         if(!unit.IsOwnedByPlayer()) {
             SetXY(-1,-1);
         } else {
@@ -237,6 +257,12 @@ public class UnitAnimatorManager : NetworkBehaviour
 
         unitAnimator.SetBool("Walking", walking);
         unitAnimator.SetBool("Idle", idle);
+        unitAnimator.ResetTrigger("Die");
+        unitAnimator.ResetTrigger("Fall");
+        unitAnimator.ResetTrigger("Attack_Start");
+        unitAnimator.ResetTrigger("Attack_End");
+        unitAnimator.ResetTrigger("BaseAttack");
+        unitAnimator.ResetTrigger("SideWeaponAttack");
 
         SetUnitWatchDirectionBasedOnPlayerOwnance();
     }
@@ -290,4 +316,10 @@ public class UnitAnimatorManager : NetworkBehaviour
     public float GetY() {
         return Y;
     }
+
+    private void Unit_OnAdditionalUnitActivated(object sender, System.EventArgs e) {
+        if (!BattleManager.Instance.IsPreparationPhase()) return;
+        unitGeneralAnimator.SetTrigger("UnitPlaced");
+    }
+
 }

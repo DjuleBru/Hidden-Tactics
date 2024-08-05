@@ -121,15 +121,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4563581498654238484, guid: e10391934621fb548b6e692a8b1644d3, type: 3}
       propertyPath: m_Color.b
-      value: 0.8301887
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4563581498654238484, guid: e10391934621fb548b6e692a8b1644d3, type: 3}
       propertyPath: m_Color.g
-      value: 0.8301887
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4563581498654238484, guid: e10391934621fb548b6e692a8b1644d3, type: 3}
       propertyPath: m_Color.r
-      value: 0.8301887
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4563581498654238484, guid: e10391934621fb548b6e692a8b1644d3, type: 3}
       propertyPath: m_Material
@@ -177,16 +177,20 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4563581499484562477, guid: e10391934621fb548b6e692a8b1644d3, type: 3}
       propertyPath: m_Color.b
-      value: 0.6698113
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4563581499484562477, guid: e10391934621fb548b6e692a8b1644d3, type: 3}
       propertyPath: m_Color.g
-      value: 0.6698113
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4563581499484562477, guid: e10391934621fb548b6e692a8b1644d3, type: 3}
       propertyPath: m_Color.r
-      value: 0.6698113
+      value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4563581499484562477, guid: e10391934621fb548b6e692a8b1644d3, type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 2100000, guid: 5472c483cff72494e8e1f9233fc2308a, type: 2}
     - target: {fileID: 4859217902295692752, guid: e10391934621fb548b6e692a8b1644d3, type: 3}
       propertyPath: m_RootOrder
       value: 8
@@ -261,6 +265,8 @@ MonoBehaviour:
   isSpell: 0
   isTroop: 0
   isMercenary: 0
+  cleanMaterial: {fileID: 2100000, guid: 5472c483cff72494e8e1f9233fc2308a, type: 2}
+  hoveredMaterial: {fileID: 2100000, guid: fc05d1c0080a5a443b6062855d658629, type: 2}
 --- !u!114 &1450932983339824339 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 4563581498654238484, guid: e10391934621fb548b6e692a8b1644d3, type: 3}

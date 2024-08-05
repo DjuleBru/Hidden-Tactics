@@ -11,12 +11,17 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
 
     public event EventHandler OnBuildingPlaced;
     public event EventHandler OnBuildingDestroyed;
+    public event EventHandler OnBuildingSelected;
+    public event EventHandler OnBuildingUnselected;
+    public static event EventHandler OnAnyBuildingPlaced;
+    public static event EventHandler OnAnyBuildingDestroyed;
     
     protected ulong ownerClientId;
 
     [SerializeField] protected Transform buildingCenterPoint;
     [SerializeField] protected List<Transform> projectileTargetList;
     [SerializeField] protected BuildingSO buildingSO;
+    [SerializeField] private TroopTypeUI buildingTypeUI;
 
     protected bool isOwnedByPlayer;
     protected bool isPlaced;
@@ -27,6 +32,9 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
     protected Vector3 battlefieldOffset;
 
     protected bool buildingIsOnlyVisual;
+
+    private bool buildingHovered;
+    private bool buildingSelected;
 
     protected void Awake() {
         if(buildingSO.buildingBlocksUnitMovement) {
@@ -76,6 +84,63 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
             transform.position = BattleGrid.Instance.GetWorldPosition(currentGridPosition) - buildingCenterPoint.localPosition;
         }
     }
+
+    public void SetBuildingHovered(bool hovered) {
+
+        if (hovered) {
+            buildingHovered = true;
+            buildingTypeUI.SetUIHovered();
+            BattlePhaseIPlaceablePanel.Instance.OpenIPlaceableCard(this);
+        }
+        else {
+            if (buildingSelected) return;
+            buildingHovered = false;
+            buildingTypeUI.SetUIUnHovered();
+            BattlePhaseIPlaceablePanel.Instance.CloseIPlaceableCard(this);
+        }
+
+        //foreach (Unit unit in allUnitsInTroop) {
+        //    unit.SetUnitHovered(hovered);
+
+        //    if (unit.GetComponent<SupportUnit>() != null) {
+        //        if (hovered) {
+        //            unit.GetComponent<SupportUnit>().HideBuffedUnitBuffs();
+        //        }
+        //        else {
+        //            unit.GetComponent<SupportUnit>().ShowBuffedUnitBuffs();
+        //        }
+        //    }
+        //}
+    }
+
+    public void SetBuildingSelected(bool selected) {
+        buildingTypeUI.SetUISelected(selected);
+
+        if (selected) {
+            OnBuildingSelected?.Invoke(this, EventArgs.Empty);
+
+            //if (BattleManager.Instance.IsPreparationPhase()) {
+            //    troopUI.ShowTroopSelectedUI();
+            //}
+
+            //foreach (Unit unit in allUnitsInTroop) {
+            //    unit.SetUnitSelected(selected);
+            //}
+
+        }
+        else {
+            buildingSelected = false;
+            buildingHovered = false;
+            OnBuildingUnselected?.Invoke(this, EventArgs.Empty);
+            //troopUI.HideTroopSelectedUI();
+            BattlePhaseIPlaceablePanel.Instance.CloseIPlaceableCard(this);
+
+            //foreach (Unit unit in allUnitsInTroop) {
+            //    unit.SetUnitSelected(false);
+            //}
+        }
+    }
+
     public virtual void Die() {
         isDestroyed = true;
         StartCoroutine(DieCoroutine());
@@ -84,6 +149,7 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
     protected IEnumerator DieCoroutine() {
         GetComponent<Collider2D>().enabled = false;
         OnBuildingDestroyed?.Invoke(this, EventArgs.Empty);
+        OnAnyBuildingDestroyed?.Invoke(this, EventArgs.Empty);
         BattleGrid.Instance.RemoveIPlaceableAtGridPosition(BattleGrid.Instance.GetGridPosition(transform.position), this);
 
         yield return new WaitForSeconds(1f);
@@ -97,6 +163,7 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
 
     public virtual void PlaceIPlaceable() {
         OnBuildingPlaced?.Invoke(this, EventArgs.Empty);
+        OnAnyBuildingPlaced?.Invoke(this, EventArgs.Empty);
 
         currentGridPosition = BattleGrid.Instance.GetGridPosition(buildingCenterPoint.position);
 
@@ -199,5 +266,9 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
     public Transform GetCenterPoint()
     {
         return buildingCenterPoint;
+    }
+
+    public bool GetSelected() {
+        return buildingSelected;
     }
 }

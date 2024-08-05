@@ -15,7 +15,8 @@ public class ItemTemplateUI_BattleDeck : ItemTemplateUI, IPointerEnterHandler, I
     [SerializeField] private bool isTroop;
     [SerializeField] private bool isMercenary;
 
-    private Color unHoveredColor;
+    [SerializeField] private Material cleanMaterial;
+    [SerializeField] private Material hoveredMaterial;
 
     private void Awake() {
         unlockTroopButton.onClick.AddListener(() => {
@@ -28,8 +29,6 @@ public class ItemTemplateUI_BattleDeck : ItemTemplateUI, IPointerEnterHandler, I
         } else {
             recruitTroopButton.gameObject.SetActive(false);
         }
-
-        unHoveredColor = backgroundImage.color;
     }
 
     public override void SetTroopSO(TroopSO troopSO) {
@@ -100,12 +99,12 @@ public class ItemTemplateUI_BattleDeck : ItemTemplateUI, IPointerEnterHandler, I
     }
 
     public void OnPointerExit(PointerEventData eventData) {
-        backgroundImage.color = unHoveredColor;
-        outlineImage.color = unHoveredColor;
+        backgroundImage.material = cleanMaterial;
+        outlineImage.material = cleanMaterial;
     }
 
     public void OnPointerEnter(PointerEventData eventData) {
-        backgroundImage.color = Color.white;
-        outlineImage.color = Color.white;
+        backgroundImage.material = hoveredMaterial;
+        outlineImage.material = hoveredMaterial;
     }
 }

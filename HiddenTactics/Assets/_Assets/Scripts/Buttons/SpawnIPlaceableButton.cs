@@ -12,7 +12,6 @@ public class SpawnIPlaceableButton : MonoBehaviour
     [SerializeField] protected Button spawnIPlaceableButton;
 
     protected virtual void SpawnTroopButton() {
-        Debug.Log("click");
         if (!CheckSpawnConditions()) return;
         int troopIndex = BattleDataManager.Instance.GetTroopSOIndex(troopToSpawnSO);
         PlayerStateUI.Instance.SetPlayerGoldChangingUI(-troopToSpawnSO.spawnTroopCost);

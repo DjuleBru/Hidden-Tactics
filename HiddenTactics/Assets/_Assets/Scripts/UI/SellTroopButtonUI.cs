@@ -29,6 +29,7 @@ public class SellTroopButtonUI : MonoBehaviour, IPointerExitHandler, IPointerEnt
 
     public void OnPointerEnter(PointerEventData eventData) {
         foreach (Unit unit in troop.GetUnitInTroopList()) {
+            if (!unit.GetUnitIsBought()) continue;
             unit.GetUnitUI().ShowUnitAsSellingUnit();
 
             if (troop.TroopWasPlacedThisPreparationPhase()) {

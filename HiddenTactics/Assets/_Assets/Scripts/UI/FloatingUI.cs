@@ -21,7 +21,6 @@ public class FloatingUI : MonoBehaviour
 
         BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
 
-        hideTroopIconsTextUI.SetActive(false);
         tacticalCameraTextUI.SetActive(false);
     }
 
@@ -30,13 +29,6 @@ public class FloatingUI : MonoBehaviour
             tacticalCameraTextUI.SetActive(true);
         } else {
             tacticalCameraTextUI.SetActive(false);
-        }
-
-        if(BattleManager.Instance.IsBattlePhase()) {
-            hideTroopIconsTextUI.SetActive(true);
-        }
-        else {
-            hideTroopIconsTextUI.SetActive(false);
         }
     }
 

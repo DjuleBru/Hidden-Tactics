@@ -12,6 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85abc532579c0ec4d839a1a1bcb04732, type: 3}
   m_Name: GreenskinCatapultTower
   m_EditorClassIdentifier: 
+  buildingIllustrationSlotSprite: {fileID: 0}
+  buildingDescriptionSlotSprite: {fileID: 0}
+  buildingTypeSprite: {fileID: 21300000, guid: 5257bbe50269dea4881bc0ca050177ea, type: 3}
   buildingPrefab: {fileID: 4388312461342439320, guid: e4d22ef1337bad946b3822d63b209f51, type: 3}
   buildingHP: 100
   buildingBlocksUnitMovement: 1
+  hasGarrisonedTroop: 0
+  garrisonedTroopSO: {fileID: 0}
+  spawnBuildingCost: 0
+  upgradeBuildingCost: 0
+  buildingIsImplemented: 0
