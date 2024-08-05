@@ -40,7 +40,12 @@ public class SettingsManager : MonoBehaviour
         tacticalView = !tacticalView;
 
         if (tacticalView) {
+            // Automatically enable troop icons when going into tactical view
             OnTacticalViewEnabled?.Invoke(this, EventArgs.Empty);
+            if(!showTacticalIcons) {
+                showTacticalIcons = true;
+                OnShowTacticalIconsEnabled?.Invoke(this, EventArgs.Empty);
+            }
         }
         else {
             OnTacticalViewDisabled?.Invoke(this, EventArgs.Empty);

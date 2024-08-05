@@ -56,7 +56,6 @@ public class TroopTypeUI : NetworkBehaviour, IPointerEnterHandler, IPointerExitH
         active_PlayerInput = SettingsManager.Instance.GetShowTacticalIconSetting();
 
         // Check if troop is garrisoned: if it is, disable game object
-        
         if (troop != null) {
             troopIsGarrisoned = troop.GetTroopSO().isGarrisonedTroop;
             if (troopIsGarrisoned) {
@@ -65,12 +64,13 @@ public class TroopTypeUI : NetworkBehaviour, IPointerEnterHandler, IPointerExitH
             }
         }
 
-        if(SettingsManager.Instance.GetTacticalViewSetting()) {
+        if (SettingsManager.Instance.GetTacticalViewSetting()) {
             SetIconTacticalView();
         } else {
             SetIconStandardView();
             typeUIGameObject.SetActive(active_PlayerInput);
         }
+        canvasGroup.alpha = .7f;
 
     }
 
@@ -132,6 +132,7 @@ public class TroopTypeUI : NetworkBehaviour, IPointerEnterHandler, IPointerExitH
         if (!troop.IsOwnedByPlayer()) {
             UIResetScale = new Vector3(-1, 1, 1);
         }
+
         if (SettingsManager.Instance.GetTacticalViewSetting()) {
             canvasGroup.alpha = 1f;
         }
@@ -150,6 +151,7 @@ public class TroopTypeUI : NetworkBehaviour, IPointerEnterHandler, IPointerExitH
         if (!building.IsOwnedByPlayer()) {
             UIResetScale = new Vector3(-1, 1, 1);
         }
+
         if (SettingsManager.Instance.GetTacticalViewSetting()) {
             canvasGroup.alpha = 1f;
         }
@@ -196,7 +198,7 @@ public class TroopTypeUI : NetworkBehaviour, IPointerEnterHandler, IPointerExitH
     private void SetTroopSelected() {
         if (!BattleManager.Instance.IsBattlePhase()) return;
         SetUISelected(true);
-        PlayerAction_SelectTroop.LocalInstance.SelectTroop(troop);
+        PlayerAction_SelectIPlaceable.LocalInstance.SelectTroop(troop);
     }
 
     public void SetUIHovered() {
@@ -227,7 +229,7 @@ public class TroopTypeUI : NetworkBehaviour, IPointerEnterHandler, IPointerExitH
     }
 
     public void SetUISelected(bool selected) {
-        if(selected) {
+        if (selected) {
             canvasGroup.alpha = 1f;
             typeOutline.material = troopSelectedMaterial;
             typeBackground.material = troopSelectedMaterial;
@@ -250,6 +252,7 @@ public class TroopTypeUI : NetworkBehaviour, IPointerEnterHandler, IPointerExitH
         animator.SetTrigger("Shrink");
         animator.ResetTrigger("Grow");
         animator.ResetTrigger("Select");
+
 
         transform.localPosition = Vector3.zero;
 
@@ -302,7 +305,10 @@ public class TroopTypeUI : NetworkBehaviour, IPointerEnterHandler, IPointerExitH
     private void SettingsManager_OnTacticalViewDisabled(object sender, System.EventArgs e) {
         if (troopIsGarrisoned) return;
 
-        typeUIGameObject.SetActive(false);
+        if (!SettingsManager.Instance.GetShowTacticalIconSetting()) {
+            typeUIGameObject.SetActive(false);
+        }
+
         SetIconStandardView();
     }
 

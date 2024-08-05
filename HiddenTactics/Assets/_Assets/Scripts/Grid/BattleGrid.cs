@@ -195,7 +195,7 @@ public class BattleGrid : MonoBehaviour
             for (int y = 0; y < gridSystem.height; y++) {
 
                 GridPosition gridPosition = new GridPosition(x, y);
-                if (PlayerAction_SpawnTroop.LocalInstance.IsValidIPlaceableSpawningTarget(gridPosition) && IsValidPlayerGridPosition(gridPosition)) {
+                if (PlayerAction_SpawnIPlaceable.LocalInstance.IsValidIPlaceableSpawningTarget(gridPosition) && IsValidPlayerGridPosition(gridPosition)) {
                     return true;
                 }
             }
@@ -211,7 +211,7 @@ public class BattleGrid : MonoBehaviour
             for (int y = 0; y < gridSystem.height; y++) {
 
                 gridPosition = new GridPosition(x, y);
-                if(PlayerAction_SpawnTroop.LocalInstance.IsValidIPlaceableSpawningTarget(gridPosition) && IsValidPlayerGridPosition(gridPosition)) {
+                if(PlayerAction_SpawnIPlaceable.LocalInstance.IsValidIPlaceableSpawningTarget(gridPosition) && IsValidPlayerGridPosition(gridPosition)) {
                     return gridPosition;
                 }
             }
@@ -251,9 +251,9 @@ public class BattleGrid : MonoBehaviour
         gridObject.AddIPlaceable(building);
     }
 
-    public List<Building> GetBuildingListAtGridPosition(GridPosition gridPosition) {
+    public Building GetBuildingAtGridPosition(GridPosition gridPosition) {
         GridObject gridObject = gridSystem.GetGridObject(gridPosition);
-        return gridObject.GetBuildingList();
+        return gridObject.GetBuilding();
     }
 
     #endregion

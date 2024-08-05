@@ -39,15 +39,15 @@ public class PlayerActionsManager : NetworkBehaviour {
 
                 if (Input.GetMouseButtonDown(0)) {
                     // Player is trying to place troop : check if troop placement conditions are met
-                    if (PlayerAction_SpawnTroop.LocalInstance.IsMousePositionValidIPlaceableSpawningTarget()) {
-                        PlayerAction_SpawnTroop.LocalInstance.PlaceIPlaceableList();
+                    if (PlayerAction_SpawnIPlaceable.LocalInstance.IsMousePositionValidIPlaceableSpawningTarget()) {
+                        PlayerAction_SpawnIPlaceable.LocalInstance.PlaceIPlaceableList();
                         PlayerStateUI.Instance.ResetPlayerGoldChangingUI();
                         ChangeAction(Action.Idle);
                     }
                 }
 
                 if (Input.GetMouseButtonDown(1)) {
-                    PlayerAction_SpawnTroop.LocalInstance.CancelIPlaceablePlacement();
+                    PlayerAction_SpawnIPlaceable.LocalInstance.CancelIPlaceablePlacement();
                     PlayerStateUI.Instance.ResetPlayerGoldChangingUI();
                     ChangeAction(Action.Idle);
                 }
@@ -63,12 +63,12 @@ public class PlayerActionsManager : NetworkBehaviour {
     private void ChangeAction(Action newAction) {
         if(newAction == Action.SelectingIPlaceableToSpawn) {
             // Deselect any selected troop
-            PlayerAction_SelectTroop.LocalInstance.DeselectTroop();
+            PlayerAction_SelectIPlaceable.LocalInstance.DeselectIPlaceable();
         }
 
         if(newAction == Action.Idle) {
             // Cancel troop placement
-            PlayerAction_SpawnTroop.LocalInstance.CancelIPlaceablePlacement();
+            PlayerAction_SpawnIPlaceable.LocalInstance.CancelIPlaceablePlacement();
         }
 
         currentAction = newAction;
@@ -78,13 +78,13 @@ public class PlayerActionsManager : NetworkBehaviour {
     public void SelectTroopToSpawn(int troopListSOIndex) {
         ChangeAction(Action.SelectingIPlaceableToSpawn);
         troopSOIndexBeingSpawned = troopListSOIndex;
-        PlayerAction_SpawnTroop.LocalInstance.SelectTroopToSpawn(troopListSOIndex);
+        PlayerAction_SpawnIPlaceable.LocalInstance.SelectTroopToSpawn(troopListSOIndex);
     }
 
     public void SelectBuildingToSpawn(int buildingListSOIndex) {
         ChangeAction(Action.SelectingIPlaceableToSpawn);
         buildingSOIndexBeingSpawned = buildingListSOIndex;
-        PlayerAction_SpawnTroop.LocalInstance.SelectBuildingToSpawn(buildingListSOIndex);
+        PlayerAction_SpawnIPlaceable.LocalInstance.SelectBuildingToSpawn(buildingListSOIndex);
     }
 
     public Action GetCurrentAction() {

@@ -105,6 +105,7 @@ public class UnitAnimatorManager : NetworkBehaviour
 
     protected void Unit_OnUnitPlaced(object sender, System.EventArgs e) {
         if (!unit.GetUnitIsBought()) return;
+        if (SettingsManager.Instance.GetTacticalViewSetting()) return;
         unitGeneralAnimator.SetTrigger("UnitPlaced");
     }
 
@@ -319,6 +320,7 @@ public class UnitAnimatorManager : NetworkBehaviour
 
     private void Unit_OnAdditionalUnitActivated(object sender, System.EventArgs e) {
         if (!BattleManager.Instance.IsPreparationPhase()) return;
+        if (SettingsManager.Instance.GetTacticalViewSetting()) return;
         unitGeneralAnimator.SetTrigger("UnitPlaced");
     }
 

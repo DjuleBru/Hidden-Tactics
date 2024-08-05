@@ -407,6 +407,11 @@ SpriteRenderer:
   m_CorrespondingSourceObject: {fileID: 7358385945221485561, guid: ecaf4c1c39222ff458941abdb8115703, type: 3}
   m_PrefabInstance: {fileID: 4281401351482345761}
   m_PrefabAsset: {fileID: 0}
+--- !u!212 &6875869209786773952 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 7206156626738903265, guid: ecaf4c1c39222ff458941abdb8115703, type: 3}
+  m_PrefabInstance: {fileID: 4281401351482345761}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &7591148188649519246 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5923283366198014383, guid: ecaf4c1c39222ff458941abdb8115703, type: 3}
@@ -460,7 +465,7 @@ MonoBehaviour:
   shadowGameObjectList:
   - {fileID: 5080694719648640392}
   - {fileID: 7648940769980904882}
-  shadowBaseGameObject: {fileID: 7648940769980904882}
+  shadowBaseSpriteRenderer: {fileID: 6875869209786773952}
   cleanMaterial: {fileID: 2100000, guid: 5472c483cff72494e8e1f9233fc2308a, type: 2}
   invisibleMaterial: {fileID: 2100000, guid: 0fd6a58cd0afa51469b9baca76fc6c55, type: 2}
   placingUnitMaterial: {fileID: 2100000, guid: 684a5a5301c6bfd4eb68f6d32d5b9a09, type: 2}

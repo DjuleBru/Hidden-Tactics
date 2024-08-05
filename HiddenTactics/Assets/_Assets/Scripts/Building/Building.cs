@@ -13,6 +13,9 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
     public event EventHandler OnBuildingDestroyed;
     public event EventHandler OnBuildingSelected;
     public event EventHandler OnBuildingUnselected;
+    public event EventHandler OnBuildingHovered;
+    public event EventHandler OnBuildingUnhovered;
+
     public static event EventHandler OnAnyBuildingPlaced;
     public static event EventHandler OnAnyBuildingDestroyed;
     
@@ -60,7 +63,7 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
 
         // Grid position is not a valid position
         if (!BattleGrid.Instance.IsValidPlayerGridPosition(newGridPosition)) return;
-        if (!PlayerAction_SpawnTroop.LocalInstance.IsValidIPlaceableSpawningTarget(newGridPosition)) return;
+        if (!PlayerAction_SpawnIPlaceable.LocalInstance.IsValidIPlaceableSpawningTarget(newGridPosition)) return;
 
         // building was not set at a grid position yet
         if (currentGridPosition == null) {
@@ -91,26 +94,15 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
             buildingHovered = true;
             buildingTypeUI.SetUIHovered();
             BattlePhaseIPlaceablePanel.Instance.OpenIPlaceableCard(this);
+            OnBuildingHovered?.Invoke(this, EventArgs.Empty);
         }
         else {
             if (buildingSelected) return;
             buildingHovered = false;
             buildingTypeUI.SetUIUnHovered();
             BattlePhaseIPlaceablePanel.Instance.CloseIPlaceableCard(this);
+            OnBuildingUnhovered?.Invoke(this, EventArgs.Empty);
         }
-
-        //foreach (Unit unit in allUnitsInTroop) {
-        //    unit.SetUnitHovered(hovered);
-
-        //    if (unit.GetComponent<SupportUnit>() != null) {
-        //        if (hovered) {
-        //            unit.GetComponent<SupportUnit>().HideBuffedUnitBuffs();
-        //        }
-        //        else {
-        //            unit.GetComponent<SupportUnit>().ShowBuffedUnitBuffs();
-        //        }
-        //    }
-        //}
     }
 
     public void SetBuildingSelected(bool selected) {
@@ -119,14 +111,6 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
         if (selected) {
             OnBuildingSelected?.Invoke(this, EventArgs.Empty);
 
-            //if (BattleManager.Instance.IsPreparationPhase()) {
-            //    troopUI.ShowTroopSelectedUI();
-            //}
-
-            //foreach (Unit unit in allUnitsInTroop) {
-            //    unit.SetUnitSelected(selected);
-            //}
-
         }
         else {
             buildingSelected = false;
@@ -134,10 +118,6 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
             OnBuildingUnselected?.Invoke(this, EventArgs.Empty);
             //troopUI.HideTroopSelectedUI();
             BattlePhaseIPlaceablePanel.Instance.CloseIPlaceableCard(this);
-
-            //foreach (Unit unit in allUnitsInTroop) {
-            //    unit.SetUnitSelected(false);
-            //}
         }
     }
 
@@ -261,6 +241,10 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
     public bool GetBuildingIsOnlyVisual()
     {
         return buildingIsOnlyVisual;
+    }
+
+    public bool GetBuildingIsPlaced() {
+        return isPlaced;
     }
 
     public Transform GetCenterPoint()

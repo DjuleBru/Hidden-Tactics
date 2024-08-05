@@ -89,7 +89,7 @@ public class GridHoverManager : MonoBehaviour
             HoveredGridPositionChanged();
             previousHoveredGridPosition = currentHoveredGridPosition;
 
-            if(PlayerAction_SpawnTroop.LocalInstance.IsValidIPlaceableSpawningTarget(currentHoveredGridPosition)) {
+            if(PlayerAction_SpawnIPlaceable.LocalInstance.IsValidIPlaceableSpawningTarget(currentHoveredGridPosition)) {
                 previousValidHoveredGridPosition = currentHoveredGridPosition;
             }
 
@@ -125,7 +125,7 @@ public class GridHoverManager : MonoBehaviour
         if (PlayerActionsManager.LocalInstance.GetCurrentAction() == PlayerActionsManager.Action.SelectingIPlaceableToSpawn) {
             //Player is placing troop : hover new grid position only if it is valid
 
-            if (!PlayerAction_SpawnTroop.LocalInstance.IsMousePositionValidIPlaceableSpawningTarget()) return;
+            if (!PlayerAction_SpawnIPlaceable.LocalInstance.IsMousePositionValidIPlaceableSpawningTarget()) return;
 
             GridObjectVisual previousValidGridObjectVisual = BattleGrid.Instance.GetGridObjectVisual(previousValidHoveredGridPosition);
             previousValidGridObjectVisual.ResetVisual();
@@ -150,7 +150,7 @@ public class GridHoverManager : MonoBehaviour
     private void HandleTroopHover() {
         Troop previousTroopHovered = BattleGrid.Instance.GetTroopAtGridPosition(previousHoveredGridPosition);
 
-        if (!PlayerAction_SelectTroop.LocalInstance.IsTroopSelected(previousTroopHovered)) {
+        if (!PlayerAction_SelectIPlaceable.LocalInstance.IsTroopSelected(previousTroopHovered)) {
             // Previous troop was not selected : unhover
             if (previousTroopHovered != null) {
                 previousTroopHovered.SetTroopHovered(false);
@@ -159,7 +159,7 @@ public class GridHoverManager : MonoBehaviour
         }
 
         Troop newTroopHovered = BattleGrid.Instance.GetTroopAtGridPosition(currentHoveredGridPosition);
-        if (!PlayerAction_SelectTroop.LocalInstance.IsTroopSelected(newTroopHovered)) {
+        if (!PlayerAction_SelectIPlaceable.LocalInstance.IsTroopSelected(newTroopHovered)) {
             // New troop was not selected : hover
 
             if (newTroopHovered != null) {
@@ -167,26 +167,28 @@ public class GridHoverManager : MonoBehaviour
             }
         }
     }
+
     private void HandleBuildingHover() {
-        //Building previousBuildingHovered = BattleGrid.Instance.GetBuildingListAtGridPosition(previousHoveredGridPosition);
+        Building previousBuildingHovered = BattleGrid.Instance.GetBuildingAtGridPosition(previousHoveredGridPosition);
 
-        //if (!PlayerAction_SelectTroop.LocalInstance.IsTroopSelected(previousBuildingHovered)) {
-        //    // Previous troop was not selected : unhover
-        //    if (previousBuildingHovered != null) {
-        //        previousBuildingHovered.SetTroopHovered(false);
-        //    }
+        if (!PlayerAction_SelectIPlaceable.LocalInstance.IsBuildingSelected(previousBuildingHovered)) {
+            // Previous building was not selected : unhover
+            if (previousBuildingHovered != null) {
+                previousBuildingHovered.SetBuildingHovered(false);
+            }
 
-        //}
+        }
 
-        //Troop newTroopHovered = BattleGrid.Instance.GetTroopAtGridPosition(currentHoveredGridPosition);
-        //if (!PlayerAction_SelectTroop.LocalInstance.IsTroopSelected(newTroopHovered)) {
-        //    // New troop was not selected : hover
+        Building newBuildingHovered = BattleGrid.Instance.GetBuildingAtGridPosition(currentHoveredGridPosition);
+        if (!PlayerAction_SelectIPlaceable.LocalInstance.IsBuildingSelected(newBuildingHovered)) {
+            // New building was not selected : hover
 
-        //    if (newTroopHovered != null) {
-        //        newTroopHovered.SetTroopHovered(true);
-        //    }
-        //}
+            if (newBuildingHovered != null) {
+                newBuildingHovered.SetBuildingHovered(true);
+            }
+        }
     }
+
     private void ShowHoveredTroopRangedAttackTiles() {
         Troop newHoveredTroop = BattleGrid.Instance.GetTroopAtGridPosition(currentHoveredGridPosition);
 
@@ -217,7 +219,7 @@ public class GridHoverManager : MonoBehaviour
     }
 
     private void ShowTroopToPlaceRangedAttackTiles(TroopSO troopSO) {
-        if (!PlayerAction_SpawnTroop.LocalInstance.IsValidIPlaceableSpawningTarget(currentHoveredGridPosition)) return;
+        if (!PlayerAction_SpawnIPlaceable.LocalInstance.IsValidIPlaceableSpawningTarget(currentHoveredGridPosition)) return;
 
         if (targetTilesGridObjectVisuals.Count > 0) {
             foreach (GridObjectVisual gridObjectVisual in targetTilesGridObjectVisuals) {

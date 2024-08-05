@@ -82,17 +82,15 @@ public class UnitAI : NetworkBehaviour
 
         if (BattleGrid.Instance.IsValidGridPosition(nextGridPosition)) {
             // This GridPosition is a valid grid position
-            List<Building> buildingList = BattleGrid.Instance.GetBuildingListAtGridPosition(nextGridPosition);
+            Building building = BattleGrid.Instance.GetBuildingAtGridPosition(nextGridPosition);
 
-            if(buildingList.Count > 0) {
-                Building buildingOnBattlefield = buildingList[0];
-
+            if(building != null) {
                 if (state.Value != State.blockedByBuilding) {
                     // There is a building that blocks the unit
 
-                    if (buildingOnBattlefield != null) {
+                    if (building != null) {
 
-                        if (buildingOnBattlefield.GetBuildingSO().buildingBlocksUnitMovement && (buildingOnBattlefield.IsOwnedByPlayer()) == unit.IsOwnedByPlayer()) {
+                        if (building.GetBuildingSO().buildingBlocksUnitMovement && (building.IsOwnedByPlayer()) == unit.IsOwnedByPlayer()) {
                             // Building blocks unit movement AND is owned by the same player
                             ChangeState(State.blockedByBuilding);
                         }

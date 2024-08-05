@@ -201,7 +201,6 @@ public class Unit : NetworkBehaviour, ITargetable {
 
     protected virtual void ParentTroop_OnTroopPlaced(object sender, System.EventArgs e) {
 
-
         if(unitSO.isGarrisonedUnit) {
             collider2d.enabled = false;
             SetParentBuilding();
@@ -219,7 +218,7 @@ public class Unit : NetworkBehaviour, ITargetable {
 
     public void SetParentBuilding() {
         GridPosition parentTroopCenterPointGridPosition = BattleGrid.Instance.GetGridPosition(parentTroop.GetTroopCenterPoint());
-        Building parentBuilding = BattleGrid.Instance.GetBuildingListAtGridPosition(parentTroopCenterPointGridPosition)[0];
+        Building parentBuilding = BattleGrid.Instance.GetBuildingAtGridPosition(parentTroopCenterPointGridPosition);
         this.parentBuilding = parentBuilding;
         parentBuilding.OnBuildingDestroyed += ParentBuilding_OnBuildingDestroyed;
     }
@@ -580,7 +579,7 @@ public class Unit : NetworkBehaviour, ITargetable {
     private void ActivateAdditionalUnitClientRpc() {
         unitIsBought = true;
 
-        if(PlayerAction_SelectTroop.LocalInstance.IsTroopSelected(parentTroop)) {
+        if(PlayerAction_SelectIPlaceable.LocalInstance.IsTroopSelected(parentTroop)) {
             OnUnitSelected?.Invoke(this, EventArgs.Empty);
         }
 

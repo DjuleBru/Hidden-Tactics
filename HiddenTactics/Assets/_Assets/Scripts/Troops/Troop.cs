@@ -149,7 +149,7 @@ public class Troop : NetworkBehaviour, IPlaceable {
 
         // Grid position is not a valid position
         if (!BattleGrid.Instance.IsValidPlayerGridPosition(newGridPosition)) return;
-        if (!PlayerAction_SpawnTroop.LocalInstance.IsMousePositionValidIPlaceableSpawningTarget()) return;
+        if (!PlayerAction_SpawnIPlaceable.LocalInstance.IsMousePositionValidIPlaceableSpawningTarget()) return;
 
         // Troop was not set at a grid position yet
         if (currentGridPosition == null) {
