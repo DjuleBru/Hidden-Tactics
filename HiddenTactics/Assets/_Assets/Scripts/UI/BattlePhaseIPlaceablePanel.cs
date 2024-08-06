@@ -102,14 +102,15 @@ public class BattlePhaseIPlaceablePanel : MonoBehaviour
     }
 
     private void RemoveIPlaceableCard(IPlaceable iPlaceableRemoved) {
+        BattlePhaseIPlaceableSlotTemplateUI slotToRemove = null;
         foreach (BattlePhaseIPlaceableSlotTemplateUI slot in iPlaceableSlotTemplateUIList) {
 
             if (slot.GetIPlaceable() == iPlaceableRemoved) {
-                iPlaceableSlotTemplateUIList.Remove(slot);
-                Destroy(slot.gameObject);
+                slotToRemove = slot;
             }
-
         }
+        iPlaceableSlotTemplateUIList.Remove(slotToRemove);
+        Destroy(slotToRemove.gameObject);
     }
 
     private void RefreshContainerSpacing() {

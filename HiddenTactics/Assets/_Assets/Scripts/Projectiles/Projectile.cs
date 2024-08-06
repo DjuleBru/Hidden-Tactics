@@ -68,6 +68,7 @@ public class Projectile : NetworkBehaviour
     }
 
     protected void UpdateTrajectoryEndPoint() {
+        if (targetTransform == null) return;
         targetPositionUpdateTimer -= Time.deltaTime;
         if (targetPositionUpdateTimer < 0) {
             targetPositionUpdateTimer = targetPositionUpdateTime;

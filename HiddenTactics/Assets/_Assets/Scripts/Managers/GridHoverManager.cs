@@ -102,8 +102,19 @@ public class GridHoverManager : MonoBehaviour
         CancelPreviousUnitsSetAsTarget();
 
         if(PlayerActionsManager.LocalInstance.GetCurrentAction() == PlayerActionsManager.Action.SelectingIPlaceableToSpawn) {
-            TroopSO troopSOBeingPlaced =  BattleDataManager.Instance.GetTroopSOFromIndex(PlayerActionsManager.LocalInstance.GetTroopSOIndexBeingSpawned());
-            ShowTroopToPlaceRangedAttackTiles(troopSOBeingPlaced);
+
+            if(PlayerActionsManager.LocalInstance.GetPlacingTroop()) {
+                TroopSO troopSOBeingPlaced = BattleDataManager.Instance.GetTroopSOFromIndex(PlayerActionsManager.LocalInstance.GetTroopSOIndexBeingSpawned());
+                ShowTroopToPlaceRangedAttackTiles(troopSOBeingPlaced);
+            }
+
+            if(PlayerActionsManager.LocalInstance.GetPlacingBuilding()) {
+                BuildingSO buildingSOBeingPlaced = BattleDataManager.Instance.GetBuildingSOFromIndex(PlayerActionsManager.LocalInstance.GetBuildingSOIndexBeingSpawned());
+                TroopSO buildingGarrisonesTroopSO = buildingSOBeingPlaced.garrisonedTroopSO;
+                if (buildingGarrisonesTroopSO != null) {
+                    ShowTroopToPlaceRangedAttackTiles(buildingSOBeingPlaced.garrisonedTroopSO);
+                }
+            }
 
             foreach (Unit unit in supportUnits) {
                 ShowPlacedSupportTroopBuffedTiles(unit);

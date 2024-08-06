@@ -132,6 +132,16 @@ public class PlayerAction_SelectIPlaceable : NetworkBehaviour {
         selectedTroop = troop;
     }
 
+    public void SelectBuilding(Building building) {
+
+        if (selectedBuilding != null) {
+            selectedBuilding.SetBuildingSelected(false);
+        }
+
+        building.SetBuildingSelected(true);
+        selectedBuilding = building;
+    }
+
     public bool IsTroopSelected(Troop troop) {
         return selectedTroop == troop;
     }

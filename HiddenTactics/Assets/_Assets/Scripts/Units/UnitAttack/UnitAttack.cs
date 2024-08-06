@@ -260,7 +260,10 @@ public class UnitAttack : NetworkBehaviour
     }
 
     protected virtual void PerformAllDamageActions(ITargetable target, Vector3 damageHitPosition) {
+        if(target as MonoBehaviour == null) return;
         IDamageable targetIDamageable = target.GetIDamageable();
+
+        if (target.GetIsDead()) return;
 
         //If attacking village:die
         if (target is Village) {
@@ -467,7 +470,7 @@ public class UnitAttack : NetworkBehaviour
     #region SET PARAMETERS
 
     public void SetAttackTarget(ITargetable attackTarget) {
-        if(attackTarget != null) {
+        if(attackTarget as MonoBehaviour != null) {
             NetworkObject targetNetworkObject = (attackTarget as MonoBehaviour).GetComponent<NetworkObject>();
             SetAttackTargetServerRpc(targetNetworkObject);
         }

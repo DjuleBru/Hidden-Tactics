@@ -54,14 +54,14 @@ public class GridObjectVisual : MonoBehaviour
         string unitString = "";
 
         if (gridObject.GetTroop() != null) {
-            troopString += gridObject.GetTroop().ToString() + "\n";
+            troopString = gridObject.GetTroop().ToString() + "\n";
             troopDebugText.text = troopString;
         } else {
             troopDebugText.text = "";
         }
 
         if (gridObject.GetBuilding() != null) {
-            buildingDebugText.text += gridObject.GetBuilding().ToString() + "\n";
+            buildingDebugText.text = gridObject.GetBuilding().ToString() + "\n";
         }
         else {
             buildingDebugText.text = "";

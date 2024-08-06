@@ -1,8 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-public class BuildingVisual : MonoBehaviour
+public class BuildingVisual : NetworkBehaviour
 {
     [SerializeField] private Material cleanMaterial;
     [SerializeField] private Material placingMaterial;
@@ -13,22 +14,30 @@ public class BuildingVisual : MonoBehaviour
     [SerializeField] List<SpriteRenderer> buildingSpriteRendererList;
     [SerializeField] List<SpriteRenderer> shadowSpriteRendererList;
 
+    private Color hoveredColor;
+    private Color selectedColor;
+    private Color shadowColor;
+
     private Building building;
 
     private void Awake() {
         building = GetComponentInParent<Building>();
+        shadowColor = shadowSpriteRendererList[0].color;
     }
 
-    private void Start() {
+    public override void OnNetworkSpawn() {
         building.OnBuildingPlaced += Building_OnBuildingPlaced;
         building.OnBuildingDestroyed += Building_OnBuildingDestroyed;
         building.OnBuildingSelected += Building_OnBuildingSelected;
+        building.OnBuildingUnselected += Building_OnBuildingUnselected;
+        building.OnBuildingHovered += Building_OnBuildingHovered;
+        building.OnBuildingUnhovered += Building_OnBuildingUnhovered;
 
-        if (!building.GetBuildingIsOnlyVisual())
-        {
-            if(SettingsManager.Instance.GetTacticalViewSetting()) {
+        if (!building.GetBuildingIsOnlyVisual()) {
+            if (SettingsManager.Instance.GetTacticalViewSetting()) {
                 ChangeSpriteRendererListMaterial(buildingSpriteRendererList, invisibleMaterial);
-            } else {
+            }
+            else {
                 ChangeSpriteRendererListMaterial(buildingSpriteRendererList, placingMaterial);
             }
 
@@ -39,7 +48,7 @@ public class BuildingVisual : MonoBehaviour
         }
     }
 
-    private void SettingsManager_OnShowTacticalIconsEnabled(object sender, System.EventArgs e) {
+     private void SettingsManager_OnShowTacticalIconsEnabled(object sender, System.EventArgs e) {
         if (SettingsManager.Instance.GetTacticalViewSetting()) {
             ChangeSpriteRendererListMaterial(buildingSpriteRendererList, invisibleMaterial);
             foreach (SpriteRenderer shadowSpriteRenderer in shadowSpriteRendererList) {
@@ -95,7 +104,23 @@ public class BuildingVisual : MonoBehaviour
 
     private void Building_OnBuildingSelected(object sender, System.EventArgs e) {
         buildingGeneralAnimator.SetTrigger("BuildingPlaced");
+        SetBuildingSelected(true);
     }
+
+    private void Building_OnBuildingUnselected(object sender, System.EventArgs e) {
+        SetBuildingSelected(false);
+    }
+
+    private void Building_OnBuildingUnhovered(object sender, System.EventArgs e) {
+        if (SettingsManager.Instance.GetTacticalViewSetting()) return;
+        SetBuildingHovered(false);
+    }
+
+    private void Building_OnBuildingHovered(object sender, System.EventArgs e) {
+        if (SettingsManager.Instance.GetTacticalViewSetting()) return;
+        SetBuildingHovered(true);
+    }
+
 
     private void Building_OnBuildingDestroyed(object sender, System.EventArgs e) {
         gameObject.SetActive(false);
@@ -106,6 +131,7 @@ public class BuildingVisual : MonoBehaviour
             ChangeSpriteRendererListMaterial(buildingSpriteRendererList, cleanMaterial);
         }
 
+        SetFactionVisualColor();
         buildingGeneralAnimator.SetTrigger("BuildingPlaced");
     }
 
@@ -113,6 +139,62 @@ public class BuildingVisual : MonoBehaviour
         foreach (SpriteRenderer spriteRenderer in spriteRendererList) {
 
             spriteRenderer.material = material;
+        }
+    }
+
+    public void SetBuildingHovered(bool hovered) {
+        if(hovered) {
+            foreach (SpriteRenderer shadowSpriteRenderer in shadowSpriteRendererList) {
+                shadowSpriteRenderer.color = hoveredColor;
+            }
+        } else {
+            foreach (SpriteRenderer shadowSpriteRenderer in shadowSpriteRendererList) {
+                shadowSpriteRenderer.color = shadowColor;
+            }
+        }
+        }
+
+        public void SetBuildingSelected(bool selected) {
+        if (selected) {
+            foreach (SpriteRenderer shadowSpriteRenderer in shadowSpriteRendererList) {
+                shadowSpriteRenderer.color = selectedColor;
+            }
+        }
+        else {
+            foreach (SpriteRenderer shadowSpriteRenderer in shadowSpriteRendererList) {
+                shadowSpriteRenderer.color = shadowColor;
+            }
+        }
+    }
+
+    private void SetFactionVisualColor() {
+        FactionSO deckFactionSO = DeckManager.LocalInstance.GetDeckSelected().deckFactionSO;
+
+        if (!building.IsOwnedByPlayer()) {
+            PlayerCustomizationData opponentCustomizationData = HiddenTacticsMultiplayer.Instance.GetLocalOpponentCustomizationData();
+            deckFactionSO = PlayerCustomizationDataManager.Instance.GetFactionSOFromId(opponentCustomizationData.factionID);
+        }
+
+        if (!HiddenTacticsMultiplayer.Instance.GetPlayerAndOpponentSameFaction()) {
+            hoveredColor = deckFactionSO.color_differentPlayerFaction_fill;
+            hoveredColor.a = 115f;
+            selectedColor = deckFactionSO.color_differentPlayerFaction_outline;
+            selectedColor.a = 150f;
+        }
+
+        else {
+            if (building.IsOwnedByPlayer()) {
+                hoveredColor = deckFactionSO.color_differentPlayerFaction_fill;
+                hoveredColor.a = 115f;
+                selectedColor = deckFactionSO.color_differentPlayerFaction_outline;
+                selectedColor.a = 150f;
+            }
+            else {
+                hoveredColor = deckFactionSO.color_samePlayerFaction_Opponent_fill;
+                hoveredColor.a = 115f;
+                selectedColor = deckFactionSO.color_samePlayerFaction_Opponent_outline;
+                selectedColor.a = 150f;
+            }
         }
     }
 

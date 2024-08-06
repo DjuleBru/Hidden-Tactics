@@ -31,6 +31,7 @@ public class Troop : NetworkBehaviour, IPlaceable {
     private List<Unit> allUnitsInTroop;
     private List<Unit> additionalUnitsInTroop;
     private List<Unit> spawnedUnitsInTroop;
+    private Building parentBuilding;
     private int spawnedUnitActivatedIndex;
 
     [SerializeField] private List<Transform> baseUnitPositions = new List<Transform>();
@@ -98,11 +99,11 @@ public class Troop : NetworkBehaviour, IPlaceable {
                 unit.DebugModeStartFunction();
             }
         }
-
-        GridPosition newGridPosition = BattleGrid.Instance.GetFirstValidGridPosition();
-        BattleGrid.Instance.IPlaceableMovedGridPosition(this, currentGridPosition, newGridPosition);
-
-        currentGridPosition = newGridPosition;
+        if(isOwnedByPlayer) {
+            GridPosition newGridPosition = BattleGrid.Instance.GetFirstValidGridPosition();
+            BattleGrid.Instance.IPlaceableMovedGridPosition(this, currentGridPosition, newGridPosition);
+            currentGridPosition = newGridPosition;
+        }
     }
 
     public override void OnNetworkSpawn() {
@@ -123,7 +124,7 @@ public class Troop : NetworkBehaviour, IPlaceable {
 
         if(BattleManager.Instance.IsBattlePhaseStarting()) {
 
-            if(troopSelled) {
+            if (troopSelled) {
                 DestroyTroop();
             }
 
@@ -419,6 +420,15 @@ public class Troop : NetworkBehaviour, IPlaceable {
         if(!spawnedUnitsInTroop.Contains(unit)) {
             spawnedUnitsInTroop.Add(unit);
         }
+    }
+
+    public void SetParentBuilding(Building building) {
+        parentBuilding = building;
+        parentBuilding.OnBuildingDestroyed += ParentBuilding_OnBuildingDestroyed;
+    }
+
+    private void ParentBuilding_OnBuildingDestroyed(object sender, EventArgs e) {
+        HiddenTacticsMultiplayer.Instance.DestroyIPlaceable(GetComponent<NetworkObject>());
     }
 
     public List<Unit> GetUnitsInAdditionalUnitsInTroopList() {

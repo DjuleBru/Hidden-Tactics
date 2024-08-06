@@ -47,14 +47,18 @@ public class GridObject
         iPlaceableList.Remove(iPlaceable);
 
         if (iPlaceable is Troop) {
-            if(iPlaceable as Troop == troopAtGridPosition) {
+            if (iPlaceable as Troop == troopAtGridPosition) {
                 troopAtGridPosition = null;
+                troopSpawnedAtGridPosition = null;
+                iPlaceableSpawnedAtGridPosition = null;
             }
         }
 
         if (iPlaceable is Building) {
             if (iPlaceable as Building == buildingAtGridPosition) {
                 buildingAtGridPosition = null;
+                buildingSpawnedAtGridPosition = null;
+                iPlaceableSpawnedAtGridPosition = null;
             }
         }
     }

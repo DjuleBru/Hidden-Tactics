@@ -69,6 +69,8 @@ public class PlayerActionsManager : NetworkBehaviour {
         if(newAction == Action.Idle) {
             // Cancel troop placement
             PlayerAction_SpawnIPlaceable.LocalInstance.CancelIPlaceablePlacement();
+            placingTroop = false;
+            placingBuilding = false;
         }
 
         currentAction = newAction;
@@ -76,12 +78,16 @@ public class PlayerActionsManager : NetworkBehaviour {
     }
 
     public void SelectTroopToSpawn(int troopListSOIndex) {
+        placingTroop = true;
+        placingBuilding = false;
         ChangeAction(Action.SelectingIPlaceableToSpawn);
         troopSOIndexBeingSpawned = troopListSOIndex;
         PlayerAction_SpawnIPlaceable.LocalInstance.SelectTroopToSpawn(troopListSOIndex);
     }
 
     public void SelectBuildingToSpawn(int buildingListSOIndex) {
+        placingBuilding = true;
+        placingTroop = false;
         ChangeAction(Action.SelectingIPlaceableToSpawn);
         buildingSOIndexBeingSpawned = buildingListSOIndex;
         PlayerAction_SpawnIPlaceable.LocalInstance.SelectBuildingToSpawn(buildingListSOIndex);
@@ -96,5 +102,13 @@ public class PlayerActionsManager : NetworkBehaviour {
     }
     public int GetBuildingSOIndexBeingSpawned() {
         return buildingSOIndexBeingSpawned;
+    }
+
+    public bool GetPlacingBuilding() {
+        return placingBuilding;
+    }
+
+    public bool GetPlacingTroop() {
+        return placingTroop;
     }
 }

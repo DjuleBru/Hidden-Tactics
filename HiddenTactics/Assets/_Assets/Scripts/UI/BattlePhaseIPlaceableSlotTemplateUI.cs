@@ -56,8 +56,8 @@ public class BattlePhaseIPlaceableSlotTemplateUI : MonoBehaviour, IPointerEnterH
         if(iPlaceable is Building) {
             iPlaceableNameText.text = (iPlaceable as Building).GetBuildingSO().buildingName;
             Building building = iPlaceable as Building;
-            //building.OnTroopSelected += Troop_OnTroopSelected;
-            //troop.OnTroopUnselected += Troop_OnTroopUnselected;
+            building.OnBuildingSelected += Building_OnTroopSelected;
+            building.OnBuildingUnselected += Building_OnTroopUnselected;
             iPlaceableTypeIcon.sprite = building.GetBuildingSO().buildingTypeSprite;
         }
     }
@@ -81,6 +81,21 @@ public class BattlePhaseIPlaceableSlotTemplateUI : MonoBehaviour, IPointerEnterH
         UpdateHPBar(newTroopHealth);
     }
 
+    private void Building_OnTroopUnselected(object sender, System.EventArgs e) {
+        borderImage.material = cleanMaterial;
+        backgroundImage.material = cleanMaterial;
+    }
+
+    private void Building_OnTroopSelected(object sender, System.EventArgs e) {
+        borderImage.material = selectedMaterial;
+        backgroundImage.material = selectedMaterial;
+
+        if (!cardOpened) {
+            OpenIPlaceableCard();
+        }
+    }
+
+
     public IPlaceable GetIPlaceable() {
         return iPlaceable;
     }
@@ -100,6 +115,11 @@ public class BattlePhaseIPlaceableSlotTemplateUI : MonoBehaviour, IPointerEnterH
                 unit.GetUnitVisual().SetUnitSelected(true);
             }
         }
+
+        if (iPlaceable is Building) {
+            Building building = (Building)iPlaceable;
+            building.GetComponentInChildren<TroopTypeUI>().SetUIHovered();
+        }
     }
 
     public void CloseIPlaceableCard() {
@@ -117,6 +137,11 @@ public class BattlePhaseIPlaceableSlotTemplateUI : MonoBehaviour, IPointerEnterH
 
                 unit.GetUnitVisual().SetUnitHovered(false);
             }
+        }
+
+        if (iPlaceable is Building) {
+            Building building = (Building)iPlaceable;
+            building.GetComponentInChildren<TroopTypeUI>().ResetUI();
         }
     }
 

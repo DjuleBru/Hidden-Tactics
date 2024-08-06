@@ -194,6 +194,7 @@ public class Unit : NetworkBehaviour, ITargetable {
     }
 
     protected void BattleManager_OnStateChanged(object sender, EventArgs e) {
+
         if(BattleManager.Instance.IsBattlePhaseEnding()) {
             ResetUnit();
         }
@@ -207,6 +208,9 @@ public class Unit : NetworkBehaviour, ITargetable {
         }
 
         currentGridPosition = parentTroop.GetIPlaceableGridPosition();
+        GridPosition newGridPosition = BattleGrid.Instance.GetGridPosition(transform.position);
+        BattleGrid.Instance.UnitMovedGridPosition(this, currentGridPosition, newGridPosition);
+        currentGridPosition = newGridPosition;
 
         if (!isAdditionalUnit && !isSpawnedUnit) {
             unitIsPlaced = true;
@@ -220,11 +224,7 @@ public class Unit : NetworkBehaviour, ITargetable {
         GridPosition parentTroopCenterPointGridPosition = BattleGrid.Instance.GetGridPosition(parentTroop.GetTroopCenterPoint());
         Building parentBuilding = BattleGrid.Instance.GetBuildingAtGridPosition(parentTroopCenterPointGridPosition);
         this.parentBuilding = parentBuilding;
-        parentBuilding.OnBuildingDestroyed += ParentBuilding_OnBuildingDestroyed;
-    }
-
-    private void ParentBuilding_OnBuildingDestroyed(object sender, EventArgs e) {
-        HiddenTacticsMultiplayer.Instance.DestroyIPlaceable(parentTroop.GetComponent<NetworkObject>());
+        parentTroop.SetParentBuilding(parentBuilding);
     }
 
     public virtual void ResetUnit() {

@@ -36,11 +36,18 @@ public class TroopTypeUI : NetworkBehaviour, IPointerEnterHandler, IPointerExitH
 
     private void Awake() {
 
+        if (BattleManager.Instance == null) return;
+
         canvasGroup = GetComponent<CanvasGroup>();
         animator = GetComponent<Animator>();
         button = GetComponent<Button>();
         button.onClick.AddListener(() => {
-            SetTroopSelected();
+            if(troop != null) {
+                SetTroopSelected();
+            }
+            if(building != null) {
+                SetBuildingSelected();
+            }
         });
 
         hoveringOverUnitPosition = transform.localPosition;
@@ -96,6 +103,7 @@ public class TroopTypeUI : NetworkBehaviour, IPointerEnterHandler, IPointerExitH
             troop.OnTroopHPChanged += Troop_OnTroopHPChanged;
         } else {
             building.OnBuildingPlaced += Building_OnBuildingPlaced;
+            building.OnBuildingDestroyed += Building_OnBuildingDestroyed;
         }
     }
 
@@ -146,11 +154,7 @@ public class TroopTypeUI : NetworkBehaviour, IPointerEnterHandler, IPointerExitH
         }
     }
 
-
     private void Building_OnBuildingPlaced(object sender, System.EventArgs e) {
-        if (!building.IsOwnedByPlayer()) {
-            UIResetScale = new Vector3(-1, 1, 1);
-        }
 
         if (SettingsManager.Instance.GetTacticalViewSetting()) {
             canvasGroup.alpha = 1f;
@@ -166,32 +170,49 @@ public class TroopTypeUI : NetworkBehaviour, IPointerEnterHandler, IPointerExitH
         }
     }
 
+    private void Building_OnBuildingDestroyed(object sender, System.EventArgs e) {
+        gameObject.SetActive(false);
+    }
     public void OnPointerEnter(PointerEventData eventData) {
         if (!BattleManager.Instance.IsBattlePhase()) return;
         SetUIHovered();
 
-        BattlePhaseIPlaceablePanel.Instance.OpenIPlaceableCard(troop);
+        if(troop != null) {
+            BattlePhaseIPlaceablePanel.Instance.OpenIPlaceableCard(troop);
+            foreach (Unit unit in troop.GetUnitInTroopList()) {
+                if (!unit.GetUnitIsBought()) continue;
 
-        foreach(Unit unit in troop.GetUnitInTroopList()) {
-            if(!unit.GetUnitIsBought()) continue;
-
-            unit.SetUnitHovered(true);
+                unit.SetUnitHovered(true);
+            }
         }
-
+        if (building != null) {
+            BattlePhaseIPlaceablePanel.Instance.OpenIPlaceableCard(building);
+        }
     }
 
     public void OnPointerExit(PointerEventData eventData) {
         if (!BattleManager.Instance.IsBattlePhase()) return;
-        if (troop.GetSelected()) return;
+        if(troop != null) {
+            if (troop.GetSelected()) return;
+        }
+        if(building != null) {
+            if(building.GetSelected()) return;
+        }
 
         ResetUI();
 
-        BattlePhaseIPlaceablePanel.Instance.CloseIPlaceableCard(troop);
 
-        foreach (Unit unit in troop.GetUnitInTroopList()) {
-            if (!unit.GetUnitIsBought()) continue;
+        if (troop != null) {
+            BattlePhaseIPlaceablePanel.Instance.CloseIPlaceableCard(troop);
+            foreach (Unit unit in troop.GetUnitInTroopList()) {
+                if (!unit.GetUnitIsBought()) continue;
 
-            unit.SetUnitHovered(false);
+                unit.SetUnitHovered(false);
+            }
+        }
+
+        if (building != null) {
+            BattlePhaseIPlaceablePanel.Instance.CloseIPlaceableCard(building);
         }
     }
 
@@ -199,6 +220,12 @@ public class TroopTypeUI : NetworkBehaviour, IPointerEnterHandler, IPointerExitH
         if (!BattleManager.Instance.IsBattlePhase()) return;
         SetUISelected(true);
         PlayerAction_SelectIPlaceable.LocalInstance.SelectTroop(troop);
+    }
+
+    private void SetBuildingSelected() {
+        if (!BattleManager.Instance.IsBattlePhase()) return;
+        SetUISelected(true);
+        PlayerAction_SelectIPlaceable.LocalInstance.SelectBuilding(building);
     }
 
     public void SetUIHovered() {

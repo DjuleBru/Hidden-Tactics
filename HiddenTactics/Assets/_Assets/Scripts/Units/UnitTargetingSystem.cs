@@ -60,6 +60,7 @@ public class UnitTargetingSystem : NetworkBehaviour
         CheckIfTargetUnitsAreDead();
 
         targetingTimer -= Time.deltaTime;
+
         if(targetingTimer < 0) {
             targetingTimer = targetingRate;
 

@@ -73,6 +73,8 @@ public class UnitVisual : NetworkBehaviour
             SettingsManager.Instance.OnTacticalViewDisabled += SettingsManager_OnTacticalViewDisabled;
             SettingsManager.Instance.OnShowTacticalIconsDisabled += SettingsManager_OnShowTacticalIconsDisabled;
             SettingsManager.Instance.OnShowTacticalIconsEnabled += SettingsManager_OnShowTacticalIconsEnabled;
+        } else {
+            return;
         }
 
         if(SettingsManager.Instance.GetTacticalViewSetting()) {

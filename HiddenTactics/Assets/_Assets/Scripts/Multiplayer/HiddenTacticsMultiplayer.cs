@@ -218,6 +218,7 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
     [ServerRpc(RequireOwnership =false)]
     private void DestroyIPlaceableServerRpc(NetworkObjectReference iPlaceableNetworkObjectReference) {
         iPlaceableNetworkObjectReference.TryGet(out NetworkObject iPlaceableNetworkObject);
+        if (iPlaceableNetworkObject == null) return;
 
         RemoveIPlaceableFromGridClientRpc(iPlaceableNetworkObject);
 

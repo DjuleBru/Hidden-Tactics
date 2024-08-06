@@ -45,6 +45,14 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
         }
     }
 
+    protected void Start() {
+        if(isOwnedByPlayer) {
+            GridPosition newGridPosition = BattleGrid.Instance.GetFirstValidGridPosition();
+            BattleGrid.Instance.IPlaceableMovedGridPosition(this, currentGridPosition, newGridPosition);
+            currentGridPosition = newGridPosition;
+        }
+    }
+
     protected virtual void Update() {
         if (buildingIsOnlyVisual) return;
         if (!isPlaced) {
@@ -89,6 +97,7 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
     }
 
     public void SetBuildingHovered(bool hovered) {
+        if (this is Village) return;
 
         if (hovered) {
             buildingHovered = true;
@@ -106,11 +115,12 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
     }
 
     public void SetBuildingSelected(bool selected) {
+        if (this is Village) return;
+
         buildingTypeUI.SetUISelected(selected);
 
         if (selected) {
             OnBuildingSelected?.Invoke(this, EventArgs.Empty);
-
         }
         else {
             buildingSelected = false;
@@ -142,23 +152,27 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
     }
 
     public virtual void PlaceIPlaceable() {
-        OnBuildingPlaced?.Invoke(this, EventArgs.Empty);
-        OnAnyBuildingPlaced?.Invoke(this, EventArgs.Empty);
 
+        if (!isOwnedByPlayer) {
+            gameObject.SetActive(true);
+        }
+
+        // Set placed building on grid object
         currentGridPosition = BattleGrid.Instance.GetGridPosition(buildingCenterPoint.position);
+        BattleGrid.Instance.SetIPlaceableSpawnedAtGridPosition(this, currentGridPosition);
+        SetIPlaceableGridPosition(currentGridPosition);
+        battlefieldOffset = transform.position - battlefieldOwner.transform.position;
 
         isPlaced = true;
         BattleGrid.Instance.AddIPlaceableAtGridPosition(currentGridPosition, this);
 
+        OnBuildingPlaced?.Invoke(this, EventArgs.Empty);
+        OnAnyBuildingPlaced?.Invoke(this, EventArgs.Empty);
+
         // Reverse X symmetry if not owned by player
         if (!isOwnedByPlayer) {
-            transform.localScale = new Vector3(-1,1,1);
+            transform.localScale = new Vector3(-1, 1, 1);
         }
-
-        // Set placed troop on grid object
-        BattleGrid.Instance.SetIPlaceableSpawnedAtGridPosition(this, currentGridPosition);
-        SetIPlaceableGridPosition(currentGridPosition);
-        battlefieldOffset = transform.position - battlefieldOwner.transform.position;
     }
 
     public void SetIPlaceableOwnerClientId(ulong clientId) {

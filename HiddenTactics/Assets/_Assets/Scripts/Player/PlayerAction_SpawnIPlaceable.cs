@@ -189,6 +189,8 @@ public class PlayerAction_SpawnIPlaceable : NetworkBehaviour {
             SpawnTroopServerRpc(troopIndex, ownerClientId);
         }
 
+        DeActivateOpponentIPlaceableClientRpc(buildingNetworkObject);
+
     }
 
     [ClientRpc]
