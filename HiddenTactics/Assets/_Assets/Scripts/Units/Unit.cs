@@ -369,6 +369,7 @@ public class Unit : NetworkBehaviour, ITargetable {
 
     public void SellUnit() {
         OnUnitSold?.Invoke(this, EventArgs.Empty);
+        collider2d.enabled = false;
     }
 
     public void RemoveUnitFromBattlePhaseUnitList() {

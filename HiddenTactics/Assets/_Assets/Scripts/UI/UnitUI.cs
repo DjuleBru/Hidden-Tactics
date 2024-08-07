@@ -81,7 +81,7 @@ public class UnitUI : NetworkBehaviour
         unit.OnUnitScaredEnded += Unit_OnUnitScaredEnded;
         unit.OnUnitWebbed += Unit_OnUnitWebbed;
         unit.OnUnitWebbedEnded += Unit_OnUnitWebbedEnded;
-
+        unit.OnUnitSold += Unit_OnUnitSold;
     }
 
 
@@ -136,6 +136,9 @@ public class UnitUI : NetworkBehaviour
         }
     }
 
+    private void Unit_OnUnitSold(object sender, System.EventArgs e) {
+        gameObject.SetActive(false);
+    }
     private void Unit_OnUnitDied(object sender, System.EventArgs e) {
         unitHPBarGameObject.SetActive(false);
         unitHPBarIsActive = false;

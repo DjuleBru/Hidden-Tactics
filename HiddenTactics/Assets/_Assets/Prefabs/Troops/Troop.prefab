@@ -1287,19 +1287,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 4954392593731988440}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: -7405699509265139040}
-        m_TargetAssemblyTypeName: Troop, Assembly-CSharp
-        m_MethodName: BuyAdditionalUnits
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &3809074660941359685
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2150,19 +2138,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 5917288211111625752}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: -7405699509265139040}
-        m_TargetAssemblyTypeName: Troop, Assembly-CSharp
-        m_MethodName: BuyAdditionalUnits
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &2967354404308180067
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2176,6 +2152,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   troop: {fileID: -7405699509265139040}
+  building: {fileID: 0}
 --- !u!1 &9126049671416047583
 GameObject:
   m_ObjectHideFlags: 0

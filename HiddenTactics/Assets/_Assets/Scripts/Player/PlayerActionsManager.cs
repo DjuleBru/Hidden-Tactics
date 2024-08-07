@@ -19,6 +19,8 @@ public class PlayerActionsManager : NetworkBehaviour {
     public enum Action {
         Idle,
         SelectingIPlaceableToSpawn,
+        MovingIPlaceable,
+
     }
 
     private Action currentAction;
@@ -60,7 +62,7 @@ public class PlayerActionsManager : NetworkBehaviour {
         ChangeAction(action);
     }
 
-    private void ChangeAction(Action newAction) {
+    public void ChangeAction(Action newAction) {
         if(newAction == Action.SelectingIPlaceableToSpawn) {
             // Deselect any selected troop
             PlayerAction_SelectIPlaceable.LocalInstance.DeselectIPlaceable();

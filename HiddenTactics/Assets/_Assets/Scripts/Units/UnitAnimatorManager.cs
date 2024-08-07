@@ -35,7 +35,7 @@ public class UnitAnimatorManager : NetworkBehaviour
         unitAnimator = GetComponent<Animator>();
         unitAttack = GetComponentInParent<UnitAttack>();
 
-
+        if (unit.GetUnitSO().isInvisibleGarrisonedUnit) return;
         // Randomize Idle animation starting frame (previously OnNetworkSpawn)
         float randomOffset = Random.Range(0f, 1f);
         unitAnimator.Play("Idle", 0, randomOffset);
@@ -43,6 +43,7 @@ public class UnitAnimatorManager : NetworkBehaviour
     }
 
     public override void OnNetworkSpawn() {
+        if(unit.GetUnitSO().isInvisibleGarrisonedUnit) return; 
         unitHP.OnHealthChanged += Unit_OnHealthChanged;
         unit.OnUnitReset += Unit_OnUnitReset;
         unitAI.OnStateChanged += UnitAI_OnStateChanged;
@@ -59,6 +60,7 @@ public class UnitAnimatorManager : NetworkBehaviour
 
     protected void Start() {
         if (unit.GetUnitIsOnlyVisual()) return;
+        if (unit.GetUnitSO().isInvisibleGarrisonedUnit) return;
         SetUnitWatchDirectionBasedOnPlayerOwnance();
     }
 
@@ -76,9 +78,14 @@ public class UnitAnimatorManager : NetworkBehaviour
         }
 
         if (movingForwards) {
-            Vector2 moveDir = unitMovement.GetMoveDir2D();
-            SetXY(moveDir.x, -1);
-            return;
+            if(!unit.GetUnitSO().isGarrisonedUnit) {
+                Vector2 moveDir = unitMovement.GetMoveDir2D();
+                SetXY(moveDir.x, -1);
+                return;
+            } else {
+                SetUnitWatchDirectionBasedOnPlayerOwnance();
+                return;
+            }
         }
 
         if (walking) {
@@ -202,7 +209,24 @@ public class UnitAnimatorManager : NetworkBehaviour
     protected virtual void UpdateAnimatorParameters() {
         string animationName = "Walk";
 
-        if (unitAI.IsWalking() | unitAI.IsMovingToTarget()) {
+        if (unitAI.IsMovingForwards()) {
+            if(!unit.GetUnitSO().isGarrisonedUnit) {
+                walking = true;
+                idle = false;
+                attacking = false;
+
+                animationName = "Walk";
+                float randomOffset = Random.Range(0f, 1f);
+                unitAnimator.Play(animationName, 0, randomOffset);
+            } else {
+                walking = false; 
+                animationName = "Idle";
+                float randomOffset = Random.Range(0f, 1f);
+                unitAnimator.Play(animationName, 0, randomOffset);
+            }
+        }
+
+        if(unitAI.IsMovingToTarget()) {
             walking = true;
             idle = false;
             attacking = false;

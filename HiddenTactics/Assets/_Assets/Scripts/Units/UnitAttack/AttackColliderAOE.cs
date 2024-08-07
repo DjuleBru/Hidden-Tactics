@@ -4,10 +4,10 @@ using UnityEngine;
 
 public class AttackColliderAOE : MonoBehaviour
 {
-    List<Collider2D> collidersInAttackAOE = new List<Collider2D>();
+    protected List<Collider2D> collidersInAttackAOE = new List<Collider2D>();
 
 
-    private void OnTriggerEnter2D(Collider2D hitCollider) {
+    protected virtual void OnTriggerEnter2D(Collider2D hitCollider) {
         //if the object is not already in the list
         if (!collidersInAttackAOE.Contains(hitCollider)) {
             //add the object to the list
@@ -16,7 +16,7 @@ public class AttackColliderAOE : MonoBehaviour
     }
 
     //called when something exits the trigger
-    private void OnTriggerExit2D(Collider2D hitCollider) {
+    protected virtual void OnTriggerExit2D(Collider2D hitCollider) {
         //if the object is in the list
         if (collidersInAttackAOE.Contains(hitCollider)) {
             //remove it from the list
@@ -27,4 +27,6 @@ public class AttackColliderAOE : MonoBehaviour
     public List<Collider2D> GetCollidersInAttackAOEList() {
         return collidersInAttackAOE;
     }
- }
+
+
+}

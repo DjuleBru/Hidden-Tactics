@@ -44,6 +44,8 @@ public class UnitStatusEffectVisuals : NetworkBehaviour
             BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
         }
 
+        if (unit.GetUnitSO().isInvisibleGarrisonedUnit) return;
+
         unit.OnUnitFlamed += Unit_OnUnitFlamed;
         unit.OnUnitFlamedEnded += Unit_OnUnitFlameEnded;
 

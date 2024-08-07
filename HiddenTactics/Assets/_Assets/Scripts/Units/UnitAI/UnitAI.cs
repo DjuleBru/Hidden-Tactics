@@ -275,9 +275,6 @@ public class UnitAI : NetworkBehaviour
     public State GetState() {
         return state.Value;
     }
-    public virtual bool IsWalking() {
-        return state.Value == State.moveForwards;
-    }
     public bool GetAttackStarted() {
         return attackStarted;
     }
@@ -300,7 +297,7 @@ public class UnitAI : NetworkBehaviour
     public bool IsAttacking() {
         return state.Value == State.attackingMelee || state.Value == State.attackingRanged;
     }
-    public bool IsMovingForwards() {
+    public virtual bool IsMovingForwards() {
         return state.Value == State.moveForwards;
     }
     public bool IsMovingToTarget() {

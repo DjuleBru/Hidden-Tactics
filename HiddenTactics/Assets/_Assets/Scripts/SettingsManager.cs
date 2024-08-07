@@ -7,7 +7,7 @@ public class SettingsManager : MonoBehaviour
 {
    public static SettingsManager Instance;
 
-    private bool showTacticalIcons = true;
+    private bool showTacticalIcons;
     private bool tacticalView;
 
     public event EventHandler OnTacticalViewEnabled;
@@ -23,6 +23,7 @@ public class SettingsManager : MonoBehaviour
         GameInput.Instance.OnShowIPlaceableIconPerformed += GameInput_OnShowIPlaceableIconPerformed;
         GameInput.Instance.OnTacticalViewPerformed += GameInput_OnTacticalViewPerformed;
         BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
+        showTacticalIcons = SavingManager.Instance.LoadShowTacticalIcons();
     }
 
     private void BattleManager_OnStateChanged(object sender, EventArgs e) {
@@ -54,8 +55,9 @@ public class SettingsManager : MonoBehaviour
 
     private void GameInput_OnShowIPlaceableIconPerformed(object sender, System.EventArgs e) {
         showTacticalIcons = !showTacticalIcons;
+        SavingManager.Instance.SaveShowTacticalIcons(showTacticalIcons);
 
-        if(showTacticalIcons) {
+        if (showTacticalIcons) {
             OnShowTacticalIconsEnabled?.Invoke(this, EventArgs.Empty);
         } else {
             OnShowTacticalIconsDisabled?.Invoke(this, EventArgs.Empty);

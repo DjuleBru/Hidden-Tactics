@@ -36,7 +36,7 @@ public class UCWAnimatorManager_BoarRider : UCWAnimatorManager
     protected override void UpdateAnimatorParameters() {
         string animationName = "Walk";
 
-        if (unitAI.IsWalking() | unitAI.IsMovingToTarget()) {
+        if (unitAI.IsMovingForwards() | unitAI.IsMovingToTarget()) {
             walking = true;
             idle = false;
             attacking = false;

@@ -13,7 +13,7 @@ public class UnitAttack_Spearman : UnitAttack
             attackDamageModified = attackDamage * largeUnitDamageMultiplier;
         }
 
-        targetUnit.GetComponent<UnitHP>().TakeDamage(attackDamageModified);
+        targetUnit.GetComponent<UnitHP>().TakeDamage(attackDamageModified, this);
 
         if (attackKnockback != 0) {
             Vector2 incomingDamageDirection = new Vector2((target as Unit).transform.position.x - damageHitPosition.x, (target as Unit).transform.position.y - damageHitPosition.y);

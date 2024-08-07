@@ -101,9 +101,11 @@ public class TroopTypeUI : NetworkBehaviour, IPointerEnterHandler, IPointerExitH
         if(troop != null) {
             troop.OnTroopPlaced += Troop_OnTroopPlaced;
             troop.OnTroopHPChanged += Troop_OnTroopHPChanged;
+            troop.OnTroopSelled += Troop_OnTroopSelled;
         } else {
             building.OnBuildingPlaced += Building_OnBuildingPlaced;
             building.OnBuildingDestroyed += Building_OnBuildingDestroyed;
+            building.OnBuildingSelled += Building_OnBuildingSelled;
         }
     }
 
@@ -154,6 +156,13 @@ public class TroopTypeUI : NetworkBehaviour, IPointerEnterHandler, IPointerExitH
         }
     }
 
+    private void Troop_OnTroopSelled(object sender, System.EventArgs e) {
+        gameObject.SetActive(false);
+    }
+
+    private void Building_OnBuildingSelled(object sender, System.EventArgs e) {
+        gameObject.SetActive(false);
+    }
     private void Building_OnBuildingPlaced(object sender, System.EventArgs e) {
 
         if (SettingsManager.Instance.GetTacticalViewSetting()) {

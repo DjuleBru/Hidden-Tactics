@@ -21,7 +21,11 @@ MonoBehaviour:
   attackTargetTiles:
   - {x: 1, y: 0}
   - {x: 2, y: 0}
+  - {x: 2, y: 1}
+  - {x: 2, y: -1}
   - {x: 3, y: 0}
+  - {x: 3, y: -1}
+  - {x: 3, y: 1}
   meleeAttackTargetingRange: 0
   meleeAttackRange: 0
   attackDamage: 3
@@ -32,3 +36,4 @@ MonoBehaviour:
   meleeAttackAnimationHitDelay: 0
   meleeAttackAnimationDuration: 0
   attackSpecialList: 
+  specialEffectDuration: 0

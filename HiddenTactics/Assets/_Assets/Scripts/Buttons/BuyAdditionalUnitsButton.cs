@@ -10,10 +10,12 @@ public class BuyAdditionalUnitsButton : MonoBehaviour, IPointerEnterHandler, IPo
     [SerializeField] Troop troop;
 
     private Button buyAdditionalUnitsButton;
+
     private void Awake() {
         buyAdditionalUnitsButton = GetComponent<Button>();
 
         buyAdditionalUnitsButton.onClick.AddListener(() => {
+            Debug.Log("buy additional units button ");
             int goldCost = troop.GetTroopSO().buyAdditionalUnitsCost;
             if ((PlayerGoldManager.Instance.CanSpendGold(goldCost, NetworkManager.Singleton.LocalClientId))) {
                 PlayerGoldManager.Instance.SpendGold(troop.GetTroopSO().buyAdditionalUnitsCost, NetworkManager.Singleton.LocalClientId);

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class UnitAI_Ranged_Garrisoned : UnitAI
 {
-    public override bool IsWalking() {
+    public override bool IsMovingForwards() {
         return false;
     }
 }

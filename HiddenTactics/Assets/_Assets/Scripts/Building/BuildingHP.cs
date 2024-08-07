@@ -26,7 +26,7 @@ public class BuildingHP : NetworkBehaviour, IDamageable {
         return buildingHP;
     }
 
-    public void TakeDamage(float damage) {
+    public virtual void TakeDamage(float damage, IDamageSource damageSource) {
         TakeDamageServerRpc(damage);
     }
 

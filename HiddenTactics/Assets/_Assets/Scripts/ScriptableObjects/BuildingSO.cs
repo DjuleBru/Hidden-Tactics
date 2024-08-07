@@ -17,7 +17,6 @@ public class BuildingSO : ScriptableObject
     public bool hasGarrisonedTroop;
     public TroopSO garrisonedTroopSO;
 
-
     public int spawnBuildingCost;
     public int upgradeBuildingCost;
 

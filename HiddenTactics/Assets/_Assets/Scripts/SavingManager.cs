@@ -15,6 +15,15 @@ public class SavingManager : MonoBehaviour
         Instance = this;
     }
 
+    #region SAVE SETTINGS
+
+    public void SaveShowTacticalIcons(bool showTacticalIcons) {
+        string showTacticalIconsKey = saveSlot.ToString() + PlayerSaveConstString.SETTINGS_SHOW_TACTICAL_ICONS;
+
+        ES3.Save(showTacticalIconsKey, showTacticalIcons);
+    }
+
+    #endregion
 
     #region SAVE PLAYER CUSTOMIZATION DATA
     public void SavePlayerName(string playerName) {
@@ -78,6 +87,13 @@ public class SavingManager : MonoBehaviour
     }
     #endregion
 
+    #region LOAD SETTINGS
+    public bool LoadShowTacticalIcons() {
+        string showTacticalIconsKey = saveSlot.ToString() + PlayerSaveConstString.SETTINGS_SHOW_TACTICAL_ICONS;
+
+        return ES3.Load(showTacticalIconsKey, true);
+    }
+    #endregion
 
     #region LOAD PLAYER CUSTOMIZATION DATA
     public Sprite LoadBattlefieldBaseSprite(Deck deck) {

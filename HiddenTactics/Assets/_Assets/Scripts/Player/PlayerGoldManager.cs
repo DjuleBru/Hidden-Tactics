@@ -39,6 +39,7 @@ public class PlayerGoldManager : NetworkBehaviour {
     }
 
     private void HiddenTacticsMultiplayer_OnPlayerRevenueChanged(object sender, HiddenTacticsMultiplayer.OnPlayerRevenueChangedEventArgs e) {
+        Debug.Log("revenue changed !");
         if (e.clientId == NetworkManager.Singleton.LocalClientId) {
             PlayerStateUI.Instance.RefreshPlayerRevenueUI(e.newRevenue);
             RevenueDetailPanelUI.Instance.UpdateRevenueDetailPanelUI(e.newRevenue);

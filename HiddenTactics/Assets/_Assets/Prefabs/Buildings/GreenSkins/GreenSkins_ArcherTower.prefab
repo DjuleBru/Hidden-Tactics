@@ -59,6 +59,10 @@ PrefabInstance:
       propertyPath: m_WasSpriteAssigned
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 901424197122897117, guid: e3e93ece8e3f9f342bf64a8dd15cb760, type: 3}
+      propertyPath: buildingHP
+      value: 
+      objectReference: {fileID: 5843075017091313118}
     - target: {fileID: 1169388096161900607, guid: e3e93ece8e3f9f342bf64a8dd15cb760, type: 3}
       propertyPath: m_IsActive
       value: 1
@@ -181,7 +185,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2111626829108963439, guid: e3e93ece8e3f9f342bf64a8dd15cb760, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2295628251655419787, guid: e3e93ece8e3f9f342bf64a8dd15cb760, type: 3}
       propertyPath: m_Size.x
@@ -265,7 +269,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7236345148894600409, guid: e3e93ece8e3f9f342bf64a8dd15cb760, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7522236696230173018, guid: e3e93ece8e3f9f342bf64a8dd15cb760, type: 3}
       propertyPath: m_LocalPosition.x
@@ -335,5 +339,24 @@ PrefabInstance:
       propertyPath: m_LocalPosition.y
       value: 1.25
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 3229240955304496283, guid: e3e93ece8e3f9f342bf64a8dd15cb760, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: e3e93ece8e3f9f342bf64a8dd15cb760, type: 3}
+--- !u!1 &4388312461342439320 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1960146068611182066, guid: e3e93ece8e3f9f342bf64a8dd15cb760, type: 3}
+  m_PrefabInstance: {fileID: 2870407699123591786}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &5843075017091313118
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4388312461342439320}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: efb347e1db8a62646b54af5361737e52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damageReflection: 5

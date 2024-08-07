@@ -20,7 +20,6 @@ public class GridHoverManager : MonoBehaviour
     }
 
     public void SubsribeToPlayerActions() {
-        Debug.Log("suubbed to player actions");
         PlayerActionsManager.LocalInstance.OnActionChanged += PlayerActionsManager_OnActionChanged;
     }
 
@@ -56,20 +55,23 @@ public class GridHoverManager : MonoBehaviour
             // Player is not hovering a valid gridposition
             if (currentHoveredGridPosition != null) {
                 GridObjectVisual currentHoveredGridObjectVisual = BattleGrid.Instance.GetGridObjectVisual(currentHoveredGridPosition);
-                currentHoveredGridObjectVisual.ResetVisual();
+                if (!currentHoveredGridObjectVisual.GetGridObjectVisualIsReset()) {
+                    currentHoveredGridObjectVisual.ResetVisual();
+                }
             }
             return;
         }
 
-        if (MousePositionManager.Instance.IsPointerOverUIElement()) {
+        if (MousePositionManager.Instance.IsPointerOverUIElement() && PlayerActionsManager.LocalInstance.GetCurrentAction() != PlayerActionsManager.Action.MovingIPlaceable) {
             // Player is hovering UI
             if (currentHoveredGridPosition != null) {
                 GridObjectVisual currentHoveredGridObjectVisual = BattleGrid.Instance.GetGridObjectVisual(currentHoveredGridPosition);
-                currentHoveredGridObjectVisual.ResetVisual();
+                if (!currentHoveredGridObjectVisual.GetGridObjectVisualIsReset()) {
+                    currentHoveredGridObjectVisual.ResetVisual();
+                }
             }
             return;
         }
-
 
         HandleHoveredGridPositionChange();
     }
@@ -145,17 +147,19 @@ public class GridHoverManager : MonoBehaviour
             newGridObjectVisual.SetHovered();
 
         } else {
-
             //Player is not placing troop
 
-            GridObjectVisual previousGridObjectVisual = BattleGrid.Instance.GetGridObjectVisual(previousHoveredGridPosition);
-            previousGridObjectVisual.ResetVisual();
+            if (!(PlayerActionsManager.LocalInstance.GetCurrentAction() == PlayerActionsManager.Action.MovingIPlaceable)) {
 
-            GridObjectVisual newGridObjectVisual = BattleGrid.Instance.GetGridObjectVisual(currentHoveredGridPosition);
-            newGridObjectVisual.SetHovered();
+                // Player is not moving an Iplaceable
+                GridObjectVisual previousGridObjectVisual = BattleGrid.Instance.GetGridObjectVisual(previousHoveredGridPosition);
+                previousGridObjectVisual.ResetVisual();
+
+                GridObjectVisual newGridObjectVisual = BattleGrid.Instance.GetGridObjectVisual(currentHoveredGridPosition);
+                newGridObjectVisual.SetHovered();
+            }
+
         }
-
-       
     }
 
     private void HandleTroopHover() {
@@ -362,6 +366,35 @@ public class GridHoverManager : MonoBehaviour
             }
         }
         unitSetAsTargetList.Clear();
+    }
+
+    public void ShowGridPositionsValid(List<GridPosition> gridPositionList, bool active) {
+        if(active) {
+            foreach(GridPosition gridPosition in gridPositionList) {
+                GridObjectVisual targetGridPositionGridObjectVisual = BattleGrid.Instance.GetGridObjectVisual(gridPosition);
+                targetGridPositionGridObjectVisual.SetAsValidPosition();
+            }
+        } else {
+            foreach (GridPosition gridPosition in gridPositionList) {
+                GridObjectVisual targetGridPositionGridObjectVisual = BattleGrid.Instance.GetGridObjectVisual(gridPosition);
+                targetGridPositionGridObjectVisual.ResetVisual();
+            }
+        }
+    }
+
+    public void ShowGridPositionsUnvalid(List<GridPosition> gridPositionList, bool active) {
+        if (active) {
+            foreach (GridPosition gridPosition in gridPositionList) {
+                GridObjectVisual targetGridPositionGridObjectVisual = BattleGrid.Instance.GetGridObjectVisual(gridPosition);
+                targetGridPositionGridObjectVisual.SetAsUnvalidPosition();
+            }
+        }
+        else {
+            foreach (GridPosition gridPosition in gridPositionList) {
+                GridObjectVisual targetGridPositionGridObjectVisual = BattleGrid.Instance.GetGridObjectVisual(gridPosition);
+                targetGridPositionGridObjectVisual.ResetVisual();
+            }
+        }
     }
 
     public void AddSupportUnit(Unit unit) {

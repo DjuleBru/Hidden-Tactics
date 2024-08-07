@@ -11,6 +11,7 @@ public class Troop : NetworkBehaviour, IPlaceable {
     public static event EventHandler OnAnyTroopSelled;
     public event EventHandler OnTroopSelected;
     public event EventHandler OnTroopUnselected;
+    public event EventHandler OnTroopSelled;
 
     public event EventHandler OnTroopHPChanged;
     public float maxTroopHP;
@@ -228,6 +229,7 @@ public class Troop : NetworkBehaviour, IPlaceable {
     }
 
     public void BuyAdditionalUnits() {
+        Debug.Log("BuyAdditionalUnits");
         BuyAdditionalUnitsServerRpc();
     }
 
@@ -268,21 +270,18 @@ public class Troop : NetworkBehaviour, IPlaceable {
         }
     }
 
-    public void SetTroopSelled() {
-        troopSelled = true;
-        SellTroop();
-    }
-
     public void SellTroop() {
+        troopSelled = true;
+        OnTroopUnselected?.Invoke(this, EventArgs.Empty);
         OnAnyTroopSelled?.Invoke(this, EventArgs.Empty);
+        OnTroopSelled?.Invoke(this, EventArgs.Empty);
 
-        foreach (Unit unit in additionalUnitsInTroop) {
+        foreach (Unit unit in allUnitsInTroop) {
             unit.SellUnit();
         }
 
         BattleGrid.Instance.RemoveIPlaceableAtGridPosition(currentGridPosition, this);
         BattleGrid.Instance.ResetIPlaceableSpawnedAtGridPosition(currentGridPosition);
-
     }
 
     private void DestroyTroop() {
@@ -356,7 +355,7 @@ public class Troop : NetworkBehaviour, IPlaceable {
         if (selected) {
             troopSelected = true;
             OnTroopSelected?.Invoke(this, EventArgs.Empty);
-            if (BattleManager.Instance.IsPreparationPhase()) {
+            if (BattleManager.Instance.IsPreparationPhase() && !troopSO.isGarrisonedTroop) {
                 troopUI.ShowTroopSelectedUI();
             }
 
@@ -425,6 +424,11 @@ public class Troop : NetworkBehaviour, IPlaceable {
     public void SetParentBuilding(Building building) {
         parentBuilding = building;
         parentBuilding.OnBuildingDestroyed += ParentBuilding_OnBuildingDestroyed;
+        parentBuilding.OnBuildingSelled += ParentBuilding_OnBuildingSelled;
+    }
+
+    private void ParentBuilding_OnBuildingSelled(object sender, EventArgs e) {
+        SellTroop();
     }
 
     private void ParentBuilding_OnBuildingDestroyed(object sender, EventArgs e) {

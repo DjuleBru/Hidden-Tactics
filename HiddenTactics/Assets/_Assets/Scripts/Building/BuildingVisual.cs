@@ -32,6 +32,7 @@ public class BuildingVisual : NetworkBehaviour
         building.OnBuildingUnselected += Building_OnBuildingUnselected;
         building.OnBuildingHovered += Building_OnBuildingHovered;
         building.OnBuildingUnhovered += Building_OnBuildingUnhovered;
+        building.OnBuildingSelled += Building_OnBuildingSelled;
 
         if (!building.GetBuildingIsOnlyVisual()) {
             if (SettingsManager.Instance.GetTacticalViewSetting()) {
@@ -48,7 +49,11 @@ public class BuildingVisual : NetworkBehaviour
         }
     }
 
-     private void SettingsManager_OnShowTacticalIconsEnabled(object sender, System.EventArgs e) {
+    private void Building_OnBuildingSelled(object sender, System.EventArgs e) {
+        gameObject.SetActive(false);
+    }
+
+    private void SettingsManager_OnShowTacticalIconsEnabled(object sender, System.EventArgs e) {
         if (SettingsManager.Instance.GetTacticalViewSetting()) {
             ChangeSpriteRendererListMaterial(buildingSpriteRendererList, invisibleMaterial);
             foreach (SpriteRenderer shadowSpriteRenderer in shadowSpriteRendererList) {

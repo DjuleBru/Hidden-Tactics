@@ -41,6 +41,8 @@ public class UnitVisual : NetworkBehaviour
     protected bool unitIsSpawnedDynamically;
 
     protected virtual void Awake() {
+        if (unit.GetUnitSO().isInvisibleGarrisonedUnit) return;
+
         unit = GetComponentInParent<Unit>();
         bodyAnimator = GetComponent<Animator>();
         activeBodyAnimator = bodyAnimator.runtimeAnimatorController;
@@ -55,6 +57,8 @@ public class UnitVisual : NetworkBehaviour
     }
 
     public override void OnNetworkSpawn() {
+        if (unit.GetUnitSO().isInvisibleGarrisonedUnit) return;
+
         unit.OnUnitUpgraded += Unit_OnUnitUpgraded;
         unit.OnAdditionalUnitActivated += Unit_OnAdditionalUnitActivated;
         unit.OnUnitDynamicallySpawned += Unit_OnUnitDynamicallySpawned;
@@ -67,6 +71,7 @@ public class UnitVisual : NetworkBehaviour
         unit.OnUnitUnhovered += Unit_OnUnitUnhovered;
         unit.OnUnitSelected += Unit_OnUnitSelected;
         unit.OnUnitUnselected += Unit_OnUnitUnselected;
+        unit.OnUnitSold += Unit_OnUnitSold;
 
         if(!unit.GetUnitIsOnlyVisual()) {
             SettingsManager.Instance.OnTacticalViewEnabled += SettingsManager_OnTacticalViewEnabled;
@@ -82,9 +87,13 @@ public class UnitVisual : NetworkBehaviour
         }
     }
 
+
     protected virtual void Start() {
-        if (!unit.GetUnitIsOnlyVisual())
-        {
+        if (unit.GetUnitSO().isInvisibleGarrisonedUnit) {
+            gameObject.SetActive(false);
+        }
+
+        if (!unit.GetUnitIsOnlyVisual()) {
             if (!unit.IsOwnedByPlayer()) return;
 
             if(!unitIsSpawnedDynamically && !unit.GetUnitIsDynamicallySpawnedUnit()) {
@@ -239,6 +248,11 @@ public class UnitVisual : NetworkBehaviour
 
     }
 
+    private void Unit_OnUnitSold(object sender, EventArgs e) {
+        SetUnitCircleGameObjectsActive(false);
+        gameObject.SetActive(false);
+    }
+
     private void SetFactionVisualColor() {
         FactionSO deckFactionSO = DeckManager.LocalInstance.GetDeckSelected().deckFactionSO;
         ParticleSystem.MainModule ma = unitPlacedPS.main;
@@ -313,18 +327,22 @@ public class UnitVisual : NetworkBehaviour
     }
 
     private void Unit_OnUnitUnselected(object sender, EventArgs e) {
+        if (unit.GetUnitSO().isGarrisonedUnit) return;
         SetUnitSelected(false);
     }
 
     private void Unit_OnUnitSelected(object sender, EventArgs e) {
+        if (unit.GetUnitSO().isGarrisonedUnit) return;
         SetUnitSelected(true);
     }
 
     private void Unit_OnUnitUnhovered(object sender, EventArgs e) {
+        if (unit.GetUnitSO().isGarrisonedUnit) return;
         SetUnitHovered(false);
     }
 
     private void Unit_OnUnitHovered(object sender, EventArgs e) {
+        if (unit.GetUnitSO().isGarrisonedUnit) return;
         if (SettingsManager.Instance.GetTacticalViewSetting()) return;
         SetUnitHovered(true);
     }

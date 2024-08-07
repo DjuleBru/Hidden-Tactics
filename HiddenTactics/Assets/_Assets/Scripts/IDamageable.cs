@@ -5,7 +5,7 @@ using UnityEngine;
 
 public interface IDamageable {
 
-    public void TakeDamage(float damage);
+    public void TakeDamage(float damage, IDamageSource damageSource);
 
     public void Heal(float healAmount);
 

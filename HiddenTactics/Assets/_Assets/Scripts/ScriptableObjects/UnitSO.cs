@@ -27,6 +27,7 @@ public class UnitSO : ScriptableObject {
     public float unitMoveSpeed;
 
     public bool isGarrisonedUnit;
+    public bool isInvisibleGarrisonedUnit;
 
     public WeaponSO mainWeaponSO;
     public AttackSO mainAttackSO;

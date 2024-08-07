@@ -14,12 +14,23 @@ public class PreparationPhaseUI : MonoBehaviour
     [SerializeField] Button playerReadyButton;
 
     [SerializeField] private TextMeshProUGUI turnText;
+    [SerializeField] private GameObject allPlaceablesUI;
+
+    private bool panelOpen = true;
+    [SerializeField] private bool debugMode;
+    [SerializeField] private GameObject openCloseAllPlaceablesButton;
 
     private void Awake() {
         playerReadyButton.onClick.AddListener(() => {
             Player.LocalInstance.SetPlayerReadyOrUnready();
             playerReadyButton.GetComponent<ReadyPanelButtonUI>().HandleButtonClickVisual();
         });
+
+        if(debugMode) {
+            openCloseAllPlaceablesButton.SetActive(true);
+        } else {
+            openCloseAllPlaceablesButton.SetActive(false);
+        }
     }
 
     private void Start() {
@@ -110,5 +121,10 @@ public class PreparationPhaseUI : MonoBehaviour
             return "X";
         }
         return "";
+    }
+
+    public void OpenClosePanel() {
+        panelOpen = !panelOpen;
+        allPlaceablesUI.SetActive(panelOpen);
     }
 }

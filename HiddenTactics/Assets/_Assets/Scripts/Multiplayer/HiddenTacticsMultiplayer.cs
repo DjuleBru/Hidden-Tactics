@@ -20,6 +20,7 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
     private int playerGridVisualSOId;
     private List<int> villageSpriteIdList;
     private int playerBattlefieldBaseSpriteId;
+    private int playerRevenueSinglePlayer;
 
     public const int MAX_PLAYER_AMOUNT = 2;
 
@@ -212,6 +213,7 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
 
     #region HANDLE IPLACEABLES
     public void DestroyIPlaceable(NetworkObjectReference iPlaceableNetworkObjectReference) {
+        Debug.Log("destgroy");
         DestroyIPlaceableServerRpc(iPlaceableNetworkObjectReference);
     }
 
@@ -368,6 +370,8 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
         playerData.playerVillagesRemaining = initialPlayerVillages;
         playerData.playerRevenue = initialPlayerRevenue;
 
+        this.playerRevenueSinglePlayer = initialPlayerRevenue;
+
         playerDataNetworkList[playerDataIndex] = playerData;
     }
 
@@ -412,14 +416,23 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
 
     [ServerRpc(RequireOwnership = false)]
     public void ChangePlayerRevenueServerRpc(ulong clientId, int revenueAmount) {
-        int playerDataIndex = GetPlayerDataIndexFromClientId(clientId);
-        PlayerData playerData = playerDataNetworkList[playerDataIndex];
 
-        playerData.playerRevenue += revenueAmount;
+        if(isMultiplayer) {
+            int playerDataIndex = GetPlayerDataIndexFromClientId(clientId);
+            PlayerData playerData = playerDataNetworkList[playerDataIndex];
 
-        playerDataNetworkList[playerDataIndex] = playerData;
+            playerData.playerRevenue += revenueAmount;
 
-        ChangePlayerRevenueClientRpc(clientId, playerDataNetworkList[playerDataIndex].playerRevenue);
+            playerDataNetworkList[playerDataIndex] = playerData;
+
+            ChangePlayerRevenueClientRpc(clientId, playerDataNetworkList[playerDataIndex].playerRevenue);
+        } else {
+            playerRevenueSinglePlayer += revenueAmount;
+            OnPlayerRevenueChanged?.Invoke(this, new OnPlayerRevenueChangedEventArgs {
+                clientId = clientId,
+                newRevenue = playerRevenueSinglePlayer
+            });
+        }
     }
 
     [ClientRpc]

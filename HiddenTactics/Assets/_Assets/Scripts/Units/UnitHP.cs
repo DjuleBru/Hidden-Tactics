@@ -103,7 +103,7 @@ public class UnitHP : NetworkBehaviour, IDamageable
     }
 
 
-    public void TakeDamage(float damage) {
+    public void TakeDamage(float damage, IDamageSource damageSource) {
         TakeDamageServerRpc(damage);
     }
 

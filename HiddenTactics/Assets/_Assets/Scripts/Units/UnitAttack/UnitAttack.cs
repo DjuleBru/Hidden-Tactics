@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
-public class UnitAttack : NetworkBehaviour
+public class UnitAttack : NetworkBehaviour, IDamageSource
 {
     public event EventHandler OnUnitAttack;
     public event EventHandler OnUnitAttackStarted;
@@ -275,7 +275,7 @@ public class UnitAttack : NetworkBehaviour
             PerformDamageActionOnUnit(target, damageHitPosition);
         }
 
-        targetIDamageable.TakeDamage(attackDamage);
+        targetIDamageable.TakeDamage(attackDamage, this);
     }
 
     protected virtual void PerformDamageActionOnUnit(ITargetable target, Vector3 damageHitPosition) {
@@ -315,8 +315,8 @@ public class UnitAttack : NetworkBehaviour
     }
 
     protected virtual void PerformDamageActionOnVillage(IDamageable targetIDamageable) {
-        GetComponent<UnitHP>().TakeDamage(unit.GetUnitSO().HP);
-        targetIDamageable.TakeDamage(unit.GetUnitSO().damageToVillages);
+        GetComponent<UnitHP>().TakeDamage(unit.GetUnitSO().HP, this);
+        targetIDamageable.TakeDamage(unit.GetUnitSO().damageToVillages, this);
     }
 
     protected List<Unit> FindAOEAttackTargets(Vector3 targetPosition, float AOE, bool targetAllyUnits = false) {

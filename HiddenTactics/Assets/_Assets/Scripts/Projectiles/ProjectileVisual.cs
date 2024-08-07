@@ -67,4 +67,9 @@ public class ProjectileVisual : MonoBehaviour
             trailRenderer.startColor = new Color(1f, .8f, 0f, 1f);
         }
     }
+
+    public void SetProjectileVisualInactive() {
+        bodyVisual.GetComponent<SpriteRenderer>().enabled = false;
+        shadowVisual.GetComponent<SpriteRenderer>().enabled = false;
+    }
 }

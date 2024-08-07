@@ -12,6 +12,7 @@ public class Projectile_Remains : Projectile
     [SerializeField] private float projectileRemainTimeAfterHit;
     [SerializeField] private bool projectileRotatesAfterHit;
     [SerializeField] private bool projectileAnimatedAfterHit;
+    [SerializeField] private bool projectileSpawnsUnit;
 
     protected override void Update() {
         if (projectileHasHit) return;
@@ -62,7 +63,9 @@ public class Projectile_Remains : Projectile
 
         yield return new WaitForSeconds(projectileRemainTimeAfterHit);
 
-        unitAttackOrigin.GetComponent<Unit>().GetParentTroop().ActivateNextSpawnedUnit(transform.position);
+        if(projectileSpawnsUnit) {
+            unitAttackOrigin.GetComponent<Unit>().GetParentTroop().ActivateNextSpawnedUnit(transform.position);
+        }
 
         if (unitAttackOrigin.IsServer) {
             Destroy(gameObject);

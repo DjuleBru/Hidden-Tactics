@@ -35,10 +35,12 @@ public class BattlePhaseIPlaceablePanel : MonoBehaviour
         Troop.OnAnyTroopSelled += Troop_OnAnyTroopSelled;
         Building.OnAnyBuildingPlaced += Building_OnAnyBuildingPlaced;
         Building.OnAnyBuildingDestroyed += Building_OnAnyBuildingDestroyed;
+        Building.OnAnyBuildingSelled += Building_OnAnyBuildingSelled;
 
         Deck playerDeck = DeckManager.LocalInstance.GetDeckSelected();
         SetPanelVisuals(playerDeck);
     }
+
 
     private void SetPanelVisuals(Deck playerDeck) {
         backgroundImage.sprite = playerDeck.deckFactionSO.panelBackground;
@@ -53,6 +55,7 @@ public class BattlePhaseIPlaceablePanel : MonoBehaviour
         Troop troop = (Troop)sender;
 
         if (troop.IsOwnedByPlayer()) {
+            if (!playerIPlaceableList.Contains(troop)) return;
             playerIPlaceableList.Remove(troop);
             RemoveIPlaceableCard(troop);
         }
@@ -67,6 +70,15 @@ public class BattlePhaseIPlaceablePanel : MonoBehaviour
         }
     }
 
+
+    private void Building_OnAnyBuildingSelled(object sender, System.EventArgs e) {
+        Building building = (Building)sender;
+
+        if (building.IsOwnedByPlayer()) {
+            playerIPlaceableList.Remove(building);
+            RemoveIPlaceableCard(building);
+        }
+    }
 
     private void Building_OnAnyBuildingDestroyed(object sender, System.EventArgs e) {
         Building building = (Building)sender;

@@ -8,15 +8,16 @@ using UnityEngine;
 
 public class Building : NetworkBehaviour, IPlaceable, ITargetable {
 
-
     public event EventHandler OnBuildingPlaced;
     public event EventHandler OnBuildingDestroyed;
     public event EventHandler OnBuildingSelected;
     public event EventHandler OnBuildingUnselected;
     public event EventHandler OnBuildingHovered;
     public event EventHandler OnBuildingUnhovered;
+    public event EventHandler OnBuildingSelled;
 
     public static event EventHandler OnAnyBuildingPlaced;
+    public static event EventHandler OnAnyBuildingSelled;
     public static event EventHandler OnAnyBuildingDestroyed;
     
     protected ulong ownerClientId;
@@ -25,6 +26,7 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
     [SerializeField] protected List<Transform> projectileTargetList;
     [SerializeField] protected BuildingSO buildingSO;
     [SerializeField] private TroopTypeUI buildingTypeUI;
+    [SerializeField] private BuildingUI buildingUI;
 
     protected bool isOwnedByPlayer;
     protected bool isPlaced;
@@ -36,20 +38,35 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
 
     protected bool buildingIsOnlyVisual;
 
+    private bool buildingWasPlacedThisPreparationPhase = true;
     private bool buildingHovered;
     private bool buildingSelected;
+    private bool buildingSelled;
 
-    protected void Awake() {
+    protected virtual void Awake() {
         if(buildingSO.buildingBlocksUnitMovement) {
             GetComponent<Collider2D>().enabled = true;
         }
     }
 
-    protected void Start() {
-        if(isOwnedByPlayer) {
+    protected virtual void Start() {
+        if(isOwnedByPlayer && !(this is Village)) {
             GridPosition newGridPosition = BattleGrid.Instance.GetFirstValidGridPosition();
             BattleGrid.Instance.IPlaceableMovedGridPosition(this, currentGridPosition, newGridPosition);
             currentGridPosition = newGridPosition;
+        }
+        BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
+    }
+
+    private void BattleManager_OnStateChanged(object sender, EventArgs e) {
+
+        if (BattleManager.Instance.IsBattlePhaseStarting()) {
+
+            if (buildingSelled) {
+                DestroyBuilding();
+            }
+
+            buildingWasPlacedThisPreparationPhase = false;
         }
     }
 
@@ -121,12 +138,13 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
 
         if (selected) {
             OnBuildingSelected?.Invoke(this, EventArgs.Empty);
+            buildingUI.ShowBuildingSelectedUI();
         }
         else {
             buildingSelected = false;
             buildingHovered = false;
             OnBuildingUnselected?.Invoke(this, EventArgs.Empty);
-            //troopUI.HideTroopSelectedUI();
+            buildingUI.HideBuildingSelectedUI();
             BattlePhaseIPlaceablePanel.Instance.CloseIPlaceableCard(this);
         }
     }
@@ -175,6 +193,17 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
         }
     }
 
+    public void SellBuilding() {
+        buildingSelled = true;
+        OnBuildingUnselected?.Invoke(this, EventArgs.Empty);
+        OnAnyBuildingSelled?.Invoke(this, EventArgs.Empty);
+        OnBuildingSelled?.Invoke(this, EventArgs.Empty);
+
+        BattleGrid.Instance.RemoveIPlaceableAtGridPosition(currentGridPosition, this);
+        BattleGrid.Instance.ResetIPlaceableSpawnedAtGridPosition(currentGridPosition);
+
+    }
+
     public void SetIPlaceableOwnerClientId(ulong clientId) {
         ownerClientId = clientId;
         isOwnedByPlayer = (ownerClientId == NetworkManager.Singleton.LocalClientId);
@@ -192,6 +221,11 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
         if (!isOwnedByPlayer) {
             gameObject.SetActive(false);
         }
+    }
+
+    private void DestroyBuilding() {
+        NetworkObject networkObject = GetComponent<NetworkObject>();
+        HiddenTacticsMultiplayer.Instance.DestroyIPlaceable(networkObject);
     }
     public virtual void SetIPlaceableGridPosition(GridPosition iPlaceableGridPosition) {
         Vector3 buildingWorldPosition = BattleGrid.Instance.GetWorldPosition(iPlaceableGridPosition);
@@ -226,6 +260,10 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
         return isDestroyed;
     }
 
+    public bool BuildingWasPlacedThisPreparationPhase() {
+        return buildingWasPlacedThisPreparationPhase;
+    }
+
     public Transform GetProjectileTarget() {
         Transform projectileTarget = projectileTargetList[UnityEngine.Random.Range(0, projectileTargetList.Count)];
 
@@ -242,6 +280,10 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
 
     public IDamageable GetIDamageable() {
         return GetComponent<BuildingHP>();
+    }
+
+    public BuildingUI GetBuildingUI() {
+        return buildingUI;
     }
 
     public void SetBuildingAsVisual()
@@ -268,5 +310,9 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
 
     public bool GetSelected() {
         return buildingSelected;
+    }
+
+    protected void InvokeOnBuildingPlaced() {
+        OnBuildingPlaced?.Invoke(this, EventArgs.Empty);
     }
 }

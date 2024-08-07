@@ -12,14 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85abc532579c0ec4d839a1a1bcb04732, type: 3}
   m_Name: HumanWizardTower
   m_EditorClassIdentifier: 
+  buildingName: Wizard Tower
   buildingIllustrationSlotSprite: {fileID: 21300000, guid: ea58476cf1bb9254e93603ffec85488f, type: 3}
   buildingDescriptionSlotSprite: {fileID: 0}
   buildingTypeSprite: {fileID: 21300000, guid: 5257bbe50269dea4881bc0ca050177ea, type: 3}
   buildingPrefab: {fileID: 4768680137565142705, guid: 8e3b91605d9061a418c31a12df34b06e, type: 3}
   buildingHP: 100
   buildingBlocksUnitMovement: 0
-  hasGarrisonedTroop: 0
-  garrisonedTroopSO: {fileID: 0}
+  hasGarrisonedTroop: 1
+  garrisonedTroopSO: {fileID: 11400000, guid: 30f6ad2ef282baa43bfdb09560cf8aca, type: 2}
   spawnBuildingCost: 0
   upgradeBuildingCost: 0
   buildingIsImplemented: 0

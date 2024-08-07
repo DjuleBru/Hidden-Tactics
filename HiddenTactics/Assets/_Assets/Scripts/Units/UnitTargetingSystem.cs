@@ -168,10 +168,8 @@ public class UnitTargetingSystem : NetworkBehaviour
             if (collider.TryGetComponent<ITargetable>(out ITargetable targetITargetable)) {
                 // Collider is targetable
 
-
                 if (targetITargetable.IsOwnedByPlayer() != unit.IsOwnedByPlayer() && unit.GetUnitIsBought() && !targetITargetable.GetIsDead()) {
                     // targetable is not from the same team AND targetable is not dead
-
 
                     if (attackSO.attackTargetTypes.Contains(targetITargetable.GetTargetType())) {
                         // target can be targeted (air unit vs ground unit vs garrisoned unit, building, village)

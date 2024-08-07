@@ -196,7 +196,7 @@ public class Projectile : NetworkBehaviour
         }
 
         if(!keepProjectileVisualOnHit) {
-            projectileVisual.gameObject.SetActive(false);
+            projectileVisual.SetProjectileVisualInactive();
         }
 
         yield return new WaitForSeconds(.5f);

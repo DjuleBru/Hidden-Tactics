@@ -34,8 +34,10 @@ public class SupportUnit : NetworkBehaviour {
         unit.OnUnitChangedGridPosition += Unit_OnUnitChangedGridPosition;
         unit.OnUnitDied += Unit_OnUnitDied;
         unit.OnUnitPlaced += Unit_OnUnitPlaced;
+        unit.OnUnitSold += Unit_OnUnitSold;
         BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
     }
+
 
     protected void Start() {
         buffTargetTiles = GetComponentInParent<Troop>().GetTroopSO().buffedGridPositions;
@@ -240,6 +242,9 @@ public class SupportUnit : NetworkBehaviour {
         }
     }
 
+    private void Unit_OnUnitSold(object sender, System.EventArgs e) {
+        GridHoverManager.Instance.RemoveSupportUnit(unit);
+    }
     public override void OnDestroy() {
         HideBuffedUnitBuffs();
         GridHoverManager.Instance.RemoveSupportUnit(unit);

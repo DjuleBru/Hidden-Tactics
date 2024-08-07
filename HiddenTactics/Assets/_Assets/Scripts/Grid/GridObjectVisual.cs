@@ -31,6 +31,8 @@ public class GridObjectVisual : MonoBehaviour
 
     [SerializeField] List<SpriteRenderer> villageSpriteRenderers;
 
+    private bool gridObjectVisualReset;
+
     private void Awake() {
         cleanMaterial = gridSprite.material;
 
@@ -80,6 +82,19 @@ public class GridObjectVisual : MonoBehaviour
 
     public void SetHovered() {
         gridSprite.material = selectedMaterial;
+        gridObjectVisualReset = false;
+    }
+
+    public void SetAsValidPosition() {
+        overlayGridSprite.gameObject.SetActive(true);
+        overlayGridSprite.material = healTargetTileMaterial;
+        gridObjectVisualReset = false;
+    }
+
+    public void SetAsUnvalidPosition() {
+        overlayGridSprite.gameObject.SetActive(true);
+        overlayGridSprite.material = targetTileMaterial;
+        gridObjectVisualReset = false;
     }
 
     public void ResetVisual() {
@@ -88,6 +103,7 @@ public class GridObjectVisual : MonoBehaviour
 
         rangedAttackTargetGameObject.SetActive(false);
         overlayGridSprite.gameObject.SetActive(false);
+        gridObjectVisualReset = true;
     }
 
     public void SetAsAttackTargetTile() {
@@ -95,18 +111,21 @@ public class GridObjectVisual : MonoBehaviour
         overlayGridSprite.material = targetTileMaterial;
         overlayGridSprite.gameObject.SetActive(true);
         rangedAttackTargetGameObject.SetActive(true);
+        gridObjectVisualReset = false;
     }
     public void SetAsHealTargetTile() {
         overlayGridSprite.sprite = overlayGradientSprite;
         overlayGridSprite.material = healTargetTileMaterial;
         overlayGridSprite.gameObject.SetActive(true);
         rangedAttackTargetGameObject.SetActive(false);
+        gridObjectVisualReset = false;
     }
     public void SetAsAttackSpeedBuffTile() {
         overlayGridSprite.sprite = overlayGradientSprite;
         overlayGridSprite.material = attackSpeedBuffTileMaterial;
         overlayGridSprite.gameObject.SetActive(true);
         rangedAttackTargetGameObject.SetActive(false);
+        gridObjectVisualReset = false;
     }
 
     public void SetAsMoveSpeedBuffTile() {
@@ -114,6 +133,7 @@ public class GridObjectVisual : MonoBehaviour
         overlayGridSprite.material = moveSpeedBuffTileMaterial;
         overlayGridSprite.gameObject.SetActive(true);
         rangedAttackTargetGameObject.SetActive(false);
+        gridObjectVisualReset = false;
     }
 
     public void SetAsAttackDamageBuffTile() {
@@ -121,6 +141,7 @@ public class GridObjectVisual : MonoBehaviour
         overlayGridSprite.material = attackDamageBuffTileMaterial;
         overlayGridSprite.gameObject.SetActive(true);
         rangedAttackTargetGameObject.SetActive(false);
+        gridObjectVisualReset = false;
     }
 
     public void SetGridSprite(List<Sprite> sprites) {
@@ -147,5 +168,9 @@ public class GridObjectVisual : MonoBehaviour
             spriteRenderer.material = material;
         }
     } 
+
+    public bool GetGridObjectVisualIsReset() {
+        return gridObjectVisualReset;
+    }
 
 }
