@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: ElfWargRiderTroop
   m_EditorClassIdentifier: 
   troopName: Wargs
+  troopDescription: Terrifying beasts with 2 rows of fangs, to double the damage.
   troopIllustrationSlotSprite: {fileID: 21300000, guid: 3c2ff4b9d235efd468260a273784482d, type: 3}
-  troopDescriptionSlotSprite: {fileID: 0}
+  troopDescriptionSlotSprite: {fileID: 21300000, guid: 40299a8469ee59d4781b06addea14019, type: 3}
   troopTypeIconSprite: {fileID: 21300000, guid: dc97a0ca5e319e940a1d154b6098e535, type: 3}
   troopPrefab: {fileID: 2495463524177989710, guid: 89613864cc34a174f99623215944380a, type: 3}
   unitPrefab: {fileID: 2271543175021472386, guid: 2ea2217f22078ae43844ca15d568e314, type: 3}
@@ -27,4 +28,5 @@ MonoBehaviour:
   buffedGridPositions: []
   supportType: 0
   buffAmount: 0
+  isGarrisonedTroop: 0
   troopIsImplemented: 1

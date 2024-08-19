@@ -11,12 +11,29 @@ public class UnitSO : ScriptableObject {
         air,
     }
 
-    public enum UnitTag {
-        large,
-        mounted,
+    public enum UnitKeyword {
+        Large,
+        Mounted,
+        Charge,
+        Beast,
+        AntiLarge,
+        Spawner,
+        Siege,
+        Flying,
+        Shielded,
+        Jumper,
+        RoyalAura,
+        BushyBeard,
+        Support,
+        Hybrid,
+        Healer,
+        Restricted,
+        DeathTrigger,
+        Unstoppable,
+        BloodFlag,
     }
 
-    public List<UnitTag> unitTagList;
+    public List<UnitKeyword> unitKeywordsList;
 
     public ITargetable.TargetType unitTargetType;
 
@@ -26,13 +43,14 @@ public class UnitSO : ScriptableObject {
     public MoveType moveType;
     public float unitMoveSpeed;
 
-    public bool isGarrisonedUnit;
+    public bool doesNotMoveGarrisonedUnit;
     public bool isInvisibleGarrisonedUnit;
 
     public WeaponSO mainWeaponSO;
     public AttackSO mainAttackSO;
     public AttackSO sideAttackSO;
-    public AttackSO specialAttackSO;
+    public AttackSO jumpAttackSO;
+    public AttackSO deathTriggerAttackSO;
 
     public int damageToVillages;
 }

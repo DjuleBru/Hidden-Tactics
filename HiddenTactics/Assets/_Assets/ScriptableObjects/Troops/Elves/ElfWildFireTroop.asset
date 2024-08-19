@@ -12,10 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44a693b538d454945879116c3a121ddd, type: 3}
   m_Name: ElfWildFireTroop
   m_EditorClassIdentifier: 
-  troopName: WildFires
+  troopName: Wild Fires
+  troopDescription: Tears of light that only appear when the forest is threatened.
   troopIllustrationSlotSprite: {fileID: 21300000, guid: 27de9c7eed54a8742a75467da30e4e08, type: 3}
-  troopDescriptionSlotSprite: {fileID: 0}
-  troopTypeIconSprite: {fileID: 21300000, guid: f6a936248289b084ca34e4346460645f, type: 3}
+  troopDescriptionSlotSprite: {fileID: 21300000, guid: 067a9bb3b48e8c74a9c567dd0fae77ca, type: 3}
+  troopTypeIconSprite: {fileID: 21300000, guid: 97d8434728d6958408988008d0b123a8, type: 3}
   troopPrefab: {fileID: 2495463524177989710, guid: bed44b984342f794a9fc6ac34004411c, type: 3}
   unitPrefab: {fileID: 7228251882027103337, guid: 087bb623f59af9146abbad59562d31b6, type: 3}
   additionalUnit1Prefab: {fileID: 0}
@@ -27,4 +28,5 @@ MonoBehaviour:
   buffedGridPositions: []
   supportType: 0
   buffAmount: 0
+  isGarrisonedTroop: 0
   troopIsImplemented: 1

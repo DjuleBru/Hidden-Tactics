@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: GreenSkinGiantSpiderTroop
   m_EditorClassIdentifier: 
   troopName: Giant Spider
+  troopDescription: 
   troopIllustrationSlotSprite: {fileID: 21300000, guid: 3de2678ba2dea134695deb722733ea95, type: 3}
-  troopDescriptionSlotSprite: {fileID: 0}
+  troopDescriptionSlotSprite: {fileID: 21300000, guid: ed8f9e1f53c1a6f43883108616bd2c5a, type: 3}
   troopTypeIconSprite: {fileID: 21300000, guid: dc97a0ca5e319e940a1d154b6098e535, type: 3}
   troopPrefab: {fileID: 2495463524177989710, guid: cc2b039d22d7c6e489ae6f83829ff1c1, type: 3}
   unitPrefab: {fileID: 7228251882027103337, guid: 943e12aa7e019ad42b8a47516a6a85d3, type: 3}
@@ -27,4 +28,5 @@ MonoBehaviour:
   buffedGridPositions: []
   supportType: 0
   buffAmount: 0
+  isGarrisonedTroop: 0
   troopIsImplemented: 1

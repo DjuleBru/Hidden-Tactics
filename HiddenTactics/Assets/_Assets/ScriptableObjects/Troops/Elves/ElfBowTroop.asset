@@ -13,9 +13,10 @@ MonoBehaviour:
   m_Name: ElfBowTroop
   m_EditorClassIdentifier: 
   troopName: Longbows
+  troopDescription: Elves train their archery skills from the age of 4.
   troopIllustrationSlotSprite: {fileID: 21300000, guid: e2ae608f6c8f9784faf8989cad0e9353, type: 3}
-  troopDescriptionSlotSprite: {fileID: 0}
-  troopTypeIconSprite: {fileID: 21300000, guid: e7920be881996114f989c68f2c5ae8f7, type: 3}
+  troopDescriptionSlotSprite: {fileID: 21300000, guid: a1c81cd14af2e864490fac97e077f292, type: 3}
+  troopTypeIconSprite: {fileID: 21300000, guid: 479325c2fd721b042aa5463e05286eb0, type: 3}
   troopPrefab: {fileID: 2495463524177989710, guid: c0e25344e6ef9904392456182278a961, type: 3}
   unitPrefab: {fileID: 6582105824262927089, guid: 728646e895686394ab93b6bb50d02ff9, type: 3}
   additionalUnit1Prefab: {fileID: 0}
@@ -27,4 +28,5 @@ MonoBehaviour:
   buffedGridPositions: []
   supportType: 0
   buffAmount: 0
+  isGarrisonedTroop: 0
   troopIsImplemented: 1

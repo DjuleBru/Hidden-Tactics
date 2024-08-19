@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: DwarfMechanicalScarabTroop
   m_EditorClassIdentifier: 
   troopName: Mechanical Scarab
-  troopIllustrationSlotSprite: {fileID: 0}
-  troopDescriptionSlotSprite: {fileID: 0}
+  troopDescription: Carefully crafted beetles, with a poisonous gift in their fangs
+  troopIllustrationSlotSprite: {fileID: 21300000, guid: 8eb48656c16c53545816baa95a4d4e0b, type: 3}
+  troopDescriptionSlotSprite: {fileID: 21300000, guid: e419b51ec36e464458c632e11ea4aacf, type: 3}
   troopTypeIconSprite: {fileID: 21300000, guid: dc97a0ca5e319e940a1d154b6098e535, type: 3}
   troopPrefab: {fileID: 2495463524177989710, guid: 46b6da7d52eb15b41810c3668ca7dfd8, type: 3}
   unitPrefab: {fileID: 7228251882027103337, guid: afe57f1d96a0fb4439cd665ff4f5624c, type: 3}
@@ -27,4 +28,5 @@ MonoBehaviour:
   buffedGridPositions: []
   supportType: 0
   buffAmount: 0
+  isGarrisonedTroop: 0
   troopIsImplemented: 0

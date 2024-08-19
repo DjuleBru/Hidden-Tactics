@@ -19,7 +19,10 @@ MonoBehaviour:
   mass: 60
   moveType: 0
   unitMoveSpeed: 80
-  isGarrisonedUnit: 1
+  doesNotMoveGarrisonedUnit: 1
+  isInvisibleGarrisonedUnit: 0
+  mainWeaponSO: {fileID: 0}
   mainAttackSO: {fileID: 11400000, guid: 7869c555994b04542b547d075b1ac9bf, type: 2}
   sideAttackSO: {fileID: 0}
   specialAttackSO: {fileID: 0}
+  damageToVillages: 1

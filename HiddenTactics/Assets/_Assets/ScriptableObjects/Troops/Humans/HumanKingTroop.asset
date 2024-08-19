@@ -13,8 +13,10 @@ MonoBehaviour:
   m_Name: HumanKingTroop
   m_EditorClassIdentifier: 
   troopName: King
-  troopIllustrationSlotSprite: {fileID: 0}
-  troopDescriptionSlotSprite: {fileID: 0}
+  troopDescription: The most royal member of the Royal Army, guarded by less royal
+    humans.
+  troopIllustrationSlotSprite: {fileID: 21300000, guid: 40d6918d184a25742b9deef240bfc96c, type: 3}
+  troopDescriptionSlotSprite: {fileID: 21300000, guid: 03b6a0a4f6cb3a346aabd392020f4766, type: 3}
   troopTypeIconSprite: {fileID: 21300000, guid: 893b08baed36c3643a1fb229647fa27c, type: 3}
   troopPrefab: {fileID: 2495463524177989710, guid: 303fe98e49b5ea44c95da258e02a865e, type: 3}
   unitPrefab: {fileID: 7228251882027103337, guid: 9094d890246214a4983af19decaac9a3, type: 3}
@@ -31,4 +33,5 @@ MonoBehaviour:
   - {x: 1, y: 0}
   supportType: 1
   buffAmount: 0.5
+  isGarrisonedTroop: 0
   troopIsImplemented: 1

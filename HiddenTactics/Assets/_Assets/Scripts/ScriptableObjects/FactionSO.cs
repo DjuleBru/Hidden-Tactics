@@ -39,4 +39,6 @@ public class FactionSO : ScriptableObject
     public List<BuildingSO> buildingsInFaction;
     public List<Sprite> villageSpritesInFaction;
     public List<Sprite> deckSlotSpritesInFaction;
+
+    public Sprite factionVillageIconSpriteUI;
 }

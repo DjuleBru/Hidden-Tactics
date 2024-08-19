@@ -13,9 +13,10 @@ MonoBehaviour:
   m_Name: GreenSkinFlailTroop
   m_EditorClassIdentifier: 
   troopName: Goblin Flails
+  troopDescription: 
   troopIllustrationSlotSprite: {fileID: 21300000, guid: 2cdafbcde36a7df43a775d22a7055104, type: 3}
-  troopDescriptionSlotSprite: {fileID: 0}
-  troopTypeIconSprite: {fileID: 21300000, guid: e7920be881996114f989c68f2c5ae8f7, type: 3}
+  troopDescriptionSlotSprite: {fileID: 21300000, guid: 3e85fd8e674902346a0d32f1b7e6baf1, type: 3}
+  troopTypeIconSprite: {fileID: 21300000, guid: 9f9bd47f25789f24aa9a18291492610a, type: 3}
   troopPrefab: {fileID: 2495463524177989710, guid: 809304bbd5472ba4989b85dbcf20e5af, type: 3}
   unitPrefab: {fileID: 6582105824262927089, guid: 5ed72c41421aebe47a14ea3e26d8d9f1, type: 3}
   additionalUnit1Prefab: {fileID: 0}
@@ -27,4 +28,5 @@ MonoBehaviour:
   buffedGridPositions: []
   supportType: 0
   buffAmount: 0
+  isGarrisonedTroop: 0
   troopIsImplemented: 1

@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44a693b538d454945879116c3a121ddd, type: 3}
   m_Name: DwarfYellowBeardTroop
   m_EditorClassIdentifier: 
-  troopName: Yellow Bear Dwarves
-  troopIllustrationSlotSprite: {fileID: 0}
-  troopDescriptionSlotSprite: {fileID: 0}
+  troopName: Yellow Beards
+  troopDescription: The famous Yellow Beards... They are now fighting among us!
+  troopIllustrationSlotSprite: {fileID: 21300000, guid: f6ea021fac0bd4149a6d53708a2433b2, type: 3}
+  troopDescriptionSlotSprite: {fileID: 21300000, guid: 412b20c9db6a60e41b0321e7731c6684, type: 3}
   troopTypeIconSprite: {fileID: 21300000, guid: 893b08baed36c3643a1fb229647fa27c, type: 3}
   troopPrefab: {fileID: 2495463524177989710, guid: 6ccb6f56e0bc42243b5b4b821f3b89e5, type: 3}
   unitPrefab: {fileID: 7228251882027103337, guid: 10fac841555cdfa4b96e4a682b07b8a2, type: 3}
@@ -33,4 +34,5 @@ MonoBehaviour:
   - {x: 1, y: -1}
   supportType: 3
   buffAmount: 0.5
+  isGarrisonedTroop: 0
   troopIsImplemented: 1

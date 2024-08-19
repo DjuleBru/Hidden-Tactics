@@ -11,6 +11,8 @@ public class GameInput : MonoBehaviour
 
     public event EventHandler OnShowIPlaceableIconPerformed;
     public event EventHandler OnTacticalViewPerformed;
+    public event EventHandler OnLeftClickPerformed;
+    public event EventHandler OnRightClickPerformed;
 
     private void Awake() {
         Instance = this;
@@ -19,6 +21,16 @@ public class GameInput : MonoBehaviour
         playerInputActions.Player.Enable();
         playerInputActions.Player.ShowIPlaceableIcons.performed += ShowIPlaceableIcons_performed;
         playerInputActions.Player.EnableTacticalView.performed += EnableTacticalView_performed;
+        playerInputActions.Player.LeftClick.performed += LeftClick_performed;
+        playerInputActions.Player.RightClick.performed += RightClick_performed;
+    }
+
+    private void RightClick_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj) {
+        OnRightClickPerformed?.Invoke(this, EventArgs.Empty);
+    }
+
+    private void LeftClick_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj) {
+        OnLeftClickPerformed?.Invoke(this, EventArgs.Empty);
     }
 
     private void EnableTacticalView_performed(UnityEngine.InputSystem.InputAction.CallbackContext obj) {

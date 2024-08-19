@@ -13,7 +13,7 @@ public class UnitTargetingSystem : NetworkBehaviour
 
     protected List<ITargetable> mainAttackITargerableList = new List<ITargetable>();
     protected List<ITargetable> sideAttackITargetableList = new List<ITargetable>();
-    protected List<ITargetable> specialAttackITargetableList = new List<ITargetable>();
+    protected List<ITargetable> jumpAttackITargetableList = new List<ITargetable>();
 
     public enum AttackMode {
         mainAttack,
@@ -23,11 +23,11 @@ public class UnitTargetingSystem : NetworkBehaviour
 
     protected AttackSO mainAttackSO;
     protected AttackSO sideAttackSO;
-    protected AttackSO specialAttackSO;
+    protected AttackSO jumpAttackSO;
 
     protected ITargetable mainAttackITargetable;
     protected ITargetable sideAttackITargetable;
-    protected ITargetable specialAttackITargetable;
+    protected ITargetable jumpAttackITargetable;
 
     protected float distanceToClosestTargetITargetable;
     protected bool ITargetableIsInRange;
@@ -40,7 +40,7 @@ public class UnitTargetingSystem : NetworkBehaviour
 
         mainAttackSO = unit.GetUnitSO().mainAttackSO;
         sideAttackSO = unit.GetUnitSO().sideAttackSO;
-        specialAttackSO = unit.GetUnitSO().specialAttackSO;
+        jumpAttackSO = unit.GetUnitSO().jumpAttackSO;
     }
 
     protected void Start() {
@@ -49,8 +49,8 @@ public class UnitTargetingSystem : NetworkBehaviour
         if(sideAttackSO != null) {
             sideAttackGridPositionTargetList = FillGridPositionAttackTargetList(sideAttackSO);
         }
-        if(specialAttackSO != null) {
-            specialAttackGridPositionTargetList = FillGridPositionAttackTargetList(specialAttackSO);
+        if(jumpAttackSO != null) {
+            specialAttackGridPositionTargetList = FillGridPositionAttackTargetList(jumpAttackSO);
         }
     }
 
@@ -68,8 +68,8 @@ public class UnitTargetingSystem : NetworkBehaviour
             if (sideAttackSO != null) {
                 sideAttackITargetableList = FindAttackTargetList(sideAttackSO, sideAttackGridPositionTargetList);
             }
-            if (specialAttackSO != null) {
-                specialAttackITargetableList = FindAttackTargetList(specialAttackSO, specialAttackGridPositionTargetList);
+            if (jumpAttackSO != null) {
+                jumpAttackITargetableList = FindAttackTargetList(jumpAttackSO, specialAttackGridPositionTargetList);
             }
 
             mainAttackITargetable = FindAttackTarget(mainAttackSO, mainAttackITargerableList, mainAttackITargetable);
@@ -77,8 +77,8 @@ public class UnitTargetingSystem : NetworkBehaviour
             if (sideAttackSO != null) {
                 sideAttackITargetable = FindAttackTarget(sideAttackSO, sideAttackITargetableList, sideAttackITargetable);
             }
-            if (specialAttackSO != null) {
-                specialAttackITargetable = FindAttackTarget(specialAttackSO, specialAttackITargetableList, specialAttackITargetable);
+            if (jumpAttackSO != null) {
+                jumpAttackITargetable = FindAttackTarget(jumpAttackSO, jumpAttackITargetableList, jumpAttackITargetable);
             }
         }
     }
@@ -96,9 +96,9 @@ public class UnitTargetingSystem : NetworkBehaviour
             }
         }
 
-        if (specialAttackITargetable != null) {
-            if (specialAttackITargetable.GetIsDead()) {
-                specialAttackITargetable = null;
+        if (jumpAttackITargetable != null) {
+            if (jumpAttackITargetable.GetIsDead()) {
+                jumpAttackITargetable = null;
             }
         }
     }
@@ -107,7 +107,7 @@ public class UnitTargetingSystem : NetworkBehaviour
         if (targetList.Count > 0) {
             // There are potential targets within targeting range of attack
 
-            if (attackSO.attackType == AttackSO.AttackType.melee) {
+            if (attackSO.attackType == AttackSO.AttackType.melee || attackSO.attackType == AttackSO.AttackType.jump) {
                 // Melee attack : constantly re-evaluate attack target
                 target = FindClosestAttackTarget(targetList);
             }
@@ -140,7 +140,7 @@ public class UnitTargetingSystem : NetworkBehaviour
     protected List<ITargetable> FindAttackTargetList(AttackSO attackSO, List<GridPosition> rangedGridPositionTargetList) {
         List<ITargetable> targetUnitList = new List<ITargetable>();
 
-        if(attackSO.attackType == AttackSO.AttackType.melee) {
+        if(attackSO.attackType == AttackSO.AttackType.melee || attackSO.attackType == AttackSO.AttackType.jump) {
             targetUnitList = GetMeleeAttackTargetList(attackSO);
         }
 
@@ -397,7 +397,7 @@ public class UnitTargetingSystem : NetworkBehaviour
     }
 
     public ITargetable GetSpecialAttackTarget() {
-        return specialAttackITargetable;
+        return jumpAttackITargetable;
     }
 
     public ITargetable GetRandomMainAttackTarget() {

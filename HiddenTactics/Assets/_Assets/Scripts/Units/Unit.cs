@@ -13,6 +13,7 @@ public class Unit : NetworkBehaviour, ITargetable {
     public event EventHandler OnUnitSpawned;
     public event EventHandler OnUnitPlaced;
     public event EventHandler OnUnitDied;
+    public static event EventHandler OnAnyUnitDied;
     public event EventHandler OnUnitReset;
     public event EventHandler OnUnitFell;
     public event EventHandler OnUnitSold;
@@ -202,7 +203,7 @@ public class Unit : NetworkBehaviour, ITargetable {
 
     protected virtual void ParentTroop_OnTroopPlaced(object sender, System.EventArgs e) {
 
-        if(unitSO.isGarrisonedUnit) {
+        if(unitSO.doesNotMoveGarrisonedUnit) {
             collider2d.enabled = false;
             SetParentBuilding();
         }
@@ -231,7 +232,7 @@ public class Unit : NetworkBehaviour, ITargetable {
         transform.localPosition = unitPositionInTroop;
         unitIsDead = false;
 
-        if (!unitSO.isGarrisonedUnit & unitIsBought) {
+        if (!unitSO.doesNotMoveGarrisonedUnit & unitIsBought) {
             collider2d.enabled = true;
         }
         RemoveAllSpecialEffects();
@@ -352,6 +353,7 @@ public class Unit : NetworkBehaviour, ITargetable {
 
     public virtual void Die() {
         OnUnitDied?.Invoke(this, EventArgs.Empty);
+        OnAnyUnitDied?.Invoke(this, EventArgs.Empty);
         unitIsDead = true;
         collider2d.enabled = false;
 
@@ -554,6 +556,12 @@ public class Unit : NetworkBehaviour, ITargetable {
         OnUnitSetAsAdditionalUnit?.Invoke(this, EventArgs.Empty);
     }
 
+    public void SetUnitAsSpawnedUnit(bool isSpawnedUnit) {
+        // Ony for wolf because he is not DYNAMICALLY spawned
+        this.isSpawnedUnit = isSpawnedUnit;
+    }
+
+
     #endregion
 
     public void InvokeOnUnitPlaced() {
@@ -579,8 +587,9 @@ public class Unit : NetworkBehaviour, ITargetable {
     [ClientRpc]
     private void ActivateAdditionalUnitClientRpc() {
         unitIsBought = true;
+        unitIsPlaced = true;
 
-        if(PlayerAction_SelectIPlaceable.LocalInstance.IsTroopSelected(parentTroop)) {
+        if (PlayerAction_SelectIPlaceable.LocalInstance.IsTroopSelected(parentTroop)) {
             OnUnitSelected?.Invoke(this, EventArgs.Empty);
         }
 

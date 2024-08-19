@@ -13,9 +13,10 @@ MonoBehaviour:
   m_Name: HumanSamuraiTroop
   m_EditorClassIdentifier: 
   troopName: Samurais
-  troopIllustrationSlotSprite: {fileID: 0}
-  troopDescriptionSlotSprite: {fileID: 0}
-  troopTypeIconSprite: {fileID: 21300000, guid: e7920be881996114f989c68f2c5ae8f7, type: 3}
+  troopDescription: Mighty armored warriors weilding shiny curved blades.
+  troopIllustrationSlotSprite: {fileID: 21300000, guid: 2c3278d41b8d1e64c9c9339834b32759, type: 3}
+  troopDescriptionSlotSprite: {fileID: 21300000, guid: 30eef3f4e5f596247976db91215161fb, type: 3}
+  troopTypeIconSprite: {fileID: 21300000, guid: 9f9bd47f25789f24aa9a18291492610a, type: 3}
   troopPrefab: {fileID: 2495463524177989710, guid: 38e3e7914ed183d4dbad1b690b92f75e, type: 3}
   unitPrefab: {fileID: 7228251882027103337, guid: 0ecde1f332fde82498654f8c7a96428a, type: 3}
   additionalUnit1Prefab: {fileID: 0}
@@ -27,4 +28,5 @@ MonoBehaviour:
   buffedGridPositions: []
   supportType: 0
   buffAmount: 0
+  isGarrisonedTroop: 0
   troopIsImplemented: 1

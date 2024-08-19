@@ -12,15 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4bc7b5eb9df2cac4eae406c9d717c5aa, type: 3}
   m_Name: HumanGiant
   m_EditorClassIdentifier: 
-  unitTagList: 00000000
+  unitKeywordsList: 0300000000000000
   unitTargetType: 0
   HP: 100
   armor: 0
   mass: 1000
   moveType: 0
   unitMoveSpeed: 50
-  isGarrisonedUnit: 0
+  doesNotMoveGarrisonedUnit: 0
+  isInvisibleGarrisonedUnit: 0
+  mainWeaponSO: {fileID: 0}
   mainAttackSO: {fileID: 11400000, guid: 7b735deec11654243a3d702854c9ff3a, type: 2}
   sideAttackSO: {fileID: 0}
   specialAttackSO: {fileID: 0}
-  damageToVillages: 3
+  damageToVillages: 1

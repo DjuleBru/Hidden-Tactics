@@ -13,9 +13,11 @@ MonoBehaviour:
   m_Name: HumanSpearmanTroop
   m_EditorClassIdentifier: 
   troopName: Spearmen
+  troopDescription: Their long spears make these proud infantrymen best at handling
+    large targets.
   troopIllustrationSlotSprite: {fileID: 21300000, guid: b05a42f6c6f6fd34983d70ae447376a1, type: 3}
-  troopDescriptionSlotSprite: {fileID: 0}
-  troopTypeIconSprite: {fileID: 21300000, guid: e7920be881996114f989c68f2c5ae8f7, type: 3}
+  troopDescriptionSlotSprite: {fileID: 21300000, guid: 20b550c9cba04924ea2a2f0980424991, type: 3}
+  troopTypeIconSprite: {fileID: 21300000, guid: 9f9bd47f25789f24aa9a18291492610a, type: 3}
   troopPrefab: {fileID: 2495463524177989710, guid: f5170a040ae3af7449cbc4cdcf7c721c, type: 3}
   unitPrefab: {fileID: 6582105824262927089, guid: 974a18b8d382e7e49970efa5bd60d332, type: 3}
   additionalUnit1Prefab: {fileID: 0}
@@ -27,4 +29,5 @@ MonoBehaviour:
   buffedGridPositions: []
   supportType: 0
   buffAmount: 0
+  isGarrisonedTroop: 0
   troopIsImplemented: 1

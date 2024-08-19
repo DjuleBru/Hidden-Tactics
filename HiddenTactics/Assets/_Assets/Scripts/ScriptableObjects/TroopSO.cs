@@ -6,6 +6,7 @@ using UnityEngine;
 public class TroopSO : ScriptableObject {
 
     public string troopName;
+    public string troopDescription;
     public Sprite troopIllustrationSlotSprite;
     public Sprite troopDescriptionSlotSprite;
     public Sprite troopTypeIconSprite;

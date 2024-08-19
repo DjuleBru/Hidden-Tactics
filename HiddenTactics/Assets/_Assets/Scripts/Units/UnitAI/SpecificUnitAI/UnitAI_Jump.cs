@@ -23,7 +23,7 @@ public class UnitAI_Jump : UnitAI
     }
 
     protected void Start() {
-        unitAttack.SetActiveAttackSO(unit.GetUnitSO().specialAttackSO);
+        unitAttack.SetActiveAttackSO(unit.GetUnitSO().jumpAttackSO);
     }
 
     protected void Update() {
@@ -40,7 +40,7 @@ public class UnitAI_Jump : UnitAI
 
         if (state.Value == State.idle) {
             specialActive = true;
-            unitAttack.SetActiveAttackSO(unit.GetUnitSO().specialAttackSO);
+            unitAttack.SetActiveAttackSO(unit.GetUnitSO().jumpAttackSO);
         }
 
         if (state.Value == State.attackingMelee) {
@@ -78,7 +78,7 @@ public class UnitAI_Jump : UnitAI
         unit.TakeDazed(jumpAnimationTime);
         unit.TakeKnockBack(jumpForceVector3);
 
-        unitAttack.SetActiveAttackSO(unit.GetUnitSO().specialAttackSO);
+        unitAttack.SetActiveAttackSO(unit.GetUnitSO().jumpAttackSO);
         unitVisual.EnableTrailRenderer();
         unit.DisableCollider();
         jumpTimer = jumpAnimationTime;

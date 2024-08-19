@@ -12,10 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44a693b538d454945879116c3a121ddd, type: 3}
   m_Name: DwarfAxeTroop
   m_EditorClassIdentifier: 
-  troopName: Axes
+  troopName: Axeman
+  troopDescription: Never ask an Axeman if he prefers his axe of his shield
   troopIllustrationSlotSprite: {fileID: 21300000, guid: 25accdbe1dd79f541acaec2f1f72eaf1, type: 3}
-  troopDescriptionSlotSprite: {fileID: 0}
-  troopTypeIconSprite: {fileID: 21300000, guid: e7920be881996114f989c68f2c5ae8f7, type: 3}
+  troopDescriptionSlotSprite: {fileID: 21300000, guid: a9b69409ef46b534aa49ad1cd8c410cb, type: 3}
+  troopTypeIconSprite: {fileID: 21300000, guid: 9f9bd47f25789f24aa9a18291492610a, type: 3}
   troopPrefab: {fileID: 2495463524177989710, guid: ee78e2bf8efd62f41b13a48aedd470ff, type: 3}
   unitPrefab: {fileID: 6582105824262927089, guid: 5b3882cb0fb4a284ebdc1595b3f1ad00, type: 3}
   additionalUnit1Prefab: {fileID: 0}
@@ -27,4 +28,5 @@ MonoBehaviour:
   buffedGridPositions: []
   supportType: 0
   buffAmount: 0
+  isGarrisonedTroop: 0
   troopIsImplemented: 1

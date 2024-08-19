@@ -13,9 +13,10 @@ MonoBehaviour:
   m_Name: Level4_DemonLordTroop
   m_EditorClassIdentifier: 
   troopName: Demon Lord
+  troopDescription: 
   troopIllustrationSlotSprite: {fileID: 21300000, guid: da2ecd9d05ef1f743954d2134ae296bf, type: 3}
   troopDescriptionSlotSprite: {fileID: 0}
-  troopTypeIconSprite: {fileID: 21300000, guid: e7920be881996114f989c68f2c5ae8f7, type: 3}
+  troopTypeIconSprite: {fileID: 21300000, guid: 9f9bd47f25789f24aa9a18291492610a, type: 3}
   troopPrefab: {fileID: 2495463524177989710, guid: 201b9d3221d1b2a4d86c6b08321523e8, type: 3}
   unitPrefab: {fileID: 7228251882027103337, guid: c1b327c31cd8c3246a611ae5b3fd8b64, type: 3}
   additionalUnit1Prefab: {fileID: 0}
@@ -27,4 +28,5 @@ MonoBehaviour:
   buffedGridPositions: []
   supportType: 0
   buffAmount: 0
+  isGarrisonedTroop: 0
   troopIsImplemented: 1

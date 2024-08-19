@@ -13,9 +13,10 @@ MonoBehaviour:
   m_Name: Level1_ImpTroop
   m_EditorClassIdentifier: 
   troopName: Imps
+  troopDescription: 
   troopIllustrationSlotSprite: {fileID: 21300000, guid: 6bde18bbebb11274eb4d8cbf05308186, type: 3}
   troopDescriptionSlotSprite: {fileID: 0}
-  troopTypeIconSprite: {fileID: 21300000, guid: e7920be881996114f989c68f2c5ae8f7, type: 3}
+  troopTypeIconSprite: {fileID: 21300000, guid: 97d8434728d6958408988008d0b123a8, type: 3}
   troopPrefab: {fileID: 2495463524177989710, guid: 986327be068212e4abfa10148fe7558c, type: 3}
   unitPrefab: {fileID: 7228251882027103337, guid: b404faee30f3f80488513332e3aa5525, type: 3}
   additionalUnit1Prefab: {fileID: 0}
@@ -27,4 +28,5 @@ MonoBehaviour:
   buffedGridPositions: []
   supportType: 0
   buffAmount: 0
+  isGarrisonedTroop: 0
   troopIsImplemented: 1

@@ -32,6 +32,7 @@ public class TroopTypeUI : NetworkBehaviour, IPointerEnterHandler, IPointerExitH
     private float worldIconScale;
 
     private bool troopIsGarrisoned;
+    private bool troopIsDead;
     private Button button;
 
     private void Awake() {
@@ -93,6 +94,7 @@ public class TroopTypeUI : NetworkBehaviour, IPointerEnterHandler, IPointerExitH
 
     private void BattleManager_OnStateChanged(object sender, System.EventArgs e) {
         if(!BattleManager.Instance.IsPreparationPhase()) {
+            troopIsDead = false;
             SetIconStandardView();
         }
     }
@@ -108,7 +110,6 @@ public class TroopTypeUI : NetworkBehaviour, IPointerEnterHandler, IPointerExitH
             building.OnBuildingSelled += Building_OnBuildingSelled;
         }
     }
-
 
     private void SetBackgroundSprite() {
         FactionSO deckFactionSO = DeckManager.LocalInstance.GetDeckSelected().deckFactionSO;
@@ -134,6 +135,7 @@ public class TroopTypeUI : NetworkBehaviour, IPointerEnterHandler, IPointerExitH
     private void Troop_OnTroopHPChanged(object sender, System.EventArgs e) {
         if(troop.GetTroopHPNormalized() <= 0) {
             typeUIGameObject.SetActive(false);
+            troopIsDead = true;
         }
     }
 
@@ -196,6 +198,7 @@ public class TroopTypeUI : NetworkBehaviour, IPointerEnterHandler, IPointerExitH
         }
         if (building != null) {
             BattlePhaseIPlaceablePanel.Instance.OpenIPlaceableCard(building);
+
         }
     }
 
@@ -313,7 +316,7 @@ public class TroopTypeUI : NetworkBehaviour, IPointerEnterHandler, IPointerExitH
     }
 
     private void SettingsManager_OnShowTacticalIconsEnabled(object sender, System.EventArgs e) {
-        if (troopIsGarrisoned) return;
+        if (troopIsGarrisoned || troopIsDead) return;
 
         active_PlayerInput = SettingsManager.Instance.GetShowTacticalIconSetting();
 

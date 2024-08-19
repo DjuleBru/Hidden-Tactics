@@ -17,8 +17,7 @@ public class TreeSpiritAttack : UnitAttack
         yield return new WaitForSeconds(activeAttackSO.meleeAttackAnimationHitDelay);
         foreach (Unit unitAOETarget in FindAOEAttackTargets(transform.position, 1.5f, true)) {
             // Die effect
-            Debug.Log(unitAOETarget);
-            unitAOETarget.GetComponent<UnitHP>().Heal(activeAttackSO.attackDamage * dieHealMultiplier);
+            unitAOETarget.GetComponent<UnitHP>().Heal(unit.GetUnitSO().deathTriggerAttackSO.attackDamage);
         }
     }
 }

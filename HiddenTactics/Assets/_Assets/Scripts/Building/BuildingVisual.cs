@@ -37,9 +37,11 @@ public class BuildingVisual : NetworkBehaviour
         if (!building.GetBuildingIsOnlyVisual()) {
             if (SettingsManager.Instance.GetTacticalViewSetting()) {
                 ChangeSpriteRendererListMaterial(buildingSpriteRendererList, invisibleMaterial);
+                ChangeSpriteRendererListMaterial(shadowSpriteRendererList, invisibleMaterial);
             }
             else {
                 ChangeSpriteRendererListMaterial(buildingSpriteRendererList, placingMaterial);
+                ChangeSpriteRendererListMaterial(shadowSpriteRendererList, shadowMaterial);
             }
 
             SettingsManager.Instance.OnTacticalViewEnabled += SettingsManager_OnTacticalViewEnabled;

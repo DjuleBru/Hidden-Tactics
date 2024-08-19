@@ -9,7 +9,7 @@ public class UnitAttack_Spearman : UnitAttack
         float attackDamageModified = attackDamage;
 
         Unit targetUnit = (Unit)target;
-        if (targetUnit.GetUnitSO().unitTagList.Contains(UnitSO.UnitTag.large)) {
+        if (targetUnit.GetUnitSO().unitKeywordsList.Contains(UnitSO.UnitKeyword.Large)) {
             attackDamageModified = attackDamage * largeUnitDamageMultiplier;
         }
 

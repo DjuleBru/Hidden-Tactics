@@ -520,7 +520,7 @@ PrefabInstance:
     - target: {fileID: 5099548929421653523, guid: e3e93ece8e3f9f342bf64a8dd15cb760, type: 3}
       propertyPath: building
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 6193232879982273500}
     - target: {fileID: 7236345148894600409, guid: e3e93ece8e3f9f342bf64a8dd15cb760, type: 3}
       propertyPath: m_IsActive
       value: 1
@@ -660,6 +660,7 @@ MonoBehaviour:
   buildingUI: {fileID: 2224500848692155775}
   farmGoldRevenue: 3
   psDelayBetweenParticles: 0.5
+  buildingName: Mine
   goldPS: {fileID: 4371550772196049509}
 --- !u!114 &2183601373864415379 stripped
 MonoBehaviour:

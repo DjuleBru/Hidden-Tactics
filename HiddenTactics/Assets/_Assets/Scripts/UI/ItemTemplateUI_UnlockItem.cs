@@ -9,18 +9,17 @@ public class ItemTemplateUI_UnlockItem : ItemTemplateUI, IPointerEnterHandler, I
 {
     [SerializeField] protected Button unlockItemButton;
 
-    public void OnPointerEnter(PointerEventData eventData) {
+    public override void OnPointerEnter(PointerEventData eventData) {
+        base.OnPointerEnter(eventData);
         PlayerStateUI.Instance.SetPlayerGoldChangingUI(-BattleDeckUI.Instance.GetNextUnlockCost());
     }
 
-    public void OnPointerExit(PointerEventData eventData) {
+    public override void OnPointerExit(PointerEventData eventData) {
+        base.OnPointerExit(eventData);
         PlayerStateUI.Instance.ResetPlayerGoldChangingUI();
     }
 
     private void Awake() {
-
-
-
         unlockItemButton.onClick.AddListener(() => { 
 
             if(troopSO != null) {

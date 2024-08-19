@@ -38,8 +38,6 @@ public class UnitVisual : NetworkBehaviour
 
     public event EventHandler OnUnitVisualPlacingMaterialSet;
 
-    protected bool unitIsSpawnedDynamically;
-
     protected virtual void Awake() {
         if (unit.GetUnitSO().isInvisibleGarrisonedUnit) return;
 
@@ -96,7 +94,7 @@ public class UnitVisual : NetworkBehaviour
         if (!unit.GetUnitIsOnlyVisual()) {
             if (!unit.IsOwnedByPlayer()) return;
 
-            if(!unitIsSpawnedDynamically && !unit.GetUnitIsDynamicallySpawnedUnit()) {
+            if(!unit.GetUnitIsDynamicallySpawnedUnit()) {
                 // Unit is a basic unit
 
                 if(SettingsManager.Instance.GetTacticalViewSetting()) {
@@ -129,10 +127,11 @@ public class UnitVisual : NetworkBehaviour
         } else {
 
             if (!unit.IsOwnedByPlayer() || unit.GetUnitIsBought()) return;
-            if (unitIsSpawnedDynamically || unit.GetUnitIsDynamicallySpawnedUnit()) return;
+            if (unit.GetUnitIsDynamicallySpawnedUnit()) return;
 
             ChangeSpriteRendererListMaterial(allVisualsSpriteRendererList, placingUnitMaterial);
         }
+
         foreach (GameObject shadowGameObject in shadowGameObjectList) {
             shadowGameObject.SetActive(true);
         }
@@ -161,7 +160,6 @@ public class UnitVisual : NetworkBehaviour
     private void SettingsManager_OnShowTacticalIconsDisabled(object sender, EventArgs e) {
         if (SettingsManager.Instance.GetTacticalViewSetting()) {
             SetUnitCircleGameObjectsActive(true);
-
             if (unit.GetUnitIsPlaced()) {
 
                 ChangeSpriteRendererListMaterial(allVisualsSpriteRendererList, cleanMaterial);
@@ -169,7 +167,7 @@ public class UnitVisual : NetworkBehaviour
             else {
 
                 if (!unit.IsOwnedByPlayer() || unit.GetUnitIsBought()) return;
-                if (unitIsSpawnedDynamically || unit.GetUnitIsDynamicallySpawnedUnit()) return;
+                if (unit.GetUnitIsDynamicallySpawnedUnit()) return;
 
                 ChangeSpriteRendererListMaterial(allVisualsSpriteRendererList, placingUnitMaterial);
             }
@@ -208,6 +206,7 @@ public class UnitVisual : NetworkBehaviour
     protected void Unit_OnAdditionalUnitActivated(object sender, System.EventArgs e) {
         if (SettingsManager.Instance.GetTacticalViewSetting()) return;
         ChangeSpriteRendererListMaterial(allVisualsSpriteRendererList, cleanMaterial);
+        SetFactionVisualColor();
 
         //Activate shadows
         foreach (GameObject shadowGameObject in shadowGameObjectList) {
@@ -216,8 +215,8 @@ public class UnitVisual : NetworkBehaviour
     }
 
     private void Unit_OnUnitDynamicallySpawned(object sender, EventArgs e) {
-        unitIsSpawnedDynamically = true;
         ChangeSpriteRendererListMaterial(allVisualsSpriteRendererList, cleanMaterial);
+        SetFactionVisualColor();
 
         //Activate shadows
         foreach (GameObject shadowGameObject in shadowGameObjectList) {
@@ -327,22 +326,22 @@ public class UnitVisual : NetworkBehaviour
     }
 
     private void Unit_OnUnitUnselected(object sender, EventArgs e) {
-        if (unit.GetUnitSO().isGarrisonedUnit) return;
+        if (unit.GetUnitSO().isInvisibleGarrisonedUnit) return;
         SetUnitSelected(false);
     }
 
     private void Unit_OnUnitSelected(object sender, EventArgs e) {
-        if (unit.GetUnitSO().isGarrisonedUnit) return;
+        if (unit.GetUnitSO().isInvisibleGarrisonedUnit) return;
         SetUnitSelected(true);
     }
 
     private void Unit_OnUnitUnhovered(object sender, EventArgs e) {
-        if (unit.GetUnitSO().isGarrisonedUnit) return;
+        if (unit.GetUnitSO().isInvisibleGarrisonedUnit) return;
         SetUnitHovered(false);
     }
 
     private void Unit_OnUnitHovered(object sender, EventArgs e) {
-        if (unit.GetUnitSO().isGarrisonedUnit) return;
+        if (unit.GetUnitSO().isInvisibleGarrisonedUnit) return;
         if (SettingsManager.Instance.GetTacticalViewSetting()) return;
         SetUnitHovered(true);
     }

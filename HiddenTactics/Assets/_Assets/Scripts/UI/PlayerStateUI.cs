@@ -13,6 +13,10 @@ public class PlayerStateUI : MonoBehaviour {
 
     [SerializeField] private Image playerIconImage;
     [SerializeField] private Image playerIconShadowImage;
+    [SerializeField] private Image villagesImage;
+    [SerializeField] private Image villagesShadowImage;
+    [SerializeField] private Image heroImage;
+    [SerializeField] private Image heroShadowImage;
 
     [SerializeField] private TextMeshProUGUI playerGoldText;
     [SerializeField] private TextMeshProUGUI playerGoldChangingText;
@@ -51,6 +55,7 @@ public class PlayerStateUI : MonoBehaviour {
     [SerializeField] private Image goldbackgroundImage;
     [SerializeField] private Image villagesbackgroundBorderImage;
     [SerializeField] private Image villagesbackgroundImage;
+
 
     private void Awake() {
         playerReadyGameObject.gameObject.SetActive(false);
@@ -103,6 +108,9 @@ public class PlayerStateUI : MonoBehaviour {
 
         villagesbackgroundBorderImage.sprite = deckFactionSO.slotBorder;
         villagesbackgroundImage.sprite = deckFactionSO.slotBackground;
+
+        villagesImage.sprite = deckFactionSO.factionVillageIconSpriteUI;
+        villagesShadowImage.sprite = deckFactionSO.factionVillageIconSpriteUI;
 
         if (!isOpponentPanel) {
             goldbackgroundBorderImage.sprite = deckFactionSO.slotBorder;

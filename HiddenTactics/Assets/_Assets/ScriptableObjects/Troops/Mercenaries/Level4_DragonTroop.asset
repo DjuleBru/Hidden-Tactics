@@ -13,9 +13,10 @@ MonoBehaviour:
   m_Name: Level4_DragonTroop
   m_EditorClassIdentifier: 
   troopName: Dragon
+  troopDescription: 
   troopIllustrationSlotSprite: {fileID: 21300000, guid: ca9f5d3df0849bb49810a6d5fad5b3ac, type: 3}
   troopDescriptionSlotSprite: {fileID: 0}
-  troopTypeIconSprite: {fileID: 21300000, guid: e7920be881996114f989c68f2c5ae8f7, type: 3}
+  troopTypeIconSprite: {fileID: 21300000, guid: 9f9bd47f25789f24aa9a18291492610a, type: 3}
   troopPrefab: {fileID: 2495463524177989710, guid: 667da7332afe85442990e74d361e44b2, type: 3}
   unitPrefab: {fileID: 7228251882027103337, guid: a5210dfac86b77a47a896521fbeb9e14, type: 3}
   additionalUnit1Prefab: {fileID: 0}
@@ -27,4 +28,5 @@ MonoBehaviour:
   buffedGridPositions: []
   supportType: 0
   buffAmount: 0
+  isGarrisonedTroop: 0
   troopIsImplemented: 1

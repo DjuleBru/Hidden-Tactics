@@ -13,11 +13,16 @@ MonoBehaviour:
   m_Name: DwarfMechanicalWarrior
   m_EditorClassIdentifier: 
   unitTagList: 
+  unitTargetType: 0
   HP: 100
   armor: 0
   mass: 150
   moveType: 0
   unitMoveSpeed: 60
+  isGarrisonedUnit: 0
+  isInvisibleGarrisonedUnit: 0
+  mainWeaponSO: {fileID: 0}
   mainAttackSO: {fileID: 11400000, guid: 296ef5cb3ccbf2f41865252b2b9e29fa, type: 2}
   sideAttackSO: {fileID: 0}
   specialAttackSO: {fileID: 0}
+  damageToVillages: 1

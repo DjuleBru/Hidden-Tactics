@@ -12,14 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85abc532579c0ec4d839a1a1bcb04732, type: 3}
   m_Name: ElfWolfDen
   m_EditorClassIdentifier: 
+  buildingName: 
   buildingIllustrationSlotSprite: {fileID: 0}
   buildingDescriptionSlotSprite: {fileID: 0}
   buildingTypeSprite: {fileID: 21300000, guid: 5257bbe50269dea4881bc0ca050177ea, type: 3}
   buildingPrefab: {fileID: 539002622979983450, guid: 221ff2d989f8f3848bc9e01e01838d36, type: 3}
   buildingHP: 100
   buildingBlocksUnitMovement: 1
-  hasGarrisonedTroop: 0
-  garrisonedTroopSO: {fileID: 0}
+  hasGarrisonedTroop: 1
+  garrisonedTroopSO: {fileID: 11400000, guid: 58d9c9047025a5f4ab3a22d28dd75a55, type: 2}
   spawnBuildingCost: 0
   upgradeBuildingCost: 0
   buildingIsImplemented: 0

@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: ElfDireBearTroop
   m_EditorClassIdentifier: 
   troopName: Dire Bears
+  troopDescription: The forest's most feared predator.Stay away from it's children.
   troopIllustrationSlotSprite: {fileID: 21300000, guid: 825c0e8be75c5da41b3bd4915987d7b0, type: 3}
-  troopDescriptionSlotSprite: {fileID: 0}
+  troopDescriptionSlotSprite: {fileID: 21300000, guid: aa1cef63c371412489568a920ba77473, type: 3}
   troopTypeIconSprite: {fileID: 21300000, guid: dc97a0ca5e319e940a1d154b6098e535, type: 3}
   troopPrefab: {fileID: 2495463524177989710, guid: e6f58cd8a46f95e4bb961acedab1140d, type: 3}
   unitPrefab: {fileID: 7228251882027103337, guid: cc36cf48e6e3ab943851255ee3cce133, type: 3}
@@ -27,4 +28,5 @@ MonoBehaviour:
   buffedGridPositions: []
   supportType: 0
   buffAmount: 0
+  isGarrisonedTroop: 0
   troopIsImplemented: 1

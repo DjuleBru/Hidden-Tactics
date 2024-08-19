@@ -13,9 +13,10 @@ MonoBehaviour:
   m_Name: DwarfCrossbowTroop
   m_EditorClassIdentifier: 
   troopName: Crossbows
+  troopDescription: Their bolts are forged with wood, iron and lots of love.
   troopIllustrationSlotSprite: {fileID: 21300000, guid: 5f47feb091e674c4582428b8dba9f181, type: 3}
-  troopDescriptionSlotSprite: {fileID: 0}
-  troopTypeIconSprite: {fileID: 21300000, guid: e7920be881996114f989c68f2c5ae8f7, type: 3}
+  troopDescriptionSlotSprite: {fileID: 21300000, guid: 5cd6d799765a4284787b1069f721fafd, type: 3}
+  troopTypeIconSprite: {fileID: 21300000, guid: 479325c2fd721b042aa5463e05286eb0, type: 3}
   troopPrefab: {fileID: 2495463524177989710, guid: 3b269287d4346ec44bd9249ffdc7535d, type: 3}
   unitPrefab: {fileID: 6582105824262927089, guid: 515c2d7503285ee45badb983f0867443, type: 3}
   additionalUnit1Prefab: {fileID: 0}
@@ -27,4 +28,5 @@ MonoBehaviour:
   buffedGridPositions: []
   supportType: 0
   buffAmount: 0
+  isGarrisonedTroop: 0
   troopIsImplemented: 1

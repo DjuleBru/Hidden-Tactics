@@ -17,43 +17,43 @@ public class Troop : NetworkBehaviour, IPlaceable {
     public float maxTroopHP;
     public float troopHP;
 
-    private ulong ownerClientId;
+    protected ulong ownerClientId;
 
-    private bool isPlaced;
-    private bool isOwnedByPlayer;
-    private bool additionalUnitsHaveBeenBought;
+    protected bool isPlaced;
+    protected bool isOwnedByPlayer;
+    protected bool additionalUnitsHaveBeenBought;
 
-    [SerializeField] private bool debugMode;
-    [SerializeField] private TroopSO troopSO;
-    [SerializeField] private Transform troopCenterPoint;
-    [SerializeField] private TroopUI troopUI;
-    [SerializeField] private TroopTypeUI troopTypeUI;
+    [SerializeField] protected bool debugMode;
+    [SerializeField] protected TroopSO troopSO;
+    [SerializeField] protected Transform troopCenterPoint;
+    [SerializeField] protected TroopUI troopUI;
+    [SerializeField] protected TroopTypeUI troopTypeUI;
 
-    private List<Unit> allUnitsInTroop;
-    private List<Unit> additionalUnitsInTroop;
-    private List<Unit> spawnedUnitsInTroop;
-    private Building parentBuilding;
-    private int spawnedUnitActivatedIndex;
+    protected List<Unit> allUnitsInTroop;
+    protected List<Unit> additionalUnitsInTroop;
+    protected List<Unit> spawnedUnitsInTroop;
+    protected Building parentBuilding;
+    protected int spawnedUnitActivatedIndex;
 
-    [SerializeField] private List<Transform> baseUnitPositions = new List<Transform>();
-    [SerializeField] private List<Transform> additionalUnitPositions = new List<Transform>();
-    [SerializeField] private List<Transform> baseUnit1Positions = new List<Transform>();
-    [SerializeField] private List<Transform> additionalUnit1Positions = new List<Transform>();
-    [SerializeField] private List<Transform> baseUnit2Positions = new List<Transform>();
-    [SerializeField] private List<Transform> additionalUnit2Positions = new List<Transform>();
-    [SerializeField] private List<Transform> spawnedUnitPositions = new List<Transform>();
-    [SerializeField] private Transform allUnitsMiddlePoint;
+    [SerializeField] protected List<Transform> baseUnitPositions = new List<Transform>();
+    [SerializeField] protected List<Transform> additionalUnitPositions = new List<Transform>();
+    [SerializeField] protected List<Transform> baseUnit1Positions = new List<Transform>();
+    [SerializeField] protected List<Transform> additionalUnit1Positions = new List<Transform>();
+    [SerializeField] protected List<Transform> baseUnit2Positions = new List<Transform>();
+    [SerializeField] protected List<Transform> additionalUnit2Positions = new List<Transform>();
+    [SerializeField] protected List<Transform> spawnedUnitPositions = new List<Transform>();
+    [SerializeField] protected Transform allUnitsMiddlePoint;
 
-    private GridPosition currentGridPosition;
-    private Transform battlefieldOwner;
-    private Vector3 battlefieldOffset;
+    protected GridPosition currentGridPosition;
+    protected Transform battlefieldOwner;
+    protected Vector3 battlefieldOffset;
 
-    private bool troopWasPlacedThisPreparationPhase = true;
-    private bool troopHovered;
-    private bool troopSelected;
-    private bool troopSelled;
+    protected bool troopWasPlacedThisPreparationPhase = true;
+    protected bool troopHovered;
+    protected bool troopSelected;
+    protected bool troopSelled;
 
-    private void Awake() {
+    protected void Awake() {
         allUnitsInTroop = new List<Unit>();
         additionalUnitsInTroop = new List<Unit>();
         spawnedUnitsInTroop = new List<Unit>();
@@ -90,7 +90,7 @@ public class Troop : NetworkBehaviour, IPlaceable {
         }
     }
 
-    private void Start() {
+    protected void Start() {
         if (debugMode) {
             PlaceIPlaceable();
             Unit[] unitArray = GetComponentsInChildren<Unit>();
@@ -111,7 +111,7 @@ public class Troop : NetworkBehaviour, IPlaceable {
         BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
     }
 
-    private void Update() {
+    protected void Update() {
         HandleAllUnitsMiddlePoint();
         if (!isPlaced) {
             HandlePositioningOnGrid();
@@ -121,7 +121,7 @@ public class Troop : NetworkBehaviour, IPlaceable {
         }
     }
 
-    private void BattleManager_OnStateChanged(object sender, EventArgs e) {
+    protected virtual void BattleManager_OnStateChanged(object sender, EventArgs e) {
 
         if(BattleManager.Instance.IsBattlePhaseStarting()) {
 
@@ -181,7 +181,7 @@ public class Troop : NetworkBehaviour, IPlaceable {
         transform.position = battlefieldOwner.position + battlefieldOffset;
     }
 
-    private void HandleAllUnitsMiddlePoint() {
+    protected void HandleAllUnitsMiddlePoint() {
         if(BattleManager.Instance.IsBattlePhase()) {
             Vector3 allUnitsSum = Vector3.zero;
             int allUnitsCount = 0;
@@ -234,12 +234,12 @@ public class Troop : NetworkBehaviour, IPlaceable {
     }
 
     [ServerRpc(RequireOwnership = false)]
-    private void BuyAdditionalUnitsServerRpc() {
+    protected void BuyAdditionalUnitsServerRpc() {
         BuyAdditionalUnitsClientRpc();
     }
 
     [ClientRpc]
-    private void BuyAdditionalUnitsClientRpc() {
+    protected void BuyAdditionalUnitsClientRpc() {
         if (isOwnedByPlayer) {
             foreach (Unit unit in additionalUnitsInTroop) {
                 unit.ActivateAdditionalUnit();
@@ -255,12 +255,12 @@ public class Troop : NetworkBehaviour, IPlaceable {
     }
 
     [ServerRpc(RequireOwnership =false)]
-    private void UpdateTroopServerRpc() {
+    protected void UpdateTroopServerRpc() {
         UpdateTroopClientRpc();
     }
 
     [ClientRpc]
-    private void UpdateTroopClientRpc() {
+    protected void UpdateTroopClientRpc() {
         if (!isOwnedByPlayer && additionalUnitsHaveBeenBought == true) {
 
             foreach (Unit unit in additionalUnitsInTroop) {
@@ -284,7 +284,7 @@ public class Troop : NetworkBehaviour, IPlaceable {
         BattleGrid.Instance.ResetIPlaceableSpawnedAtGridPosition(currentGridPosition);
     }
 
-    private void DestroyTroop() {
+    protected void DestroyTroop() {
         NetworkObject networkObject = GetComponent<NetworkObject>();
         HiddenTacticsMultiplayer.Instance.DestroyIPlaceable(networkObject);
     }
@@ -295,7 +295,7 @@ public class Troop : NetworkBehaviour, IPlaceable {
         }
 
         // Set placed troop on grid object
-        BattleGrid.Instance.SetIPlaceableSpawnedAtGridPosition(this, currentGridPosition);
+        BattleGrid.Instance.IPlaceableMovedGridPosition(this, currentGridPosition, currentGridPosition);
         SetIPlaceableGridPosition(currentGridPosition);
         battlefieldOffset = transform.position - battlefieldOwner.transform.position;
 
@@ -376,14 +376,17 @@ public class Troop : NetworkBehaviour, IPlaceable {
         }
     }
 
-    public void ActivateNextSpawnedUnit(Vector3 spawnPosition) {
+    public virtual void ActivateNextSpawnedUnit(Vector3 spawnPosition) {
+        Debug.Log("activating next spawned unit");
 
         if (!BattleManager.Instance.IsBattlePhase()) {
             return;
         }
 
         if (spawnedUnitActivatedIndex < spawnedUnitsInTroop.Count) {
-            spawnedUnitsInTroop[spawnedUnitActivatedIndex].transform.position = spawnPosition;
+            if(spawnPosition != Vector3.zero) {
+                spawnedUnitsInTroop[spawnedUnitActivatedIndex].transform.position = spawnPosition;
+            }
             spawnedUnitsInTroop[spawnedUnitActivatedIndex].ActivateSpawnedUnit();
             spawnedUnitActivatedIndex++;
         } else {
@@ -391,7 +394,7 @@ public class Troop : NetworkBehaviour, IPlaceable {
         }
     }
 
-    public void DeactivateAllDynamicallySpawnedUnits() {
+    public virtual void DeactivateAllDynamicallySpawnedUnits() {
         spawnedUnitActivatedIndex = 0;
 
         foreach (Unit unit in spawnedUnitsInTroop) {
@@ -427,11 +430,11 @@ public class Troop : NetworkBehaviour, IPlaceable {
         parentBuilding.OnBuildingSelled += ParentBuilding_OnBuildingSelled;
     }
 
-    private void ParentBuilding_OnBuildingSelled(object sender, EventArgs e) {
+    protected void ParentBuilding_OnBuildingSelled(object sender, EventArgs e) {
         SellTroop();
     }
 
-    private void ParentBuilding_OnBuildingDestroyed(object sender, EventArgs e) {
+    protected void ParentBuilding_OnBuildingDestroyed(object sender, EventArgs e) {
         HiddenTacticsMultiplayer.Instance.DestroyIPlaceable(GetComponent<NetworkObject>());
     }
 
@@ -494,7 +497,7 @@ public class Troop : NetworkBehaviour, IPlaceable {
         return spawnedUnitPositions;
     }
 
-    private void UnitHP_OnHealthChanged(object sender, UnitHP.OnHealthChangedEventArgs e) {
+    protected void UnitHP_OnHealthChanged(object sender, UnitHP.OnHealthChangedEventArgs e) {
         float healthChange = e.newHealth - e.previousHealth;
         troopHP += healthChange;
 

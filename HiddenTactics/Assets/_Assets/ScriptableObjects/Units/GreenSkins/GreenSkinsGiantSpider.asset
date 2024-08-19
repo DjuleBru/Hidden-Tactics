@@ -12,16 +12,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4bc7b5eb9df2cac4eae406c9d717c5aa, type: 3}
   m_Name: GreenSkinsGiantSpider
   m_EditorClassIdentifier: 
-  unitTagList: 
+  unitKeywordsList: 00000000030000000d000000
   unitTargetType: 0
   HP: 120
   armor: 0
   mass: 120
   moveType: 0
   unitMoveSpeed: 100
-  isGarrisonedUnit: 0
+  doesNotMoveGarrisonedUnit: 0
+  isInvisibleGarrisonedUnit: 0
   mainWeaponSO: {fileID: 0}
   mainAttackSO: {fileID: 11400000, guid: 5d1ed9206a54fc74595384594a023756, type: 2}
   sideAttackSO: {fileID: 11400000, guid: 1894bf577f85f264484b530687a1f95d, type: 2}
-  specialAttackSO: {fileID: 0}
-  damageToVillages: 0
+  jumpAttackSO: {fileID: 0}
+  deathTriggerAttackSO: {fileID: 0}
+  damageToVillages: 1

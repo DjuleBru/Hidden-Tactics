@@ -12,16 +12,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4bc7b5eb9df2cac4eae406c9d717c5aa, type: 3}
   m_Name: ElfTreeSpirits
   m_EditorClassIdentifier: 
-  unitTagList: 
+  unitKeywordsList: 0e0000000f00000010000000
   unitTargetType: 0
   HP: 10
   armor: 0
   mass: 20
   moveType: 0
   unitMoveSpeed: 150
-  isGarrisonedUnit: 0
+  doesNotMoveGarrisonedUnit: 0
+  isInvisibleGarrisonedUnit: 0
   mainWeaponSO: {fileID: 0}
   mainAttackSO: {fileID: 11400000, guid: 8a48bd0dc51ff8d46bff25dfc9d060cf, type: 2}
   sideAttackSO: {fileID: 0}
-  specialAttackSO: {fileID: 0}
-  damageToVillages: 0
+  jumpAttackSO: {fileID: 0}
+  deathTriggerAttackSO: {fileID: 11400000, guid: 7f4f3539f416243458c9e2cb4dd2538e, type: 2}
+  damageToVillages: 1

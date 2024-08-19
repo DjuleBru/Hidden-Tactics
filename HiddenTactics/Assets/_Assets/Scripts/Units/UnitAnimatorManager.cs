@@ -78,7 +78,7 @@ public class UnitAnimatorManager : NetworkBehaviour
         }
 
         if (movingForwards) {
-            if(!unit.GetUnitSO().isGarrisonedUnit) {
+            if(!unit.GetUnitSO().doesNotMoveGarrisonedUnit) {
                 Vector2 moveDir = unitMovement.GetMoveDir2D();
                 SetXY(moveDir.x, -1);
                 return;
@@ -179,7 +179,7 @@ public class UnitAnimatorManager : NetworkBehaviour
             unitAnimator.SetTrigger("BaseAttack");
         }
 
-        if (unitAttack.GetActiveAttackSO().attackType == AttackSO.AttackType.special1Melee) {
+        if (unitAttack.GetActiveAttackSO().attackType == AttackSO.AttackType.jump) {
             unitAnimator.SetTrigger("Special1");
         }
 
@@ -210,7 +210,7 @@ public class UnitAnimatorManager : NetworkBehaviour
         string animationName = "Walk";
 
         if (unitAI.IsMovingForwards()) {
-            if(!unit.GetUnitSO().isGarrisonedUnit) {
+            if(!unit.GetUnitSO().doesNotMoveGarrisonedUnit) {
                 walking = true;
                 idle = false;
                 attacking = false;

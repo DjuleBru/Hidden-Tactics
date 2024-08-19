@@ -12,16 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4bc7b5eb9df2cac4eae406c9d717c5aa, type: 3}
   m_Name: ElfSword
   m_EditorClassIdentifier: 
-  unitTagList: 
+  unitKeywordsList: 0d000000
   unitTargetType: 0
   HP: 25
   armor: 0
   mass: 80
   moveType: 0
   unitMoveSpeed: 80
-  isGarrisonedUnit: 0
+  doesNotMoveGarrisonedUnit: 0
+  isInvisibleGarrisonedUnit: 0
   mainWeaponSO: {fileID: 0}
   mainAttackSO: {fileID: 11400000, guid: dd4b84f7f2efb204fb202975bbe767e6, type: 2}
   sideAttackSO: {fileID: 11400000, guid: 2f051b37068a4934c824097baeaacb4c, type: 2}
   specialAttackSO: {fileID: 0}
-  damageToVillages: 0
+  damageToVillages: 1

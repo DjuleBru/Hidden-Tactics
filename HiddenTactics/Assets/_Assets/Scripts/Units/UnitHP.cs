@@ -113,7 +113,7 @@ public class UnitHP : NetworkBehaviour, IDamageable
 
     [ServerRpc(RequireOwnership = false)]
     protected void TakeDamageServerRpc(float damage) {
-        if(unit.GetUnitSO().isGarrisonedUnit) {
+        if(unit.GetUnitSO().doesNotMoveGarrisonedUnit) {
             // There is a chance the unit is not damaged
             int damagedChance = UnityEngine.Random.Range(0, 100);
 

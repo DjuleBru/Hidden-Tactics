@@ -13,9 +13,10 @@ MonoBehaviour:
   m_Name: ElfSwordTroop
   m_EditorClassIdentifier: 
   troopName: Elven Swords
+  troopDescription: Their swords sharpness compete with their arrow tip's pointyness.
   troopIllustrationSlotSprite: {fileID: 21300000, guid: fca3571f9dce4fb43a03437b9fd335bb, type: 3}
-  troopDescriptionSlotSprite: {fileID: 0}
-  troopTypeIconSprite: {fileID: 21300000, guid: e7920be881996114f989c68f2c5ae8f7, type: 3}
+  troopDescriptionSlotSprite: {fileID: 21300000, guid: 2a942752c62181046b25fe8dd860361c, type: 3}
+  troopTypeIconSprite: {fileID: 21300000, guid: 9f9bd47f25789f24aa9a18291492610a, type: 3}
   troopPrefab: {fileID: 2495463524177989710, guid: 15d70de1762686a4aa78449f18ef25d0, type: 3}
   unitPrefab: {fileID: 6582105824262927089, guid: c8296a7692e5fab4b98f4c5248fab44c, type: 3}
   additionalUnit1Prefab: {fileID: 0}
@@ -27,4 +28,5 @@ MonoBehaviour:
   buffedGridPositions: []
   supportType: 0
   buffAmount: 0
+  isGarrisonedTroop: 0
   troopIsImplemented: 1

@@ -13,9 +13,10 @@ MonoBehaviour:
   m_Name: DwarfMechanicalWarriorTroop
   m_EditorClassIdentifier: 
   troopName: Mechanical Warrior
+  troopDescription: Heavily armored, carefully crafted automaton. Don't get too close.
   troopIllustrationSlotSprite: {fileID: 21300000, guid: 8cb78de253aade44dafe7c4e00797960, type: 3}
-  troopDescriptionSlotSprite: {fileID: 0}
-  troopTypeIconSprite: {fileID: 21300000, guid: e7920be881996114f989c68f2c5ae8f7, type: 3}
+  troopDescriptionSlotSprite: {fileID: 21300000, guid: 67ffe04b3d9f9b94cb50390f8709181d, type: 3}
+  troopTypeIconSprite: {fileID: 21300000, guid: 9f9bd47f25789f24aa9a18291492610a, type: 3}
   troopPrefab: {fileID: 2495463524177989710, guid: 3351d0077f048494d80d298bebc54682, type: 3}
   unitPrefab: {fileID: 7228251882027103337, guid: 3bc5706ef23f0294498abd322825cf45, type: 3}
   additionalUnit1Prefab: {fileID: 0}
@@ -27,4 +28,5 @@ MonoBehaviour:
   buffedGridPositions: []
   supportType: 0
   buffAmount: 0
+  isGarrisonedTroop: 0
   troopIsImplemented: 0

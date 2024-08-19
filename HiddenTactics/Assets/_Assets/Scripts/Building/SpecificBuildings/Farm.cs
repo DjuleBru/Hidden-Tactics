@@ -6,9 +6,11 @@ public class Farm : Building
 {
     [SerializeField] private int farmGoldRevenue;
     [SerializeField] private float psDelayBetweenParticles;
+    [SerializeField] private string buildingName;
     [SerializeField] private ParticleSystem goldPS;
 
     protected override void Start() {
+        base.Start();
         OnBuildingPlaced += Farm_OnBuildingPlaced;
         OnBuildingDestroyed += Farm_OnBuildingDestroyed;
         BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
@@ -30,14 +32,14 @@ public class Farm : Building
 
     private void Farm_OnBuildingDestroyed(object sender, System.EventArgs e) {
         if (isOwnedByPlayer) {
-            RevenueDetailPanelUI.Instance.RemoveRevenueElement("Farm", farmGoldRevenue);
+            RevenueDetailPanelUI.Instance.RemoveRevenueElement(buildingName, farmGoldRevenue);
             HiddenTacticsMultiplayer.Instance.ChangePlayerRevenueServerRpc(ownerClientId, -farmGoldRevenue);
         }
     }
 
     private void Farm_OnBuildingPlaced(object sender, System.EventArgs e) {
         if (isOwnedByPlayer) {
-            RevenueDetailPanelUI.Instance.AddRevenueElement("Farm", farmGoldRevenue);
+            RevenueDetailPanelUI.Instance.AddRevenueElement(buildingName, farmGoldRevenue);
             HiddenTacticsMultiplayer.Instance.ChangePlayerRevenueServerRpc(ownerClientId, farmGoldRevenue);
         }
     }

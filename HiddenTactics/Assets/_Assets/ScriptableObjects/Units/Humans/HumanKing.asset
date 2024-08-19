@@ -12,16 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4bc7b5eb9df2cac4eae406c9d717c5aa, type: 3}
   m_Name: HumanKing
   m_EditorClassIdentifier: 
-  unitTagList: 
+  unitKeywordsList: 0c0000000a000000
   unitTargetType: 0
   HP: 50
   armor: 0
   mass: 80
   moveType: 0
   unitMoveSpeed: 80
-  isGarrisonedUnit: 0
+  doesNotMoveGarrisonedUnit: 0
+  isInvisibleGarrisonedUnit: 0
   mainWeaponSO: {fileID: 0}
   mainAttackSO: {fileID: 11400000, guid: b271447fca9bb104eadd46a5e7cf173d, type: 2}
   sideAttackSO: {fileID: 0}
   specialAttackSO: {fileID: 0}
-  damageToVillages: 0
+  damageToVillages: 1

@@ -13,11 +13,16 @@ MonoBehaviour:
   m_Name: GreenSkinFlail
   m_EditorClassIdentifier: 
   unitTagList: 
+  unitTargetType: 0
   HP: 20
   armor: 0
   mass: 50
   moveType: 0
   unitMoveSpeed: 100
+  isGarrisonedUnit: 0
+  isInvisibleGarrisonedUnit: 0
+  mainWeaponSO: {fileID: 0}
   mainAttackSO: {fileID: 11400000, guid: e93e8736f30e8fb4fa6efe1a786fcac4, type: 2}
   sideAttackSO: {fileID: 0}
   specialAttackSO: {fileID: 0}
+  damageToVillages: 1

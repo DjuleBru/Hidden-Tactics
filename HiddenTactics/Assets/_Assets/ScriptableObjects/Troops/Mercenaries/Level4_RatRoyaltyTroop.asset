@@ -13,9 +13,10 @@ MonoBehaviour:
   m_Name: Level4_RatRoyaltyTroop
   m_EditorClassIdentifier: 
   troopName: Ray Royalty
+  troopDescription: 
   troopIllustrationSlotSprite: {fileID: 21300000, guid: bcc3254ac5aa7424ba8a9e237a28029d, type: 3}
   troopDescriptionSlotSprite: {fileID: 0}
-  troopTypeIconSprite: {fileID: 21300000, guid: e7920be881996114f989c68f2c5ae8f7, type: 3}
+  troopTypeIconSprite: {fileID: 21300000, guid: ce8a6a2cfb763544ea932ade2b74425e, type: 3}
   troopPrefab: {fileID: 2495463524177989710, guid: ae93cf4962211b745a40f32976e0c36a, type: 3}
   unitPrefab: {fileID: 7228251882027103337, guid: 20f7f360d3c97bb4695465f485cc48da, type: 3}
   additionalUnit1Prefab: {fileID: 3712576469477235652, guid: 38b2757fe068e8742a095ab05f4ec134, type: 3}
@@ -27,4 +28,5 @@ MonoBehaviour:
   buffedGridPositions: []
   supportType: 0
   buffAmount: 0
+  isGarrisonedTroop: 0
   troopIsImplemented: 1

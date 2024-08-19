@@ -212,9 +212,6 @@ public class UnitUI : NetworkBehaviour
 
         damageBarUpdateTimer = delayToUpdateDamageBar;
 
-        unitHPBarGameObject.SetActive(true);
-        unitHPBarIsActive = true;
-
         if(newUnitHP < initialUnitHP) {
             unitHPBarImage.fillAmount = newUnitHP / unitHP.GetMaxHP();
             unitHPBarHealImage.fillAmount = newUnitHP / unitHP.GetMaxHP();

@@ -91,7 +91,7 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
         if (attackTimer < 0) {
             attackTimer = attackRate;
 
-            if (activeAttackSO.attackType == AttackSO.AttackType.melee || activeAttackSO.attackType == AttackSO.AttackType.special1Melee) {
+            if (activeAttackSO.attackType == AttackSO.AttackType.melee || activeAttackSO.attackType == AttackSO.AttackType.jump) {
                 StartCoroutine(MeleeAttack(attackTarget));
             }
 

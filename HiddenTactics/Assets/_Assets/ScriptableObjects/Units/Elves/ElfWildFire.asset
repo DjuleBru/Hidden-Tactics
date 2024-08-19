@@ -12,16 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4bc7b5eb9df2cac4eae406c9d717c5aa, type: 3}
   m_Name: ElfWildFire
   m_EditorClassIdentifier: 
-  unitTagList: 
+  unitKeywordsList: 07000000
   unitTargetType: 1
   HP: 25
   armor: 0
   mass: 30
   moveType: 1
   unitMoveSpeed: 110
-  isGarrisonedUnit: 0
+  doesNotMoveGarrisonedUnit: 0
+  isInvisibleGarrisonedUnit: 0
   mainWeaponSO: {fileID: 0}
   mainAttackSO: {fileID: 11400000, guid: 597fa67b6c092fc49aa7d85d59ccb079, type: 2}
   sideAttackSO: {fileID: 0}
   specialAttackSO: {fileID: 0}
-  damageToVillages: 0
+  damageToVillages: 1

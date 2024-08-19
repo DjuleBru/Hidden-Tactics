@@ -21,6 +21,7 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
     private List<int> villageSpriteIdList;
     private int playerBattlefieldBaseSpriteId;
     private int playerRevenueSinglePlayer;
+    private int playerGoldSinglePlayer;
 
     public const int MAX_PLAYER_AMOUNT = 2;
 
@@ -370,7 +371,8 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
         playerData.playerVillagesRemaining = initialPlayerVillages;
         playerData.playerRevenue = initialPlayerRevenue;
 
-        this.playerRevenueSinglePlayer = initialPlayerRevenue;
+        playerRevenueSinglePlayer = initialPlayerRevenue;
+        playerGoldSinglePlayer = initialPlayerGold;
 
         playerDataNetworkList[playerDataIndex] = playerData;
     }
@@ -384,12 +386,22 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
 
     [ServerRpc(RequireOwnership = false)]
     public void ChangePlayerGoldServerRpc(ulong clientId, int goldAmount) {
-        int playerDataIndex = GetPlayerDataIndexFromClientId(clientId);
-        PlayerData playerData = playerDataNetworkList[playerDataIndex];
-        playerData.playerGold += goldAmount;
+        if(isMultiplayer) {
+            int playerDataIndex = GetPlayerDataIndexFromClientId(clientId);
+            PlayerData playerData = playerDataNetworkList[playerDataIndex];
+            playerData.playerGold += goldAmount;
 
-        playerDataNetworkList[playerDataIndex] = playerData;
-        ChangePlayerGoldClientRpc(clientId, playerData.playerGold - goldAmount, playerData.playerGold);
+            playerDataNetworkList[playerDataIndex] = playerData;
+            ChangePlayerGoldClientRpc(clientId, playerData.playerGold - goldAmount, playerData.playerGold);
+        } else {
+            int newGold = playerGoldSinglePlayer + goldAmount;
+            OnPlayerGoldChanged?.Invoke(this, new OnPlayerGoldChangedEventArgs {
+                previousGold = playerGoldSinglePlayer,
+                newGold = newGold,
+                clientId = clientId,
+            });
+            playerGoldSinglePlayer = newGold;
+        }
     }
 
     [ClientRpc]

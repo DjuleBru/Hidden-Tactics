@@ -13,9 +13,10 @@ MonoBehaviour:
   m_Name: DwarfRockGolemTroop
   m_EditorClassIdentifier: 
   troopName: Rock Golem
+  troopDescription: 
   troopIllustrationSlotSprite: {fileID: 0}
   troopDescriptionSlotSprite: {fileID: 0}
-  troopTypeIconSprite: {fileID: 21300000, guid: e7920be881996114f989c68f2c5ae8f7, type: 3}
+  troopTypeIconSprite: {fileID: 21300000, guid: 5257bbe50269dea4881bc0ca050177ea, type: 3}
   troopPrefab: {fileID: 2495463524177989710, guid: de7c1c7407a255b448e5082383b583be, type: 3}
   unitPrefab: {fileID: 7228251882027103337, guid: ca44e8e5df51cef419a22bca1cd00368, type: 3}
   additionalUnit1Prefab: {fileID: 0}
@@ -27,4 +28,5 @@ MonoBehaviour:
   buffedGridPositions: []
   supportType: 0
   buffAmount: 0
+  isGarrisonedTroop: 0
   troopIsImplemented: 0

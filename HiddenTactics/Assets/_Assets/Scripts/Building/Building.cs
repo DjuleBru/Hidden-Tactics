@@ -58,7 +58,7 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
         BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
     }
 
-    private void BattleManager_OnStateChanged(object sender, EventArgs e) {
+    protected virtual void BattleManager_OnStateChanged(object sender, EventArgs e) {
 
         if (BattleManager.Instance.IsBattlePhaseStarting()) {
 

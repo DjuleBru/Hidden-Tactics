@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: GreenSkinBoarTroop
   m_EditorClassIdentifier: 
   troopName: Boar Riders
+  troopDescription: 
   troopIllustrationSlotSprite: {fileID: 21300000, guid: 88e1d9ca2e397f643841ddb5cfd40feb, type: 3}
-  troopDescriptionSlotSprite: {fileID: 0}
+  troopDescriptionSlotSprite: {fileID: 21300000, guid: 95338aa260ba52440b360349fc29bd9a, type: 3}
   troopTypeIconSprite: {fileID: 21300000, guid: e7920be881996114f989c68f2c5ae8f7, type: 3}
   troopPrefab: {fileID: 2495463524177989710, guid: f35cb1da771952f4487e992f1a16dc0f, type: 3}
   unitPrefab: {fileID: 2271543175021472386, guid: 45d3902db3508454c8ac5187879b3c60, type: 3}
@@ -27,4 +28,5 @@ MonoBehaviour:
   buffedGridPositions: []
   supportType: 0
   buffAmount: 0
+  isGarrisonedTroop: 0
   troopIsImplemented: 1

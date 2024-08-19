@@ -13,11 +13,16 @@ MonoBehaviour:
   m_Name: DwarfGreatAxe
   m_EditorClassIdentifier: 
   unitTagList: 
+  unitTargetType: 0
   HP: 30
   armor: 0
   mass: 80
   moveType: 0
   unitMoveSpeed: 80
+  isGarrisonedUnit: 0
+  isInvisibleGarrisonedUnit: 0
+  mainWeaponSO: {fileID: 0}
   mainAttackSO: {fileID: 11400000, guid: 650d56513c82e1347bce136467ebc38c, type: 2}
   sideAttackSO: {fileID: 0}
   specialAttackSO: {fileID: 0}
+  damageToVillages: 1

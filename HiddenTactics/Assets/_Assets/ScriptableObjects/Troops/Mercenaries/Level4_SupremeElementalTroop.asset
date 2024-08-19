@@ -13,9 +13,10 @@ MonoBehaviour:
   m_Name: Level4_SupremeElementalTroop
   m_EditorClassIdentifier: 
   troopName: Supreme Elemental
+  troopDescription: 
   troopIllustrationSlotSprite: {fileID: 21300000, guid: 8fd82987af633be4b995e6fc1f9598ee, type: 3}
   troopDescriptionSlotSprite: {fileID: 0}
-  troopTypeIconSprite: {fileID: 0}
+  troopTypeIconSprite: {fileID: 21300000, guid: ce8a6a2cfb763544ea932ade2b74425e, type: 3}
   troopPrefab: {fileID: 2495463524177989710, guid: 9751199acc56d6b44bdac6db5a6576e2, type: 3}
   unitPrefab: {fileID: 7228251882027103337, guid: 189b7c8a89dd04147b1be9da3e56a8bb, type: 3}
   additionalUnit1Prefab: {fileID: 0}
@@ -27,4 +28,5 @@ MonoBehaviour:
   buffedGridPositions: []
   supportType: 0
   buffAmount: 0
+  isGarrisonedTroop: 0
   troopIsImplemented: 1

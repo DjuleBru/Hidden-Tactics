@@ -1,10 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class ItemTemplateUI : MonoBehaviour
-{
+public class ItemTemplateUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler {
     [SerializeField] protected Image illustrationImage;
     [SerializeField] protected Image outlineImage;
     [SerializeField] protected Image outlineShadowImage;
@@ -13,6 +13,16 @@ public class ItemTemplateUI : MonoBehaviour
 
     protected TroopSO troopSO;
     protected BuildingSO buildingSO;
+
+    protected bool pointerEntered;
+    public static bool cardOpen;
+    public static ItemTemplateUI lastHoveredItemTemplateUI;
+
+    private void Start() {
+        GameInput.Instance.OnLeftClickPerformed += GameInput_OnLeftClickPerformed;
+        GameInput.Instance.OnRightClickPerformed += GameInput_OnRightClickPerformed;
+    }
+
 
     public virtual void SetDeckVisuals(Deck deck) {
         outlineImage.sprite = deck.deckFactionSO.slotBorder;
@@ -57,4 +67,36 @@ public class ItemTemplateUI : MonoBehaviour
         }
     }
 
+
+    private void GameInput_OnLeftClickPerformed(object sender, System.EventArgs e) {
+        if (!pointerEntered && cardOpen && lastHoveredItemTemplateUI == this) {
+            cardOpen = false;
+            IPlaceableDescriptionSlotTemplate.Instance.Hide();
+        }
+    }
+
+    private void GameInput_OnRightClickPerformed(object sender, System.EventArgs e) {
+        if (pointerEntered) {
+            if (troopSO != null) {
+                cardOpen = true;
+                IPlaceableDescriptionSlotTemplate.Instance.Show();
+                IPlaceableDescriptionSlotTemplate.Instance.SetDescriptionSlot(troopSO, troopSO.unitPrefab.GetComponent<Unit>().GetUnitSO());
+            }
+        }
+    }
+
+    public virtual void OnPointerEnter(PointerEventData eventData) {
+        pointerEntered = true;
+        lastHoveredItemTemplateUI = this;
+
+        if (cardOpen) {
+            if (troopSO != null) {
+                IPlaceableDescriptionSlotTemplate.Instance.SetDescriptionSlot(troopSO, troopSO.unitPrefab.GetComponent<Unit>().GetUnitSO());
+            }
+        }
+    }
+
+    public virtual void OnPointerExit(PointerEventData eventData) {
+        pointerEntered = false;
+    }
 }

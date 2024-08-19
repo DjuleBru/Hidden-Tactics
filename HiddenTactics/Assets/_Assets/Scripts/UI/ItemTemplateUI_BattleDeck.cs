@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class ItemTemplateUI_BattleDeck : ItemTemplateUI, IPointerEnterHandler, IPointerExitHandler {
+public class ItemTemplateUI_BattleDeck : ItemTemplateUI {
 
     [SerializeField] protected Button unlockTroopButton;
     [SerializeField] protected Button recruitTroopButton;
@@ -98,12 +98,14 @@ public class ItemTemplateUI_BattleDeck : ItemTemplateUI, IPointerEnterHandler, I
         return illustrationImage;
     }
 
-    public void OnPointerExit(PointerEventData eventData) {
+    public override void OnPointerExit(PointerEventData eventData) {
+        base.OnPointerExit(eventData);
         backgroundImage.material = cleanMaterial;
         outlineImage.material = cleanMaterial;
     }
 
-    public void OnPointerEnter(PointerEventData eventData) {
+    public override void OnPointerEnter(PointerEventData eventData) {
+        base.OnPointerEnter(eventData);
         backgroundImage.material = hoveredMaterial;
         outlineImage.material = hoveredMaterial;
     }

@@ -12,16 +12,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4bc7b5eb9df2cac4eae406c9d717c5aa, type: 3}
   m_Name: DwarfYellowBeardDwarf
   m_EditorClassIdentifier: 
-  unitTagList: 
+  unitKeywordsList: 0c0000000b00000009000000
   unitTargetType: 0
   HP: 60
   armor: 0
   mass: 100
   moveType: 0
   unitMoveSpeed: 80
-  isGarrisonedUnit: 0
+  doesNotMoveGarrisonedUnit: 0
+  isInvisibleGarrisonedUnit: 0
   mainWeaponSO: {fileID: 0}
   mainAttackSO: {fileID: 11400000, guid: cdbc1fbeaadd8ac499f9cdf85545ec57, type: 2}
   sideAttackSO: {fileID: 11400000, guid: c4b92d55bcc0655428208184e8e0546d, type: 2}
-  specialAttackSO: {fileID: 11400000, guid: ca02027f0bae8f54db8f169ade38359c, type: 2}
-  damageToVillages: 0
+  jumpAttackSO: {fileID: 11400000, guid: ca02027f0bae8f54db8f169ade38359c, type: 2}
+  deathTriggerAttackSO: {fileID: 0}
+  damageToVillages: 1
