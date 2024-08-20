@@ -13,6 +13,7 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
 
     [SerializeField] protected Transform projectileSpawnPoint;
     [SerializeField] protected AttackColliderAOE attackColliderAOE;
+    [SerializeField] protected float antiLargeUnitDamageMultiplier;
 
     protected Unit unit;
     protected UnitAI unitAI;
@@ -275,10 +276,21 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
             PerformDamageActionOnUnit(target, damageHitPosition);
         }
 
-        targetIDamageable.TakeDamage(attackDamage, this);
     }
 
     protected virtual void PerformDamageActionOnUnit(ITargetable target, Vector3 damageHitPosition) {
+
+        IDamageable targetIDamageable = target.GetIDamageable();
+        Unit targetUnit = (Unit)target;
+        float attackDamageModified = attackDamage;
+
+        // Anti-large 
+        if (unit.GetUnitSO().unitKeywordsList.Contains(UnitSO.UnitKeyword.AntiLarge) && targetUnit.GetUnitSO().unitKeywordsList.Contains(UnitSO.UnitKeyword.Large)) {
+            attackDamageModified = attackDamage * antiLargeUnitDamageMultiplier;
+        }
+
+        targetIDamageable.TakeDamage(attackDamageModified, this);
+
 
         //Knockback
         if (attackKnockback != 0) {
@@ -444,6 +456,16 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
         } else {
             attacking = false;
             attackStarted = false;
+        }
+
+        if (unitAI.IsDead()) {
+            // Death trigger attacks : fire
+            if(unit.GetUnitSO().deathTriggerAttackSO != null && unit.GetUnitSO().deathTriggerAttackSO.attackSpecialList.Contains(AttackSO.UnitAttackSpecial.fire)) {
+                foreach (Unit unitAOETarget in FindAOEAttackTargets(transform.position, unit.GetUnitSO().deathTriggerAttackSO.attackAOE)) {
+                    // Die effect
+                    unitAOETarget.TakeSpecial(AttackSO.UnitAttackSpecial.fire, unit.GetUnitSO().deathTriggerAttackSO.specialEffectDuration);
+                }
+            }
         }
 
     }

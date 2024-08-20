@@ -12,9 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44a693b538d454945879116c3a121ddd, type: 3}
   m_Name: DwarfMineGarrisonedTroop
   m_EditorClassIdentifier: 
-  troopName: Crossbows
-  troopIllustrationSlotSprite: {fileID: 0}
-  troopDescriptionSlotSprite: {fileID: 0}
+  troopFactionSO: {fileID: 11400000, guid: c03d5604d3c62b244af2d58fa2043c0d, type: 2}
+  troopName: Mine Guards
+  troopDescription: They will guard their affected mine with their lives.
+  troopIllustrationSlotSprite: {fileID: 21300000, guid: 5657d86f78747d14ba79d42b76e96bb9, type: 3}
+  troopDescriptionSlotSprite: {fileID: 21300000, guid: 56418108f4884ca43b10fb85d3500640, type: 3}
   troopTypeIconSprite: {fileID: 21300000, guid: e7920be881996114f989c68f2c5ae8f7, type: 3}
   troopPrefab: {fileID: 2495463524177989710, guid: f1c6f964d3227584dbfb80efbdc057d8, type: 3}
   unitPrefab: {fileID: 6582105824262927089, guid: 5e2f57684b52e1e4e8a8fb1594807bd4, type: 3}

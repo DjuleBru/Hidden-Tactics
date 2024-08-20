@@ -15,6 +15,8 @@ public class IPlaceableDescriptionSlotTemplate : MonoBehaviour, IPointerEnterHan
     [SerializeField] private Animator animator;
 
     [SerializeField] private GameObject descriptionCardGameObject;
+    [SerializeField] private GameObject attackDescriptionPanel;
+    [SerializeField] private GameObject buildingDescriptionPanel;
 
     [SerializeField] private Image backgroundImage;
     [SerializeField] private Image outlineImage;
@@ -23,8 +25,12 @@ public class IPlaceableDescriptionSlotTemplate : MonoBehaviour, IPointerEnterHan
     [SerializeField] private Image statPanelOutlineImage;
     [SerializeField] private Image attackPanelBackgroundImage;
     [SerializeField] private Image attackPanelOutlineImage;
+    [SerializeField] private Image buildingPanelBackgroundImage;
+    [SerializeField] private Image buildingPanelOutlineImage;
     [SerializeField] private Image switchAttacksButtonOutlineImage;
     [SerializeField] private Image switchAttacksButtonBackgroundImage;
+    [SerializeField] private Image showGarrisonedTroopButtonOutlineImage;
+    [SerializeField] private Image showGarrisonedTroopButtonBackgroundImage;
 
     [SerializeField] private Image cardIllustrationImage;
     [SerializeField] private Image moveTypeImage;
@@ -43,9 +49,28 @@ public class IPlaceableDescriptionSlotTemplate : MonoBehaviour, IPointerEnterHan
     [SerializeField] private TextMeshProUGUI attackTargetsText;
     [SerializeField] private TextMeshProUGUI attackRangeText;
     [SerializeField] private TextMeshProUGUI attackAOEText;
+    [SerializeField] private TextMeshProUGUI garrisonedUnitNumberText;
+
+    [SerializeField] private ShowGarrisonedTroopButton showGarrisonedTroopButton;
+
+    [SerializeField] private GameObject unitCostGameObject;
+    [SerializeField] private GameObject unitArmorGameObject;
+    [SerializeField] private GameObject unitNumberGameObject;
+    [SerializeField] private GameObject unitMoveSpeedGameObject;
+    [SerializeField] private GameObject garrisonedUnitGameObject;
 
     [SerializeField] private GameObject attackAOEGameObject;
     [SerializeField] private GameObject attackSpeedGameObject;
+    [SerializeField] private GameObject attackDamageGameObject;
+
+    [SerializeField] private GameObject economicalBuildingGameObject;
+    [SerializeField] private GameObject treeWallGameObject;
+    [SerializeField] private GameObject reflectDamageGameObject;
+    [SerializeField] private GameObject trappedWallGameObject;
+    [SerializeField] private TextMeshProUGUI economicalBuildingRevenueText;
+    [SerializeField] private TextMeshProUGUI economicalBuildingDescriptionText;
+    [SerializeField] private Image economicalBuildingImage;
+    [SerializeField] private TextMeshProUGUI reflectDamageAmountText;
 
     [SerializeField] private GameObject statusEffectGameObject;
     [SerializeField] private TextMeshProUGUI statusEffect1Text;
@@ -53,8 +78,7 @@ public class IPlaceableDescriptionSlotTemplate : MonoBehaviour, IPointerEnterHan
     [SerializeField] private TextMeshProUGUI statusEffect2Text;
     [SerializeField] private Image statusEffect2Image;
 
-    [SerializeField] private Transform keywordContainer;
-    [SerializeField] private Transform keywordTemplateTransform;
+    [SerializeField] private TextMeshProUGUI keywordText;
     [SerializeField] private TextMeshProUGUI descriptionText;
 
     [SerializeField] private Transform keywordDescriptionContainer;
@@ -77,12 +101,17 @@ public class IPlaceableDescriptionSlotTemplate : MonoBehaviour, IPointerEnterHan
     [SerializeField] private Sprite shockSprite;
     [SerializeField] private Sprite iceSprite;
     [SerializeField] private Sprite poisonSprite;
+    [SerializeField] private Sprite slowedSprite;
+    [SerializeField] private Sprite knockbackSprite;
+    [SerializeField] private Sprite coinSprite;
+    [SerializeField] private Sprite elfWolfDenWolfSprite;
 
     [SerializeField] private float shortRangeMaxRange;
     [SerializeField] private float mediumRangeMaxRange;
 
     private UnitSO currentUnitSO;
     private TroopSO currentTroopSO;
+    private BuildingSO currentBuildingSO;
 
     private AttackSO currentAttackSO;
 
@@ -93,7 +122,6 @@ public class IPlaceableDescriptionSlotTemplate : MonoBehaviour, IPointerEnterHan
     private void Start() {
         SetFactionVisuals();
         descriptionCardGameObject.SetActive(false);
-        keywordTemplateTransform.gameObject.SetActive(false);
         keywordDescriptionTemplate.gameObject.SetActive(false);
         keywordDescriptionContainer.gameObject.SetActive(false);
         changeAttackSOButtonTemplate.gameObject.SetActive(false);
@@ -110,18 +138,30 @@ public class IPlaceableDescriptionSlotTemplate : MonoBehaviour, IPointerEnterHan
         statPanelOutlineImage.sprite = deckFactionSO.slotBorder;
         attackPanelBackgroundImage.sprite = deckFactionSO.slotBackground;
         attackPanelOutlineImage.sprite = deckFactionSO.slotBorder;
+        buildingPanelBackgroundImage.sprite = deckFactionSO.slotBackground;
+        buildingPanelOutlineImage.sprite = deckFactionSO.slotBorder;
         switchAttacksButtonBackgroundImage.sprite = deckFactionSO.slotBackground;
         switchAttacksButtonOutlineImage.sprite = deckFactionSO.slotBorder;
+        showGarrisonedTroopButtonOutlineImage.sprite = deckFactionSO.slotBorder;
+        showGarrisonedTroopButtonBackgroundImage.sprite = deckFactionSO.slotBackground;
 
         Color keywordColor = deckFactionSO.color_samePlayerFaction_Opponent_fill;
         keywordColor.a = 1f;
-        keywordTemplateTransform.GetComponent<TextMeshProUGUI>().color = keywordColor;
+        keywordText.color = keywordColor;
         keywordDescriptionTemplate.Find("KeyWordName").GetComponent<TextMeshProUGUI>().color = keywordColor;
     }
 
-    public void SetDescriptionSlot(TroopSO troopSO, UnitSO unitSO) {
+    public void SetDescriptionSlot(TroopSO troopSO, UnitSO unitSO, bool shownFromBuilding = false) {
         currentUnitSO = unitSO;
         currentTroopSO = troopSO;
+
+        unitCostGameObject.gameObject.SetActive(true);
+        unitArmorGameObject.SetActive(true);
+        unitMoveSpeedGameObject.SetActive(true);
+        unitNumberGameObject.SetActive(true);
+        garrisonedUnitGameObject.SetActive(false);
+        attackDescriptionPanel.gameObject.SetActive(true);
+        buildingDescriptionPanel.gameObject.SetActive(false);
 
         cardIllustrationImage.sprite = troopSO.troopDescriptionSlotSprite;
         nameText.text = troopSO.troopName;
@@ -140,6 +180,45 @@ public class IPlaceableDescriptionSlotTemplate : MonoBehaviour, IPointerEnterHan
         SetMoveTypeStats(unitSO);
         SetAttackTypeStats(unitSO.mainAttackSO);
         SetStatusEffectStats(unitSO.mainAttackSO);
+
+        if(shownFromBuilding) {
+            unitCostGameObject.gameObject.SetActive(false);
+            unitNumberGameObject.gameObject.SetActive(false);
+            garrisonedUnitGameObject.SetActive(true);
+            showGarrisonedTroopButton.SetBuildingSO(currentBuildingSO);
+        }
+    }
+
+    public void SetDescriptionSlot(BuildingSO buildingSO) {
+        currentBuildingSO = buildingSO;
+
+        unitCostGameObject.gameObject.SetActive(true);
+        unitArmorGameObject.SetActive(false);
+        unitMoveSpeedGameObject.SetActive(false);
+        unitNumberGameObject.SetActive(false);
+        attackDescriptionPanel.gameObject.SetActive(false);
+        buildingDescriptionPanel.gameObject.SetActive(true);
+
+        cardIllustrationImage.sprite = buildingSO.buildingDescriptionSlotSprite;
+        nameText.text = buildingSO.buildingName;
+        costText.text = buildingSO.spawnBuildingCost.ToString();
+        healthText.text = buildingSO.buildingHP.ToString();
+        descriptionText.text = buildingSO.buildingDescription;
+
+        if(buildingSO.garrisonedTroopSO != null) {
+
+            //Unit has a garrisoned troop
+            garrisonedUnitGameObject.SetActive(true);
+            garrisonedUnitNumberText.text = "x" + buildingSO.garrisonedTroopSO.troopPrefab.GetComponent<Troop>().GetBaseUnitPositions().Count.ToString();
+            currentTroopSO = buildingSO.garrisonedTroopSO;
+            showGarrisonedTroopButton.SetGarrisonedTroopSO(currentTroopSO);
+
+        } else {
+            garrisonedUnitGameObject.SetActive(false);
+        }
+
+        RefreshKeywords(buildingSO);
+        SetBuildingDescriptionPanel(buildingSO);
     }
 
     private void RefreshAttackTypeButtons() {
@@ -157,6 +236,7 @@ public class IPlaceableDescriptionSlotTemplate : MonoBehaviour, IPointerEnterHan
         }
 
         if (currentUnitSO.sideAttackSO != null) {
+            if (currentUnitSO.sideAttackSO.name == "DwarfAxeSideAttack") return;
             SwitchAttackSOButton switchAttackSOButton = Instantiate(changeAttackSOButtonTemplate, changeAttackSOButtonContainer).GetComponent<SwitchAttackSOButton>();
             switchAttackSOButton.SetAttackSO(currentUnitSO.sideAttackSO);
             switchAttackSOButton.gameObject.SetActive(true);
@@ -182,11 +262,14 @@ public class IPlaceableDescriptionSlotTemplate : MonoBehaviour, IPointerEnterHan
     private void SetAttackStats(AttackSO attackSO) {
         if(attackSO.attackType == AttackSO.AttackType.melee || attackSO.attackType == AttackSO.AttackType.ranged || attackSO.attackType == AttackSO.AttackType.healAllyMeleeTargeting || attackSO.attackType == AttackSO.AttackType.healAllyRangedTargeting) {
             attackSpeedGameObject.SetActive(true);
+            attackDamageGameObject.SetActive(true);
             attackDamageText.text = attackSO.attackDamage.ToString();
             attackSpeedText.text = attackSO.attackRate.ToString() + "s";
         }
 
         if(attackSO.attackType == AttackSO.AttackType.healAllyMeleeTargeting || attackSO.attackType == AttackSO.AttackType.healAllyRangedTargeting) {
+            attackSpeedGameObject.SetActive(true);
+            attackDamageGameObject.SetActive(true);
             attackDamageImage.sprite = healSprite;
         } else {
             attackDamageImage.sprite = damageSprite;
@@ -194,6 +277,7 @@ public class IPlaceableDescriptionSlotTemplate : MonoBehaviour, IPointerEnterHan
 
         if (attackSO.attackType == AttackSO.AttackType.deathTrigger ) {
             attackSpeedGameObject.SetActive(false);
+            attackDamageGameObject.SetActive(false);
             attackDamageImage.sprite = GetStatusEffectSprite(attackSO.attackSpecialList[0]);
         } else {
             attackDamageImage.sprite = damageSprite;
@@ -201,6 +285,7 @@ public class IPlaceableDescriptionSlotTemplate : MonoBehaviour, IPointerEnterHan
 
         if(attackSO.attackType == AttackSO.AttackType.jump) {
             attackSpeedGameObject.SetActive(false);
+            attackDamageGameObject.SetActive(true);
             attackDamageText.text = attackSO.attackDamage.ToString();
         }
 
@@ -281,8 +366,15 @@ public class IPlaceableDescriptionSlotTemplate : MonoBehaviour, IPointerEnterHan
             statusEffect1Text.gameObject.SetActive(true);
             statusEffect1Image.gameObject.SetActive(true);
             statusEffectGameObject.SetActive(true);
-            statusEffect1Text.text = attackSO.attackSpecialList[0].ToString();
+
+            if (attackSO.specialEffectDuration != 0) {
+                statusEffect1Text.text = "+" + attackSO.specialEffectDuration.ToString();
+            } else {
+                statusEffect1Text.text = "+";
+            }
+
             statusEffect1Image.sprite = GetStatusEffectSprite(attackSO.attackSpecialList[0]);
+
         } else {
             statusEffect1Text.gameObject.SetActive(false);
             statusEffect1Image.gameObject.SetActive(false);
@@ -292,7 +384,7 @@ public class IPlaceableDescriptionSlotTemplate : MonoBehaviour, IPointerEnterHan
         if (attackSO.attackSpecialList.Count > 1) {
             statusEffect2Text.gameObject.SetActive(true);
             statusEffect2Image.gameObject.SetActive(true);
-            statusEffect2Text.text = attackSO.attackSpecialList[1].ToString();
+            statusEffect2Text.text = "+";
             statusEffect2Image.sprite = GetStatusEffectSprite(attackSO.attackSpecialList[1]);
         } else {
             statusEffect2Text.gameObject.SetActive(false);
@@ -305,23 +397,19 @@ public class IPlaceableDescriptionSlotTemplate : MonoBehaviour, IPointerEnterHan
         keywordDescriptionContainer.gameObject.SetActive(false);
 
             // Refresh card keywords
-            foreach (Transform child in keywordContainer) {
-            if (child == keywordTemplateTransform) continue;
-            Destroy(child.gameObject);
-            }
 
-            foreach(UnitSO.UnitKeyword unitKeyword in unitSO.unitKeywordsList) {
-                Transform instantiatedKeywordTemplate = Instantiate(keywordTemplateTransform, keywordContainer);
+            string allUnitsKeywords = "";
+            foreach (UnitSO.UnitKeyword unitKeyword in unitSO.unitKeywordsList) {
 
-                string unitKeywordString = SetKeywordName(unitKeyword);
-                if (unitKeyword != unitSO.unitKeywordsList[unitSO.unitKeywordsList.Count -1]) {
-                        unitKeywordString += ", ";
+                    string unitKeywordString = SetKeywordName(unitKeyword);
+
+                    if (unitKeyword != unitSO.unitKeywordsList[unitSO.unitKeywordsList.Count -1]) {
+                            unitKeywordString += ", ";
                     }
 
-                instantiatedKeywordTemplate.GetComponent<TextMeshProUGUI>().text = unitKeywordString;
-
-                instantiatedKeywordTemplate.gameObject.SetActive(true);
+                    allUnitsKeywords += unitKeywordString;
             }
+        keywordText.text = allUnitsKeywords;
 
         // Refresh description keywords
         if (unitSO.unitKeywordsList.Count > 0) {
@@ -340,7 +428,44 @@ public class IPlaceableDescriptionSlotTemplate : MonoBehaviour, IPointerEnterHan
                 instantiatedKeywordTemplate.gameObject.SetActive(true);
             }
         }
-    } 
+    }
+
+    private void RefreshKeywords(BuildingSO buildingSO) {
+        keywordDescriptionContainer.gameObject.SetActive(false);
+
+        // Refresh card keywords
+
+        string allUnitsKeywords = "";
+        foreach (UnitSO.UnitKeyword unitKeyword in buildingSO.buildingKeyworkdList) {
+
+            string unitKeywordString = SetKeywordName(unitKeyword);
+
+            if (unitKeyword != buildingSO.buildingKeyworkdList[buildingSO.buildingKeyworkdList.Count - 1]) {
+                unitKeywordString += ", ";
+            }
+
+            allUnitsKeywords += unitKeywordString;
+        }
+        keywordText.text = allUnitsKeywords;
+
+        // Refresh description keywords
+        if (buildingSO.buildingKeyworkdList.Count > 0) {
+            keywordDescriptionContainer.gameObject.SetActive(true);
+
+            foreach (Transform child in keywordDescriptionContainer) {
+                if (child == keywordDescriptionTemplate) continue;
+                Destroy(child.gameObject);
+            }
+
+            foreach (UnitSO.UnitKeyword unitKeyword in buildingSO.buildingKeyworkdList) {
+                Transform instantiatedKeywordTemplate = Instantiate(keywordDescriptionTemplate, keywordDescriptionContainer);
+
+                instantiatedKeywordTemplate.Find("KeyWordName").GetComponent<TextMeshProUGUI>().text = SetKeywordName(unitKeyword);
+                instantiatedKeywordTemplate.Find("KeyWordDescription").GetComponent<TextMeshProUGUI>().text = SetKeywordDescription(unitKeyword);
+                instantiatedKeywordTemplate.gameObject.SetActive(true);
+            }
+        }
+    }
 
     private Sprite GetStatusEffectSprite(AttackSO.UnitAttackSpecial attackSpecial) {
         if(attackSpecial == AttackSO.UnitAttackSpecial.pierce) {
@@ -373,6 +498,14 @@ public class IPlaceableDescriptionSlotTemplate : MonoBehaviour, IPointerEnterHan
 
         if (attackSpecial == AttackSO.UnitAttackSpecial.heal) {
             return healSprite;
+        }
+
+        if (attackSpecial == AttackSO.UnitAttackSpecial.webbed) {
+            return slowedSprite;
+        }
+
+        if (attackSpecial == AttackSO.UnitAttackSpecial.knockback) {
+            return knockbackSprite;
         }
 
         return null;
@@ -451,6 +584,17 @@ public class IPlaceableDescriptionSlotTemplate : MonoBehaviour, IPointerEnterHan
             return "Increases nearby units damage";
         }
 
+        if (unitKeyword == UnitSO.UnitKeyword.Destructible) {
+            return "Does not refill HP at the end of a battle";
+        }
+
+        if (unitKeyword == UnitSO.UnitKeyword.Uncrossable) {
+            return "Units cannot walk past this building";
+        }
+
+        if (unitKeyword == UnitSO.UnitKeyword.Garrisoned) {
+            return "Does not move during the battle";
+        }
 
         return "keyword description not set";
     }
@@ -493,6 +637,57 @@ public class IPlaceableDescriptionSlotTemplate : MonoBehaviour, IPointerEnterHan
         }
 
         selectedButton.SetSelected(true);
+    }
+
+    public void SetBuildingDescriptionPanel(BuildingSO buildingSO) {
+
+        if(buildingSO.buildingName == "Farm" || buildingSO.buildingName == "Mine" || buildingSO.buildingName == "Wolf Den" || buildingSO.buildingName == "Blood Altar") {
+
+            economicalBuildingGameObject.SetActive(true);
+
+            if(buildingSO.buildingName == "Farm" || buildingSO.buildingName == "Mine") {
+                economicalBuildingRevenueText.text = "+" + buildingSO.economicalBuildingRevenue.ToString();
+                economicalBuildingImage.sprite = coinSprite;
+                economicalBuildingDescriptionText.text = "/turn";
+            }
+
+            if (buildingSO.buildingName == "Wolf Den") {
+                economicalBuildingRevenueText.text = "+" + buildingSO.economicalBuildingRevenue.ToString();
+                economicalBuildingImage.sprite = elfWolfDenWolfSprite;
+                economicalBuildingDescriptionText.text = "/turn";
+            }
+
+            if (buildingSO.buildingName == "Blood Altar") {
+                economicalBuildingRevenueText.text = "+" + buildingSO.economicalBuildingRevenue.ToString();
+                economicalBuildingImage.sprite = elfWolfDenWolfSprite;
+                economicalBuildingImage.sprite = coinSprite;
+                economicalBuildingDescriptionText.text = "/slay";
+            }
+
+        } else {
+            economicalBuildingGameObject.SetActive(false);
+        }
+
+        if (buildingSO.buildingName == "Tree Wall") {
+            treeWallGameObject.SetActive(true);
+        } else {
+            treeWallGameObject.SetActive(false);
+        }
+
+        if (buildingSO.buildingName == "Trapped Wall") {
+            trappedWallGameObject.SetActive(true);
+        }
+        else {
+            trappedWallGameObject.SetActive(false);
+        }
+
+        if (buildingSO.buildingName == "Spiked Wall" || buildingSO.buildingName == "Spiked Tower") {
+            reflectDamageGameObject.SetActive(true);
+            reflectDamageAmountText.text = buildingSO.reflectMeleeDamageAmount.ToString();
+        }
+        else {
+            reflectDamageGameObject.SetActive(false);
+        }
     }
 
     public void Show() {

@@ -163,6 +163,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: UCW_Human_Spearman
       objectReference: {fileID: 0}
+    - target: {fileID: 6275341051487490763, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6275341051487490763, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6275341051487490763, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6275341051487490763, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7096053914295724965, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
       propertyPath: upgradedBodyMaterial
       value: 
@@ -174,6 +190,22 @@ PrefabInstance:
     - target: {fileID: 7096053914295724965, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
       propertyPath: upgradeChangesWeaponShader
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7282277745875805071, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7282277745875805071, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7282277745875805071, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7282277745875805071, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7339233484989583726, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
       propertyPath: m_Controller
@@ -215,6 +247,22 @@ PrefabInstance:
       propertyPath: shaderTypes
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7982654533926462438, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7982654533926462438, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7982654533926462438, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7982654533926462438, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8393628555918220568, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
       propertyPath: m_Sprite
       value: 
@@ -251,8 +299,7 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 2419772438973261976, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
+    m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
 --- !u!212 &499381468929607195 stripped
 SpriteRenderer:
@@ -262,11 +309,6 @@ SpriteRenderer:
 --- !u!4 &2213990894495455491 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 417919779066184301, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
-  m_PrefabInstance: {fileID: 1978508700217793390}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &5096727140472696848 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 6759381298818050942, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}
   m_PrefabInstance: {fileID: 1978508700217793390}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &6582105824262927089 stripped
@@ -326,20 +368,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2bf9678b97d092a4b8df0ff7fa2efd93, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &4994556190344914593
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6582105824262927089}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2d81395fe7397dc4a831c29f19ccc579, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  projectileSpawnPoint: {fileID: 5096727140472696848}
-  attackColliderAOE: {fileID: 0}
 --- !u!4 &8227018930490549216 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7591148188649519246, guid: 6a37641f22f544643bbdb91baa257e3d, type: 3}

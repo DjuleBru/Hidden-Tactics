@@ -12,10 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44a693b538d454945879116c3a121ddd, type: 3}
   m_Name: ElfWolfGarrisonedTroop
   m_EditorClassIdentifier: 
+  troopFactionSO: {fileID: 11400000, guid: 93b3c3b9964a4d943974c0aaef250ee6, type: 2}
   troopName: Wolves
-  troopIllustrationSlotSprite: {fileID: 0}
-  troopDescriptionSlotSprite: {fileID: 0}
-  troopTypeIconSprite: {fileID: 21300000, guid: e7920be881996114f989c68f2c5ae8f7, type: 3}
+  troopDescription: A pack of hungry wolves.
+  troopIllustrationSlotSprite: {fileID: 21300000, guid: e5f6788a32cb68b4e98c127de75d3e73, type: 3}
+  troopDescriptionSlotSprite: {fileID: 21300000, guid: 968a2898686db73418db8d5396457b19, type: 3}
+  troopTypeIconSprite: {fileID: 21300000, guid: dc97a0ca5e319e940a1d154b6098e535, type: 3}
   troopPrefab: {fileID: 2495463524177989710, guid: de6533bfbf212854d92c5e6a761692f3, type: 3}
   unitPrefab: {fileID: 7228251882027103337, guid: 58c1d0d7ebf39704099a1a1e69f688be, type: 3}
   additionalUnit1Prefab: {fileID: 0}

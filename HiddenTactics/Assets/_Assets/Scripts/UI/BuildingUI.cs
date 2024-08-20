@@ -14,7 +14,6 @@ public class BuildingUI : NetworkBehaviour
     [SerializeField] private GameObject buildingSelectedUI;
     [SerializeField] private Image buildingHPBarImage;
 
-    [SerializeField] private TextMeshPro buildingHPText;
     [SerializeField] private Image buildingTargetImage;
     [SerializeField] private Sprite coinSprite;
 
@@ -53,7 +52,6 @@ public class BuildingUI : NetworkBehaviour
     private void UpdateHealthBar(float initialHP, float newHP) {
         buildingHPBarGameObject.SetActive(true);
         buildingHPBarImage.fillAmount = newHP/ buildingHP.GetMaxHP();
-        buildingHPText.text = Mathf.RoundToInt((newHP / buildingHP.GetMaxHP())*100).ToString();
     }
 
     public void ShowBuildingSelectedUI() {

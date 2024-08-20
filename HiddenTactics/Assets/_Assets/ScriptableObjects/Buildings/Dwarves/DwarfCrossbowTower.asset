@@ -12,9 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85abc532579c0ec4d839a1a1bcb04732, type: 3}
   m_Name: DwarfCrossbowTower
   m_EditorClassIdentifier: 
-  buildingIllustrationSlotSprite: {fileID: 0}
-  buildingDescriptionSlotSprite: {fileID: 0}
-  buildingTypeSprite: {fileID: 21300000, guid: 5257bbe50269dea4881bc0ca050177ea, type: 3}
+  buildingName: Crossbow Tower
+  buildingDescription: When they have the occasion, dwarves like to watch others
+    from above.
+  buildingRecruitmentSlotSprite: {fileID: 21300000, guid: 43aa3b18e1f68f549a54f7bfe5fad1f9, type: 3}
+  buildingDescriptionSlotSprite: {fileID: 21300000, guid: 22af7ce49c04851458823290b114632f, type: 3}
+  buildingTypeSprite: {fileID: 21300000, guid: f3dab0a958b57444bafb6aa3012f17b6, type: 3}
   buildingPrefab: {fileID: 679574338467843152, guid: e22611cf2b457a44f90a8f93dd8e45e9, type: 3}
   buildingHP: 100
   buildingBlocksUnitMovement: 1
@@ -22,4 +25,7 @@ MonoBehaviour:
   garrisonedTroopSO: {fileID: 11400000, guid: ef34d53a6018b2946a04dca84ebf0d97, type: 2}
   spawnBuildingCost: 0
   upgradeBuildingCost: 0
+  economicalBuildingRevenue: 0
+  reflectMeleeDamageAmount: 0
+  buildingKeyworkdList: 1300000014000000
   buildingIsImplemented: 1

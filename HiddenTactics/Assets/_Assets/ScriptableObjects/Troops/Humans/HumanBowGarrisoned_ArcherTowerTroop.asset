@@ -12,9 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44a693b538d454945879116c3a121ddd, type: 3}
   m_Name: HumanBowGarrisoned_ArcherTowerTroop
   m_EditorClassIdentifier: 
-  troopName: Archers
-  troopIllustrationSlotSprite: {fileID: 0}
-  troopDescriptionSlotSprite: {fileID: 0}
+  troopFactionSO: {fileID: 11400000, guid: b990bb797b0c43b46af1c1ad479ccf69, type: 2}
+  troopName: Garrisoned Archers
+  troopDescription: Archers on top of a tower.
+  troopIllustrationSlotSprite: {fileID: 21300000, guid: f2ed493c2afcd824a98695377d433d1e, type: 3}
+  troopDescriptionSlotSprite: {fileID: 21300000, guid: e5202f37b1f25a04688026756a54c287, type: 3}
   troopTypeIconSprite: {fileID: 21300000, guid: e7920be881996114f989c68f2c5ae8f7, type: 3}
   troopPrefab: {fileID: 2495463524177989710, guid: fdc6c47a1f4f52248956644435961935, type: 3}
   unitPrefab: {fileID: 6582105824262927089, guid: e3bb34a0740088f44b2da27e83131dc2, type: 3}

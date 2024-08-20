@@ -109,9 +109,6 @@ public class PlayerStateUI : MonoBehaviour {
         villagesbackgroundBorderImage.sprite = deckFactionSO.slotBorder;
         villagesbackgroundImage.sprite = deckFactionSO.slotBackground;
 
-        villagesImage.sprite = deckFactionSO.factionVillageIconSpriteUI;
-        villagesShadowImage.sprite = deckFactionSO.factionVillageIconSpriteUI;
-
         if (!isOpponentPanel) {
             goldbackgroundBorderImage.sprite = deckFactionSO.slotBorder;
             goldbackgroundImage.sprite = deckFactionSO.slotBackground;

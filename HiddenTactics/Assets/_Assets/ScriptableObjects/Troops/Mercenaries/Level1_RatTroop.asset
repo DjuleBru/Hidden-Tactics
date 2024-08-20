@@ -12,10 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44a693b538d454945879116c3a121ddd, type: 3}
   m_Name: Level1_RatTroop
   m_EditorClassIdentifier: 
+  troopFactionSO: {fileID: 11400000, guid: d56030ef345bce24e8e656daa67acf63, type: 2}
   troopName: Rats
-  troopDescription: 
+  troopDescription: Historically accurate disease vectors.
   troopIllustrationSlotSprite: {fileID: 21300000, guid: 92e0f6573b42c164a8072ad4a73208bb, type: 3}
-  troopDescriptionSlotSprite: {fileID: 0}
+  troopDescriptionSlotSprite: {fileID: 21300000, guid: 914aea91622369c4bb1170b8eceb4e51, type: 3}
   troopTypeIconSprite: {fileID: 21300000, guid: 9f9bd47f25789f24aa9a18291492610a, type: 3}
   troopPrefab: {fileID: 2495463524177989710, guid: a51f6b98aa7fa9249a693c56b2c650ce, type: 3}
   unitPrefab: {fileID: 7228251882027103337, guid: 8f28bffbcd40a784887cdea4c547c91a, type: 3}

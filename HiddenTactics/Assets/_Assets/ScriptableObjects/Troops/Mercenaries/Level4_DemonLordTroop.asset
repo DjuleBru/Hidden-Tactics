@@ -12,10 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44a693b538d454945879116c3a121ddd, type: 3}
   m_Name: Level4_DemonLordTroop
   m_EditorClassIdentifier: 
+  troopFactionSO: {fileID: 11400000, guid: d56030ef345bce24e8e656daa67acf63, type: 2}
   troopName: Demon Lord
-  troopDescription: 
+  troopDescription: The Lord of all Demons. He eats fire for breakfast.
   troopIllustrationSlotSprite: {fileID: 21300000, guid: da2ecd9d05ef1f743954d2134ae296bf, type: 3}
-  troopDescriptionSlotSprite: {fileID: 0}
+  troopDescriptionSlotSprite: {fileID: 21300000, guid: d222272ac12d12b48a2be329a94804ae, type: 3}
   troopTypeIconSprite: {fileID: 21300000, guid: 9f9bd47f25789f24aa9a18291492610a, type: 3}
   troopPrefab: {fileID: 2495463524177989710, guid: 201b9d3221d1b2a4d86c6b08321523e8, type: 3}
   unitPrefab: {fileID: 7228251882027103337, guid: c1b327c31cd8c3246a611ae5b3fd8b64, type: 3}

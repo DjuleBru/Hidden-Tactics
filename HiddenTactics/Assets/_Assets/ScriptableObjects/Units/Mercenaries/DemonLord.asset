@@ -12,17 +12,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4bc7b5eb9df2cac4eae406c9d717c5aa, type: 3}
   m_Name: DemonLord
   m_EditorClassIdentifier: 
-  unitTagList: 
+  unitKeywordsList: 0000000010000000
   unitTargetType: 0
   HP: 200
   armor: 0
   mass: 300
   moveType: 0
   unitMoveSpeed: 70
-  isGarrisonedUnit: 0
+  doesNotMoveGarrisonedUnit: 0
   isInvisibleGarrisonedUnit: 0
   mainWeaponSO: {fileID: 0}
   mainAttackSO: {fileID: 11400000, guid: 072152632f093f34a9e0082d1093a89d, type: 2}
   sideAttackSO: {fileID: 0}
-  specialAttackSO: {fileID: 0}
+  jumpAttackSO: {fileID: 0}
+  deathTriggerAttackSO: {fileID: 11400000, guid: 0f1750b624a3f2a45a2181f476c32c5c, type: 2}
   damageToVillages: 1

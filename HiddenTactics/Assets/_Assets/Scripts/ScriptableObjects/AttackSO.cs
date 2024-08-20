@@ -25,6 +25,7 @@ public class AttackSO : ScriptableObject
         fear,
         webbed,
         heal,
+        knockback,
     }
 
     public AttackType attackType;

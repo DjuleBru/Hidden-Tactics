@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94ea46ef78865b74bb8e414907951874, type: 3}
+  m_Name: Mercenaries
+  m_EditorClassIdentifier: 
+  factionName: 4
+  factionSprite: {fileID: 0}
+  factionDefaultGridTileVisualSO: {fileID: 0}
+  panelBackground: {fileID: 543858176, guid: 8f6cf1a8b695dc447aa77630c9d1f56b, type: 3}
+  panelBackgroundBorder: {fileID: -706684851, guid: e9cb9a2468e7b6f4596ecdfc14209ea5, type: 3}
+  panelBackgroundBorderSimple: {fileID: -706684851, guid: e9cb9a2468e7b6f4596ecdfc14209ea5, type: 3}
+  panelBackgroundInnerShadow: {fileID: 21300000, guid: 5c46042b283aed543aaa564565faf4f4, type: 3}
+  panelBorder: {fileID: -706684851, guid: e9cb9a2468e7b6f4596ecdfc14209ea5, type: 3}
+  panelTopItem: {fileID: 0}
+  panelBottomItem: {fileID: 0}
+  panelLeftItem: {fileID: 0}
+  panelRightItem: {fileID: 0}
+  slotBackground: {fileID: 21300000, guid: a54023886d16f344da6218993626fce7, type: 3}
+  slotBorder: {fileID: 21300000, guid: 5c29a0443e881d9409a9445ff6623c83, type: 3}
+  troopIconBackgroundSprite_differentPlayerFaction: {fileID: 0}
+  troopIconBackgroundSprite_samePlayerFaction_Opponent: {fileID: 0}
+  color_differentPlayerFaction_outline: {r: 1, g: 1, b: 1, a: 1}
+  color_differentPlayerFaction_fill: {r: 1, g: 1, b: 1, a: 0.5882353}
+  color_samePlayerFaction_Opponent_outline: {r: 1, g: 1, b: 1, a: 1}
+  color_samePlayerFaction_Opponent_fill: {r: 1, g: 1, b: 1, a: 0.5882353}
+  troopsInFaction:
+  - {fileID: 11400000, guid: a8478e2ca29f6764392e2ae70500ee6d, type: 2}
+  - {fileID: 11400000, guid: a3b3dc9608bca9f469e9f76de59eb2f6, type: 2}
+  - {fileID: 11400000, guid: 5c1860792f8af044596166638a894814, type: 2}
+  - {fileID: 11400000, guid: 2eea602e4c7379a4f9db10c26b610dde, type: 2}
+  - {fileID: 11400000, guid: e81be00023b89fd4f94be7d163b2679b, type: 2}
+  - {fileID: 11400000, guid: 20409a5c0f2d19046a61620f4b9da97e, type: 2}
+  - {fileID: 11400000, guid: 5e5842136c9f04d41840c8e7b724995b, type: 2}
+  - {fileID: 11400000, guid: 65ea0e2c69d91364ba907f176576ebe9, type: 2}
+  - {fileID: 11400000, guid: 94adca1ec7e46aa4fac50f2b2787d166, type: 2}
+  - {fileID: 11400000, guid: 9e02236b3706c4d49812bfef4734e325, type: 2}
+  - {fileID: 11400000, guid: 2e82b8f82dbfcfa4389e65865e773734, type: 2}
+  - {fileID: 11400000, guid: 6948e0ecaad47a548af0396951751599, type: 2}
+  - {fileID: 11400000, guid: 7dbc4709ebadaf343b1acdd707bed234, type: 2}
+  - {fileID: 11400000, guid: 41462b2ce4aa9a7488f5fdb640ea0bf7, type: 2}
+  - {fileID: 11400000, guid: eaa34c01890b2ba4ebb84fdd6150357e, type: 2}
+  - {fileID: 11400000, guid: 8479fd72270b4e84382a4404a1c0d67d, type: 2}
+  buildingsInFaction: []
+  villageSpritesInFaction: []
+  deckSlotSpritesInFaction: []
+  factionVillageIconSpriteUI: {fileID: 0}

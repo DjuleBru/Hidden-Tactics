@@ -12,9 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44a693b538d454945879116c3a121ddd, type: 3}
   m_Name: ElfBowGarrisonedTroop
   m_EditorClassIdentifier: 
-  troopName: Longbows
-  troopIllustrationSlotSprite: {fileID: 0}
-  troopDescriptionSlotSprite: {fileID: 0}
+  troopFactionSO: {fileID: 11400000, guid: 93b3c3b9964a4d943974c0aaef250ee6, type: 2}
+  troopName: Garrisoned longbows
+  troopDescription: Nothing escapes the vigilant eye of a longbow elf
+  troopIllustrationSlotSprite: {fileID: 21300000, guid: c20faf165f8f6da4181d97cdd54c5265, type: 3}
+  troopDescriptionSlotSprite: {fileID: 21300000, guid: a1c81cd14af2e864490fac97e077f292, type: 3}
   troopTypeIconSprite: {fileID: 21300000, guid: e7920be881996114f989c68f2c5ae8f7, type: 3}
   troopPrefab: {fileID: 2495463524177989710, guid: 276b1e77716dec149a144bd45b52833b, type: 3}
   unitPrefab: {fileID: 6582105824262927089, guid: a2624557c9a4f0849829368b5861ccea, type: 3}

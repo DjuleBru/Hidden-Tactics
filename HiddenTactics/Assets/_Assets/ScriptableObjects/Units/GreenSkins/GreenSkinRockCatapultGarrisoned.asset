@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4bc7b5eb9df2cac4eae406c9d717c5aa, type: 3}
   m_Name: GreenSkinRockCatapultGarrisoned
   m_EditorClassIdentifier: 
-  unitTagList: 
+  unitKeywordsList: 15000000
   unitTargetType: 0
   HP: 100
   armor: 0
@@ -24,5 +24,6 @@ MonoBehaviour:
   mainWeaponSO: {fileID: 0}
   mainAttackSO: {fileID: 11400000, guid: fff6e20a49c8ff94ab36e94b68572678, type: 2}
   sideAttackSO: {fileID: 0}
-  specialAttackSO: {fileID: 0}
+  jumpAttackSO: {fileID: 0}
+  deathTriggerAttackSO: {fileID: 0}
   damageToVillages: 1

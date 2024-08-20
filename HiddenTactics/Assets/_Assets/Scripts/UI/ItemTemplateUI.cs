@@ -53,15 +53,15 @@ public class ItemTemplateUI : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         this.buildingSO = buildingSO;
         illustrationImage.gameObject.SetActive(true);
 
-        if (buildingSO.buildingIllustrationSlotSprite != null && buildingSO.buildingIsImplemented) {
-            illustrationImage.sprite = buildingSO.buildingIllustrationSlotSprite;
+        if (buildingSO.buildingRecruitmentSlotSprite != null && buildingSO.buildingIsImplemented) {
+            illustrationImage.sprite = buildingSO.buildingRecruitmentSlotSprite;
         }
         else {
             illustrationImage.gameObject.SetActive(false);
             comingSoonText.SetActive(true);
         }
 
-        if (buildingSO.buildingIllustrationSlotSprite == null && buildingSO.buildingIsImplemented)
+        if (buildingSO.buildingRecruitmentSlotSprite == null && buildingSO.buildingIsImplemented)
         {
             illustrationImage.sprite = null;
         }

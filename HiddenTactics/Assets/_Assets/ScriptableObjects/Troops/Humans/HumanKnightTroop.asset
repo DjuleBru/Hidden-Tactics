@@ -12,7 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44a693b538d454945879116c3a121ddd, type: 3}
   m_Name: HumanKnightTroop
   m_EditorClassIdentifier: 
+  troopFactionSO: {fileID: 11400000, guid: b990bb797b0c43b46af1c1ad479ccf69, type: 2}
   troopName: Knights
+  troopDescription: 
   troopIllustrationSlotSprite: {fileID: 21300000, guid: 73fcb3b5be9415b42af167c7bd11cf20, type: 3}
   troopDescriptionSlotSprite: {fileID: 0}
   troopTypeIconSprite: {fileID: 21300000, guid: e7920be881996114f989c68f2c5ae8f7, type: 3}
@@ -27,4 +29,5 @@ MonoBehaviour:
   buffedGridPositions: []
   supportType: 0
   buffAmount: 0
+  isGarrisonedTroop: 0
   troopIsImplemented: 0

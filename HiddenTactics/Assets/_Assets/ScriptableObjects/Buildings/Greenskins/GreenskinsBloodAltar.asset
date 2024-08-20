@@ -12,9 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85abc532579c0ec4d839a1a1bcb04732, type: 3}
   m_Name: GreenskinsBloodAltar
   m_EditorClassIdentifier: 
-  buildingIllustrationSlotSprite: {fileID: 21300000, guid: 7fe7b420a5e38734588c1c88d3047129, type: 3}
-  buildingDescriptionSlotSprite: {fileID: 0}
-  buildingTypeSprite: {fileID: 21300000, guid: 5257bbe50269dea4881bc0ca050177ea, type: 3}
+  buildingName: Blood Altar
+  buildingDescription: GreenSkins have a thing for slaying foes. This altar rewards
+    them for doing so.
+  buildingRecruitmentSlotSprite: {fileID: 21300000, guid: 7fe7b420a5e38734588c1c88d3047129, type: 3}
+  buildingDescriptionSlotSprite: {fileID: 21300000, guid: ab9d07dc015b2fb4288f78430d8f6103, type: 3}
+  buildingTypeSprite: {fileID: 21300000, guid: f8a917cc49ac24b4c8556ab89690ffbb, type: 3}
   buildingPrefab: {fileID: 679574338467843152, guid: 4a209fd1b5d711c4f878c54a7c0a9698, type: 3}
   buildingHP: 100
   buildingBlocksUnitMovement: 0
@@ -22,4 +25,7 @@ MonoBehaviour:
   garrisonedTroopSO: {fileID: 0}
   spawnBuildingCost: 0
   upgradeBuildingCost: 0
+  economicalBuildingRevenue: 1
+  reflectMeleeDamageAmount: 0
+  buildingKeyworkdList: 13000000
   buildingIsImplemented: 0

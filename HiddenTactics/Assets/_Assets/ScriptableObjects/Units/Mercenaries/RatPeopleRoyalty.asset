@@ -12,17 +12,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4bc7b5eb9df2cac4eae406c9d717c5aa, type: 3}
   m_Name: RatPeopleRoyalty
   m_EditorClassIdentifier: 
-  unitTagList: 
+  unitKeywordsList: 0000000005000000
   unitTargetType: 0
   HP: 160
   armor: 0
   mass: 60
   moveType: 0
   unitMoveSpeed: 100
-  isGarrisonedUnit: 0
+  doesNotMoveGarrisonedUnit: 0
   isInvisibleGarrisonedUnit: 0
   mainWeaponSO: {fileID: 0}
   mainAttackSO: {fileID: 11400000, guid: 4bbd7d225f3b718428008113fad595cc, type: 2}
   sideAttackSO: {fileID: 11400000, guid: c4fcc10fb7148c240a794c52ded9e375, type: 2}
-  specialAttackSO: {fileID: 0}
+  jumpAttackSO: {fileID: 0}
+  deathTriggerAttackSO: {fileID: 0}
   damageToVillages: 1

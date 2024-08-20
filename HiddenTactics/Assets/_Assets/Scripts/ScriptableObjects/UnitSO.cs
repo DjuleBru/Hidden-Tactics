@@ -31,6 +31,9 @@ public class UnitSO : ScriptableObject {
         DeathTrigger,
         Unstoppable,
         BloodFlag,
+        Destructible,
+        Uncrossable,
+        Garrisoned,
     }
 
     public List<UnitKeyword> unitKeywordsList;

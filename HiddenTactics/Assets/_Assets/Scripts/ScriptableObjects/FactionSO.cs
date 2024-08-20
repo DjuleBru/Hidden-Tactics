@@ -10,6 +10,7 @@ public class FactionSO : ScriptableObject
         Elves,
         Dwarves,
         Greenskins,
+        Mercenaries,
     }
 
     public FactionName factionName;
@@ -39,6 +40,4 @@ public class FactionSO : ScriptableObject
     public List<BuildingSO> buildingsInFaction;
     public List<Sprite> villageSpritesInFaction;
     public List<Sprite> deckSlotSpritesInFaction;
-
-    public Sprite factionVillageIconSpriteUI;
 }

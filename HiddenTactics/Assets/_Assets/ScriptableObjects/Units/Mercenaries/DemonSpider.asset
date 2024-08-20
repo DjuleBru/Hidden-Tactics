@@ -12,17 +12,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4bc7b5eb9df2cac4eae406c9d717c5aa, type: 3}
   m_Name: DemonSpider
   m_EditorClassIdentifier: 
-  unitTagList: 
+  unitKeywordsList: 0000000004000000
   unitTargetType: 0
   HP: 150
   armor: 0
   mass: 150
   moveType: 0
   unitMoveSpeed: 110
-  isGarrisonedUnit: 0
+  doesNotMoveGarrisonedUnit: 0
   isInvisibleGarrisonedUnit: 0
   mainWeaponSO: {fileID: 0}
   mainAttackSO: {fileID: 11400000, guid: 273ff89d617f6ce4f8815cfa9236c123, type: 2}
   sideAttackSO: {fileID: 0}
-  specialAttackSO: {fileID: 0}
+  jumpAttackSO: {fileID: 0}
+  deathTriggerAttackSO: {fileID: 0}
   damageToVillages: 1

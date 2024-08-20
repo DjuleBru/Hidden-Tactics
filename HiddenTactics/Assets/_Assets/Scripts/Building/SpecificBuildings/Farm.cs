@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class Farm : Building
 {
-    [SerializeField] private int farmGoldRevenue;
     [SerializeField] private float psDelayBetweenParticles;
     [SerializeField] private string buildingName;
     [SerializeField] private ParticleSystem goldPS;
@@ -17,14 +16,15 @@ public class Farm : Building
     }
 
 
-    private void BattleManager_OnStateChanged(object sender, System.EventArgs e) {
+    protected override void BattleManager_OnStateChanged(object sender, System.EventArgs e) {
+        base.BattleManager_OnStateChanged(sender, e);
         if (BattleManager.Instance.IsPreparationPhase()) {
             StartCoroutine(ShowGoldEarned());
         }
     }
 
     private IEnumerator ShowGoldEarned() {
-        for (int i = 0; i < farmGoldRevenue; i++) {
+        for (int i = 0; i < buildingSO.economicalBuildingRevenue; i++) {
             goldPS.Play();
             yield return new WaitForSeconds(psDelayBetweenParticles);
         }
@@ -32,15 +32,15 @@ public class Farm : Building
 
     private void Farm_OnBuildingDestroyed(object sender, System.EventArgs e) {
         if (isOwnedByPlayer) {
-            RevenueDetailPanelUI.Instance.RemoveRevenueElement(buildingName, farmGoldRevenue);
-            HiddenTacticsMultiplayer.Instance.ChangePlayerRevenueServerRpc(ownerClientId, -farmGoldRevenue);
+            RevenueDetailPanelUI.Instance.RemoveRevenueElement(buildingName, buildingSO.economicalBuildingRevenue);
+            HiddenTacticsMultiplayer.Instance.ChangePlayerRevenueServerRpc(ownerClientId, -buildingSO.economicalBuildingRevenue);
         }
     }
 
     private void Farm_OnBuildingPlaced(object sender, System.EventArgs e) {
         if (isOwnedByPlayer) {
-            RevenueDetailPanelUI.Instance.AddRevenueElement(buildingName, farmGoldRevenue);
-            HiddenTacticsMultiplayer.Instance.ChangePlayerRevenueServerRpc(ownerClientId, farmGoldRevenue);
+            RevenueDetailPanelUI.Instance.AddRevenueElement(buildingName, buildingSO.economicalBuildingRevenue);
+            HiddenTacticsMultiplayer.Instance.ChangePlayerRevenueServerRpc(ownerClientId, buildingSO.economicalBuildingRevenue);
         }
     }
 

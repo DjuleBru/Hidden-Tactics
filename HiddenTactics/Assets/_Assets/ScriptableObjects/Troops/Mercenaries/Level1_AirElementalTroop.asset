@@ -12,10 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44a693b538d454945879116c3a121ddd, type: 3}
   m_Name: Level1_AirElementalTroop
   m_EditorClassIdentifier: 
-  troopName: Air elemental
-  troopDescription: 
+  troopFactionSO: {fileID: 11400000, guid: d56030ef345bce24e8e656daa67acf63, type: 2}
+  troopName: Air elementals
+  troopDescription: Fragile creatures made of wind. Their ability to weild air is
+    very useful.
   troopIllustrationSlotSprite: {fileID: 21300000, guid: 75ae32b53c4efb54ca4b3e2cb822ed86, type: 3}
-  troopDescriptionSlotSprite: {fileID: 0}
+  troopDescriptionSlotSprite: {fileID: 21300000, guid: d22d219f6ff56134ea3eb0aadc9ec8b2, type: 3}
   troopTypeIconSprite: {fileID: 21300000, guid: 479325c2fd721b042aa5463e05286eb0, type: 3}
   troopPrefab: {fileID: 2495463524177989710, guid: f8a3041748435484aa594ff5b879bb46, type: 3}
   unitPrefab: {fileID: 7228251882027103337, guid: 62b9b23dcf271fa41a20423cfb91997c, type: 3}

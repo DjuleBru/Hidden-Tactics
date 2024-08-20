@@ -58,6 +58,11 @@ public class SpawnIPlaceableButtonDebug : SpawnIPlaceableButton, IPointerEnterHa
                 IPlaceableDescriptionSlotTemplate.Instance.Show();
                 IPlaceableDescriptionSlotTemplate.Instance.SetDescriptionSlot(debugTroopToSpawnSO, debugTroopToSpawnSO.unitPrefab.GetComponent<Unit>().GetUnitSO());
             }
+            if(debugBuildingToSpawnSO != null) {
+                cardOpen = true;
+                IPlaceableDescriptionSlotTemplate.Instance.Show();
+                IPlaceableDescriptionSlotTemplate.Instance.SetDescriptionSlot(debugBuildingToSpawnSO);
+            }
         }
     }
 

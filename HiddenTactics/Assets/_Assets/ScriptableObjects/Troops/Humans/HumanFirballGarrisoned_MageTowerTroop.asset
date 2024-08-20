@@ -12,9 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44a693b538d454945879116c3a121ddd, type: 3}
   m_Name: HumanFirballGarrisoned_MageTowerTroop
   m_EditorClassIdentifier: 
-  troopName: Fireball
-  troopIllustrationSlotSprite: {fileID: 0}
-  troopDescriptionSlotSprite: {fileID: 0}
+  troopFactionSO: {fileID: 11400000, guid: b990bb797b0c43b46af1c1ad479ccf69, type: 2}
+  troopName: Garrisoned Fire Mage
+  troopDescription: Elite fire mages, they never exit their tower.
+  troopIllustrationSlotSprite: {fileID: 21300000, guid: 9fc9a355802dd3a4d923bb7f2b5290ac, type: 3}
+  troopDescriptionSlotSprite: {fileID: 21300000, guid: f0344d1e2afaaea4da6fa80bc8eab8a6, type: 3}
   troopTypeIconSprite: {fileID: 21300000, guid: e7920be881996114f989c68f2c5ae8f7, type: 3}
   troopPrefab: {fileID: 2495463524177989710, guid: 91ca30d5cd9f4f74a98152085b06c954, type: 3}
   unitPrefab: {fileID: 7228251882027103337, guid: 5307399471688a745b0ab8f1fda8bb08, type: 3}

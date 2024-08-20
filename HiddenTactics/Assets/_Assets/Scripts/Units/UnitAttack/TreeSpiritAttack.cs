@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class TreeSpiritAttack : UnitAttack
 {
-    [SerializeField] private float dieHealMultiplier = 5f;
     protected override void UnitAI_OnStateChanged(object sender, System.EventArgs e) {
         base.UnitAI_OnStateChanged(sender, e);
 

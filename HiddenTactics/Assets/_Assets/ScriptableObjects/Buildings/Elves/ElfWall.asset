@@ -12,9 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85abc532579c0ec4d839a1a1bcb04732, type: 3}
   m_Name: ElfWall
   m_EditorClassIdentifier: 
-  buildingIllustrationSlotSprite: {fileID: 21300000, guid: 732e4e3f422a3034fa145eead1421ca2, type: 3}
-  buildingDescriptionSlotSprite: {fileID: 0}
-  buildingTypeSprite: {fileID: 21300000, guid: 5257bbe50269dea4881bc0ca050177ea, type: 3}
+  buildingName: Tree Wall
+  buildingDescription: A group of living trees that answered the call to arms.
+  buildingRecruitmentSlotSprite: {fileID: 21300000, guid: 732e4e3f422a3034fa145eead1421ca2, type: 3}
+  buildingDescriptionSlotSprite: {fileID: 21300000, guid: 365903fac5826384b9142b7a4f39fb0c, type: 3}
+  buildingTypeSprite: {fileID: 21300000, guid: c2f895eaf9343c34a8d4e4f7109cbeaa, type: 3}
   buildingPrefab: {fileID: 539002622979983450, guid: 7afdb1f690fc66548b84d52e31523dd5, type: 3}
   buildingHP: 100
   buildingBlocksUnitMovement: 1
@@ -22,4 +24,7 @@ MonoBehaviour:
   garrisonedTroopSO: {fileID: 0}
   spawnBuildingCost: 0
   upgradeBuildingCost: 0
+  economicalBuildingRevenue: 0
+  reflectMeleeDamageAmount: 0
+  buildingKeyworkdList: 1300000014000000
   buildingIsImplemented: 0
