@@ -12,6 +12,7 @@ public class Troop : NetworkBehaviour, IPlaceable {
     public event EventHandler OnTroopSelected;
     public event EventHandler OnTroopUnselected;
     public event EventHandler OnTroopSelled;
+    public event EventHandler OnAdditionalUnitsBought;
 
     public event EventHandler OnTroopHPChanged;
     public float maxTroopHP;
@@ -229,7 +230,6 @@ public class Troop : NetworkBehaviour, IPlaceable {
     }
 
     public void BuyAdditionalUnits() {
-        Debug.Log("BuyAdditionalUnits");
         BuyAdditionalUnitsServerRpc();
     }
 
@@ -251,6 +251,7 @@ public class Troop : NetworkBehaviour, IPlaceable {
             additionalUnitsInTroop.Clear();
         }
 
+        OnAdditionalUnitsBought?.Invoke(this, EventArgs.Empty);
         additionalUnitsHaveBeenBought = true;
     }
 

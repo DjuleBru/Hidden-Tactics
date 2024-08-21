@@ -22,7 +22,7 @@ PrefabInstance:
     - target: {fileID: 625947453899721624, guid: e6d0e8717f6dc0049bda6c0f472ac28b, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 1164749794, guid: 7bb60c4c4ade8ce478485c0770b38321, type: 3}
+      objectReference: {fileID: 1185250441, guid: e44024cc086cd4648a249b1cd287ead4, type: 3}
     - target: {fileID: 625947453899721624, guid: e6d0e8717f6dc0049bda6c0f472ac28b, type: 3}
       propertyPath: m_SortingLayer
       value: 9
@@ -66,6 +66,10 @@ PrefabInstance:
     - target: {fileID: 1899915179584296392, guid: e6d0e8717f6dc0049bda6c0f472ac28b, type: 3}
       propertyPath: m_IsTrigger
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1917477069857370320, guid: e6d0e8717f6dc0049bda6c0f472ac28b, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 1.895
       objectReference: {fileID: 0}
     - target: {fileID: 2082776267096474349, guid: e6d0e8717f6dc0049bda6c0f472ac28b, type: 3}
       propertyPath: m_IsActive
@@ -227,6 +231,10 @@ PrefabInstance:
       propertyPath: m_LocalScale.z
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 9129102945408068014, guid: e6d0e8717f6dc0049bda6c0f472ac28b, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 1.289
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 3193459154862487477, guid: e6d0e8717f6dc0049bda6c0f472ac28b, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: e6d0e8717f6dc0049bda6c0f472ac28b, type: 3}
@@ -317,6 +325,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   projectileSpawnPoint: {fileID: 8767532937672996488}
   attackColliderAOE: {fileID: 755264522738636227}
+  antiLargeUnitDamageMultiplier: 0
 --- !u!4 &8767532937672996488 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5767867997887919187, guid: e6d0e8717f6dc0049bda6c0f472ac28b, type: 3}

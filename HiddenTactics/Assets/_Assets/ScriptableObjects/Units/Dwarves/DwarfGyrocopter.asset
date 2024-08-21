@@ -12,17 +12,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4bc7b5eb9df2cac4eae406c9d717c5aa, type: 3}
   m_Name: DwarfGyrocopter
   m_EditorClassIdentifier: 
-  unitTagList: 
+  unitKeywordsList: 0000000007000000
   unitTargetType: 1
   HP: 100
   armor: 0
   mass: 150
   moveType: 1
   unitMoveSpeed: 100
-  isGarrisonedUnit: 0
+  doesNotMoveGarrisonedUnit: 0
   isInvisibleGarrisonedUnit: 0
   mainWeaponSO: {fileID: 0}
   mainAttackSO: {fileID: 11400000, guid: 9ff2e43177c2554408deb9f3fbeeaee1, type: 2}
   sideAttackSO: {fileID: 0}
-  specialAttackSO: {fileID: 0}
+  jumpAttackSO: {fileID: 0}
+  deathTriggerAttackSO: {fileID: 0}
+  singleUnitSprite: {fileID: 21300000, guid: bb503d89951cf0b4e878f23136f10130, type: 3}
   damageToVillages: 1

@@ -12,17 +12,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4bc7b5eb9df2cac4eae406c9d717c5aa, type: 3}
   m_Name: DwarfNutcracker
   m_EditorClassIdentifier: 
-  unitTagList: 
+  unitKeywordsList: 
   unitTargetType: 0
   HP: 100
   armor: 0
   mass: 500
   moveType: 0
   unitMoveSpeed: 80
-  isGarrisonedUnit: 0
+  doesNotMoveGarrisonedUnit: 0
   isInvisibleGarrisonedUnit: 0
   mainWeaponSO: {fileID: 0}
   mainAttackSO: {fileID: 11400000, guid: 686c2187c67252940a799c6bb7a13c1e, type: 2}
   sideAttackSO: {fileID: 0}
-  specialAttackSO: {fileID: 0}
+  jumpAttackSO: {fileID: 0}
+  deathTriggerAttackSO: {fileID: 0}
+  singleUnitSprite: {fileID: 21300000, guid: 5aecbb1697db6bf40a78ec861b60de98, type: 3}
   damageToVillages: 1

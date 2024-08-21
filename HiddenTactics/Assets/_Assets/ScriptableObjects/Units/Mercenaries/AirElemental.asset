@@ -12,17 +12,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4bc7b5eb9df2cac4eae406c9d717c5aa, type: 3}
   m_Name: AirElemental
   m_EditorClassIdentifier: 
-  unitTagList: 
+  unitKeywordsList: 
   unitTargetType: 0
   HP: 20
   armor: 0
   mass: 60
   moveType: 0
   unitMoveSpeed: 80
-  isGarrisonedUnit: 0
+  doesNotMoveGarrisonedUnit: 0
   isInvisibleGarrisonedUnit: 0
   mainWeaponSO: {fileID: 0}
   mainAttackSO: {fileID: 11400000, guid: e3795e4a48b37e142a95c7e1b1945d80, type: 2}
   sideAttackSO: {fileID: 0}
-  specialAttackSO: {fileID: 0}
+  jumpAttackSO: {fileID: 0}
+  deathTriggerAttackSO: {fileID: 0}
+  singleUnitSprite: {fileID: 21300000, guid: 288b4084deccdbf48b223ce213d43da4, type: 3}
   damageToVillages: 1

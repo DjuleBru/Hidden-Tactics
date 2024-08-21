@@ -28,6 +28,8 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
     [SerializeField] private TroopTypeUI buildingTypeUI;
     [SerializeField] private BuildingUI buildingUI;
 
+    private Troop garrisonedTroop;
+
     protected bool isOwnedByPlayer;
     protected bool isPlaced;
     protected bool isDestroyed;
@@ -191,6 +193,8 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
         if (!isOwnedByPlayer) {
             transform.localScale = new Vector3(-1, 1, 1);
         }
+
+        garrisonedTroop = BattleGrid.Instance.GetTroopAtGridPosition(currentGridPosition);
     }
 
     public void SellBuilding() {
@@ -301,6 +305,10 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
 
     public bool GetBuildingIsPlaced() {
         return isPlaced;
+    }
+
+    public Troop GetGarrisonedTroop() {
+        return garrisonedTroop;
     }
 
     public Transform GetCenterPoint()

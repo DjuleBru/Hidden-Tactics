@@ -21,7 +21,9 @@ MonoBehaviour:
   troopPrefab: {fileID: 2495463524177989710, guid: de6533bfbf212854d92c5e6a761692f3, type: 3}
   unitPrefab: {fileID: 7228251882027103337, guid: 58c1d0d7ebf39704099a1a1e69f688be, type: 3}
   additionalUnit1Prefab: {fileID: 0}
+  additionalUnit1TroopSO: {fileID: 0}
   additionalUnit2Prefab: {fileID: 0}
+  additionalUnit2TroopSO: {fileID: 0}
   spawnedUnitPrefab: {fileID: 7228251882027103337, guid: 58c1d0d7ebf39704099a1a1e69f688be, type: 3}
   spawnTroopCost: 0
   upgradeTroopCost: 0
@@ -30,4 +32,4 @@ MonoBehaviour:
   supportType: 0
   buffAmount: 0
   isGarrisonedTroop: 1
-  troopIsImplemented: 0
+  troopIsImplemented: 1

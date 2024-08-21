@@ -12,17 +12,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4bc7b5eb9df2cac4eae406c9d717c5aa, type: 3}
   m_Name: GreenSkinFlail
   m_EditorClassIdentifier: 
-  unitTagList: 
+  unitKeywordsList: 16000000
   unitTargetType: 0
   HP: 20
   armor: 0
   mass: 50
   moveType: 0
   unitMoveSpeed: 100
-  isGarrisonedUnit: 0
+  doesNotMoveGarrisonedUnit: 0
   isInvisibleGarrisonedUnit: 0
   mainWeaponSO: {fileID: 0}
   mainAttackSO: {fileID: 11400000, guid: e93e8736f30e8fb4fa6efe1a786fcac4, type: 2}
   sideAttackSO: {fileID: 0}
-  specialAttackSO: {fileID: 0}
+  jumpAttackSO: {fileID: 0}
+  deathTriggerAttackSO: {fileID: 0}
+  singleUnitSprite: {fileID: 21300000, guid: 3d341b80034497943b8d5c5293ed921c, type: 3}
   damageToVillages: 1

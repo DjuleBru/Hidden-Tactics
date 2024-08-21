@@ -34,6 +34,7 @@ public class UnitSO : ScriptableObject {
         Destructible,
         Uncrossable,
         Garrisoned,
+        PerforatingAttack,
     }
 
     public List<UnitKeyword> unitKeywordsList;
@@ -54,6 +55,8 @@ public class UnitSO : ScriptableObject {
     public AttackSO sideAttackSO;
     public AttackSO jumpAttackSO;
     public AttackSO deathTriggerAttackSO;
+
+    public Sprite singleUnitSprite;
 
     public int damageToVillages;
 }

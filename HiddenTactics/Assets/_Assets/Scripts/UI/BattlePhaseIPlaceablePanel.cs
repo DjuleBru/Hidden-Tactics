@@ -100,8 +100,9 @@ public class BattlePhaseIPlaceablePanel : MonoBehaviour
 
 
     private void AddIPlaceableCard(IPlaceable iPlaceableAdded) {
-        iPlaceableCardTemplate.gameObject.SetActive(true);
+        if (!(iPlaceableAdded is Troop)) return;
 
+        iPlaceableCardTemplate.gameObject.SetActive(true);
         Transform template = Instantiate(iPlaceableCardTemplate, iPlaceableCardContainer);
         BattlePhaseIPlaceableSlotTemplateUI iPlaceableSlot = template.GetComponent<BattlePhaseIPlaceableSlotTemplateUI>();
 

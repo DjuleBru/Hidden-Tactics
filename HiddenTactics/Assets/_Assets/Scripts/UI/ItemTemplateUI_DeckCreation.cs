@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class ItemTemplateUI_DeckCreation : ItemTemplateUI
@@ -9,6 +10,7 @@ public class ItemTemplateUI_DeckCreation : ItemTemplateUI
     [SerializeField] protected Color unSelectedColor;
     [SerializeField] protected Material selectedMaterial;
     [SerializeField] protected Material cleanMaterial;
+    [SerializeField] protected Material hoveredMaterial;
     private Button selectButton;
 
     private bool selected;
@@ -104,4 +106,20 @@ public class ItemTemplateUI_DeckCreation : ItemTemplateUI
         }
     }
 
+    public override void OnPointerExit(PointerEventData eventData) {
+        base.OnPointerExit(eventData);
+        if(selected) {
+            backgroundImage.material = selectedMaterial;
+            outlineImage.material = selectedMaterial;
+        } else {
+            backgroundImage.material = cleanMaterial;
+            outlineImage.material = cleanMaterial;
+        }
+    }
+
+    public override void OnPointerEnter(PointerEventData eventData) {
+        base.OnPointerEnter(eventData);
+        backgroundImage.material = hoveredMaterial;
+        outlineImage.material = hoveredMaterial;
+    }
 }

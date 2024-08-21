@@ -443,6 +443,18 @@ public class Unit : NetworkBehaviour, ITargetable {
         return burningDurationNormalized.Value;
     }
 
+    public float GetPoisonedRemainingTime() {
+        return poisonedDuration - poisonedTimer;
+    }
+
+    public float GetScaredRemainingTime() {
+        return scaredDuration - scaredTimer;
+    }
+
+    public float GetBurningRemainingTime() {
+        return burningDuration - burningTimer;
+    }
+
     public UnitSO GetUnitSO() {
         return unitSO;
     }

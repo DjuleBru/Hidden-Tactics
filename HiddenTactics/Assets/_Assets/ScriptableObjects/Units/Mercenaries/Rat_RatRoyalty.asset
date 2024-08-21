@@ -12,17 +12,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4bc7b5eb9df2cac4eae406c9d717c5aa, type: 3}
   m_Name: Rat_RatRoyalty
   m_EditorClassIdentifier: 
-  unitTagList: 
+  unitKeywordsList: 
   unitTargetType: 0
   HP: 8
   armor: 0
   mass: 5
   moveType: 0
   unitMoveSpeed: 100
-  isGarrisonedUnit: 0
+  doesNotMoveGarrisonedUnit: 0
   isInvisibleGarrisonedUnit: 0
   mainWeaponSO: {fileID: 0}
   mainAttackSO: {fileID: 11400000, guid: 8944b2725aca4994c8dee6c2f23a1d32, type: 2}
   sideAttackSO: {fileID: 0}
-  specialAttackSO: {fileID: 0}
+  jumpAttackSO: {fileID: 0}
+  deathTriggerAttackSO: {fileID: 0}
+  singleUnitSprite: {fileID: 21300000, guid: c8ad4ffcb2b7a5b4eb7936ab62635155, type: 3}
   damageToVillages: 1

@@ -30,6 +30,16 @@ public class ShowGarrisonedTroopButton : MonoBehaviour
         });
     }
 
+    public void SetChildTroopSO(TroopSO troopSO) {
+        this.troopSO = troopSO;
+        troopIcon.sprite = troopSO.troopIllustrationSlotSprite;
+
+        button.onClick.RemoveAllListeners();
+        button.onClick.AddListener(() => {
+            IPlaceableDescriptionSlotTemplate.Instance.SetDescriptionSlot(troopSO, troopSO.unitPrefab.GetComponent<Unit>().GetUnitSO(), false, true);
+        });
+    }
+
     public void SetBuildingSO(BuildingSO buildingSO) {
         this.buildingSO = buildingSO;
         troopIcon.sprite = buildingSO.buildingRecruitmentSlotSprite;

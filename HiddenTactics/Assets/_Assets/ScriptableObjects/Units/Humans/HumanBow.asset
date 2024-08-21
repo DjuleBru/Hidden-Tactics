@@ -12,17 +12,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4bc7b5eb9df2cac4eae406c9d717c5aa, type: 3}
   m_Name: HumanBow
   m_EditorClassIdentifier: 
-  unitTagList: 
+  unitKeywordsList: 
   unitTargetType: 0
   HP: 30
   armor: 0
   mass: 60
   moveType: 0
   unitMoveSpeed: 80
-  isGarrisonedUnit: 0
+  doesNotMoveGarrisonedUnit: 0
   isInvisibleGarrisonedUnit: 0
   mainWeaponSO: {fileID: 11400000, guid: 1221645990cf7d74ab26c7f045d05ddc, type: 2}
   mainAttackSO: {fileID: 11400000, guid: 385580abebce0f4498364c7ce3150c9e, type: 2}
   sideAttackSO: {fileID: 11400000, guid: 1665b88c4be65264181bcc853277a35e, type: 2}
-  specialAttackSO: {fileID: 0}
+  jumpAttackSO: {fileID: 0}
+  deathTriggerAttackSO: {fileID: 0}
+  singleUnitSprite: {fileID: 21300000, guid: 4513871e59814ed4fb7d940d94a05683, type: 3}
   damageToVillages: 1

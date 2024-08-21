@@ -885,7 +885,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.41509432, g: 0.41509432, b: 0.41509432, a: 1}
+  m_Color: {r: 0.41509432, g: 0.41509432, b: 0.41509432, a: 0.3882353}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -2163,9 +2163,11 @@ MonoBehaviour:
   unitFearBarImage: {fileID: 1140329519390507574}
   unitFearBarGameObject: {fileID: 5764287894438147068}
   unitHPBarImage: {fileID: 2417476210482411052}
+  unitHPBarBackgroundImage: {fileID: 1347141056691629249}
   unitHPBarGameObject: {fileID: 1239429430629773935}
   unitHPBarDamageImage: {fileID: 8914057789915125774}
   unitHPBarHealImage: {fileID: 2409195920115201571}
+  unitHPBarOutline: {fileID: 525591915152694569}
   unitTargetImage: {fileID: 2683922162569287766}
   meleeTargetSprite: {fileID: -1656188105, guid: ab49c36e9d22c2647a0701b78dcb0d9d, type: 3}
   rangedTargetSprite: {fileID: -1803219836, guid: ab49c36e9d22c2647a0701b78dcb0d9d, type: 3}
@@ -2173,6 +2175,26 @@ MonoBehaviour:
   armorTargetSprite: {fileID: -368315034, guid: ab49c36e9d22c2647a0701b78dcb0d9d, type: 3}
   coinSprite: {fileID: 21300000, guid: 8d3e67a51a7ae0c458e8b674da3a729a, type: 3}
   webbedSprite: {fileID: 193885227, guid: fe2494be8d0e26c43bff42681ad6695e, type: 3}
+  oneBarHPBackground: {fileID: 21300000, guid: a60337e82795334459bc6d83213cafeb, type: 3}
+  oneBarHPOutline: {fileID: 21300000, guid: 1d9ce9e7e3fd1f8498f1065fd8d5e91b, type: 3}
+  twoBarHPBackground: {fileID: 21300000, guid: 1df8f2979b132494b90df309bccb1c81, type: 3}
+  twoBarHPOutline: {fileID: 21300000, guid: da20d30a2187f6c498c1fe118867a015, type: 3}
+  threeBarHPBackground: {fileID: 21300000, guid: 17fcd7935ff8e88439bf30e84d243f1f, type: 3}
+  threeBarHPOutline: {fileID: 21300000, guid: ac565d49f272e9648ad18b39dbf22257, type: 3}
+  fourBarHPBackground: {fileID: 21300000, guid: f28fbe432bfed0349afa27cafb78bf0f, type: 3}
+  fourBarHPOutline: {fileID: 21300000, guid: 34d939b53ee542c48af0a694d6c29857, type: 3}
+  fiveBarHPBackground: {fileID: 21300000, guid: df5d1a54d8deb894f9d31b63288c2307, type: 3}
+  fiveBarHPOutline: {fileID: 21300000, guid: 33e4d9885829d864689b9de01ef9a486, type: 3}
+  sixBarHPBackground: {fileID: 21300000, guid: d8159982cf5ab144695f7cac199d1f31, type: 3}
+  sixBarHPOutline: {fileID: 21300000, guid: 90ee735f053d8e348a6a8d45c490905a, type: 3}
+  sevenBarHPBackground: {fileID: 21300000, guid: 89e64509e12302143b74e6171e48ff63, type: 3}
+  sevenBarHPOutline: {fileID: 21300000, guid: 564a1546f7ede204882021a27f71047c, type: 3}
+  eightBarHPBackground: {fileID: 21300000, guid: 23f5b9ec0fb29e748a27ecc8aedcac54, type: 3}
+  eightBarHPOutline: {fileID: 21300000, guid: f4b411b2cfada804590375ef9e28b5dd, type: 3}
+  nineBarHPBackground: {fileID: 21300000, guid: eee817c8847f10c4f8ece40a05a54644, type: 3}
+  nineBarHPOutline: {fileID: 21300000, guid: ec05b74480ee83846a9fa78745186bc2, type: 3}
+  tenBarHPBackground: {fileID: 21300000, guid: 28586a44bc351194fb3670400b2dc4b2, type: 3}
+  tenBarHPOutline: {fileID: 21300000, guid: 855ae44f572eb2d4ca7ffc05094e8d64, type: 3}
   selectedCircleSpriteRenderer: {fileID: 7358385945221485561}
   debug: 
 --- !u!1 &6008118249998785659
@@ -2582,9 +2604,9 @@ RectTransform:
   m_Father: {fileID: 3184916835551258332}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -1.817, y: 0.042}
+  m_AnchorMin: {x: 0, y: 0.5}
+  m_AnchorMax: {x: 0, y: 0.5}
+  m_AnchoredPosition: {x: -1.0219998, y: 0.042}
   m_SizeDelta: {x: 2, y: 0.5}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &8375827676444538306

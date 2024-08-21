@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -19,9 +20,11 @@ public class UnitUI : NetworkBehaviour
     [SerializeField] private GameObject unitFearBarGameObject;
 
     [SerializeField] private Image unitHPBarImage;
+    [SerializeField] private Image unitHPBarBackgroundImage;
     [SerializeField] private GameObject unitHPBarGameObject;
     [SerializeField] private Image unitHPBarDamageImage;
     [SerializeField] private Image unitHPBarHealImage;
+    [SerializeField] private Image unitHPBarOutline;
     [SerializeField] private Image unitTargetImage;
 
     [SerializeField] private Sprite meleeTargetSprite;
@@ -30,6 +33,27 @@ public class UnitUI : NetworkBehaviour
     [SerializeField] private Sprite armorTargetSprite;
     [SerializeField] private Sprite coinSprite;
     [SerializeField] private Sprite webbedSprite;
+
+    [SerializeField] private Sprite oneBarHPBackground;
+    [SerializeField] private Sprite oneBarHPOutline;
+    [SerializeField] private Sprite twoBarHPBackground;
+    [SerializeField] private Sprite twoBarHPOutline;
+    [SerializeField] private Sprite threeBarHPBackground;
+    [SerializeField] private Sprite threeBarHPOutline;
+    [SerializeField] private Sprite fourBarHPBackground;
+    [SerializeField] private Sprite fourBarHPOutline;
+    [SerializeField] private Sprite fiveBarHPBackground;
+    [SerializeField] private Sprite fiveBarHPOutline;
+    [SerializeField] private Sprite sixBarHPBackground;
+    [SerializeField] private Sprite sixBarHPOutline;
+    [SerializeField] private Sprite sevenBarHPBackground;
+    [SerializeField] private Sprite sevenBarHPOutline;
+    [SerializeField] private Sprite eightBarHPBackground;
+    [SerializeField] private Sprite eightBarHPOutline;
+    [SerializeField] private Sprite nineBarHPBackground;
+    [SerializeField] private Sprite nineBarHPOutline;
+    [SerializeField] private Sprite tenBarHPBackground;
+    [SerializeField] private Sprite tenBarHPOutline;
 
     [SerializeField] private SpriteRenderer selectedCircleSpriteRenderer;
 
@@ -82,8 +106,9 @@ public class UnitUI : NetworkBehaviour
         unit.OnUnitWebbed += Unit_OnUnitWebbed;
         unit.OnUnitWebbedEnded += Unit_OnUnitWebbedEnded;
         unit.OnUnitSold += Unit_OnUnitSold;
-    }
 
+        SetUnitHPBar();
+    }
 
     private void Update() {
 
@@ -136,9 +161,74 @@ public class UnitUI : NetworkBehaviour
         }
     }
 
+    private void SetUnitHPBar() {
+        int unitMaxHP = unit.GetUnitSO().HP;
+
+        RectTransform rt = unitHPBarGameObject.GetComponent(typeof(RectTransform)) as RectTransform;
+
+        if (unitMaxHP <= 10) {
+            SetUnitHPBarSprite(oneBarHPBackground, oneBarHPOutline);
+            rt.sizeDelta = new Vector2(.5f, 1f);
+        }
+
+        if (unitMaxHP > 10 && unitMaxHP <= 20) {
+            SetUnitHPBarSprite(twoBarHPBackground, twoBarHPOutline);
+            rt.sizeDelta = new Vector2(.9f, 1f);
+        }
+
+        if (unitMaxHP > 20 && unitMaxHP <= 30) {
+            SetUnitHPBarSprite(threeBarHPBackground, threeBarHPOutline);
+            rt.sizeDelta = new Vector2(1.4f, 1f);
+        }
+
+        if (unitMaxHP > 30 && unitMaxHP <= 40) {
+            SetUnitHPBarSprite(fourBarHPBackground, fourBarHPOutline);
+            rt.sizeDelta = new Vector2(1.9f, 1f);
+        }
+
+        if (unitMaxHP > 40 && unitMaxHP <= 50) {
+            SetUnitHPBarSprite(fiveBarHPBackground, fiveBarHPOutline);
+            rt.sizeDelta = new Vector2(2.4f, 1f);
+        }
+
+        if (unitMaxHP > 50 && unitMaxHP <= 60) {
+            SetUnitHPBarSprite(sixBarHPBackground, sixBarHPOutline);
+            rt.sizeDelta = new Vector2(2.9f, 1f);
+        }
+
+        if (unitMaxHP > 60 && unitMaxHP <= 70) {
+            SetUnitHPBarSprite(sevenBarHPBackground, sevenBarHPOutline);
+            rt.sizeDelta = new Vector2(3.4f, 1f);
+        }
+
+        if (unitMaxHP > 70 && unitMaxHP <= 80) {
+            SetUnitHPBarSprite(eightBarHPBackground, eightBarHPOutline);
+            rt.sizeDelta = new Vector2(3.9f, 1f);
+        }
+
+        if (unitMaxHP > 80 && unitMaxHP <= 90) {
+            SetUnitHPBarSprite(nineBarHPBackground, nineBarHPOutline);
+            rt.sizeDelta = new Vector2(4.4f, 1f);
+        }
+
+        if (unitMaxHP > 90) {
+            SetUnitHPBarSprite(tenBarHPBackground, tenBarHPOutline);
+            rt.sizeDelta = new Vector2(4.9f, 1f);
+        }
+    }
+
+    private void SetUnitHPBarSprite(Sprite hpBarBackgroundSprite, Sprite hpBarOutlineSprite) {
+        unitHPBarImage.sprite = hpBarBackgroundSprite;
+        unitHPBarDamageImage.sprite = hpBarBackgroundSprite;
+        unitHPBarHealImage.sprite = hpBarBackgroundSprite;
+        unitHPBarBackgroundImage.sprite = hpBarBackgroundSprite;
+        unitHPBarOutline.sprite = hpBarOutlineSprite;
+    }
+
     private void Unit_OnUnitSold(object sender, System.EventArgs e) {
         gameObject.SetActive(false);
     }
+
     private void Unit_OnUnitDied(object sender, System.EventArgs e) {
         unitHPBarGameObject.SetActive(false);
         unitHPBarIsActive = false;

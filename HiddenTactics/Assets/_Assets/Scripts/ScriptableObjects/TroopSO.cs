@@ -15,7 +15,9 @@ public class TroopSO : ScriptableObject {
     public GameObject troopPrefab;
     public GameObject unitPrefab;
     public GameObject additionalUnit1Prefab;
+    public TroopSO additionalUnit1TroopSO;
     public GameObject additionalUnit2Prefab;
+    public TroopSO additionalUnit2TroopSO;
     public GameObject spawnedUnitPrefab;
 
     public int spawnTroopCost;

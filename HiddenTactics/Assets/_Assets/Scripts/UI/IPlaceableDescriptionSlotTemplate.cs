@@ -29,8 +29,11 @@ public class IPlaceableDescriptionSlotTemplate : MonoBehaviour, IPointerEnterHan
     [SerializeField] private Image buildingPanelOutlineImage;
     [SerializeField] private Image switchAttacksButtonOutlineImage;
     [SerializeField] private Image switchAttacksButtonBackgroundImage;
-    [SerializeField] private Image showGarrisonedTroopButtonOutlineImage;
-    [SerializeField] private Image showGarrisonedTroopButtonBackgroundImage;
+    [SerializeField] private Image showOtherTroop1ButtonOutlineImage;
+    [SerializeField] private Image showOtherTroop1ButtonBackgroundImage;
+    [SerializeField] private Image showOtherTroop2ButtonOutlineImage;
+    [SerializeField] private Image showOtherTroop2ButtonBackgroundImage;
+    [SerializeField] private Image keywordDescriptionBackgroundImage;
 
     [SerializeField] private Image cardIllustrationImage;
     [SerializeField] private Image moveTypeImage;
@@ -49,15 +52,18 @@ public class IPlaceableDescriptionSlotTemplate : MonoBehaviour, IPointerEnterHan
     [SerializeField] private TextMeshProUGUI attackTargetsText;
     [SerializeField] private TextMeshProUGUI attackRangeText;
     [SerializeField] private TextMeshProUGUI attackAOEText;
-    [SerializeField] private TextMeshProUGUI garrisonedUnitNumberText;
+    [SerializeField] private TextMeshProUGUI OtherTroop1NumberText;
+    [SerializeField] private TextMeshProUGUI OtherTroop2NumberText;
 
-    [SerializeField] private ShowGarrisonedTroopButton showGarrisonedTroopButton;
+    [SerializeField] private ShowGarrisonedTroopButton showOtherTroop1Button;
+    [SerializeField] private ShowGarrisonedTroopButton showOtherTroop2Button;
 
     [SerializeField] private GameObject unitCostGameObject;
     [SerializeField] private GameObject unitArmorGameObject;
     [SerializeField] private GameObject unitNumberGameObject;
     [SerializeField] private GameObject unitMoveSpeedGameObject;
-    [SerializeField] private GameObject garrisonedUnitGameObject;
+    [SerializeField] private GameObject otherTroop1GameObject;
+    [SerializeField] private GameObject otherTroop2GameObject;
 
     [SerializeField] private GameObject attackAOEGameObject;
     [SerializeField] private GameObject attackSpeedGameObject;
@@ -111,6 +117,7 @@ public class IPlaceableDescriptionSlotTemplate : MonoBehaviour, IPointerEnterHan
 
     private UnitSO currentUnitSO;
     private TroopSO currentTroopSO;
+    private TroopSO parentTroopSO;
     private BuildingSO currentBuildingSO;
 
     private AttackSO currentAttackSO;
@@ -125,6 +132,8 @@ public class IPlaceableDescriptionSlotTemplate : MonoBehaviour, IPointerEnterHan
         keywordDescriptionTemplate.gameObject.SetActive(false);
         keywordDescriptionContainer.gameObject.SetActive(false);
         changeAttackSOButtonTemplate.gameObject.SetActive(false);
+
+        DeckManager.LocalInstance.OnSelectedDeckChanged += DeckManager_OnSelectedDeckChanged;
     }
 
     private void SetFactionVisuals() {
@@ -142,8 +151,14 @@ public class IPlaceableDescriptionSlotTemplate : MonoBehaviour, IPointerEnterHan
         buildingPanelOutlineImage.sprite = deckFactionSO.slotBorder;
         switchAttacksButtonBackgroundImage.sprite = deckFactionSO.slotBackground;
         switchAttacksButtonOutlineImage.sprite = deckFactionSO.slotBorder;
-        showGarrisonedTroopButtonOutlineImage.sprite = deckFactionSO.slotBorder;
-        showGarrisonedTroopButtonBackgroundImage.sprite = deckFactionSO.slotBackground;
+        showOtherTroop1ButtonOutlineImage.sprite = deckFactionSO.slotBorder;
+        showOtherTroop1ButtonBackgroundImage.sprite = deckFactionSO.slotBackground;
+        showOtherTroop2ButtonOutlineImage.sprite = deckFactionSO.slotBorder;
+        showOtherTroop2ButtonBackgroundImage.sprite = deckFactionSO.slotBackground;
+
+        if(keywordDescriptionBackgroundImage != null) {
+            keywordDescriptionBackgroundImage.sprite = deckFactionSO.slotBackground;
+        }
 
         Color keywordColor = deckFactionSO.color_samePlayerFaction_Opponent_fill;
         keywordColor.a = 1f;
@@ -151,7 +166,7 @@ public class IPlaceableDescriptionSlotTemplate : MonoBehaviour, IPointerEnterHan
         keywordDescriptionTemplate.Find("KeyWordName").GetComponent<TextMeshProUGUI>().color = keywordColor;
     }
 
-    public void SetDescriptionSlot(TroopSO troopSO, UnitSO unitSO, bool shownFromBuilding = false) {
+    public void SetDescriptionSlot(TroopSO troopSO, UnitSO unitSO, bool shownFromBuilding = false, bool shownFromTroop = false) {
         currentUnitSO = unitSO;
         currentTroopSO = troopSO;
 
@@ -159,7 +174,8 @@ public class IPlaceableDescriptionSlotTemplate : MonoBehaviour, IPointerEnterHan
         unitArmorGameObject.SetActive(true);
         unitMoveSpeedGameObject.SetActive(true);
         unitNumberGameObject.SetActive(true);
-        garrisonedUnitGameObject.SetActive(false);
+        otherTroop1GameObject.SetActive(false);
+        otherTroop2GameObject.SetActive(false);
         attackDescriptionPanel.gameObject.SetActive(true);
         buildingDescriptionPanel.gameObject.SetActive(false);
 
@@ -180,12 +196,31 @@ public class IPlaceableDescriptionSlotTemplate : MonoBehaviour, IPointerEnterHan
         SetMoveTypeStats(unitSO);
         SetAttackTypeStats(unitSO.mainAttackSO);
         SetStatusEffectStats(unitSO.mainAttackSO);
+        SetChildTroopSO(troopSO);
 
-        if(shownFromBuilding) {
+        if (shownFromBuilding) {
             unitCostGameObject.gameObject.SetActive(false);
             unitNumberGameObject.gameObject.SetActive(false);
-            garrisonedUnitGameObject.SetActive(true);
-            showGarrisonedTroopButton.SetBuildingSO(currentBuildingSO);
+            otherTroop1GameObject.SetActive(true);
+            showOtherTroop1Button.SetBuildingSO(currentBuildingSO);
+            OtherTroop1NumberText.text = "";
+        }
+
+        if (!shownFromTroop) {
+            parentTroopSO = troopSO;
+        }
+
+        if (shownFromTroop && parentTroopSO == troopSO) {
+            shownFromTroop = false;
+        }
+
+        if (shownFromTroop) {
+            nameText.text = troopSO.troopName + " (" + parentTroopSO.troopName + ")";
+            unitCostGameObject.gameObject.SetActive(false);
+            unitNumberGameObject.gameObject.SetActive(false);
+            otherTroop1GameObject.SetActive(true);
+            showOtherTroop1Button.SetChildTroopSO(parentTroopSO);
+            OtherTroop1NumberText.text = "";
         }
     }
 
@@ -198,6 +233,7 @@ public class IPlaceableDescriptionSlotTemplate : MonoBehaviour, IPointerEnterHan
         unitNumberGameObject.SetActive(false);
         attackDescriptionPanel.gameObject.SetActive(false);
         buildingDescriptionPanel.gameObject.SetActive(true);
+        otherTroop2GameObject.SetActive(false);
 
         cardIllustrationImage.sprite = buildingSO.buildingDescriptionSlotSprite;
         nameText.text = buildingSO.buildingName;
@@ -205,16 +241,16 @@ public class IPlaceableDescriptionSlotTemplate : MonoBehaviour, IPointerEnterHan
         healthText.text = buildingSO.buildingHP.ToString();
         descriptionText.text = buildingSO.buildingDescription;
 
-        if(buildingSO.garrisonedTroopSO != null) {
+        if (buildingSO.garrisonedTroopSO != null) {
 
             //Unit has a garrisoned troop
-            garrisonedUnitGameObject.SetActive(true);
-            garrisonedUnitNumberText.text = "x" + buildingSO.garrisonedTroopSO.troopPrefab.GetComponent<Troop>().GetBaseUnitPositions().Count.ToString();
+            otherTroop1GameObject.SetActive(true);
+            OtherTroop1NumberText.text = "x" + buildingSO.garrisonedTroopSO.troopPrefab.GetComponent<Troop>().GetBaseUnitPositions().Count.ToString();
             currentTroopSO = buildingSO.garrisonedTroopSO;
-            showGarrisonedTroopButton.SetGarrisonedTroopSO(currentTroopSO);
+            showOtherTroop1Button.SetGarrisonedTroopSO(currentTroopSO);
 
         } else {
-            garrisonedUnitGameObject.SetActive(false);
+            otherTroop1GameObject.SetActive(false);
         }
 
         RefreshKeywords(buildingSO);
@@ -467,6 +503,26 @@ public class IPlaceableDescriptionSlotTemplate : MonoBehaviour, IPointerEnterHan
         }
     }
 
+    private void SetChildTroopSO(TroopSO troopSO) {
+        if (troopSO.additionalUnit1TroopSO != null) {
+            otherTroop1GameObject.SetActive(true);
+            OtherTroop1NumberText.text = "x" + troopSO.troopPrefab.GetComponent<Troop>().GetBaseUnit1Positions().Count;
+            showOtherTroop1Button.SetChildTroopSO(troopSO.additionalUnit1TroopSO);
+        }
+        else {
+            otherTroop1GameObject.SetActive(false);
+        }
+
+        if (troopSO.additionalUnit2TroopSO != null) {
+            otherTroop2GameObject.SetActive(true);
+            OtherTroop2NumberText.text = "x" + troopSO.troopPrefab.GetComponent<Troop>().GetBaseUnit2Positions().Count;
+            showOtherTroop2Button.SetChildTroopSO(troopSO.additionalUnit2TroopSO);
+        }
+        else {
+            otherTroop2GameObject.SetActive(false);
+        }
+    }
+
     private Sprite GetStatusEffectSprite(AttackSO.UnitAttackSpecial attackSpecial) {
         if(attackSpecial == AttackSO.UnitAttackSpecial.pierce) {
             return pierceSprite;
@@ -596,6 +652,10 @@ public class IPlaceableDescriptionSlotTemplate : MonoBehaviour, IPointerEnterHan
             return "Does not move during the battle";
         }
 
+        if (unitKeyword == UnitSO.UnitKeyword.PerforatingAttack) {
+            return "Attacks can hit multiple enemies at once";
+        }
+
         return "keyword description not set";
     }
 
@@ -619,6 +679,10 @@ public class IPlaceableDescriptionSlotTemplate : MonoBehaviour, IPointerEnterHan
 
         if (unitKeyword == UnitSO.UnitKeyword.BloodFlag) {
             return "Blood Flag";
+        }
+
+        if (unitKeyword == UnitSO.UnitKeyword.PerforatingAttack) {
+            return "Perforating Attack";
         }
 
         return unitKeyword.ToString();
@@ -696,17 +760,24 @@ public class IPlaceableDescriptionSlotTemplate : MonoBehaviour, IPointerEnterHan
 
     public void Hide() {
         if (pointerEntered) return;
-        StartCoroutine(HideCoroutine());
+
+        if (animator != null) {
+            StartCoroutine(HideCoroutine());
+        } else {
+            descriptionCardGameObject.SetActive(false);
+        }
     }
 
     private IEnumerator HideCoroutine() {
 
-        if (animator != null) {
-            animator.SetTrigger("Close");
-        }
+        animator.SetTrigger("Close");
 
         yield return new WaitForSeconds(.3f);
         descriptionCardGameObject.SetActive(false);
+    }
+
+    private void DeckManager_OnSelectedDeckChanged(object sender, DeckManager.OnDeckChangedEventArgs e) {
+        SetFactionVisuals();
     }
 
     public void OnPointerEnter(PointerEventData eventData) {
@@ -715,5 +786,9 @@ public class IPlaceableDescriptionSlotTemplate : MonoBehaviour, IPointerEnterHan
 
     public void OnPointerExit(PointerEventData eventData) {
         pointerEntered = false;
+    }
+
+    public bool GetPointerEntered() {
+        return pointerEntered;
     }
 }

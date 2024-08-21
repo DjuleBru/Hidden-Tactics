@@ -152,19 +152,19 @@ public class UnitBuffManager : NetworkBehaviour
     }
 
     private void ResetBuffs() {
-        if (attackRateMultiplier < 1) {
+        if (attackRateMultiplier != 1) {
             ResetAttackRate();
         }
 
-        if (attackDamageMultiplier > 1) {
+        if (attackDamageMultiplier != 1) {
             ResetAttackDamage();
         }
 
-        if (moveSpeedMultiplier > 1) {
+        if (moveSpeedMultiplier != 1) {
             ResetMoveSpeed();
         }
 
-        if (attackKnockbackBuffAbsolute > 0) {
+        if (attackKnockbackBuffAbsolute != 0) {
             attackKnockbackBuffAbsolute = 0;
         }
     }
@@ -256,4 +256,17 @@ public class UnitBuffManager : NetworkBehaviour
         OnMoveSpeedDebuffed?.Invoke(this, EventArgs.Empty);
     }
     #endregion
+
+    public float GetMoveSpeedMultiplier() {
+        return moveSpeedMultiplier;
+    }
+
+    public float GetAttackRateMultiplier() {
+        return attackRateMultiplier;
+    }
+
+    public float GetAttackDamageMultiplier() {
+        return attackDamageMultiplier;
+    }
+
 }

@@ -69,7 +69,7 @@ public class ItemTemplateUI : MonoBehaviour, IPointerEnterHandler, IPointerExitH
 
 
     private void GameInput_OnLeftClickPerformed(object sender, System.EventArgs e) {
-        if (!pointerEntered && cardOpen && lastHoveredItemTemplateUI == this) {
+        if (!pointerEntered && cardOpen && lastHoveredItemTemplateUI == this && !IPlaceableDescriptionSlotTemplate.Instance.GetPointerEntered()) {
             cardOpen = false;
             IPlaceableDescriptionSlotTemplate.Instance.Hide();
         }
@@ -77,23 +77,41 @@ public class ItemTemplateUI : MonoBehaviour, IPointerEnterHandler, IPointerExitH
 
     private void GameInput_OnRightClickPerformed(object sender, System.EventArgs e) {
         if (pointerEntered) {
-            if (troopSO != null) {
+            if (troopSO != null && troopSO.troopIsImplemented) {
                 cardOpen = true;
                 IPlaceableDescriptionSlotTemplate.Instance.Show();
                 IPlaceableDescriptionSlotTemplate.Instance.SetDescriptionSlot(troopSO, troopSO.unitPrefab.GetComponent<Unit>().GetUnitSO());
+                return;
+            }
+
+            if (buildingSO != null && buildingSO.buildingIsImplemented) {
+                cardOpen = true;
+                IPlaceableDescriptionSlotTemplate.Instance.Show();
+                IPlaceableDescriptionSlotTemplate.Instance.SetDescriptionSlot(buildingSO);
+                return;
             }
         }
     }
 
     public virtual void OnPointerEnter(PointerEventData eventData) {
         pointerEntered = true;
-        lastHoveredItemTemplateUI = this;
 
-        if (cardOpen) {
-            if (troopSO != null) {
-                IPlaceableDescriptionSlotTemplate.Instance.SetDescriptionSlot(troopSO, troopSO.unitPrefab.GetComponent<Unit>().GetUnitSO());
-            }
-        }
+        //if (cardOpen) {
+
+        //    if (lastHoveredItemTemplateUI == this) return;
+
+        //    if (troopSO != null && troopSO.troopIsImplemented) {
+        //        IPlaceableDescriptionSlotTemplate.Instance.SetDescriptionSlot(troopSO, troopSO.unitPrefab.GetComponent<Unit>().GetUnitSO());
+        //        lastHoveredItemTemplateUI = this;
+        //        return;
+        //    }
+
+        //    if (buildingSO != null && buildingSO.buildingIsImplemented) {
+        //        IPlaceableDescriptionSlotTemplate.Instance.SetDescriptionSlot(buildingSO);
+        //        lastHoveredItemTemplateUI = this;
+        //        return;
+        //    }
+        //}
     }
 
     public virtual void OnPointerExit(PointerEventData eventData) {

@@ -56,11 +56,10 @@ public class PlayerAction_SelectIPlaceable : NetworkBehaviour {
             if (selectedTroop != null || selectedBuilding != null) {
                 // There was already a placeable selected
 
-                if (selectedTroop == newSelectedTroop || selectedBuilding == newSelectedBuilding) {
+                if ((selectedTroop != null && selectedTroop == newSelectedTroop) || (selectedBuilding != null && selectedBuilding == newSelectedBuilding)) {
                     // Player clicked the same placeable again to deselect
                     DeselectIPlaceable();
-                }
-                else {
+                } else {
                     // Player clicked a new placeable with a previous troop selected
                     DeselectIPlaceable();
                     selectedTroop = newSelectedTroop;
