@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class SellTroopButtonUI : MonoBehaviour, IPointerExitHandler, IPointerEnterHandler {
+public class SellTroopButtonUI : TroopButtonUI, IPointerExitHandler, IPointerEnterHandler {
 
     [SerializeField] Troop troop;
     [SerializeField] Building building;
@@ -13,7 +13,7 @@ public class SellTroopButtonUI : MonoBehaviour, IPointerExitHandler, IPointerEnt
     private Button sellTroopUnitsButton;
     private int goldRedundValue;
 
-    private void Awake() {
+    protected void Awake() {
         sellTroopUnitsButton = GetComponent<Button>();
         sellTroopUnitsButton.onClick.AddListener(() => {
 
@@ -46,7 +46,9 @@ public class SellTroopButtonUI : MonoBehaviour, IPointerExitHandler, IPointerEnt
         });
     }
 
-    public void OnPointerEnter(PointerEventData eventData) {
+    public override void OnPointerEnter(PointerEventData eventData) {
+        base.OnPointerEnter(eventData);
+
         if(building != null) {
             building.GetBuildingUI().ShowUnitAsSellingBuilding();
         } else {
@@ -66,7 +68,9 @@ public class SellTroopButtonUI : MonoBehaviour, IPointerExitHandler, IPointerEnt
         }
     }
 
-    public void OnPointerExit(PointerEventData eventData) {
+    public override void OnPointerExit(PointerEventData eventData) {
+        base.OnPointerExit(eventData);
+
         if(building != null) {
             building.GetBuildingUI().HideBuildingTargetUI();
         } else {

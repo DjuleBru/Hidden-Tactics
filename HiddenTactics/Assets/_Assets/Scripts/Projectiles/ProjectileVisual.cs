@@ -69,7 +69,7 @@ public class ProjectileVisual : MonoBehaviour
     }
 
     public void SetProjectileVisualInactive() {
-        bodyVisual.GetComponent<SpriteRenderer>().enabled = false;
-        shadowVisual.GetComponent<SpriteRenderer>().enabled = false;
+        bodyVisual.gameObject.SetActive(false);
+        shadowVisual.gameObject.SetActive(false);
     }
 }

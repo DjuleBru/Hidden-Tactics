@@ -56,6 +56,8 @@ public class UnitUI : NetworkBehaviour
     [SerializeField] private Sprite tenBarHPOutline;
 
     [SerializeField] private SpriteRenderer selectedCircleSpriteRenderer;
+    [SerializeField] private Animator showArmorAnimator;
+    [SerializeField] private ParticleSystem showArmorParticleSystem;
 
     private float damageBarUpdateTimer;
     private float damageBarUpdateRate = 1f;
@@ -77,7 +79,7 @@ public class UnitUI : NetworkBehaviour
     [SerializeField] private string debug;
 
     private void Awake() {
-        unitHPBarGameObject.SetActive(false);
+        //unitHPBarGameObject.SetActive(false);
         unitTargetImage.gameObject.SetActive(false);
         hideHPBarTimer = hideHPBarDuration;
         damageBarUpdateTimer = delayToUpdateDamageBar;
@@ -87,11 +89,11 @@ public class UnitUI : NetworkBehaviour
         unitFearBarGameObject.SetActive(false);
         unitPoisonBarGameObject.SetActive(false);
         unitBurningBarGameObject.SetActive(false);
-
     }
 
     public override void OnNetworkSpawn() {
-        unitHP.OnHealthChanged += Unit_OnHealthChanged;
+        unitHP.OnHealthChanged += UnitHP_OnHealthChanged;
+        unitHP.OnUnitArmorUsed += UnitHP_OnUnitArmorUsed;
         unit.OnUnitDied += Unit_OnUnitDied;
         unit.OnUnitReset += Unit_OnUnitReset;
         unit.OnUnitSetAsAdditionalUnit += Unit_OnUnitSetAsAdditionalUnit;
@@ -168,7 +170,7 @@ public class UnitUI : NetworkBehaviour
 
         if (unitMaxHP <= 10) {
             SetUnitHPBarSprite(oneBarHPBackground, oneBarHPOutline);
-            rt.sizeDelta = new Vector2(.5f, 1f);
+            rt.sizeDelta = new Vector2(.65f, 1f);
         }
 
         if (unitMaxHP > 10 && unitMaxHP <= 20) {
@@ -234,8 +236,18 @@ public class UnitUI : NetworkBehaviour
         unitHPBarIsActive = false;
     }
 
-    private void Unit_OnHealthChanged(object sender, UnitHP.OnHealthChangedEventArgs e) {
+    private void UnitHP_OnHealthChanged(object sender, UnitHP.OnHealthChangedEventArgs e) {
         UpdateUnitHPBar(e.previousHealth, e.newHealth);
+    }
+
+    private void UnitHP_OnUnitArmorUsed(object sender, System.EventArgs e) {
+        if(!showArmorAnimator.GetCurrentAnimatorStateInfo(0).IsName("ShowUnitArmor")) {
+            //showArmorAnimator.SetTrigger("ShowArmor");
+        }
+
+        if(!showArmorParticleSystem.isPlaying) {
+            showArmorParticleSystem.Play();
+        }
     }
 
     private void Unit_OnUnitScaredEnded(object sender, System.EventArgs e) {

@@ -11,6 +11,7 @@ public class IPlaceableDescriptionSlotTemplate : MonoBehaviour, IPointerEnterHan
     public static IPlaceableDescriptionSlotTemplate Instance;
 
     private bool pointerEntered;
+    private bool cardOpened;
 
     [SerializeField] private Animator animator;
 
@@ -313,8 +314,9 @@ public class IPlaceableDescriptionSlotTemplate : MonoBehaviour, IPointerEnterHan
 
         if (attackSO.attackType == AttackSO.AttackType.deathTrigger ) {
             attackSpeedGameObject.SetActive(false);
-            attackDamageGameObject.SetActive(false);
-            attackDamageImage.sprite = GetStatusEffectSprite(attackSO.attackSpecialList[0]);
+            if(attackSO.attackSpecialList.Count >0) {
+                attackDamageImage.sprite = GetStatusEffectSprite(attackSO.attackSpecialList[0]);
+            }
         } else {
             attackDamageImage.sprite = damageSprite;
         }
@@ -333,6 +335,12 @@ public class IPlaceableDescriptionSlotTemplate : MonoBehaviour, IPointerEnterHan
         else {
             attackAOEGameObject.SetActive(false);
         }
+
+        // Pierce ?
+        if (attackSO.attackSpecialList.Contains(AttackSO.UnitAttackSpecial.pierce)) {
+            attackDamageImage.sprite = pierceSprite;
+        }
+
     }
 
     private void SetAttackTargetTypesStats(AttackSO attackSO) {
@@ -399,6 +407,9 @@ public class IPlaceableDescriptionSlotTemplate : MonoBehaviour, IPointerEnterHan
 
     private void SetStatusEffectStats(AttackSO attackSO) {
         if (attackSO.attackSpecialList.Count > 0) {
+
+            if (attackSO.attackSpecialList[0] == AttackSO.UnitAttackSpecial.pierce) return;
+
             statusEffect1Text.gameObject.SetActive(true);
             statusEffect1Image.gameObject.SetActive(true);
             statusEffectGameObject.SetActive(true);
@@ -656,6 +667,10 @@ public class IPlaceableDescriptionSlotTemplate : MonoBehaviour, IPointerEnterHan
             return "Attacks can hit multiple enemies at once";
         }
 
+        if (unitKeyword == UnitSO.UnitKeyword.Trample) {
+            return "Deals double damage to non-large units";
+        }
+
         return "keyword description not set";
     }
 
@@ -756,6 +771,7 @@ public class IPlaceableDescriptionSlotTemplate : MonoBehaviour, IPointerEnterHan
 
     public void Show() {
         descriptionCardGameObject.SetActive(true);
+        cardOpened = true;
     }
 
     public void Hide() {

@@ -325,7 +325,6 @@ public class Troop : NetworkBehaviour, IPlaceable {
     }
 
     public void SetTroopHovered(bool hovered) {
-
         if(hovered) {
             troopHovered = true;
             troopTypeUI.SetUIHovered();
@@ -356,7 +355,7 @@ public class Troop : NetworkBehaviour, IPlaceable {
         if (selected) {
             troopSelected = true;
             OnTroopSelected?.Invoke(this, EventArgs.Empty);
-            if (BattleManager.Instance.IsPreparationPhase() && !troopSO.isGarrisonedTroop) {
+            if (BattleManager.Instance.IsPreparationPhase() && !troopSO.isGarrisonedTroop && !SettingsManager.Instance.GetTacticalViewSetting()) {
                 troopUI.ShowTroopSelectedUI();
             }
 

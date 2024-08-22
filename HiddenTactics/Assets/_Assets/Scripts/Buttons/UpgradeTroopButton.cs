@@ -5,16 +5,18 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class UpgradeTroopButton : MonoBehaviour, IPointerExitHandler, IPointerEnterHandler
+public class UpgradeTroopButton : TroopButtonUI, IPointerExitHandler, IPointerEnterHandler
 {
     [SerializeField] Troop troop;
 
     private Button upgradeTroopButton;
 
-    public void OnPointerEnter(PointerEventData eventData) {
+    public override void OnPointerEnter(PointerEventData eventData) {
+        base.OnPointerEnter(eventData);
     }
 
-    public void OnPointerExit(PointerEventData eventData) {
+    public override void OnPointerExit(PointerEventData eventData) {
+        base.OnPointerExit(eventData);
     }
 
     private void Awake() {

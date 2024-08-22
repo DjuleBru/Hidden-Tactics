@@ -35,6 +35,7 @@ public class UnitSO : ScriptableObject {
         Uncrossable,
         Garrisoned,
         PerforatingAttack,
+        Trample,
     }
 
     public List<UnitKeyword> unitKeywordsList;

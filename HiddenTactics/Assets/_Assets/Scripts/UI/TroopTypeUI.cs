@@ -165,6 +165,7 @@ public class TroopTypeUI : NetworkBehaviour, IPointerEnterHandler, IPointerExitH
     private void Building_OnBuildingSelled(object sender, System.EventArgs e) {
         gameObject.SetActive(false);
     }
+
     private void Building_OnBuildingPlaced(object sender, System.EventArgs e) {
 
         if (SettingsManager.Instance.GetTacticalViewSetting()) {
@@ -241,6 +242,7 @@ public class TroopTypeUI : NetworkBehaviour, IPointerEnterHandler, IPointerExitH
     }
 
     public void SetUIHovered() {
+        typeUIGameObject.SetActive(true);
         canvasGroup.alpha = 1f;
         animator.SetTrigger("Grow");
         animator.ResetTrigger("Shrink");
@@ -248,13 +250,13 @@ public class TroopTypeUI : NetworkBehaviour, IPointerEnterHandler, IPointerExitH
     }
 
     public void SetUIUnHovered() {
-
         if (!SettingsManager.Instance.GetTacticalViewSetting()) {
             canvasGroup.alpha = .7f;
         }
         animator.SetTrigger("Shrink");
         animator.ResetTrigger("Grow");
         animator.ResetTrigger("Select");
+        typeUIGameObject.SetActive(active_PlayerInput);
     }
 
     public void ResetUI() {
@@ -265,6 +267,8 @@ public class TroopTypeUI : NetworkBehaviour, IPointerEnterHandler, IPointerExitH
         animator.SetTrigger("Shrink");
         animator.ResetTrigger("Grow");
         animator.ResetTrigger("Select");
+
+        typeUIGameObject.SetActive(active_PlayerInput);
     }
 
     public void SetUISelected(bool selected) {

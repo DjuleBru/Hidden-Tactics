@@ -23,7 +23,8 @@ public class Unit : NetworkBehaviour, ITargetable {
 
     public event EventHandler OnUnitHovered;
     public event EventHandler OnUnitUnhovered;
-    public event EventHandler OnUnitSelected;
+    public event EventHandler OnUnitSelectedFromTroop;
+    public event EventHandler OnSingleUnitSelected;
     public event EventHandler OnUnitUnselected;
 
     public event EventHandler<OnUnitSpecialEventArgs> OnUnitDazed;
@@ -82,6 +83,7 @@ public class Unit : NetworkBehaviour, ITargetable {
     protected bool isSpawnedUnit;
     protected bool unitIsBought;
     protected bool unitIsOnlyVisual;
+    protected bool isSelected;
 
     protected virtual void Awake() {
         collider2d = GetComponent<Collider2D>();
@@ -394,10 +396,26 @@ public class Unit : NetworkBehaviour, ITargetable {
     }
 
     public void SetUnitSelected(bool selected) {
+
         if(selected) {
-            OnUnitSelected?.Invoke(this, EventArgs.Empty);
+            if (isSelected) return;
+            OnUnitSelectedFromTroop?.Invoke(this, EventArgs.Empty);
+            isSelected = true;
         } else {
+            if (!isSelected) return;
             OnUnitUnselected?.Invoke(this, EventArgs.Empty);
+            isSelected = false;
+        }
+    }
+
+    public void SetSingleUnitSelected(bool selected) {
+        if (selected) {
+            OnSingleUnitSelected?.Invoke(this, EventArgs.Empty);
+            isSelected = true;
+        }
+        else {
+            OnUnitUnselected?.Invoke(this, EventArgs.Empty);
+            isSelected = false;
         }
     }
 
@@ -602,7 +620,7 @@ public class Unit : NetworkBehaviour, ITargetable {
         unitIsPlaced = true;
 
         if (PlayerAction_SelectIPlaceable.LocalInstance.IsTroopSelected(parentTroop)) {
-            OnUnitSelected?.Invoke(this, EventArgs.Empty);
+            OnUnitSelectedFromTroop?.Invoke(this, EventArgs.Empty);
         }
 
         OnAdditionalUnitActivated?.Invoke(this, EventArgs.Empty);

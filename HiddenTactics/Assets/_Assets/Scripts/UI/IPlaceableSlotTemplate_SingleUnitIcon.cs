@@ -247,8 +247,8 @@ public class IPlaceableSlotTemplate_SingleUnitIcon : MonoBehaviour, IPointerEnte
     public void SetInteractable(bool interactable) {
         this.interactable = interactable;
 
-        if(pointerEntered) {
-            unit.SetUnitSelected(true);
+        if(pointerEntered && interactable) {
+            unit.SetSingleUnitSelected(true);
             slotBackgroundImage.color = hoveredColor;
             parentSlotTemplate.DeselectOtherSlots(this);
         }
@@ -258,7 +258,7 @@ public class IPlaceableSlotTemplate_SingleUnitIcon : MonoBehaviour, IPointerEnte
         pointerEntered = false;
 
         if (!interactable) return;
-        unit.SetUnitSelected(false);
+        unit.SetSingleUnitSelected(false);
         slotBackgroundImage.color = baseColor;
     }
 
@@ -267,12 +267,12 @@ public class IPlaceableSlotTemplate_SingleUnitIcon : MonoBehaviour, IPointerEnte
         if (!interactable) return;
 
         parentSlotTemplate.DeselectOtherSlots(this);
-        unit.SetUnitSelected(true);
+        unit.SetSingleUnitSelected(true);
         slotBackgroundImage.color = hoveredColor;
     }
 
     public void SetUnitUnSelected() {
-        unit.SetUnitSelected(false);
+        unit.SetSingleUnitSelected(false);
         slotBackgroundImage.color = baseColor;
     }
 }

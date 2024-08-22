@@ -19,11 +19,13 @@ public class UnitTargetingSystem_TreeSpirits : UnitTargetingSystem
             }
 
             List<Unit> unitListAtTargetGridPosition = BattleGrid.Instance.GetUnitListAtGridPosition(targetGridPosition);
+
             foreach (Unit unit in unitListAtTargetGridPosition) {
                 if (unit.IsOwnedByPlayer() == this.unit.IsOwnedByPlayer() && unit != this.unit && !unit.GetIsDead() && unit.GetUnitIsBought() && attackSO.attackTargetTypes.Contains(unit.GetTargetType())) {
 
                     bool unitHasLostHP = unit.GetComponent<UnitHP>().GetHP() < unit.GetComponent<UnitHP>().GetMaxHP();
                     bool unitIsTreeSpirit = (unit.GetComponent<UnitTargetingSystem_TreeSpirits>() != null);
+
                     if (unitHasLostHP && !unitIsTreeSpirit) {
                         //  targetable has lost HP AND target can be targeted (air unit vs ground unit vs garrisoned unit, building, village)
                         targetItargetableList.Add(unit);

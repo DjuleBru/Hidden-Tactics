@@ -86,7 +86,7 @@ public class DwarfWallBlade : NetworkBehaviour, IDamageSource
             if (unitAOETarget == null) return;
             IDamageable targetIDamageable = unitAOETarget.GetIDamageable();
             if (unitAOETarget.GetIsDead()) return;
-            targetIDamageable.TakeDamage(damageDealt, this);
+            targetIDamageable.TakeDamage(damageDealt, this, true);
         }
     }
 

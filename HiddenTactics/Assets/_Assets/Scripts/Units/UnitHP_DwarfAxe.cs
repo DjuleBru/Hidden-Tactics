@@ -13,12 +13,12 @@ public class UnitHP_DwarfAxe : UnitHP
     }
 
     [ClientRpc]
-    protected override void TakeDamageClientRpc(float damage) {
+    protected override void TakeDamageClientRpc(float damage, bool attackIgnoresArmor) {
         if(unitAI_DwarfAxe.GetWearingShield()) {
             unitAI_DwarfAxe.TakeShieldDamage();
             return;
         }
 
-        base.TakeDamageClientRpc(damage);
+        base.TakeDamageClientRpc(damage, attackIgnoresArmor);
     }
 }

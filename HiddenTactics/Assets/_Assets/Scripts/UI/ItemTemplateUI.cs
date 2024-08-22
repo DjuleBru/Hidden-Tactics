@@ -67,8 +67,8 @@ public class ItemTemplateUI : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         }
     }
 
-
     private void GameInput_OnLeftClickPerformed(object sender, System.EventArgs e) {
+
         if (!pointerEntered && cardOpen && lastHoveredItemTemplateUI == this && !IPlaceableDescriptionSlotTemplate.Instance.GetPointerEntered()) {
             cardOpen = false;
             IPlaceableDescriptionSlotTemplate.Instance.Hide();
@@ -79,6 +79,7 @@ public class ItemTemplateUI : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         if (pointerEntered) {
             if (troopSO != null && troopSO.troopIsImplemented) {
                 cardOpen = true;
+                lastHoveredItemTemplateUI = this;
                 IPlaceableDescriptionSlotTemplate.Instance.Show();
                 IPlaceableDescriptionSlotTemplate.Instance.SetDescriptionSlot(troopSO, troopSO.unitPrefab.GetComponent<Unit>().GetUnitSO());
                 return;
@@ -86,9 +87,15 @@ public class ItemTemplateUI : MonoBehaviour, IPointerEnterHandler, IPointerExitH
 
             if (buildingSO != null && buildingSO.buildingIsImplemented) {
                 cardOpen = true;
+                lastHoveredItemTemplateUI = this;
                 IPlaceableDescriptionSlotTemplate.Instance.Show();
                 IPlaceableDescriptionSlotTemplate.Instance.SetDescriptionSlot(buildingSO);
                 return;
+            }
+        } else {
+            if (!pointerEntered && cardOpen && lastHoveredItemTemplateUI == this && !IPlaceableDescriptionSlotTemplate.Instance.GetPointerEntered()) {
+                cardOpen = false;
+                IPlaceableDescriptionSlotTemplate.Instance.Hide();
             }
         }
     }
@@ -96,22 +103,20 @@ public class ItemTemplateUI : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     public virtual void OnPointerEnter(PointerEventData eventData) {
         pointerEntered = true;
 
-        //if (cardOpen) {
+        if (cardOpen) {
 
-        //    if (lastHoveredItemTemplateUI == this) return;
+            if (lastHoveredItemTemplateUI == this) return;
 
-        //    if (troopSO != null && troopSO.troopIsImplemented) {
-        //        IPlaceableDescriptionSlotTemplate.Instance.SetDescriptionSlot(troopSO, troopSO.unitPrefab.GetComponent<Unit>().GetUnitSO());
-        //        lastHoveredItemTemplateUI = this;
-        //        return;
-        //    }
+            if (troopSO != null && troopSO.troopIsImplemented) {
+                lastHoveredItemTemplateUI = this;
+                return;
+            }
 
-        //    if (buildingSO != null && buildingSO.buildingIsImplemented) {
-        //        IPlaceableDescriptionSlotTemplate.Instance.SetDescriptionSlot(buildingSO);
-        //        lastHoveredItemTemplateUI = this;
-        //        return;
-        //    }
-        //}
+            if (buildingSO != null && buildingSO.buildingIsImplemented) {
+                lastHoveredItemTemplateUI = this;
+                return;
+            }
+        }
     }
 
     public virtual void OnPointerExit(PointerEventData eventData) {

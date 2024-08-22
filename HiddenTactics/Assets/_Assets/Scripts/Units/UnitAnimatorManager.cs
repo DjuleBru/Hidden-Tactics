@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
@@ -27,6 +28,8 @@ public class UnitAnimatorManager : NetworkBehaviour
     protected float Y;
     private bool firstSelectionDone;
 
+    public event EventHandler OnUnitXChanged;
+
     protected virtual void Awake() {
         unit = GetComponentInParent<Unit>();
         unitHP = GetComponentInParent<UnitHP>();
@@ -37,7 +40,7 @@ public class UnitAnimatorManager : NetworkBehaviour
 
         if (unit.GetUnitSO().isInvisibleGarrisonedUnit) return;
         // Randomize Idle animation starting frame (previously OnNetworkSpawn)
-        float randomOffset = Random.Range(0f, 1f);
+        float randomOffset = UnityEngine.Random.Range(0f, 1f);
         unitAnimator.Play("Idle", 0, randomOffset);
         unitAnimator.SetBool("Idle", true);
     }
@@ -48,20 +51,21 @@ public class UnitAnimatorManager : NetworkBehaviour
         unit.OnUnitReset += Unit_OnUnitReset;
         unitAI.OnStateChanged += UnitAI_OnStateChanged;
         unit.OnUnitPlaced += Unit_OnUnitPlaced;
-        unit.OnUnitSelected += Unit_OnUnitSelected;
+        unit.OnUnitSelectedFromTroop += Unit_OnUnitSelected;
 
         unit.OnAdditionalUnitActivated += Unit_OnAdditionalUnitActivated;
 
         unitAttack.OnUnitAttack += UnitAttack_OnUnitAttack;
         unitAttack.OnUnitAttackStarted += UnitAttack_OnUnitAttackStarted;
         unitAttack.OnUnitAttackEnded += UnitAttack_OnUnitAttackEnded;
-    }
 
+    }
 
     protected void Start() {
         if (unit.GetUnitIsOnlyVisual()) return;
         if (unit.GetUnitSO().isInvisibleGarrisonedUnit) return;
         SetUnitWatchDirectionBasedOnPlayerOwnance();
+        OnUnitXChanged?.Invoke(this, EventArgs.Empty);
     }
 
     protected virtual void Update() {
@@ -163,6 +167,11 @@ public class UnitAnimatorManager : NetworkBehaviour
     }
 
     public void SetXY(float xValue, float yValue) {
+
+        if((xValue > 0 && X < 0) || (xValue < 0 && X > 0)) {
+            OnUnitXChanged?.Invoke(this, EventArgs.Empty);
+        }
+
         X = xValue;
         Y = yValue;
         unitAnimator.SetFloat("X", X);
@@ -197,11 +206,17 @@ public class UnitAnimatorManager : NetworkBehaviour
     protected virtual void Unit_OnHealthChanged(object sender, UnitHP.OnHealthChangedEventArgs e) {
         if(e.newHealth < e.previousHealth) {
             foreach(Animator unitShaderAnimator in unitShaderAnimatorList) {
-                unitShaderAnimator.SetTrigger("Damaged");
+                if(!unitShaderAnimator.GetCurrentAnimatorStateInfo(0).IsName("UnitDamageTaken")) {
+                    unitShaderAnimator.SetTrigger("Damaged");
+                }
             }
-        } else {
+        }
+
+        if (e.newHealth > e.previousHealth) {
             foreach (Animator unitShaderAnimator in unitShaderAnimatorList) {
-                unitShaderAnimator.SetTrigger("Healed");
+                if (!unitShaderAnimator.GetCurrentAnimatorStateInfo(0).IsName("UnitHealTaken")) {
+                    unitShaderAnimator.SetTrigger("Healed");
+                }
             }
         }
     }
@@ -216,12 +231,12 @@ public class UnitAnimatorManager : NetworkBehaviour
                 attacking = false;
 
                 animationName = "Walk";
-                float randomOffset = Random.Range(0f, 1f);
+                float randomOffset = UnityEngine.Random.Range(0f, 1f);
                 unitAnimator.Play(animationName, 0, randomOffset);
             } else {
                 walking = false; 
                 animationName = "Idle";
-                float randomOffset = Random.Range(0f, 1f);
+                float randomOffset = UnityEngine.Random.Range(0f, 1f);
                 unitAnimator.Play(animationName, 0, randomOffset);
             }
         }
@@ -232,7 +247,7 @@ public class UnitAnimatorManager : NetworkBehaviour
             attacking = false;
 
             animationName = "Walk";
-            float randomOffset = Random.Range(0f, 1f);
+            float randomOffset = UnityEngine.Random.Range(0f, 1f);
             unitAnimator.Play(animationName, 0, randomOffset);
         }
 
@@ -242,7 +257,7 @@ public class UnitAnimatorManager : NetworkBehaviour
             attacking = false;
 
             animationName = "Idle";
-            float randomOffset = Random.Range(0f, 1f);
+            float randomOffset = UnityEngine.Random.Range(0f, 1f);
             unitAnimator.Play(animationName, 0, randomOffset);
         }
 
@@ -277,7 +292,7 @@ public class UnitAnimatorManager : NetworkBehaviour
     protected void ResetAnimatorParameters() {
         walking = false;
         idle = true;
-        float randomOffset = Random.Range(0f, 1f);
+        float randomOffset = UnityEngine.Random.Range(0f, 1f);
         unitAnimator.Play("Idle", 0, randomOffset);
 
         unitAnimator.SetBool("Walking", walking);
@@ -311,7 +326,7 @@ public class UnitAnimatorManager : NetworkBehaviour
         unitAnimator.SetBool("Idle", idle);
 
 
-        float randomOffset = Random.Range(0f, 1f);
+        float randomOffset = UnityEngine.Random.Range(0f, 1f);
         unitAnimator.Play(animationName, 0, randomOffset);
     }
 

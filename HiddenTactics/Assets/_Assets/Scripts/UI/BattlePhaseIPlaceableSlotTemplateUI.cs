@@ -106,9 +106,10 @@ public class BattlePhaseIPlaceableSlotTemplateUI : MonoBehaviour, IPointerEnterH
         borderImage.material = selectedMaterial;
         backgroundImage.material = selectedMaterial;
 
-        if(!cardOpened) {
+        SelectCard();
+
+        if (!cardOpened) {
             OpenIPlaceableCard();
-            SelectCard();
         }
     }
 
@@ -156,6 +157,7 @@ public class BattlePhaseIPlaceableSlotTemplateUI : MonoBehaviour, IPointerEnterH
         animator.ResetTrigger("SlideDown");
         cardOpened = true;
 
+        if (cardSelected) return;
         HoverIPlaceableOnBattleField(true);
     }
 
@@ -170,15 +172,15 @@ public class BattlePhaseIPlaceableSlotTemplateUI : MonoBehaviour, IPointerEnterH
 
         foreach (IPlaceableSlotTemplate_SingleUnitIcon singleUnit in singleUnitIconsList) {
             singleUnit.SetInteractable(false);
+            singleUnit.SetUnitUnSelected();
         }
 
         HoverIPlaceableOnBattleField(false);
-
     }
 
-    private void HoverIPlaceableOnBattleField(bool selected) {
+    private void HoverIPlaceableOnBattleField(bool hovered) {
 
-        if(selected) {
+        if(hovered) {
 
             if (iPlaceable is Troop) {
                 Troop troop = (Troop)iPlaceable;
@@ -186,8 +188,9 @@ public class BattlePhaseIPlaceableSlotTemplateUI : MonoBehaviour, IPointerEnterH
 
                 foreach (Unit unit in troop.GetUnitInTroopList()) {
                     if (!unit.GetUnitIsBought()) continue;
-
-                    unit.GetUnitVisual().SetUnitSelected(true);
+                    if(hovered) {
+                        unit.GetUnitVisual().SetUnitHovered(true);
+                    }
                 }
             }
 
@@ -222,8 +225,23 @@ public class BattlePhaseIPlaceableSlotTemplateUI : MonoBehaviour, IPointerEnterH
         borderImage.material = selectedMaterial;
         backgroundImage.material = selectedMaterial;
 
+        if (iPlaceable is Troop) {
+            Troop troop = (Troop)iPlaceable;
+            troop.GetComponentInChildren<TroopTypeUI>().SetUIHovered();
+
+            foreach (Unit unit in troop.GetUnitInTroopList()) {
+                if (!unit.GetUnitIsBought()) continue;
+                unit.SetUnitSelected(true);
+            }
+        }
+
         foreach (IPlaceableSlotTemplate_SingleUnitIcon singleUnitIcon in singleUnitIconsList) {
             singleUnitIcon.SetInteractable(true);
+        }
+
+        if (iPlaceable is Building) {
+            Building building = (Building)iPlaceable;
+            building.GetComponentInChildren<TroopTypeUI>().SetUIHovered();
         }
     }
 
@@ -240,9 +258,10 @@ public class BattlePhaseIPlaceableSlotTemplateUI : MonoBehaviour, IPointerEnterH
     }
 
     public void OnPointerExit(PointerEventData eventData) {
-        if (cardSelected) return;
         pointerEntered = false;
+        if (cardSelected) return;
         if (iPlaceable.GetSelected()) return;
+
         CloseIPlaceableCard();
     }
 

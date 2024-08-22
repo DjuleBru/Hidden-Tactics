@@ -14,6 +14,7 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
     [SerializeField] protected Transform projectileSpawnPoint;
     [SerializeField] protected AttackColliderAOE attackColliderAOE;
     [SerializeField] protected float antiLargeUnitDamageMultiplier;
+    [SerializeField] protected float trampleUnitDamageMultiplier;
 
     protected Unit unit;
     protected UnitAI unitAI;
@@ -45,6 +46,8 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
 
     protected bool attacking;
     protected bool dazed;
+    protected bool triggerDeathAttack;
+    protected float deadTimer;
 
     protected void Awake() {
         unitAI = GetComponent<UnitAI>();
@@ -71,6 +74,13 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
 
 
     protected virtual void Update() {
+
+        if(triggerDeathAttack) {
+            deadTimer += Time.deltaTime;
+            if(deadTimer >= unit.GetUnitSO().deathTriggerAttackSO.meleeAttackAnimationHitDelay) {
+                TriggerDeathTriggerAttacks();
+            }
+        }
 
         if (attackTarget as MonoBehaviour == null) return;
 
@@ -289,8 +299,13 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
             attackDamageModified = attackDamage * antiLargeUnitDamageMultiplier;
         }
 
-        targetIDamageable.TakeDamage(attackDamageModified, this);
+        // Trample
+        if (unit.GetUnitSO().unitKeywordsList.Contains(UnitSO.UnitKeyword.Trample) && !targetUnit.GetUnitSO().unitKeywordsList.Contains(UnitSO.UnitKeyword.Large)) {
+            attackDamageModified = attackDamage * antiLargeUnitDamageMultiplier;
+        }
 
+        bool attackIgnoresArmor = activeAttackSO.attackSpecialList.Contains(AttackSO.UnitAttackSpecial.pierce);
+        targetIDamageable.TakeDamage(attackDamageModified, this, attackIgnoresArmor);
 
         //Knockback
         if (attackKnockback != 0) {
@@ -306,7 +321,7 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
         }
 
         //Fire
-        if(attackSpecialList.Contains(AttackSO.UnitAttackSpecial.fire)) {
+        if (attackSpecialList.Contains(AttackSO.UnitAttackSpecial.fire)) {
             (target as Unit).TakeSpecial(AttackSO.UnitAttackSpecial.fire, activeAttackSO.specialEffectDuration);
         }
 
@@ -327,8 +342,8 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
     }
 
     protected virtual void PerformDamageActionOnVillage(IDamageable targetIDamageable) {
-        GetComponent<UnitHP>().TakeDamage(unit.GetUnitSO().HP, this);
-        targetIDamageable.TakeDamage(unit.GetUnitSO().damageToVillages, this);
+        GetComponent<UnitHP>().TakeDamage(unit.GetUnitSO().HP, this, true);
+        targetIDamageable.TakeDamage(unit.GetUnitSO().damageToVillages, this, true);
     }
 
     protected List<Unit> FindAOEAttackTargets(Vector3 targetPosition, float AOE, bool targetAllyUnits = false) {
@@ -433,6 +448,7 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
 
     public void InvokeOnUnitAttackEnded() {
         OnUnitAttackEnded?.Invoke(this, EventArgs.Empty);
+        OnUnitDecomposedAttackEnded?.Invoke(this, EventArgs.Empty);
     }
 
 
@@ -459,15 +475,21 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
         }
 
         if (unitAI.IsDead()) {
-            // Death trigger attacks : fire
-            if(unit.GetUnitSO().deathTriggerAttackSO != null && unit.GetUnitSO().deathTriggerAttackSO.attackSpecialList.Contains(AttackSO.UnitAttackSpecial.fire)) {
-                foreach (Unit unitAOETarget in FindAOEAttackTargets(transform.position, unit.GetUnitSO().deathTriggerAttackSO.attackAOE)) {
-                    // Die effect
-                    unitAOETarget.TakeSpecial(AttackSO.UnitAttackSpecial.fire, unit.GetUnitSO().deathTriggerAttackSO.specialEffectDuration);
-                }
+            if (unit.GetUnitSO().deathTriggerAttackSO != null) {
+                // Death trigger attacks
+                deadTimer = 0f;
+            triggerDeathAttack = true;
+            activeAttackSO = unit.GetUnitSO().deathTriggerAttackSO;
             }
         }
 
+    }
+
+    private void TriggerDeathTriggerAttacks() {
+        foreach (Unit unitAOETarget in FindAOEAttackTargets(transform.position, unit.GetUnitSO().deathTriggerAttackSO.attackAOE)) {
+            InflictDamage(unitAOETarget, this.transform.position);
+        }
+        triggerDeathAttack = false;
     }
 
     #endregion

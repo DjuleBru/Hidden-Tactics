@@ -23,6 +23,7 @@ public class UnitHP : NetworkBehaviour, IDamageable
     protected int garrisonedProtectionChance = 50;
 
     public event EventHandler<OnHealthChangedEventArgs> OnHealthChanged;
+    public event EventHandler OnUnitArmorUsed;
 
     [SerializeField] protected string debug;
 
@@ -54,7 +55,7 @@ public class UnitHP : NetworkBehaviour, IDamageable
 
             if(burningTimer >= burningTick) {
                 burningTimer = 0f;
-                TakeDamageServerRpc(burningDamage);
+                TakeDamageServerRpc(burningDamage, true);
             }
         }
 
@@ -63,7 +64,7 @@ public class UnitHP : NetworkBehaviour, IDamageable
 
             if (poisonedTimer >= poisonedTick) {
                 poisonedTimer = 0f;
-                TakeDamageServerRpc(poisonedDamage);
+                TakeDamageServerRpc(poisonedDamage, true);
             }
         }
     }
@@ -103,8 +104,8 @@ public class UnitHP : NetworkBehaviour, IDamageable
     }
 
 
-    public void TakeDamage(float damage, IDamageSource damageSource) {
-        TakeDamageServerRpc(damage);
+    public void TakeDamage(float damage, IDamageSource damageSource, bool attackIgnoresArmor) {
+        TakeDamageServerRpc(damage, attackIgnoresArmor);
     }
 
     public void Heal(float healAmount) {
@@ -112,21 +113,21 @@ public class UnitHP : NetworkBehaviour, IDamageable
     }
 
     [ServerRpc(RequireOwnership = false)]
-    protected void TakeDamageServerRpc(float damage) {
+    protected void TakeDamageServerRpc(float damage, bool attackIgnoresArmor) {
         if(unit.GetUnitSO().doesNotMoveGarrisonedUnit) {
             // There is a chance the unit is not damaged
             int damagedChance = UnityEngine.Random.Range(0, 100);
 
             if(damagedChance >= garrisonedProtectionChance) {
-                TakeDamageClientRpc(damage);
+                TakeDamageClientRpc(damage, attackIgnoresArmor);
             }
         } else {
-            TakeDamageClientRpc(damage);
+            TakeDamageClientRpc(damage, attackIgnoresArmor);
         }
     }
 
     [ClientRpc]
-    protected virtual void TakeDamageClientRpc(float damage) {
+    protected virtual void TakeDamageClientRpc(float damage, bool attackIgnoresArmor) {
         unitHP -= (damage - unitArmor);
 
         OnHealthChanged?.Invoke(this, new OnHealthChangedEventArgs {
@@ -136,6 +137,11 @@ public class UnitHP : NetworkBehaviour, IDamageable
 
         if (unitHP <= 0) {
             unit.Die();
+            return;
+        }
+
+        if (!attackIgnoresArmor && unitArmor != 0 && unitArmor >= damage) {
+            OnUnitArmorUsed?.Invoke(this, EventArgs.Empty);
         }
     }
 

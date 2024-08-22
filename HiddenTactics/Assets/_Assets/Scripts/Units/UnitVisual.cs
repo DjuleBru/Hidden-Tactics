@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UnitVisual : NetworkBehaviour
 {
@@ -21,6 +22,8 @@ public class UnitVisual : NetworkBehaviour
 
     [SerializeField] protected ParticleSystem unitGoldBurstPS;
     [SerializeField] protected ParticleSystem unitPlacedPS;
+    [SerializeField] protected GameObject unitSelectedGameObject;
+    [SerializeField] protected Image unitSelectedImage;
 
     [FoldoutGroup("Visual Components")]
     protected Animator bodyAnimator;
@@ -38,9 +41,15 @@ public class UnitVisual : NetworkBehaviour
 
     public event EventHandler OnUnitVisualPlacingMaterialSet;
 
+    [SerializeField] protected GameObject selectedVisual;
+    [SerializeField] protected GameObject statusEffectVisuals;
+    protected UnitAnimatorManager unitAnimatorManager;
+    protected float baseUnitScale;
+
     protected virtual void Awake() {
         if (unit.GetUnitSO().isInvisibleGarrisonedUnit) return;
 
+        unitAnimatorManager = GetComponent<UnitAnimatorManager>();
         unit = GetComponentInParent<Unit>();
         bodyAnimator = GetComponent<Animator>();
         activeBodyAnimator = bodyAnimator.runtimeAnimatorController;
@@ -52,6 +61,8 @@ public class UnitVisual : NetworkBehaviour
         baseOutlineSpriteRenderer.enabled = false;
         baseCircleSpriteRenderer.enabled = false;
         selectedUnitSpriteRenderer.enabled = false;
+        unitSelectedGameObject.SetActive(false);
+        baseUnitScale = shadowBaseSpriteRenderer.transform.localScale.x;
     }
 
     public override void OnNetworkSpawn() {
@@ -67,9 +78,12 @@ public class UnitVisual : NetworkBehaviour
         unit.OnUnitReset += Unit_OnUnitReset;
         unit.OnUnitHovered += Unit_OnUnitHovered;
         unit.OnUnitUnhovered += Unit_OnUnitUnhovered;
-        unit.OnUnitSelected += Unit_OnUnitSelected;
+        unit.OnUnitSelectedFromTroop += Unit_OnUnitSelected;
+        unit.OnSingleUnitSelected += Unit_OnSingleUnitSelected;
         unit.OnUnitUnselected += Unit_OnUnitUnselected;
         unit.OnUnitSold += Unit_OnUnitSold;
+
+        unitAnimatorManager.OnUnitXChanged += UnitAnimatorManager_OnUnitXChanged;
 
         if(!unit.GetUnitIsOnlyVisual()) {
             SettingsManager.Instance.OnTacticalViewEnabled += SettingsManager_OnTacticalViewEnabled;
@@ -84,7 +98,6 @@ public class UnitVisual : NetworkBehaviour
             SetUnitCircleGameObjectsActive(false);
         }
     }
-
 
     protected virtual void Start() {
         if (unit.GetUnitSO().isInvisibleGarrisonedUnit) {
@@ -176,6 +189,19 @@ public class UnitVisual : NetworkBehaviour
             }
         };
         
+    }
+
+    private void UnitAnimatorManager_OnUnitXChanged(object sender, EventArgs e) {
+        if (unitAnimatorManager.GetX() < 0) {
+            selectedVisual.transform.localScale = new Vector3(-1, 1, 1) * baseUnitScale;
+            statusEffectVisuals.transform.localScale = new Vector3(-1, 1, 1) * baseUnitScale;
+            shadowBaseSpriteRenderer.transform.localScale = new Vector3(-1, 1, 1) * baseUnitScale;
+        }
+        else {
+            selectedVisual.transform.localScale = new Vector3(1, 1, 1) * baseUnitScale;
+            statusEffectVisuals.transform.localScale = new Vector3(1, 1, 1) * baseUnitScale;
+            shadowBaseSpriteRenderer.transform.localScale = new Vector3(1, 1, 1) * baseUnitScale;
+        }
     }
 
     private void Unit_OnUnitReset(object sender, System.EventArgs e) {
@@ -327,12 +353,17 @@ public class UnitVisual : NetworkBehaviour
 
     private void Unit_OnUnitUnselected(object sender, EventArgs e) {
         if (unit.GetUnitSO().isInvisibleGarrisonedUnit) return;
-        SetUnitSelected(false);
+        SetUnitSelected(false, false);
     }
 
     private void Unit_OnUnitSelected(object sender, EventArgs e) {
         if (unit.GetUnitSO().isInvisibleGarrisonedUnit) return;
-        SetUnitSelected(true);
+        SetUnitSelected(true, false);
+    }
+
+    private void Unit_OnSingleUnitSelected(object sender, EventArgs e) {
+        if (unit.GetUnitSO().isInvisibleGarrisonedUnit) return;
+        SetUnitSelected(true, true);
     }
 
     private void Unit_OnUnitUnhovered(object sender, EventArgs e) {
@@ -363,7 +394,7 @@ public class UnitVisual : NetworkBehaviour
         }
     }
 
-    public void SetUnitSelected(bool selected) {
+    public void SetUnitSelected(bool selected, bool showSingleUnit) {
         if (!unit.GetUnitIsBought()) return;
 
         if (selected) {
@@ -371,11 +402,17 @@ public class UnitVisual : NetworkBehaviour
             baseCircleSpriteRenderer.enabled = true;
             selectedUnitSpriteRenderer.enabled = true;
             shadowBaseSpriteRenderer.enabled = false;
+
+            if(showSingleUnit) {
+                unitSelectedGameObject.SetActive(true);
+            }
         } else {
             baseOutlineSpriteRenderer.enabled = false;
             baseCircleSpriteRenderer.enabled = false;
             selectedUnitSpriteRenderer.enabled = false;
             shadowBaseSpriteRenderer.enabled = true;
+
+            unitSelectedGameObject.SetActive(false);
         }
     }
 

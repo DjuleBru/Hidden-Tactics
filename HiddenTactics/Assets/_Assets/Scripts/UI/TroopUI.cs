@@ -17,6 +17,7 @@ public class TroopUI : MonoBehaviour
     }
 
     private void Troop_OnTroopSelled(object sender, System.EventArgs e) {
+        troopSelectedGameObject.SetActive(false);
         gameObject.SetActive(false);
     }
 

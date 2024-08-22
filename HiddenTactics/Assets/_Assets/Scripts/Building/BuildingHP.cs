@@ -26,7 +26,7 @@ public class BuildingHP : NetworkBehaviour, IDamageable {
         return buildingHP;
     }
 
-    public virtual void TakeDamage(float damage, IDamageSource damageSource) {
+    public virtual void TakeDamage(float damage, IDamageSource damageSource, bool attackIgnoresArmor) {
         TakeDamageServerRpc(damage);
     }
 

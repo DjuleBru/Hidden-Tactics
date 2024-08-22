@@ -26,7 +26,7 @@ public class UnitMovement : NetworkBehaviour {
     protected int currentWaypoint = 0;
     protected bool reachedEndOfPath;
 
-    protected float pathCalculationRate = .2f;
+    [SerializeField] protected float pathCalculationRate = .2f;
     protected float pathCalculationTimer = 0;
     #endregion
 

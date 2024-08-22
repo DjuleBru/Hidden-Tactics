@@ -5,17 +5,16 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class BuyAdditionalUnitsButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler {
+public class BuyAdditionalUnitsButton : TroopButtonUI, IPointerEnterHandler, IPointerExitHandler {
 
     [SerializeField] Troop troop;
 
     private Button buyAdditionalUnitsButton;
 
-    private void Awake() {
+    protected void Awake() {
         buyAdditionalUnitsButton = GetComponent<Button>();
 
         buyAdditionalUnitsButton.onClick.AddListener(() => {
-            Debug.Log("buy additional units button ");
             int goldCost = troop.GetTroopSO().buyAdditionalUnitsCost;
             if ((PlayerGoldManager.Instance.CanSpendGold(goldCost, NetworkManager.Singleton.LocalClientId))) {
                 PlayerGoldManager.Instance.SpendGold(troop.GetTroopSO().buyAdditionalUnitsCost, NetworkManager.Singleton.LocalClientId);
@@ -24,7 +23,8 @@ public class BuyAdditionalUnitsButton : MonoBehaviour, IPointerEnterHandler, IPo
         });
     }
 
-    public void OnPointerEnter(PointerEventData eventData) {
+    public override void OnPointerEnter(PointerEventData eventData) {
+        base.OnPointerEnter(eventData);
         foreach (Unit unit in troop.GetUnitsInAdditionalUnitsInTroopList()) {
             unit.GetUnitVisual().ShowAsAdditionalUnitToBuy();
             PlayerStateUI.Instance.SetPlayerGoldChangingUI(-troop.GetTroopSO().buyAdditionalUnitsCost);
@@ -32,7 +32,8 @@ public class BuyAdditionalUnitsButton : MonoBehaviour, IPointerEnterHandler, IPo
 
     }
 
-    public void OnPointerExit(PointerEventData eventData) {
+    public override void OnPointerExit(PointerEventData eventData) {
+        base.OnPointerExit(eventData);
         foreach (Unit unit in troop.GetUnitsInAdditionalUnitsInTroopList()) {
             unit.GetUnitVisual().HideAsAdditionalUnitToBuy();
             PlayerStateUI.Instance.ResetPlayerGoldChangingUI();
