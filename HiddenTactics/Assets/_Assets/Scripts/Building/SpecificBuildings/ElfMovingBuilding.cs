@@ -46,7 +46,8 @@ public class ElfMovingBuilding : Building
         }
     }
 
-    private void BattleManager_OnStateChanged(object sender, System.EventArgs e) {
+    protected override void BattleManager_OnStateChanged(object sender, System.EventArgs e) {
+        base.BattleManager_OnStateChanged((object)sender, e);
 
         if(BattleManager.Instance.IsBattlePhaseStarting()) {
             movingTreeWallButton.interactable = true;

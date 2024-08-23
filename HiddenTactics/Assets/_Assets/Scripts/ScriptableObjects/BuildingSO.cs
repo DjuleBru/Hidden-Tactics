@@ -27,4 +27,6 @@ public class BuildingSO : ScriptableObject
     public List<UnitSO.UnitKeyword> buildingKeyworkdList;
 
     public bool buildingIsImplemented;
+
+    public FactionSO buildingFactionSO;
 }

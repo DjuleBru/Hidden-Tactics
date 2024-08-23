@@ -15,6 +15,8 @@ public class PlayerGoldManager : NetworkBehaviour {
 
     private const int opponentVillageDestroyedBoostGold = 2;
     private const int playerUnitFellBonusGold = 1;
+
+    private int playerGoldSinglePlayer;
     
     private void Awake() {
         Instance = this;
@@ -30,6 +32,8 @@ public class PlayerGoldManager : NetworkBehaviour {
 
         HiddenTacticsMultiplayer.Instance.OnPlayerGoldChanged += HiddenTacticsMultiplayer_OnPlayerGoldChanged;
         HiddenTacticsMultiplayer.Instance.OnPlayerRevenueChanged += HiddenTacticsMultiplayer_OnPlayerRevenueChanged;
+
+        playerGoldSinglePlayer = playerInitialGold;
     }
 
     private void HiddenTacticsMultiplayer_OnPlayerGoldChanged(object sender, HiddenTacticsMultiplayer.OnPlayerGoldChangedEventArgs e) {
@@ -76,13 +80,22 @@ public class PlayerGoldManager : NetworkBehaviour {
     }
 
     public bool CanSpendGold(int goldAmount, ulong clientID) {
-        PlayerData playerData = HiddenTacticsMultiplayer.Instance.GetPlayerDataFromClientId(clientID);
+        if(HiddenTacticsMultiplayer.Instance.IsMultiplayer()) {
+            PlayerData playerData = HiddenTacticsMultiplayer.Instance.GetPlayerDataFromClientId(clientID);
 
-        return playerData.playerGold >= goldAmount;
+            return playerData.playerGold >= goldAmount;
+        } else {
+            return playerGoldSinglePlayer >= goldAmount;
+        }
     }
 
     public void SpendGold(int goldAmount, ulong clientID) {
-        SpendGoldServerRpc(goldAmount, clientID);
+        if(HiddenTacticsMultiplayer.Instance.IsMultiplayer()) {
+            SpendGoldServerRpc(goldAmount, clientID);
+        } else {
+            HiddenTacticsMultiplayer.Instance.ChangePlayerGoldClientRpc(clientID, playerGoldSinglePlayer, playerGoldSinglePlayer - goldAmount);
+            playerGoldSinglePlayer -= goldAmount;
+        }
     }
 
     [ServerRpc(RequireOwnership = false)]

@@ -297,6 +297,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3184916835551258332}
   - component: {fileID: 2135565135450215889}
+  - component: {fileID: 7888650088385505878}
   m_Layer: 6
   m_Name: HealthBar
   m_TagString: Untagged
@@ -351,6 +352,18 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!225 &7888650088385505878
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1239429430629773935}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &1430049877813575668
 GameObject:
   m_ObjectHideFlags: 0
@@ -935,6 +948,7 @@ GameObject:
   - component: {fileID: 6840350821460907871}
   - component: {fileID: 6131582285429469278}
   - component: {fileID: 1347141056691629249}
+  - component: {fileID: 4802195204741725006}
   m_Layer: 6
   m_Name: HealthBarBackground
   m_TagString: Untagged
@@ -1000,6 +1014,27 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!95 &4802195204741725006
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2174104929921688100}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 0}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &2351181013744951331
 GameObject:
   m_ObjectHideFlags: 0
@@ -2371,6 +2406,7 @@ MonoBehaviour:
   unitHPBarImage: {fileID: 2417476210482411052}
   unitHPBarBackgroundImage: {fileID: 1347141056691629249}
   unitHPBarGameObject: {fileID: 1239429430629773935}
+  unitHPBarAnimator: {fileID: 2135565135450215889}
   unitHPBarDamageImage: {fileID: 8914057789915125774}
   unitHPBarHealImage: {fileID: 2409195920115201571}
   unitHPBarOutline: {fileID: 525591915152694569}
@@ -2695,7 +2731,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   unitShaderAnimatorList:
   - {fileID: 7852375926518810119}
-  - {fileID: 2135565135450215889}
   unitGeneralAnimator: {fileID: 3179515588043489197}
 --- !u!1 &6962077613285239951
 GameObject:
@@ -3732,8 +3767,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   projectileSpawnPoint: {fileID: 7396232900771603039}
   attackColliderAOE: {fileID: 1545587305628025108}
-  antiLargeUnitDamageMultiplier: 2
-  trampleUnitDamageMultiplier: 2
+  antiLargeUnitDamageMultiplierToLargeUnits: 2
+  trampleUnitDamageMultiplierToSmallUnits: 2
+  siegeUnitDamageMultiplierToBuildings: 3
 --- !u!114 &-8097156484951236332
 MonoBehaviour:
   m_ObjectHideFlags: 0

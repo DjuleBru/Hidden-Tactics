@@ -45,7 +45,7 @@ public class Farm : Building
     }
 
     public override void OnDestroy() {
-        base.OnDestroy();
         BattleManager.Instance.OnStateChanged -= BattleManager_OnStateChanged;
+        base.OnDestroy();
     }
 }

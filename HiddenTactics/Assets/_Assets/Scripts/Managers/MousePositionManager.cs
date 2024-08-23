@@ -50,5 +50,4 @@ public class MousePositionManager : MonoBehaviour {
         EventSystem.current.RaycastAll(eventData, raysastResults);
         return raysastResults;
     }
-
 }

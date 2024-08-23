@@ -22,6 +22,7 @@ public class UnitUI : NetworkBehaviour
     [SerializeField] private Image unitHPBarImage;
     [SerializeField] private Image unitHPBarBackgroundImage;
     [SerializeField] private GameObject unitHPBarGameObject;
+    [SerializeField] private Animator unitHPBarAnimator;
     [SerializeField] private Image unitHPBarDamageImage;
     [SerializeField] private Image unitHPBarHealImage;
     [SerializeField] private Image unitHPBarOutline;
@@ -70,7 +71,10 @@ public class UnitUI : NetworkBehaviour
     private float updateHPBarTimer;
 
     private float hideHPBarTimer;
-    private float hideHPBarDuration = 1f;
+    private float hideHPBarDuration = .5f;
+    protected float hPBarDamageShaderTimer;
+    protected float hPBarDamageShaderResetTimer = .3f;
+    protected bool hPBarDamageShaderActive;
 
     private bool poisoned;
     private bool burning;
@@ -79,7 +83,7 @@ public class UnitUI : NetworkBehaviour
     [SerializeField] private string debug;
 
     private void Awake() {
-        //unitHPBarGameObject.SetActive(false);
+        unitHPBarGameObject.SetActive(false);
         unitTargetImage.gameObject.SetActive(false);
         hideHPBarTimer = hideHPBarDuration;
         damageBarUpdateTimer = delayToUpdateDamageBar;
@@ -115,9 +119,25 @@ public class UnitUI : NetworkBehaviour
     private void Update() {
 
         debug = unitHPBarIsActive.ToString();
+        CountDownHPBarShaderTimer();
+        HandleStatusEffects();
+        HandleHPBar();
+        
+    }
 
-        if (poisoned)
-        {
+    private void CountDownHPBarShaderTimer() {
+
+        if (hPBarDamageShaderActive) {
+            hPBarDamageShaderTimer -= Time.deltaTime;
+            if (hPBarDamageShaderTimer < 0) {
+                hPBarDamageShaderActive = false;
+            }
+        }
+    }
+
+    private void HandleStatusEffects() {
+
+        if (poisoned) {
             unitPoisonBarImage.fillAmount = unit.GetPoisonedDurationNormalized();
 
         }
@@ -131,18 +151,20 @@ public class UnitUI : NetworkBehaviour
             unitFearBarImage.fillAmount = unit.GetScaredDurationNormalized();
 
         }
+    }
 
+    private void HandleHPBar() {
         if (!updateHPBarFinished) {
             updateHPBarTimer -= Time.deltaTime;
             damageBarUpdateTimer -= Time.deltaTime;
 
-            if(updateHPBarTimer < 0) {
+            if (updateHPBarTimer < 0) {
                 updateHPBarFinished = true;
             }
 
-            if(damageBarUpdateTimer < 0) {
+            if (damageBarUpdateTimer < 0) {
 
-                if (unitHPBarDamageImage.fillAmount > unitHP.GetHP()/unitHP.GetMaxHP()) {
+                if (unitHPBarDamageImage.fillAmount > unitHP.GetHP() / unitHP.GetMaxHP()) {
                     unitHPBarDamageImage.fillAmount = unitHPBarDamageImage.fillAmount - damageBarUpdateRate * Time.deltaTime;
                 }
 
@@ -151,13 +173,17 @@ public class UnitUI : NetworkBehaviour
                 }
             }
 
-        } else {
+        }
+        else {
 
-            if (!unitHPBarIsActive || unitHP.GetHP() <= unitHP.GetMaxHP()) return;
+            if (!unitHPBarIsActive) return;
 
             hideHPBarTimer -= Time.deltaTime;
-            if(hideHPBarTimer < 0) {
-                unitHPBarGameObject.SetActive(false);
+            if (hideHPBarTimer < 0) {
+                unitHPBarAnimator.ResetTrigger("Show");
+                unitHPBarAnimator.ResetTrigger("Healed");
+                unitHPBarAnimator.ResetTrigger("Damaged");
+                unitHPBarAnimator.SetTrigger("Hide");
                 unitHPBarIsActive = false;
             }
         }
@@ -170,7 +196,7 @@ public class UnitUI : NetworkBehaviour
 
         if (unitMaxHP <= 10) {
             SetUnitHPBarSprite(oneBarHPBackground, oneBarHPOutline);
-            rt.sizeDelta = new Vector2(.65f, 1f);
+            rt.sizeDelta = new Vector2(.45f, 1f);
         }
 
         if (unitMaxHP > 10 && unitMaxHP <= 20) {
@@ -180,42 +206,42 @@ public class UnitUI : NetworkBehaviour
 
         if (unitMaxHP > 20 && unitMaxHP <= 30) {
             SetUnitHPBarSprite(threeBarHPBackground, threeBarHPOutline);
-            rt.sizeDelta = new Vector2(1.4f, 1f);
+            rt.sizeDelta = new Vector2(1.3f, 1f);
         }
 
         if (unitMaxHP > 30 && unitMaxHP <= 40) {
             SetUnitHPBarSprite(fourBarHPBackground, fourBarHPOutline);
-            rt.sizeDelta = new Vector2(1.9f, 1f);
+            rt.sizeDelta = new Vector2(1.7f, 1f);
         }
 
         if (unitMaxHP > 40 && unitMaxHP <= 50) {
             SetUnitHPBarSprite(fiveBarHPBackground, fiveBarHPOutline);
-            rt.sizeDelta = new Vector2(2.4f, 1f);
+            rt.sizeDelta = new Vector2(2.1f, 1f);
         }
 
         if (unitMaxHP > 50 && unitMaxHP <= 60) {
             SetUnitHPBarSprite(sixBarHPBackground, sixBarHPOutline);
-            rt.sizeDelta = new Vector2(2.9f, 1f);
+            rt.sizeDelta = new Vector2(2.5f, 1f);
         }
 
         if (unitMaxHP > 60 && unitMaxHP <= 70) {
             SetUnitHPBarSprite(sevenBarHPBackground, sevenBarHPOutline);
-            rt.sizeDelta = new Vector2(3.4f, 1f);
+            rt.sizeDelta = new Vector2(2.9f, 1f);
         }
 
         if (unitMaxHP > 70 && unitMaxHP <= 80) {
             SetUnitHPBarSprite(eightBarHPBackground, eightBarHPOutline);
-            rt.sizeDelta = new Vector2(3.9f, 1f);
+            rt.sizeDelta = new Vector2(3.3f, 1f);
         }
 
         if (unitMaxHP > 80 && unitMaxHP <= 90) {
             SetUnitHPBarSprite(nineBarHPBackground, nineBarHPOutline);
-            rt.sizeDelta = new Vector2(4.4f, 1f);
+            rt.sizeDelta = new Vector2(3.7f, 1f);
         }
 
         if (unitMaxHP > 90) {
             SetUnitHPBarSprite(tenBarHPBackground, tenBarHPOutline);
-            rt.sizeDelta = new Vector2(4.9f, 1f);
+            rt.sizeDelta = new Vector2(4.1f, 1f);
         }
     }
 
@@ -294,10 +320,13 @@ public class UnitUI : NetworkBehaviour
     }
 
     private void Unit_OnUnitReset(object sender, System.EventArgs e) {
-        if (!unit.GetUnitIsBought() || unit.GetUnitIsDynamicallySpawnedUnit()) return;
-        unitHPBarGameObject.SetActive(true);
-        hideHPBarTimer = hideHPBarDuration;
-        StartCoroutine(RefillHPBars());
+        if (!unit.GetUnitIsBought() || unit.GetUnitIsDynamicallySpawnedUnit()) {
+            unitHPBarGameObject.SetActive(false);
+        } else {
+            unitHPBarGameObject.SetActive(true);
+            hideHPBarTimer = hideHPBarDuration;
+            StartCoroutine(RefillHPBars());
+        }
     }
 
     private IEnumerator RefillHPBars() {
@@ -307,7 +336,16 @@ public class UnitUI : NetworkBehaviour
     }
 
     private void UpdateUnitHPBar(float initialUnitHP, float newUnitHP) {
+        if ((!unit.GetUnitIsBought() || unit.GetUnitIsDynamicallySpawnedUnit()) && !BattleManager.Instance.IsBattlePhase()) return;
+
         unitHPBarGameObject.SetActive(true);
+
+        if (!hPBarDamageShaderActive) {
+            unitHPBarAnimator.SetTrigger("Damaged");
+            hPBarDamageShaderActive = true;
+            hPBarDamageShaderTimer = hPBarDamageShaderResetTimer;
+        }
+
         unitHPBarIsActive = true;
         updateHPBarFinished = false;
         hideHPBarTimer = hideHPBarDuration;
@@ -323,7 +361,6 @@ public class UnitUI : NetworkBehaviour
         } else {
             unitHPBarHealImage.fillAmount = newUnitHP / unitHP.GetMaxHP();
             updateHPBarTimer = updateHPBarDuration;
-            
         }
     }
 

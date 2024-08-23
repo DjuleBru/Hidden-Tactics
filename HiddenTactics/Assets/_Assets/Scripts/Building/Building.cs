@@ -205,7 +205,6 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
 
         BattleGrid.Instance.RemoveIPlaceableAtGridPosition(currentGridPosition, this);
         BattleGrid.Instance.ResetIPlaceableSpawnedAtGridPosition(currentGridPosition);
-
     }
 
     public void SetIPlaceableOwnerClientId(ulong clientId) {

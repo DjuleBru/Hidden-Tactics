@@ -36,7 +36,8 @@ public class BuildingUI : NetworkBehaviour
     }
 
     private void Building_OnBuildingPlaced(object sender, System.EventArgs e) {
-        if(!building.IsOwnedByPlayer()) {
+        buildingHPBarGameObject.SetActive(true);
+        if (!building.IsOwnedByPlayer()) {
             buildingHPBarGameObject.transform.localScale = new Vector3(-1, 1, 1);
         }
     }

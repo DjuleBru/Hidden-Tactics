@@ -22,11 +22,13 @@ MonoBehaviour:
   troopPrefab: {fileID: 2495463524177989710, guid: 20383c3b6f2137f4aa76fb1a1f883a4b, type: 3}
   unitPrefab: {fileID: 2271543175021472386, guid: 5fe81c6c70adb3f4da82d91813aa6f2e, type: 3}
   additionalUnit1Prefab: {fileID: 6582105824262927089, guid: e32b4c92f1a989847aac63efe3d6c803, type: 3}
+  additionalUnit1TroopSO: {fileID: 0}
   additionalUnit2Prefab: {fileID: 6582105824262927089, guid: 48f72625a313c3d4e93ff1481e5291b4, type: 3}
+  additionalUnit2TroopSO: {fileID: 0}
   spawnedUnitPrefab: {fileID: 0}
-  spawnTroopCost: 0
+  spawnTroopCost: 8
   upgradeTroopCost: 0
-  buyAdditionalUnitsCost: 0
+  buyAdditionalUnitsCost: 6
   buffedGridPositions:
   - {x: 0, y: 0}
   - {x: 0, y: 1}

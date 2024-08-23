@@ -139,12 +139,13 @@ public class BattlePhaseIPlaceableSlotTemplateUI : MonoBehaviour, IPointerEnterH
 
     private void RefreshSingleUnitTemplates(Troop troop) {
         foreach(IPlaceableSlotTemplate_SingleUnitIcon singleUnit in singleUnitIconsList) {
+            singleUnit.ResetUnit();
             Destroy(singleUnit.gameObject);
         }
 
-        foreach (Unit unit in troop.GetUnitInTroopList()) {
-            if (!unit.GetUnitIsBought()) continue;
+        singleUnitIconsList.Clear();
 
+        foreach (Unit unit in troop.GetBoughtUnitInTroopList()) {
             IPlaceableSlotTemplate_SingleUnitIcon singleUnit = Instantiate(singleIconTemplate, singleIconsContainer).GetComponent<IPlaceableSlotTemplate_SingleUnitIcon>();
             singleUnit.SetUnit(unit, this);
             singleUnit.gameObject.SetActive(true);
@@ -186,8 +187,7 @@ public class BattlePhaseIPlaceableSlotTemplateUI : MonoBehaviour, IPointerEnterH
                 Troop troop = (Troop)iPlaceable;
                 troop.GetComponentInChildren<TroopTypeUI>().SetUIHovered();
 
-                foreach (Unit unit in troop.GetUnitInTroopList()) {
-                    if (!unit.GetUnitIsBought()) continue;
+                foreach (Unit unit in troop.GetBoughtUnitInTroopList()) {
                     if(hovered) {
                         unit.GetUnitVisual().SetUnitHovered(true);
                     }
@@ -205,9 +205,7 @@ public class BattlePhaseIPlaceableSlotTemplateUI : MonoBehaviour, IPointerEnterH
                 Troop troop = (Troop)iPlaceable;
                 troop.GetComponentInChildren<TroopTypeUI>().ResetUI();
 
-                foreach (Unit unit in troop.GetUnitInTroopList()) {
-                    if (!unit.GetUnitIsBought()) continue;
-
+                foreach (Unit unit in troop.GetBoughtUnitInTroopList()) {
                     unit.GetUnitVisual().SetUnitHovered(false);
                 }
             }
@@ -229,8 +227,7 @@ public class BattlePhaseIPlaceableSlotTemplateUI : MonoBehaviour, IPointerEnterH
             Troop troop = (Troop)iPlaceable;
             troop.GetComponentInChildren<TroopTypeUI>().SetUIHovered();
 
-            foreach (Unit unit in troop.GetUnitInTroopList()) {
-                if (!unit.GetUnitIsBought()) continue;
+            foreach (Unit unit in troop.GetBoughtUnitInTroopList()) {
                 unit.SetUnitSelected(true);
             }
         }

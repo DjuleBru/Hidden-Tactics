@@ -268,7 +268,7 @@ public class PlayerAction_SpawnIPlaceable : NetworkBehaviour {
         unitSpawned.SetParentTroop(troopToSpawnTroop);
 
         //Set Unit Local Position
-        unitSpawned.SetPosition(unitPosition, false);
+        unitSpawned.SetLocalPosition(unitPosition, false);
 
         //Set Units As addional Unit
         if (isAdditionalUnit) {

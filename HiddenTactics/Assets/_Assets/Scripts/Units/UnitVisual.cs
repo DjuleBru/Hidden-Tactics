@@ -47,6 +47,13 @@ public class UnitVisual : NetworkBehaviour
     protected float baseUnitScale;
 
     protected virtual void Awake() {
+
+        baseOutlineSpriteRenderer.enabled = false;
+        baseCircleSpriteRenderer.enabled = false;
+        selectedUnitSpriteRenderer.enabled = false;
+        unitSelectedGameObject.SetActive(false);
+        baseUnitScale = shadowBaseSpriteRenderer.transform.localScale.x;
+
         if (unit.GetUnitSO().isInvisibleGarrisonedUnit) return;
 
         unitAnimatorManager = GetComponent<UnitAnimatorManager>();
@@ -58,11 +65,9 @@ public class UnitVisual : NetworkBehaviour
             DisableTrailRenderer();
         }
 
-        baseOutlineSpriteRenderer.enabled = false;
-        baseCircleSpriteRenderer.enabled = false;
-        selectedUnitSpriteRenderer.enabled = false;
-        unitSelectedGameObject.SetActive(false);
-        baseUnitScale = shadowBaseSpriteRenderer.transform.localScale.x;
+        if (SettingsManager.Instance.GetTacticalViewSetting()) {
+            SetUnitCircleGameObjectsActive(false);
+        }
     }
 
     public override void OnNetworkSpawn() {
@@ -94,13 +99,11 @@ public class UnitVisual : NetworkBehaviour
             return;
         }
 
-        if(SettingsManager.Instance.GetTacticalViewSetting()) {
-            SetUnitCircleGameObjectsActive(false);
-        }
     }
 
     protected virtual void Start() {
         if (unit.GetUnitSO().isInvisibleGarrisonedUnit) {
+            selectedVisual.gameObject.SetActive(false);
             gameObject.SetActive(false);
         }
 
@@ -205,12 +208,8 @@ public class UnitVisual : NetworkBehaviour
     }
 
     private void Unit_OnUnitReset(object sender, System.EventArgs e) {
-        ChangeSpriteRendererListMaterial(allVisualsSpriteRendererList, cleanMaterial);
-        ChangeSpriteRendererListSortingOrder(allVisualsSpriteRendererList, 0);
-
-        foreach(GameObject shadowGameObject in shadowGameObjectList) {
-            shadowGameObject.SetActive(true);
-        }
+        ResetUnitVisuals();
+        
     }
 
     private void Unit_OnUnitDied(object sender, System.EventArgs e) {
@@ -431,6 +430,16 @@ public class UnitVisual : NetworkBehaviour
         baseCircleSpriteRenderer.enabled = false;
         selectedUnitSpriteRenderer.enabled = false;
     }
+
+    public void ResetUnitVisuals() {
+        ChangeSpriteRendererListMaterial(allVisualsSpriteRendererList, cleanMaterial);
+        ChangeSpriteRendererListSortingOrder(allVisualsSpriteRendererList, 0);
+
+        foreach (GameObject shadowGameObject in shadowGameObjectList) {
+            shadowGameObject.SetActive(true);
+        }
+    }
+
     public void EnableTrailRenderer() {
         trailRenderer.enabled = true;
     }

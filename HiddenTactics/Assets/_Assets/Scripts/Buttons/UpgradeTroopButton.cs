@@ -8,6 +8,7 @@ using UnityEngine.UI;
 public class UpgradeTroopButton : TroopButtonUI, IPointerExitHandler, IPointerEnterHandler
 {
     [SerializeField] Troop troop;
+    [SerializeField] Building building;
 
     private Button upgradeTroopButton;
 
@@ -19,11 +20,17 @@ public class UpgradeTroopButton : TroopButtonUI, IPointerExitHandler, IPointerEn
         base.OnPointerExit(eventData);
     }
 
-    private void Awake() {
+    protected override void Awake() {
+        base.Awake();
         upgradeTroopButton = GetComponent<Button>();
 
         upgradeTroopButton.onClick.AddListener(() => {
-            troop.UpgradeTroop();
+            if(troop != null) {
+                troop.UpgradeTroop();
+            } else {
+
+            }
         });
     }
+
 }

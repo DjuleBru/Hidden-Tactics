@@ -214,7 +214,6 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
 
     #region HANDLE IPLACEABLES
     public void DestroyIPlaceable(NetworkObjectReference iPlaceableNetworkObjectReference) {
-        Debug.Log("destgroy");
         DestroyIPlaceableServerRpc(iPlaceableNetworkObjectReference);
     }
 
@@ -313,7 +312,6 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
                 return playerCustomizationData;
             }
         }
-        Debug.Log("player customization data not found");
         return default;
     }
 
@@ -405,7 +403,7 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
     }
 
     [ClientRpc]
-    private void ChangePlayerGoldClientRpc(ulong clientId, int previousGold, int newGold) {
+    public void ChangePlayerGoldClientRpc(ulong clientId, int previousGold, int newGold) {
 
         OnPlayerGoldChanged?.Invoke(this, new OnPlayerGoldChangedEventArgs {
             previousGold = previousGold,

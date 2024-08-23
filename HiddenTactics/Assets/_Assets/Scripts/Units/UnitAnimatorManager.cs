@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 using Unity.Netcode;
 using UnityEngine;
 using static UCW;
@@ -26,7 +27,10 @@ public class UnitAnimatorManager : NetworkBehaviour
 
     protected float X;
     protected float Y;
-    private bool firstSelectionDone;
+    protected bool firstSelectionDone;
+    protected float unitDamageShaderTimer;
+    protected float unitDamageShaderResetTimer = .3f;
+    protected bool unitDamageShaderActive;
 
     public event EventHandler OnUnitXChanged;
 
@@ -69,6 +73,14 @@ public class UnitAnimatorManager : NetworkBehaviour
     }
 
     protected virtual void Update() {
+
+        if(unitDamageShaderActive) {
+            unitDamageShaderTimer -= Time.deltaTime;
+            if (unitDamageShaderTimer < 0) {
+                unitDamageShaderActive = false;
+            }
+        }
+
         if (unitAIStateHasChanged) {
             if(unitAnimator.GetCurrentAnimatorStateInfo(0).IsName("Idle") | unitAnimator.GetCurrentAnimatorStateInfo(0).IsName("Walk") | unitAnimator.GetCurrentAnimatorStateInfo(0).IsName("Attack_Start")) {
                 UpdateAnimatorParameters();
@@ -204,9 +216,10 @@ public class UnitAnimatorManager : NetworkBehaviour
     }
 
     protected virtual void Unit_OnHealthChanged(object sender, UnitHP.OnHealthChangedEventArgs e) {
-        if(e.newHealth < e.previousHealth) {
+
+        if (e.newHealth < e.previousHealth) {
             foreach(Animator unitShaderAnimator in unitShaderAnimatorList) {
-                if(!unitShaderAnimator.GetCurrentAnimatorStateInfo(0).IsName("UnitDamageTaken")) {
+                if (!unitDamageShaderActive) {
                     unitShaderAnimator.SetTrigger("Damaged");
                 }
             }
@@ -219,6 +232,9 @@ public class UnitAnimatorManager : NetworkBehaviour
                 }
             }
         }
+
+        unitDamageShaderActive = true;
+        unitDamageShaderTimer = unitDamageShaderResetTimer;
     }
 
     protected virtual void UpdateAnimatorParameters() {

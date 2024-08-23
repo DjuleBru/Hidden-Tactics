@@ -275,4 +275,23 @@ public class IPlaceableSlotTemplate_SingleUnitIcon : MonoBehaviour, IPointerEnte
         unit.SetSingleUnitSelected(false);
         slotBackgroundImage.color = baseColor;
     }
+
+    public void ResetUnit() {
+        unitHP.OnHealthChanged -= Unit_OnHealthChanged;
+        unit.OnUnitReset -= Unit_OnUnitReset;
+
+        unit.OnUnitFlamed -= Unit_OnUnitFlamed;
+        unit.OnUnitFlamedEnded -= Unit_OnUnitFlamedEnded;
+        unit.OnUnitPoisoned -= Unit_OnUnitPoisoned;
+        unit.OnUnitPoisonedEnded -= Unit_OnUnitPoisonedEnded;
+        unit.OnUnitScared -= Unit_OnUnitScared;
+        unit.OnUnitScaredEnded -= Unit_OnUnitScaredEnded;
+
+        unitBuffManager.OnAttackRateBuffed -= UnitBuffManager_OnAttackRateBuffed;
+        unitBuffManager.OnAttackRateDebuffed -= UnitBuffManager_OnAttackRateDebuffed;
+        unitBuffManager.OnAttackDamageBuffed -= UnitBuffManager_OnAttackDamageBuffed;
+        unitBuffManager.OnAttackDamageDebuffed -= UnitBuffManager_OnAttackDamageDebuffed;
+        unitBuffManager.OnMoveSpeedBuffed -= UnitBuffManager_OnMoveSpeedBuffed;
+        unitBuffManager.OnMoveSpeedDebuffed -= UnitBuffManager_OnMoveSpeedDebuffed;
+    }
 }

@@ -207,6 +207,9 @@ public class Unit : NetworkBehaviour, ITargetable {
 
         if(unitSO.doesNotMoveGarrisonedUnit) {
             collider2d.enabled = false;
+        }
+
+        if(parentTroop.GetTroopSO().isGarrisonedTroop) {
             SetParentBuilding();
         }
 
@@ -237,6 +240,7 @@ public class Unit : NetworkBehaviour, ITargetable {
         if (!unitSO.doesNotMoveGarrisonedUnit & unitIsBought) {
             collider2d.enabled = true;
         }
+
         RemoveAllSpecialEffects();
         OnUnitReset?.Invoke(this, EventArgs.Empty);
     }
@@ -532,8 +536,7 @@ public class Unit : NetworkBehaviour, ITargetable {
         parentTroop.AddUnitToUnitInTroopList(this);
     }
 
-    public void SetPosition(Vector3 positionInTroop, bool debugMode) {
-        
+    public void SetLocalPosition(Vector3 positionInTroop, bool debugMode) {
         if(parentTroop.IsOwnedByPlayer()) {
             unitPositionInTroop = positionInTroop;
         } else {
@@ -542,11 +545,12 @@ public class Unit : NetworkBehaviour, ITargetable {
             unitPositionInTroop = new Vector3(mirroredPositionX, positionInTroop.y, 0);
         }
 
-        transform.position = unitPositionInTroop;
-
-        if(debugMode) {
+        if (debugMode) {
+            transform.position = unitPositionInTroop;
             unitPositionInTroop = transform.position - parentTroop.transform.position;
             BattleGrid.Instance.AddUnitAtGridPosition(currentGridPosition,this);
+        } else {
+            transform.localPosition = unitPositionInTroop;
         }
     }
 

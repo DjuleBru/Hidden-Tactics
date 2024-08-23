@@ -146,11 +146,13 @@ public class BattleGrid : MonoBehaviour
     }
 
     public List<IPlaceable> GetIPlaceableListAtGridPosition(GridPosition gridPosition) {
+        if (!IsValidGridPosition(gridPosition)) return null;
         GridObject gridObject = gridSystem.GetGridObject(gridPosition);
         return gridObject.GetIPlaceableList();
     }
 
     public IPlaceable GetIPlaceableSpawnedAtGridPosition(GridPosition gridPosition) {
+        if (!IsValidGridPosition(gridPosition)) return null;
         GridObject gridObject = gridSystem.GetGridObject(gridPosition);
         return gridObject.GetIPlaceableSpawned();
     }
@@ -174,8 +176,9 @@ public class BattleGrid : MonoBehaviour
     }
 
     public Troop GetTroopAtGridPosition(GridPosition gridPosition) {
-            GridObject gridObject = gridSystem.GetGridObject(gridPosition);
-            return gridObject.GetTroop();
+        if (!IsValidGridPosition(gridPosition)) return null;
+        GridObject gridObject = gridSystem.GetGridObject(gridPosition);
+        return gridObject.GetTroop();
     }
 
     public void RemoveIPlaceableAtGridPosition(GridPosition gridPosition, IPlaceable iPlaceable) {
@@ -252,6 +255,7 @@ public class BattleGrid : MonoBehaviour
     }
 
     public Building GetBuildingAtGridPosition(GridPosition gridPosition) {
+        if (!IsValidGridPosition(gridPosition)) return null;
         GridObject gridObject = gridSystem.GetGridObject(gridPosition);
         return gridObject.GetBuilding();
     }

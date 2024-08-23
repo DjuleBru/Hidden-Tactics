@@ -43,6 +43,7 @@ public class Troop : NetworkBehaviour, IPlaceable {
     [SerializeField] protected List<Transform> baseUnit2Positions = new List<Transform>();
     [SerializeField] protected List<Transform> additionalUnit2Positions = new List<Transform>();
     [SerializeField] protected List<Transform> spawnedUnitPositions = new List<Transform>();
+    [SerializeField] protected Transform singleUnitUpgradeNewPosition;
     [SerializeField] protected Transform allUnitsMiddlePoint;
 
     protected GridPosition currentGridPosition;
@@ -74,6 +75,9 @@ public class Troop : NetworkBehaviour, IPlaceable {
         foreach (Transform position in spawnedUnitPositions) {
             position.gameObject.SetActive(false);
         }
+        if(singleUnitUpgradeNewPosition != null) {
+            singleUnitUpgradeNewPosition.gameObject.SetActive(false);
+        }
 
         if (debugMode) {
             isOwnedByPlayer = false;
@@ -86,7 +90,7 @@ public class Troop : NetworkBehaviour, IPlaceable {
                 unit.SetParentTroop(this);
 
                 //Set Unit Local Position
-                unit.SetPosition(unit.transform.position, true);
+                unit.SetLocalPosition(unit.transform.position, true);
             }
         }
     }
@@ -106,6 +110,8 @@ public class Troop : NetworkBehaviour, IPlaceable {
             BattleGrid.Instance.IPlaceableMovedGridPosition(this, currentGridPosition, newGridPosition);
             currentGridPosition = newGridPosition;
         }
+
+        GameInput.Instance.OnRightClickPerformed += GameInput_OnRightClickPerformed;
     }
 
     public override void OnNetworkSpawn() {
@@ -251,6 +257,10 @@ public class Troop : NetworkBehaviour, IPlaceable {
             additionalUnitsInTroop.Clear();
         }
 
+        if(singleUnitUpgradeNewPosition != null) {
+            allUnitsInTroop[0].SetLocalPosition(singleUnitUpgradeNewPosition.localPosition, false);
+        }
+
         OnAdditionalUnitsBought?.Invoke(this, EventArgs.Empty);
         additionalUnitsHaveBeenBought = true;
     }
@@ -330,8 +340,8 @@ public class Troop : NetworkBehaviour, IPlaceable {
             troopTypeUI.SetUIHovered();
             BattlePhaseIPlaceablePanel.Instance.OpenIPlaceableCard(this);
         } else {
-            if (troopSelected) return;
             troopHovered = false;
+            if (troopSelected) return;
             troopTypeUI.SetUIUnHovered();
             BattlePhaseIPlaceablePanel.Instance.CloseIPlaceableCard(this);
         }
@@ -376,9 +386,14 @@ public class Troop : NetworkBehaviour, IPlaceable {
         }
     }
 
-    public virtual void ActivateNextSpawnedUnit(Vector3 spawnPosition) {
-        Debug.Log("activating next spawned unit");
+    private void GameInput_OnRightClickPerformed(object sender, EventArgs e) {
+        //if (troopHovered) {
+        //    IPlaceableDescriptionSlotTemplate.Instance.SetDescriptionSlot(troopSO, allUnitsInTroop[0].GetUnitSO(), false, false);
+        //    IPlaceableDescriptionSlotTemplate.Instance.Show();
+        //}
+    }
 
+    public virtual void ActivateNextSpawnedUnit(Vector3 spawnPosition) {
         if (!BattleManager.Instance.IsBattlePhase()) {
             return;
         }
@@ -412,6 +427,16 @@ public class Troop : NetworkBehaviour, IPlaceable {
 
     public List<Unit> GetUnitInTroopList() {
         return allUnitsInTroop;
+    }
+
+    public List<Unit> GetBoughtUnitInTroopList() {
+        List<Unit> boughtUnits = new List<Unit>();
+        foreach(Unit unit in allUnitsInTroop) {
+            if (additionalUnitsInTroop.Contains(unit)) continue;
+            if (spawnedUnitsInTroop.Contains(unit)) continue;
+            boughtUnits.Add(unit);
+        }
+        return boughtUnits;
     }
 
     public void AddUnitToAdditionalUnitsInTroopList(Unit unit) {
@@ -495,6 +520,10 @@ public class Troop : NetworkBehaviour, IPlaceable {
     }
     public List<Transform> GetSpawnedUnitsPositions() {
         return spawnedUnitPositions;
+    }
+
+    public Transform GetSingleUnitUpgradeNewPosition() {
+        return singleUnitUpgradeNewPosition;
     }
 
     protected void UnitHP_OnHealthChanged(object sender, UnitHP.OnHealthChangedEventArgs e) {

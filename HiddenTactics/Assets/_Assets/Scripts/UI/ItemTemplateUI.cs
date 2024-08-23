@@ -15,7 +15,6 @@ public class ItemTemplateUI : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     protected BuildingSO buildingSO;
 
     protected bool pointerEntered;
-    public static bool cardOpen;
     public static ItemTemplateUI lastHoveredItemTemplateUI;
 
     private void Start() {
@@ -69,8 +68,7 @@ public class ItemTemplateUI : MonoBehaviour, IPointerEnterHandler, IPointerExitH
 
     private void GameInput_OnLeftClickPerformed(object sender, System.EventArgs e) {
 
-        if (!pointerEntered && cardOpen && lastHoveredItemTemplateUI == this && !IPlaceableDescriptionSlotTemplate.Instance.GetPointerEntered()) {
-            cardOpen = false;
+        if (!pointerEntered && IPlaceableDescriptionSlotTemplate.Instance.GetCardOpen() && lastHoveredItemTemplateUI == this && !IPlaceableDescriptionSlotTemplate.Instance.GetPointerEntered()) {
             IPlaceableDescriptionSlotTemplate.Instance.Hide();
         }
     }
@@ -78,7 +76,6 @@ public class ItemTemplateUI : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     private void GameInput_OnRightClickPerformed(object sender, System.EventArgs e) {
         if (pointerEntered) {
             if (troopSO != null && troopSO.troopIsImplemented) {
-                cardOpen = true;
                 lastHoveredItemTemplateUI = this;
                 IPlaceableDescriptionSlotTemplate.Instance.Show();
                 IPlaceableDescriptionSlotTemplate.Instance.SetDescriptionSlot(troopSO, troopSO.unitPrefab.GetComponent<Unit>().GetUnitSO());
@@ -86,15 +83,14 @@ public class ItemTemplateUI : MonoBehaviour, IPointerEnterHandler, IPointerExitH
             }
 
             if (buildingSO != null && buildingSO.buildingIsImplemented) {
-                cardOpen = true;
                 lastHoveredItemTemplateUI = this;
                 IPlaceableDescriptionSlotTemplate.Instance.Show();
                 IPlaceableDescriptionSlotTemplate.Instance.SetDescriptionSlot(buildingSO);
                 return;
             }
-        } else {
-            if (!pointerEntered && cardOpen && lastHoveredItemTemplateUI == this && !IPlaceableDescriptionSlotTemplate.Instance.GetPointerEntered()) {
-                cardOpen = false;
+        }
+        else {
+            if (!pointerEntered && IPlaceableDescriptionSlotTemplate.Instance.GetCardOpen() && lastHoveredItemTemplateUI == this && !IPlaceableDescriptionSlotTemplate.Instance.GetPointerEntered()) {
                 IPlaceableDescriptionSlotTemplate.Instance.Hide();
             }
         }
@@ -103,7 +99,7 @@ public class ItemTemplateUI : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     public virtual void OnPointerEnter(PointerEventData eventData) {
         pointerEntered = true;
 
-        if (cardOpen) {
+        if (IPlaceableDescriptionSlotTemplate.Instance.GetCardOpen()) {
 
             if (lastHoveredItemTemplateUI == this) return;
 

@@ -13,7 +13,8 @@ public class SellTroopButtonUI : TroopButtonUI, IPointerExitHandler, IPointerEnt
     private Button sellTroopUnitsButton;
     private int goldRedundValue;
 
-    protected void Awake() {
+    protected override void Awake() {
+        base.Awake();
         sellTroopUnitsButton = GetComponent<Button>();
         sellTroopUnitsButton.onClick.AddListener(() => {
 
@@ -48,12 +49,21 @@ public class SellTroopButtonUI : TroopButtonUI, IPointerExitHandler, IPointerEnt
 
     public override void OnPointerEnter(PointerEventData eventData) {
         base.OnPointerEnter(eventData);
+        ShowSelling();
+    }
 
-        if(building != null) {
+    public override void OnPointerExit(PointerEventData eventData) {
+        base.OnPointerExit(eventData);
+        HideSelling();
+    }
+
+    private void ShowSelling() {
+
+        if (building != null) {
             building.GetBuildingUI().ShowUnitAsSellingBuilding();
-        } else {
-            foreach (Unit unit in troop.GetUnitInTroopList()) {
-                if (!unit.GetUnitIsBought()) continue;
+        }
+        else {
+            foreach (Unit unit in troop.GetBoughtUnitInTroopList()) {
                 unit.GetUnitUI().ShowUnitAsSellingUnit();
 
                 if (troop.TroopWasPlacedThisPreparationPhase()) {
@@ -68,16 +78,22 @@ public class SellTroopButtonUI : TroopButtonUI, IPointerExitHandler, IPointerEnt
         }
     }
 
-    public override void OnPointerExit(PointerEventData eventData) {
-        base.OnPointerExit(eventData);
+    private void HideSelling() {
 
-        if(building != null) {
+        if (building != null) {
             building.GetBuildingUI().HideBuildingTargetUI();
-        } else {
+        }
+        else {
             foreach (Unit unit in troop.GetUnitInTroopList()) {
                 unit.GetUnitUI().HideUnitTargetUI();
             }
             PlayerStateUI.Instance.ResetPlayerGoldChangingUI();
+        }
+    }
+
+    protected override void CancelButtonShowVisuals() {
+        if(pointerEntered) {
+            HideSelling();
         }
     }
 }

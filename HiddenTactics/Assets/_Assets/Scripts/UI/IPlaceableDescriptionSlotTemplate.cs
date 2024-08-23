@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class IPlaceableDescriptionSlotTemplate : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
@@ -135,11 +136,48 @@ public class IPlaceableDescriptionSlotTemplate : MonoBehaviour, IPointerEnterHan
         changeAttackSOButtonTemplate.gameObject.SetActive(false);
 
         DeckManager.LocalInstance.OnSelectedDeckChanged += DeckManager_OnSelectedDeckChanged;
+        GameInput.Instance.OnLeftClickPerformed += GameInput_OnLeftClickPerformed;
+        GameInput.Instance.OnRightClickPerformed += GameInput_OnRightClickPerformed;
     }
 
-    private void SetFactionVisuals() {
+    private void GameInput_OnRightClickPerformed(object sender, System.EventArgs e) {
+        if (BattleManager.Instance == null) return;
+        if (MousePositionManager.Instance.IsPointerOverUIElement()) return;
+
+        GridPosition mouseGridPosition = MousePositionManager.Instance.GetMouseGridPosition();
+        Troop troop = BattleGrid.Instance.GetTroopAtGridPosition(mouseGridPosition);
+        Building building = BattleGrid.Instance.GetBuildingAtGridPosition(mouseGridPosition);
+
+        if (troop != null || building != null) {
+            Show();
+
+            if(troop != null) {
+                SetDescriptionSlot(troop.GetTroopSO(), troop.GetUnitInTroopList()[0].GetUnitSO(), false, false);
+            }
+            if(building != null) {
+                SetDescriptionSlot(building.GetBuildingSO());
+            }
+        } else {
+            Hide();
+        }
+
+    }
+
+    private void GameInput_OnLeftClickPerformed(object sender, System.EventArgs e) {
+
+    }
+
+    private void SetFactionVisuals(TroopSO troopSO = null, BuildingSO buildingSO = null) {
         Deck playerDeck = DeckManager.LocalInstance.GetDeckSelected();
         FactionSO deckFactionSO = playerDeck.deckFactionSO;
+
+        if (troopSO != null && troopSO.troopFactionSO.name != "Mercenaries") {
+            deckFactionSO = troopSO.troopFactionSO;
+        }
+
+        if (buildingSO != null) {
+            deckFactionSO = buildingSO.buildingFactionSO;
+        }
 
         backgroundImage.sprite = deckFactionSO.panelBackground;
         outlineImage.sprite = deckFactionSO.panelBackgroundBorderSimple;
@@ -168,8 +206,6 @@ public class IPlaceableDescriptionSlotTemplate : MonoBehaviour, IPointerEnterHan
     }
 
     public void SetDescriptionSlot(TroopSO troopSO, UnitSO unitSO, bool shownFromBuilding = false, bool shownFromTroop = false) {
-        currentUnitSO = unitSO;
-        currentTroopSO = troopSO;
 
         unitCostGameObject.gameObject.SetActive(true);
         unitArmorGameObject.SetActive(true);
@@ -189,8 +225,7 @@ public class IPlaceableDescriptionSlotTemplate : MonoBehaviour, IPointerEnterHan
         moveSpeedText.text = unitSO.unitMoveSpeed.ToString();
         descriptionText.text = troopSO.troopDescription;
 
-        currentAttackSO = currentUnitSO.mainAttackSO;
-        RefreshAttackTypeButtons();
+        RefreshAttackTypeButtons(unitSO);
         RefreshKeywords(unitSO);
         SetAttackStats(unitSO.mainAttackSO);
         SetAttackTargetTypesStats(unitSO.mainAttackSO);
@@ -198,6 +233,11 @@ public class IPlaceableDescriptionSlotTemplate : MonoBehaviour, IPointerEnterHan
         SetAttackTypeStats(unitSO.mainAttackSO);
         SetStatusEffectStats(unitSO.mainAttackSO);
         SetChildTroopSO(troopSO);
+        SetFactionVisuals(troopSO);
+
+        currentAttackSO = unitSO.mainAttackSO;
+        currentUnitSO = unitSO;
+        currentTroopSO = troopSO;
 
         if (shownFromBuilding) {
             unitCostGameObject.gameObject.SetActive(false);
@@ -256,40 +296,41 @@ public class IPlaceableDescriptionSlotTemplate : MonoBehaviour, IPointerEnterHan
 
         RefreshKeywords(buildingSO);
         SetBuildingDescriptionPanel(buildingSO);
+        SetFactionVisuals(null, buildingSO);
     }
 
-    private void RefreshAttackTypeButtons() {
+    private void RefreshAttackTypeButtons(UnitSO unitSO) {
 
         foreach(Transform child in changeAttackSOButtonContainer) {
             if (child == changeAttackSOButtonTemplate) continue;
             Destroy(child.gameObject);
         }
 
-        if (currentUnitSO.mainAttackSO != null) {
+        if (unitSO.mainAttackSO != null) {
             SwitchAttackSOButton switchAttackSOButton = Instantiate(changeAttackSOButtonTemplate, changeAttackSOButtonContainer).GetComponent<SwitchAttackSOButton>();
-            switchAttackSOButton.SetAttackSO(currentUnitSO.mainAttackSO);
+            switchAttackSOButton.SetAttackSO(unitSO.mainAttackSO);
             switchAttackSOButton.gameObject.SetActive(true);
             switchAttackSOButton.SetSelected(true);
         }
 
-        if (currentUnitSO.sideAttackSO != null) {
-            if (currentUnitSO.sideAttackSO.name == "DwarfAxeSideAttack") return;
+        if (unitSO.sideAttackSO != null) {
+            if (unitSO.sideAttackSO.name == "DwarfAxeSideAttack") return;
             SwitchAttackSOButton switchAttackSOButton = Instantiate(changeAttackSOButtonTemplate, changeAttackSOButtonContainer).GetComponent<SwitchAttackSOButton>();
-            switchAttackSOButton.SetAttackSO(currentUnitSO.sideAttackSO);
+            switchAttackSOButton.SetAttackSO(unitSO.sideAttackSO);
             switchAttackSOButton.gameObject.SetActive(true);
             switchAttackSOButton.SetSelected(false);
         }
 
-        if (currentUnitSO.jumpAttackSO != null) {
+        if (unitSO.jumpAttackSO != null) {
             SwitchAttackSOButton switchAttackSOButton = Instantiate(changeAttackSOButtonTemplate, changeAttackSOButtonContainer).GetComponent<SwitchAttackSOButton>();
-            switchAttackSOButton.SetAttackSO(currentUnitSO.jumpAttackSO);
+            switchAttackSOButton.SetAttackSO(unitSO.jumpAttackSO);
             switchAttackSOButton.gameObject.SetActive(true);
             switchAttackSOButton.SetSelected(false);
         }
 
-        if (currentUnitSO.deathTriggerAttackSO != null) {
+        if (unitSO.deathTriggerAttackSO != null) {
             SwitchAttackSOButton switchAttackSOButton = Instantiate(changeAttackSOButtonTemplate, changeAttackSOButtonContainer).GetComponent<SwitchAttackSOButton>();
-            switchAttackSOButton.SetAttackSO(currentUnitSO.deathTriggerAttackSO);
+            switchAttackSOButton.SetAttackSO(unitSO.deathTriggerAttackSO);
             switchAttackSOButton.gameObject.SetActive(true);
             switchAttackSOButton.SetSelected(false);
         }
@@ -441,21 +482,22 @@ public class IPlaceableDescriptionSlotTemplate : MonoBehaviour, IPointerEnterHan
     }
 
     private void RefreshKeywords(UnitSO unitSO) {
+        if (unitSO == currentUnitSO) return;
         keywordDescriptionContainer.gameObject.SetActive(false);
 
-            // Refresh card keywords
+        // Refresh card keywords
 
-            string allUnitsKeywords = "";
-            foreach (UnitSO.UnitKeyword unitKeyword in unitSO.unitKeywordsList) {
+        string allUnitsKeywords = "";
+        foreach (UnitSO.UnitKeyword unitKeyword in unitSO.unitKeywordsList) {
 
-                    string unitKeywordString = SetKeywordName(unitKeyword);
+                string unitKeywordString = SetKeywordName(unitKeyword);
 
-                    if (unitKeyword != unitSO.unitKeywordsList[unitSO.unitKeywordsList.Count -1]) {
-                            unitKeywordString += ", ";
-                    }
+                if (unitKeyword != unitSO.unitKeywordsList[unitSO.unitKeywordsList.Count -1]) {
+                        unitKeywordString += ", ";
+                }
 
-                    allUnitsKeywords += unitKeywordString;
-            }
+                allUnitsKeywords += unitKeywordString;
+        }
         keywordText.text = allUnitsKeywords;
 
         // Refresh description keywords
@@ -588,7 +630,7 @@ public class IPlaceableDescriptionSlotTemplate : MonoBehaviour, IPointerEnterHan
         }
 
         if (unitKeyword == UnitSO.UnitKeyword.AntiLarge) {
-            return "Deals double damage to large units";
+            return "Deals x2 damage to large units";
         }
 
         if (unitKeyword == UnitSO.UnitKeyword.Large) {
@@ -612,7 +654,7 @@ public class IPlaceableDescriptionSlotTemplate : MonoBehaviour, IPointerEnterHan
         }
 
         if (unitKeyword == UnitSO.UnitKeyword.Siege) {
-            return "Deals double damage to buildings";
+            return "Deals x3 damage to buildings";
         }
 
         if (unitKeyword == UnitSO.UnitKeyword.RoyalAura) {
@@ -668,7 +710,7 @@ public class IPlaceableDescriptionSlotTemplate : MonoBehaviour, IPointerEnterHan
         }
 
         if (unitKeyword == UnitSO.UnitKeyword.Trample) {
-            return "Deals double damage to non-large units";
+            return "Deals x2 damage to non-large units";
         }
 
         return "keyword description not set";
@@ -776,6 +818,7 @@ public class IPlaceableDescriptionSlotTemplate : MonoBehaviour, IPointerEnterHan
 
     public void Hide() {
         if (pointerEntered) return;
+        cardOpened = false;
 
         if (animator != null) {
             StartCoroutine(HideCoroutine());
@@ -806,5 +849,9 @@ public class IPlaceableDescriptionSlotTemplate : MonoBehaviour, IPointerEnterHan
 
     public bool GetPointerEntered() {
         return pointerEntered;
+    }
+
+    public bool GetCardOpen() {
+        return cardOpened;
     }
 }

@@ -133,7 +133,8 @@ public class TroopTypeUI : NetworkBehaviour, IPointerEnterHandler, IPointerExitH
     }
 
     private void Troop_OnTroopHPChanged(object sender, System.EventArgs e) {
-        if(troop.GetTroopHPNormalized() <= 0) {
+        if (troopIsGarrisoned) return;
+        if (troop.GetTroopHPNormalized() <= 0) {
             typeUIGameObject.SetActive(false);
             troopIsDead = true;
         }
@@ -185,15 +186,14 @@ public class TroopTypeUI : NetworkBehaviour, IPointerEnterHandler, IPointerExitH
     private void Building_OnBuildingDestroyed(object sender, System.EventArgs e) {
         gameObject.SetActive(false);
     }
+
     public void OnPointerEnter(PointerEventData eventData) {
         if (!BattleManager.Instance.IsBattlePhase()) return;
         SetUIHovered();
 
         if(troop != null) {
             BattlePhaseIPlaceablePanel.Instance.OpenIPlaceableCard(troop);
-            foreach (Unit unit in troop.GetUnitInTroopList()) {
-                if (!unit.GetUnitIsBought()) continue;
-
+            foreach (Unit unit in troop.GetBoughtUnitInTroopList()) {
                 unit.SetUnitHovered(true);
             }
         }
@@ -217,9 +217,7 @@ public class TroopTypeUI : NetworkBehaviour, IPointerEnterHandler, IPointerExitH
 
         if (troop != null) {
             BattlePhaseIPlaceablePanel.Instance.CloseIPlaceableCard(troop);
-            foreach (Unit unit in troop.GetUnitInTroopList()) {
-                if (!unit.GetUnitIsBought()) continue;
-
+            foreach (Unit unit in troop.GetBoughtUnitInTroopList()) {
                 unit.SetUnitHovered(false);
             }
         }
@@ -231,6 +229,7 @@ public class TroopTypeUI : NetworkBehaviour, IPointerEnterHandler, IPointerExitH
 
     private void SetTroopSelected() {
         if (!BattleManager.Instance.IsBattlePhase()) return;
+        if (troopIsGarrisoned) return;
         SetUISelected(true);
         PlayerAction_SelectIPlaceable.LocalInstance.SelectTroop(troop);
     }
@@ -242,6 +241,7 @@ public class TroopTypeUI : NetworkBehaviour, IPointerEnterHandler, IPointerExitH
     }
 
     public void SetUIHovered() {
+        if (troopIsGarrisoned) return;
         typeUIGameObject.SetActive(true);
         canvasGroup.alpha = 1f;
         animator.SetTrigger("Grow");
@@ -250,6 +250,7 @@ public class TroopTypeUI : NetworkBehaviour, IPointerEnterHandler, IPointerExitH
     }
 
     public void SetUIUnHovered() {
+        if (troopIsGarrisoned) return;
         if (!SettingsManager.Instance.GetTacticalViewSetting()) {
             canvasGroup.alpha = .7f;
         }
@@ -260,6 +261,7 @@ public class TroopTypeUI : NetworkBehaviour, IPointerEnterHandler, IPointerExitH
     }
 
     public void ResetUI() {
+        if (troopIsGarrisoned) return;
         if (!SettingsManager.Instance.GetTacticalViewSetting()) {
             canvasGroup.alpha = .7f;
         }
@@ -272,6 +274,7 @@ public class TroopTypeUI : NetworkBehaviour, IPointerEnterHandler, IPointerExitH
     }
 
     public void SetUISelected(bool selected) {
+        if (troopIsGarrisoned) return;
         if (selected) {
             canvasGroup.alpha = 1f;
             typeOutline.material = troopSelectedMaterial;

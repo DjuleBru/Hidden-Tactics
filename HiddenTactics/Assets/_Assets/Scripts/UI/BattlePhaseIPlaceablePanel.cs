@@ -74,10 +74,10 @@ public class BattlePhaseIPlaceablePanel : MonoBehaviour
     private void Building_OnAnyBuildingSelled(object sender, System.EventArgs e) {
         Building building = (Building)sender;
 
-        if (building.IsOwnedByPlayer()) {
-            playerIPlaceableList.Remove(building);
-            RemoveIPlaceableCard(building);
-        }
+        //if (building.IsOwnedByPlayer()) {
+        //    playerIPlaceableList.Remove(building);
+        //    RemoveIPlaceableCard(building);
+        //}
     }
 
     private void Building_OnAnyBuildingDestroyed(object sender, System.EventArgs e) {

@@ -13,8 +13,9 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
 
     [SerializeField] protected Transform projectileSpawnPoint;
     [SerializeField] protected AttackColliderAOE attackColliderAOE;
-    [SerializeField] protected float antiLargeUnitDamageMultiplier;
-    [SerializeField] protected float trampleUnitDamageMultiplier;
+    [SerializeField] protected float antiLargeUnitDamageMultiplierToLargeUnits;
+    [SerializeField] protected float trampleUnitDamageMultiplierToSmallUnits;
+    [SerializeField] protected float siegeUnitDamageMultiplierToBuildings;
 
     protected Unit unit;
     protected UnitAI unitAI;
@@ -282,6 +283,11 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
             return;
         }
 
+        if (target is Building) {
+            PerformDamageActionOnBuilding(target);
+            return;
+        }
+
         if (target is Unit) {
             PerformDamageActionOnUnit(target, damageHitPosition);
         }
@@ -296,12 +302,12 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
 
         // Anti-large 
         if (unit.GetUnitSO().unitKeywordsList.Contains(UnitSO.UnitKeyword.AntiLarge) && targetUnit.GetUnitSO().unitKeywordsList.Contains(UnitSO.UnitKeyword.Large)) {
-            attackDamageModified = attackDamage * antiLargeUnitDamageMultiplier;
+            attackDamageModified = attackDamage * antiLargeUnitDamageMultiplierToLargeUnits;
         }
 
         // Trample
         if (unit.GetUnitSO().unitKeywordsList.Contains(UnitSO.UnitKeyword.Trample) && !targetUnit.GetUnitSO().unitKeywordsList.Contains(UnitSO.UnitKeyword.Large)) {
-            attackDamageModified = attackDamage * antiLargeUnitDamageMultiplier;
+            attackDamageModified = attackDamage * antiLargeUnitDamageMultiplierToLargeUnits;
         }
 
         bool attackIgnoresArmor = activeAttackSO.attackSpecialList.Contains(AttackSO.UnitAttackSpecial.pierce);
@@ -340,7 +346,19 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
             (target as Unit).TakeSpecial(AttackSO.UnitAttackSpecial.webbed, activeAttackSO.specialEffectDuration);
         }
     }
+    protected virtual void PerformDamageActionOnBuilding(ITargetable target) {
 
+        IDamageable targetIDamageable = target.GetIDamageable();
+        float attackDamageModified = attackDamage;
+
+        // Siege
+        if (unit.GetUnitSO().unitKeywordsList.Contains(UnitSO.UnitKeyword.Siege)) {
+            attackDamageModified = attackDamage * siegeUnitDamageMultiplierToBuildings;
+        }
+
+        targetIDamageable.TakeDamage(attackDamageModified, this, false);
+
+    }
     protected virtual void PerformDamageActionOnVillage(IDamageable targetIDamageable) {
         GetComponent<UnitHP>().TakeDamage(unit.GetUnitSO().HP, this, true);
         targetIDamageable.TakeDamage(unit.GetUnitSO().damageToVillages, this, true);

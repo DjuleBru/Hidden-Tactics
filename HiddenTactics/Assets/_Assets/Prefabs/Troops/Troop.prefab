@@ -452,6 +452,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animator: {fileID: 5099910548009674399}
+  buttonEnabled: 1
   troop: {fileID: -7405699509265139040}
 --- !u!95 &5099910548009674399
 Animator:
@@ -948,7 +949,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 6.11}
+  m_AnchoredPosition: {x: 0, y: 7.5}
   m_SizeDelta: {x: 9, y: 9}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &7006200304553627185
@@ -1445,7 +1446,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animator: {fileID: 5717566328742396595}
+  buttonEnabled: 0
   troop: {fileID: -7405699509265139040}
+  building: {fileID: 0}
 --- !u!95 &5717566328742396595
 Animator:
   serializedVersion: 5
@@ -1735,6 +1738,7 @@ MonoBehaviour:
   baseUnit2Positions: []
   additionalUnit2Positions: []
   spawnedUnitPositions: []
+  singleUnitUpgradeNewPosition: {fileID: 0}
   allUnitsMiddlePoint: {fileID: 1940048345089566123}
 --- !u!114 &7847842803751851929
 MonoBehaviour:
@@ -2090,6 +2094,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   animator: {fileID: 8398502398127354777}
+  buttonEnabled: 1
   troop: {fileID: -7405699509265139040}
   building: {fileID: 0}
 --- !u!95 &8398502398127354777
@@ -2151,7 +2156,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 6.19}
+  m_AnchoredPosition: {x: 0, y: 7.5}
   m_SizeDelta: {x: 2, y: 2}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!225 &7480012250856967796
