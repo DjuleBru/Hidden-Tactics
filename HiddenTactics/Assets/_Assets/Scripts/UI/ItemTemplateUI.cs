@@ -89,11 +89,6 @@ public class ItemTemplateUI : MonoBehaviour, IPointerEnterHandler, IPointerExitH
                 return;
             }
         }
-        else {
-            if (!pointerEntered && IPlaceableDescriptionSlotTemplate.Instance.GetCardOpen() && lastHoveredItemTemplateUI == this && !IPlaceableDescriptionSlotTemplate.Instance.GetPointerEntered()) {
-                IPlaceableDescriptionSlotTemplate.Instance.Hide();
-            }
-        }
     }
 
     public virtual void OnPointerEnter(PointerEventData eventData) {

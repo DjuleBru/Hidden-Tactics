@@ -37,7 +37,10 @@ public class TroopTypeUI : NetworkBehaviour, IPointerEnterHandler, IPointerExitH
 
     private void Awake() {
 
-        if (BattleManager.Instance == null) return;
+        if (BattleManager.Instance == null) {
+            gameObject.SetActive(false);
+            return;
+        }
 
         canvasGroup = GetComponent<CanvasGroup>();
         animator = GetComponent<Animator>();

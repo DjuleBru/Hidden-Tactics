@@ -1057,8 +1057,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   projectileSpawnPoint: {fileID: 172619410879621219}
   attackColliderAOE: {fileID: 8192876364673747752}
-  antiLargeUnitDamageMultiplier: 0
-  trampleUnitDamageMultiplier: 0
+  antiLargeUnitDamageMultiplierToLargeUnits: 0
+  trampleUnitDamageMultiplierToSmallUnits: 0
+  siegeUnitDamageMultiplierToBuildings: 0
 --- !u!114 &9026667163061523284
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -123,6 +123,7 @@ public class IPlaceableDescriptionSlotTemplate : MonoBehaviour, IPointerEnterHan
     private BuildingSO currentBuildingSO;
 
     private AttackSO currentAttackSO;
+    private Color keywordColor;
 
     private void Awake() {
         Instance = this;
@@ -149,12 +150,13 @@ public class IPlaceableDescriptionSlotTemplate : MonoBehaviour, IPointerEnterHan
         Building building = BattleGrid.Instance.GetBuildingAtGridPosition(mouseGridPosition);
 
         if (troop != null || building != null) {
-            Show();
 
-            if(troop != null) {
+            if(troop != null && troop.GetIsPlaced()) {
+                Show();
                 SetDescriptionSlot(troop.GetTroopSO(), troop.GetUnitInTroopList()[0].GetUnitSO(), false, false);
             }
-            if(building != null) {
+            if(building != null && building.GetIsPlaced()) {
+                Show();
                 SetDescriptionSlot(building.GetBuildingSO());
             }
         } else {
@@ -199,10 +201,9 @@ public class IPlaceableDescriptionSlotTemplate : MonoBehaviour, IPointerEnterHan
             keywordDescriptionBackgroundImage.sprite = deckFactionSO.slotBackground;
         }
 
-        Color keywordColor = deckFactionSO.color_samePlayerFaction_Opponent_fill;
+        keywordColor = deckFactionSO.color_samePlayerFaction_Opponent_fill;
         keywordColor.a = 1f;
         keywordText.color = keywordColor;
-        keywordDescriptionTemplate.Find("KeyWordName").GetComponent<TextMeshProUGUI>().color = keywordColor;
     }
 
     public void SetDescriptionSlot(TroopSO troopSO, UnitSO unitSO, bool shownFromBuilding = false, bool shownFromTroop = false) {
@@ -225,6 +226,7 @@ public class IPlaceableDescriptionSlotTemplate : MonoBehaviour, IPointerEnterHan
         moveSpeedText.text = unitSO.unitMoveSpeed.ToString();
         descriptionText.text = troopSO.troopDescription;
 
+        SetFactionVisuals(troopSO);
         RefreshAttackTypeButtons(unitSO);
         RefreshKeywords(unitSO);
         SetAttackStats(unitSO.mainAttackSO);
@@ -233,7 +235,6 @@ public class IPlaceableDescriptionSlotTemplate : MonoBehaviour, IPointerEnterHan
         SetAttackTypeStats(unitSO.mainAttackSO);
         SetStatusEffectStats(unitSO.mainAttackSO);
         SetChildTroopSO(troopSO);
-        SetFactionVisuals(troopSO);
 
         currentAttackSO = unitSO.mainAttackSO;
         currentUnitSO = unitSO;
@@ -294,9 +295,9 @@ public class IPlaceableDescriptionSlotTemplate : MonoBehaviour, IPointerEnterHan
             otherTroop1GameObject.SetActive(false);
         }
 
+        SetFactionVisuals(null, buildingSO);
         RefreshKeywords(buildingSO);
         SetBuildingDescriptionPanel(buildingSO);
-        SetFactionVisuals(null, buildingSO);
     }
 
     private void RefreshAttackTypeButtons(UnitSO unitSO) {
@@ -498,6 +499,7 @@ public class IPlaceableDescriptionSlotTemplate : MonoBehaviour, IPointerEnterHan
 
                 allUnitsKeywords += unitKeywordString;
         }
+
         keywordText.text = allUnitsKeywords;
 
         // Refresh description keywords
@@ -514,6 +516,7 @@ public class IPlaceableDescriptionSlotTemplate : MonoBehaviour, IPointerEnterHan
 
                 instantiatedKeywordTemplate.Find("KeyWordName").GetComponent<TextMeshProUGUI>().text = SetKeywordName(unitKeyword);
                 instantiatedKeywordTemplate.Find("KeyWordDescription").GetComponent<TextMeshProUGUI>().text = SetKeywordDescription(unitKeyword);
+                instantiatedKeywordTemplate.Find("KeyWordName").GetComponent<TextMeshProUGUI>().color = keywordColor;
                 instantiatedKeywordTemplate.gameObject.SetActive(true);
             }
         }
@@ -535,6 +538,7 @@ public class IPlaceableDescriptionSlotTemplate : MonoBehaviour, IPointerEnterHan
 
             allUnitsKeywords += unitKeywordString;
         }
+
         keywordText.text = allUnitsKeywords;
 
         // Refresh description keywords
@@ -552,6 +556,7 @@ public class IPlaceableDescriptionSlotTemplate : MonoBehaviour, IPointerEnterHan
                 instantiatedKeywordTemplate.Find("KeyWordName").GetComponent<TextMeshProUGUI>().text = SetKeywordName(unitKeyword);
                 instantiatedKeywordTemplate.Find("KeyWordDescription").GetComponent<TextMeshProUGUI>().text = SetKeywordDescription(unitKeyword);
                 instantiatedKeywordTemplate.gameObject.SetActive(true);
+                instantiatedKeywordTemplate.Find("KeyWordName").GetComponent<TextMeshProUGUI>().color = keywordColor;
             }
         }
     }
@@ -819,7 +824,6 @@ public class IPlaceableDescriptionSlotTemplate : MonoBehaviour, IPointerEnterHan
     public void Hide() {
         if (pointerEntered) return;
         cardOpened = false;
-
         if (animator != null) {
             StartCoroutine(HideCoroutine());
         } else {

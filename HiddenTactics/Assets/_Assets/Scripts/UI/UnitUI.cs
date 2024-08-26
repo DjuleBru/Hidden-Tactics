@@ -272,7 +272,7 @@ public class UnitUI : NetworkBehaviour
         }
 
         if(!showArmorParticleSystem.isPlaying) {
-            showArmorParticleSystem.Play();
+            //showArmorParticleSystem.Play();
         }
     }
 

@@ -306,7 +306,7 @@ public class Troop : NetworkBehaviour, IPlaceable {
         }
 
         // Set placed troop on grid object
-        BattleGrid.Instance.IPlaceableMovedGridPosition(this, currentGridPosition, currentGridPosition);
+        BattleGrid.Instance.SetIPlaceableSpawnedAtGridPosition(this, currentGridPosition);
         SetIPlaceableGridPosition(currentGridPosition);
         battlefieldOffset = transform.position - battlefieldOwner.transform.position;
 
@@ -539,6 +539,10 @@ public class Troop : NetworkBehaviour, IPlaceable {
 
     public bool GetSelected() {
         return troopSelected;
+    }
+
+    public bool GetIsPlaced() {
+        return isPlaced;
     }
 
     public override void OnDestroy() {

@@ -46,7 +46,7 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
     private bool buildingSelled;
 
     protected virtual void Awake() {
-        if(buildingSO.buildingBlocksUnitMovement) {
+        if (buildingSO.buildingBlocksUnitMovement) {
             GetComponent<Collider2D>().enabled = true;
         }
     }
@@ -318,7 +318,9 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
     public bool GetSelected() {
         return buildingSelected;
     }
-
+    public bool GetIsPlaced() {
+        return isPlaced;
+    }
     protected void InvokeOnBuildingPlaced() {
         OnBuildingPlaced?.Invoke(this, EventArgs.Empty);
     }

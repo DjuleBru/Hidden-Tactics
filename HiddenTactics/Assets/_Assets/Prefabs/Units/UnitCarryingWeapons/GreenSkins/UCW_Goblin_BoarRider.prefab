@@ -777,6 +777,26 @@ PrefabInstance:
       propertyPath: m_LocalPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7494471314808335853, guid: 974a18b8d382e7e49970efa5bd60d332, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 1.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7494471314808335853, guid: 974a18b8d382e7e49970efa5bd60d332, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 1.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7494471314808335853, guid: 974a18b8d382e7e49970efa5bd60d332, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 1.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7494471314808335853, guid: 974a18b8d382e7e49970efa5bd60d332, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0.438
+      objectReference: {fileID: 0}
+    - target: {fileID: 7494471314808335853, guid: 974a18b8d382e7e49970efa5bd60d332, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8165989522550992604, guid: 974a18b8d382e7e49970efa5bd60d332, type: 3}
       propertyPath: m_IsActive
       value: 1
@@ -1044,8 +1064,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   projectileSpawnPoint: {fileID: 172619410879621219}
   attackColliderAOE: {fileID: 8192876364673747752}
-  antiLargeUnitDamageMultiplier: 0
-  trampleUnitDamageMultiplier: 0
+  antiLargeUnitDamageMultiplierToLargeUnits: 0
+  trampleUnitDamageMultiplierToSmallUnits: 0
+  siegeUnitDamageMultiplierToBuildings: 0
 --- !u!114 &6711920718742503338
 MonoBehaviour:
   m_ObjectHideFlags: 0

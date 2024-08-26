@@ -57,7 +57,6 @@ public class UnitVisual : NetworkBehaviour
         if (unit.GetUnitSO().isInvisibleGarrisonedUnit) return;
 
         unitAnimatorManager = GetComponent<UnitAnimatorManager>();
-        unit = GetComponentInParent<Unit>();
         bodyAnimator = GetComponent<Animator>();
         activeBodyAnimator = bodyAnimator.runtimeAnimatorController;
     
@@ -65,6 +64,7 @@ public class UnitVisual : NetworkBehaviour
             DisableTrailRenderer();
         }
 
+        if (BattleManager.Instance == null) return;
         if (SettingsManager.Instance.GetTacticalViewSetting()) {
             SetUnitCircleGameObjectsActive(false);
         }

@@ -39,9 +39,6 @@ public class WeaponVisual : NetworkBehaviour
 
     private WeaponSO activeWeaponSO;
     private Vector3 upgradedWeaponScale;
-    [SerializeField] private Material cleanMaterial;
-    [SerializeField] private Material placingUnitMaterial;
-    [SerializeField] private Material invisibleMaterial;
     private Material weaponMaterial;
 
     private UCW ucw;
@@ -67,13 +64,10 @@ public class WeaponVisual : NetworkBehaviour
         ucw = GetComponentInParent<UCW>();
         ucwAnimatorManager = GetComponentInParent<UCWAnimatorManager>();
 
-        weaponVisualSpriteRenderer.material = placingUnitMaterial;
-
         activeWeaponSO = mainWeaponSO;
         activeWeaponAnimator = mainWeaponAnimator;
         magicState = UCW.MagicState.Base;
         magicStateTrigger = "Base";
-        weaponMaterial = cleanMaterial;
         upgradedWeaponScale = weaponScale;
     }
 
@@ -432,7 +426,6 @@ public class WeaponVisual : NetworkBehaviour
             mainWeaponAnimator.enabled = false;
             weaponScale = Vector3.one;
         } else {
-            weaponVisualSpriteRenderer.material = cleanMaterial;
             activeWeaponAnimator = mainWeaponAnimator;
             mainWeaponAnimator.enabled = true;
             weaponScale = upgradedWeaponScale;

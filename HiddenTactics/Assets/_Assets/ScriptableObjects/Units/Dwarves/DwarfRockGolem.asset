@@ -12,17 +12,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4bc7b5eb9df2cac4eae406c9d717c5aa, type: 3}
   m_Name: DwarfRockGolem
   m_EditorClassIdentifier: 
-  unitTagList: 
+  unitKeywordsList: 
   unitTargetType: 0
   HP: 15
   armor: 0
   mass: 60
   moveType: 0
   unitMoveSpeed: 80
-  isGarrisonedUnit: 0
+  doesNotMoveGarrisonedUnit: 0
   isInvisibleGarrisonedUnit: 0
   mainWeaponSO: {fileID: 0}
   mainAttackSO: {fileID: 11400000, guid: fc33f05ee2501fa459d7e9365748b913, type: 2}
   sideAttackSO: {fileID: 11400000, guid: 28d89a9503000a0419c575f6aa3a164f, type: 2}
-  specialAttackSO: {fileID: 0}
-  damageToVillages: 1
+  jumpAttackSO: {fileID: 0}
+  deathTriggerAttackSO: {fileID: 0}
+  singleUnitSprite: {fileID: 0}
+  damageToVillages: 2
