@@ -9,8 +9,8 @@ public class FactionSelectionButtonUI : MonoBehaviour
     [SerializeField] private Image factionImage;
     [SerializeField] private Image factionImageShadow;
     [SerializeField] private Image factionOutlineImage;
+    [SerializeField] private Image factionOutlineShadowImage;
     [SerializeField] private Image factionBackgroundImage;
-    [SerializeField] private Image factionBackgroundShadowImage;
 
     [SerializeField] private ChangeDeckFactionButtonUI changeDeckFactionButtonUI;
     private Button button;
@@ -31,8 +31,8 @@ public class FactionSelectionButtonUI : MonoBehaviour
             factionImage.sprite = factionSO.factionSprite;
             factionImageShadow.sprite = factionSO.factionSprite;
             factionOutlineImage.sprite = factionSO.slotBorder;
-            factionBackgroundImage.sprite = factionSO.slotBackground;
-            factionBackgroundShadowImage.sprite = factionSO.slotBackground;
+            factionOutlineShadowImage.sprite = factionSO.slotBorder;
+            factionBackgroundImage.sprite = factionSO.slotBackgroundSquare;
             factionImage.preserveAspect = true;
         }
     }
@@ -42,8 +42,8 @@ public class FactionSelectionButtonUI : MonoBehaviour
         factionImage.sprite = factionSO.factionSprite;
         factionImageShadow.sprite = factionSO.factionSprite;
         factionOutlineImage.sprite = factionSO.slotBorder;
-        factionBackgroundImage.sprite = factionSO.slotBackground;
-        factionBackgroundShadowImage.sprite = factionSO.slotBackground;
+        factionOutlineShadowImage.sprite = factionSO.slotBorder;
+        factionBackgroundImage.sprite = factionSO.slotBackgroundSquare;
     }
 
 

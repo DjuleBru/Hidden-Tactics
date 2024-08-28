@@ -21,8 +21,16 @@ public class PlayerCustomizationDataManager : MonoBehaviour
         Instance = this;
     }
 
+    public List<PlayerIconSO> GetplayerIconSOList() {
+        return playerIconSOList;
+    }
+
     public Sprite GetPlayerIconSpriteFromSpriteId(int iconSpriteId) {
-        return playerIconSpriteList[iconSpriteId];
+        return playerIconSOList[iconSpriteId].iconSprite;
+    }
+
+    public PlayerIconSO GetPlayerIconSOFromSpriteId(int iconSpriteId) {
+        return playerIconSOList[iconSpriteId];
     }
 
     public Sprite GetVillageSpriteFromSpriteId(int villageSpriteIt) {

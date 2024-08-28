@@ -14,23 +14,23 @@ public class DeckSlot : MonoBehaviour
     private DeckSlotVisual deckSlotVisual;
     private DeckSlotAnimatorManager deckSlotAnimatorManager;
 
-    [SerializeField] private Transform deckSlotVisualTransform;
+    [SerializeField] private bool canHostTroop;
+    [SerializeField] private bool canHostBuilding;
+    [SerializeField] private bool canHostHero;
+    [SerializeField] private bool canHostSpell;
 
-    [SerializeField] private DeckSlotVisualSpawnPosition unitSpawnPosition0;
-    [SerializeField] private DeckSlotVisualSpawnPosition unitSpawnPosition1;
-    [SerializeField] private DeckSlotVisualSpawnPosition unitSpawnPosition2;
-    [SerializeField] private DeckSlotVisualSpawnPosition unitSpawnPosition3;
-    [SerializeField] private DeckSlotVisualSpawnPosition unitSpawnPosition4;
-    [SerializeField] private DeckSlotVisualSpawnPosition unitSpawnPosition5;
-    [SerializeField] private DeckSlotVisualSpawnPosition unitSpawnPosition6;
-    [SerializeField] private DeckSlotVisualSpawnPosition unitSpawnPosition7;
-    [SerializeField] private DeckSlotVisualSpawnPosition unitSpawnPosition8;
-    [SerializeField] private DeckSlotVisualSpawnPosition unitSpawnPosition9;
-    [SerializeField] private DeckSlotVisualSpawnPosition unitSpawnPosition10;
+    [SerializeField] private Transform deckSlotVisualTransform;
 
     private List<DeckSlotVisualSpawnPosition> unitSlotTransformList;
 
-    private List<Transform> unitSpawnTransforms;
+    [SerializeField] private GameObject smallUnitSlotContainer;
+    [SerializeField] private GameObject mediumUnitSlotContainer;
+    [SerializeField] private GameObject largeUnitSlotContainer;
+
+    private List<DeckSlotVisualSpawnPosition> smallUnitSlotTransformList = new List<DeckSlotVisualSpawnPosition>();
+    private List<DeckSlotVisualSpawnPosition> mediumUnitSlotTransformList = new List<DeckSlotVisualSpawnPosition>();
+    private List<DeckSlotVisualSpawnPosition> largeUnitSlotTransformList = new List<DeckSlotVisualSpawnPosition>();
+
     private List<Unit> unitVisualsSpawnedList = new List<Unit>();
     private Building buildingSpawned;
 
@@ -43,6 +43,16 @@ public class DeckSlot : MonoBehaviour
         deckSlotUI = GetComponentInChildren<DeckSlotUI>();
         deckSlotVisual = GetComponentInChildren<DeckSlotVisual>();
         deckSlotAnimatorManager = GetComponent<DeckSlotAnimatorManager>();
+
+        foreach(DeckSlotVisualSpawnPosition spawnPosition in smallUnitSlotContainer.GetComponentsInChildren<DeckSlotVisualSpawnPosition>()) {
+            smallUnitSlotTransformList.Add(spawnPosition);
+        }
+        foreach (DeckSlotVisualSpawnPosition spawnPosition in mediumUnitSlotContainer.GetComponentsInChildren<DeckSlotVisualSpawnPosition>()) {
+            mediumUnitSlotTransformList.Add(spawnPosition);
+        }
+        foreach (DeckSlotVisualSpawnPosition spawnPosition in largeUnitSlotContainer.GetComponentsInChildren<DeckSlotVisualSpawnPosition>()) {
+            largeUnitSlotTransformList.Add(spawnPosition);
+        }
     }
 
     private void Start()
@@ -51,12 +61,12 @@ public class DeckSlot : MonoBehaviour
         DeckManager.LocalInstance.OnDeckModified += DeckManager_OnDeckModified;
         DeckManager.LocalInstance.OnSelectedDeckChanged += DeckManager_OnSelectedDeckChanged;
 
-        RefreshDeckSlotTroopSO();
+        RefreshDeckSlotTroopSO(true);
         RefreshDeckSlotBuildingSO();
     }
 
     #region TROOPS
-    private void RefreshDeckSlotTroopSO()
+    private void RefreshDeckSlotTroopSO(bool refreshOnStart)
     {
         if (DeckManager.LocalInstance.GetDeckSelected().troopsInDeck[deckSlotNumber] == null || DeckManager.LocalInstance.GetDeckSelected().troopsInDeck[deckSlotNumber] != this.troopSO)
         {
@@ -74,37 +84,59 @@ public class DeckSlot : MonoBehaviour
 
         if(troopSO != null && troopSO != this.troopSO)
         {
-            SetTroopSO(troopSO);
+            SetTroopSO(troopSO, refreshOnStart);
         }
     }
-    public void SetTroopSO(TroopSO troopSO)
+
+    public void SetTroopSO(TroopSO troopSO, bool refreshOnStart)
     {
         this.troopSO = troopSO;
 
-        unitSpawnTransforms = troopSO.troopPrefab.GetComponent<Troop>().GetBaseUnitPositions();
-
-        SetSpawnPositions();
+        SetSpawnPositions(troopSO.unitSizeInTroop);
 
         RuntimeAnimatorController unitAnimator = troopSO.unitPrefab.transform.GetComponentInChildren<Animator>().runtimeAnimatorController;
 
-        SpawnUnitVisuals();
+        SpawnUnitVisuals(refreshOnStart);
         deckSlotUI.DisableAddTroopText();
 
     }
 
-    private void SpawnUnitVisuals()
+    private void SpawnUnitVisuals(bool refreshOnStart)
     {
+        int unit0Number = troopSO.troopPrefab.GetComponent<Troop>().GetBaseUnitPositions().Count + troopSO.troopPrefab.GetComponent<Troop>().GetAdditionalUnitPositions().Count;
+        int unit1Number = troopSO.troopPrefab.GetComponent<Troop>().GetBaseUnit1Positions().Count + troopSO.troopPrefab.GetComponent<Troop>().GetAdditionalUnit1Positions().Count;
+        int unit2Number = troopSO.troopPrefab.GetComponent<Troop>().GetBaseUnit2Positions().Count + troopSO.troopPrefab.GetComponent<Troop>().GetAdditionalUnit2Positions().Count;
+
+        int unitSpawned = 0;
+
         foreach (DeckSlotVisualSpawnPosition spawnPosition in unitSlotTransformList)
         {
-            Unit deckSlotVisualUnitInstantiated = Instantiate(troopSO.unitPrefab, spawnPosition.transform.position, Quaternion.identity, deckSlotVisualTransform).GetComponent<Unit>();
+            GameObject unitPrefab = troopSO.unitPrefab;
+
+            if(unitSpawned >= unit0Number && troopSO.additionalUnit1Prefab != null) {
+                unitPrefab = troopSO.additionalUnit1Prefab;
+            }
+            if (unitSpawned >= (unit0Number + unit1Number) && troopSO.additionalUnit2Prefab != null) {
+                unitPrefab = troopSO.additionalUnit2Prefab;
+            }
+
+
+            Unit deckSlotVisualUnitInstantiated = Instantiate(unitPrefab, spawnPosition.transform.position, Quaternion.identity, deckSlotVisualTransform).GetComponent<Unit>();
             deckSlotVisualUnitInstantiated.SetUnitAsVisual();
             deckSlotVisualUnitInstantiated.GetComponentInChildren<UnitVisual>().ChangeAllSpriteRendererListSortingOrder(deckSlotVisual.GetSlotVisualSpriteRenderer().sortingLayerID, deckSlotNumber * 100 + 2);
             deckSlotVisualUnitInstantiated.GetComponentInChildren<UnitVisual>().DeActivateStylizedShadows();
 
             UnitAnimatorManager unitAnimatorManager = deckSlotVisualUnitInstantiated.GetComponentInChildren<UnitAnimatorManager>();
+
+            if(!refreshOnStart) {
+                unitAnimatorManager.TriggerUnitOnlyVisualPlaced();
+            }
+
             SetUnitAnimatorInFunctionOfSpawnPosition(unitAnimatorManager, spawnPosition.GetSpawnPointNumber());
 
             unitVisualsSpawnedList.Add(deckSlotVisualUnitInstantiated);
+
+            unitSpawned++;
         }
     }
 
@@ -186,20 +218,32 @@ public class DeckSlot : MonoBehaviour
 
     public void SetUIActive(bool active)
     {
-        if (active)
-        {
+        if (active) {
+            deckSlotVisual.EnableSlotTypeUI(true);
             if (troopSO == null && buildingSO == null)
             {
                 deckSlotUI.EnableAddTroopText();
             }
-        } else
-        {
+        } else {
+            deckSlotVisual.EnableSlotTypeUI(false);
             deckSlotUI.DisableAddTroopText();
         }
     }
 
+    public DeckSlotAnimatorManager GetDeckSlotAnimatorManager() {
+        return deckSlotAnimatorManager;
+    }
+
     public void SetAnimatorActive(bool active) {
         deckSlotAnimatorManager.SetAnimatorActive(active);
+    }
+
+    public void TriggerFlyUp() {
+        deckSlotAnimatorManager.TriggerFlyUp();
+    }
+
+    public void TriggerFlyDown() {
+        deckSlotAnimatorManager.TriggerFlyDown();
     }
 
     public void SetAnimatorActiveAndTriggerDown() {
@@ -233,6 +277,22 @@ public class DeckSlot : MonoBehaviour
         return selecting;
     }
     
+    public bool GetCanHostTroop() {
+        return canHostTroop;
+    }
+
+    public bool GetCanHostBuilding() {
+        return canHostBuilding;
+    }
+
+    public bool GetCanHostHero() {
+        return canHostHero;
+    }
+
+    public bool GetCanHostSpell() {
+        return canHostSpell;
+    }
+
     public int GetDeckSlotNumber()
     {
         return deckSlotNumber;
@@ -257,7 +317,7 @@ public class DeckSlot : MonoBehaviour
     private void DeckManager_OnDeckModified(object sender, DeckManager.OnDeckChangedEventArgs e)
     {
         deckSelected = e.selectedDeck;
-        RefreshDeckSlotTroopSO();
+        RefreshDeckSlotTroopSO(false);
         RefreshDeckSlotBuildingSO();
         deckSlotUI.RefreshAddRemoveButtons();
     }
@@ -273,154 +333,20 @@ public class DeckSlot : MonoBehaviour
     }
 
     #region SET UNIT SPAWN POSITIONS
-    private void SetSpawnPositions()
+    private void SetSpawnPositions(TroopSO.UnitSizeInTroop unitSizeInTroop)
     {
-        if (unitSpawnTransforms.Count == 1)
-        {
-            SetSpawnPositionsFor1UnitTroop();
+        if(unitSizeInTroop == TroopSO.UnitSizeInTroop.small) {
+            unitSlotTransformList = smallUnitSlotTransformList;
         }
 
-        if (unitSpawnTransforms.Count == 2)
-        {
-            SetSpawnPositionsFor2UnitTroop();
+        if (unitSizeInTroop == TroopSO.UnitSizeInTroop.medium) {
+            unitSlotTransformList = mediumUnitSlotTransformList;
         }
 
-        if (unitSpawnTransforms.Count == 3)
-        {
-            SetSpawnPositionsFor3UnitTroop();
+        if (unitSizeInTroop == TroopSO.UnitSizeInTroop.big) {
+            unitSlotTransformList = largeUnitSlotTransformList;
+
         }
-
-        if (unitSpawnTransforms.Count == 4)
-        {
-            SetSpawnPositionsFor4UnitTroop();
-        }
-
-        if (unitSpawnTransforms.Count == 5)
-        {
-            SetSpawnPositionsFor5UnitTroop();
-        }
-
-        if (unitSpawnTransforms.Count == 6)
-        {
-            SetSpawnPositionsFor6UnitTroop();
-        }
-
-        if (unitSpawnTransforms.Count == 7)
-        {
-            SetSpawnPositionsFor7UnitTroop();
-        }
-
-        if (unitSpawnTransforms.Count == 8)
-        {
-            SetSpawnPositionsFor8UnitTroop();
-        }
-
-        if (unitSpawnTransforms.Count == 9)
-        {
-            SetSpawnPositionsFor9UnitTroop();
-        }
-
-        if (unitSpawnTransforms.Count == 10)
-        {
-            SetSpawnPositionsFor10UnitTroop();
-        }
-    }
-
-    private void SetSpawnPositionsFor1UnitTroop() {
-        unitSlotTransformList = new List<DeckSlotVisualSpawnPosition> {
-            unitSpawnPosition0,
-        };
-    }
-
-    private void SetSpawnPositionsFor2UnitTroop() {
-        unitSlotTransformList = new List<DeckSlotVisualSpawnPosition> {
-            unitSpawnPosition1,
-            unitSpawnPosition9,
-        };
-    }
-    private void SetSpawnPositionsFor3UnitTroop() {
-        unitSlotTransformList = new List<DeckSlotVisualSpawnPosition> {
-            unitSpawnPosition6,
-            unitSpawnPosition1,
-            unitSpawnPosition7,
-        };
-    }
-    private void SetSpawnPositionsFor4UnitTroop() {
-        unitSlotTransformList = new List<DeckSlotVisualSpawnPosition> {
-            unitSpawnPosition4,
-            unitSpawnPosition3,
-            unitSpawnPosition7,
-            unitSpawnPosition10,
-        };
-    }
-    private void SetSpawnPositionsFor5UnitTroop() {
-        unitSlotTransformList = new List<DeckSlotVisualSpawnPosition> {
-            unitSpawnPosition0,
-            unitSpawnPosition2,
-            unitSpawnPosition7,
-            unitSpawnPosition1,
-            unitSpawnPosition9,
-        };
-    }
-    private void SetSpawnPositionsFor6UnitTroop() {
-        unitSlotTransformList = new List<DeckSlotVisualSpawnPosition> {
-            unitSpawnPosition5,
-            unitSpawnPosition6,
-            unitSpawnPosition9,
-            unitSpawnPosition7,
-            unitSpawnPosition2,
-            unitSpawnPosition1,
-        };
-    }
-    private void SetSpawnPositionsFor7UnitTroop() {
-        unitSlotTransformList = new List<DeckSlotVisualSpawnPosition> {
-            unitSpawnPosition0,
-            unitSpawnPosition1,
-            unitSpawnPosition2,
-            unitSpawnPosition7,
-            unitSpawnPosition9,
-            unitSpawnPosition5,
-            unitSpawnPosition6,
-        };
-    }
-    private void SetSpawnPositionsFor8UnitTroop() {
-        unitSlotTransformList = new List<DeckSlotVisualSpawnPosition> {
-            unitSpawnPosition4,
-            unitSpawnPosition5,
-            unitSpawnPosition6,
-            unitSpawnPosition10,
-            unitSpawnPosition3,
-            unitSpawnPosition2,
-            unitSpawnPosition7,
-            unitSpawnPosition8,
-        };
-    }
-    private void SetSpawnPositionsFor9UnitTroop() {
-        unitSlotTransformList = new List<DeckSlotVisualSpawnPosition> {
-            unitSpawnPosition0,
-            unitSpawnPosition4,
-            unitSpawnPosition5,
-            unitSpawnPosition6,
-            unitSpawnPosition10,
-            unitSpawnPosition3,
-            unitSpawnPosition2,
-            unitSpawnPosition7,
-            unitSpawnPosition8,
-        };
-    }
-    private void SetSpawnPositionsFor10UnitTroop() {
-        unitSlotTransformList = new List<DeckSlotVisualSpawnPosition> {
-            unitSpawnPosition1,
-            unitSpawnPosition9,
-            unitSpawnPosition4,
-            unitSpawnPosition5,
-            unitSpawnPosition6,
-            unitSpawnPosition10,
-            unitSpawnPosition3,
-            unitSpawnPosition2,
-            unitSpawnPosition7,
-            unitSpawnPosition8,
-        };
     }
 
     #endregion

@@ -26,18 +26,22 @@ public class ItemTemplateUI : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     public virtual void SetDeckVisuals(Deck deck) {
         outlineImage.sprite = deck.deckFactionSO.slotBorder;
         outlineShadowImage.sprite = deck.deckFactionSO.slotBorder;
-        backgroundImage.sprite = deck.deckFactionSO.slotBackground;
+        backgroundImage.sprite = deck.deckFactionSO.slotBackgroundSquare;
     }
 
     public virtual void SetTroopSO(TroopSO troopSO) {
         this.troopSO = troopSO;
-        illustrationImage.gameObject.SetActive(true);
 
         if (troopSO.troopIllustrationSlotSprite != null  && troopSO.troopIsImplemented) {
             illustrationImage.sprite = troopSO.troopIllustrationSlotSprite;
         }
         else {
-            illustrationImage.gameObject.SetActive(false);
+            illustrationImage.sprite = troopSO.troopTypeIconSprite;
+
+            Color semitransparent = Color.white;
+            semitransparent.a = .7f;
+            illustrationImage.color = semitransparent;
+
             comingSoonText.SetActive(true);
         }
 
@@ -50,13 +54,16 @@ public class ItemTemplateUI : MonoBehaviour, IPointerEnterHandler, IPointerExitH
 
     public virtual void SetBuildingSO(BuildingSO buildingSO) {
         this.buildingSO = buildingSO;
-        illustrationImage.gameObject.SetActive(true);
 
         if (buildingSO.buildingRecruitmentSlotSprite != null && buildingSO.buildingIsImplemented) {
             illustrationImage.sprite = buildingSO.buildingRecruitmentSlotSprite;
         }
         else {
-            illustrationImage.gameObject.SetActive(false);
+            illustrationImage.sprite = buildingSO.buildingTypeSprite;
+            Color semitransparent = Color.white;
+            semitransparent.a = .7f;
+            illustrationImage.sprite = buildingSO.buildingTypeSprite;
+            illustrationImage.color = semitransparent;
             comingSoonText.SetActive(true);
         }
 
@@ -94,19 +101,14 @@ public class ItemTemplateUI : MonoBehaviour, IPointerEnterHandler, IPointerExitH
     public virtual void OnPointerEnter(PointerEventData eventData) {
         pointerEntered = true;
 
-        if (IPlaceableDescriptionSlotTemplate.Instance.GetCardOpen()) {
+        if (lastHoveredItemTemplateUI == this) return;
 
-            if (lastHoveredItemTemplateUI == this) return;
+        if (troopSO != null && troopSO.troopIsImplemented) {
+            lastHoveredItemTemplateUI = this;
+        }
 
-            if (troopSO != null && troopSO.troopIsImplemented) {
-                lastHoveredItemTemplateUI = this;
-                return;
-            }
-
-            if (buildingSO != null && buildingSO.buildingIsImplemented) {
-                lastHoveredItemTemplateUI = this;
-                return;
-            }
+        if (buildingSO != null && buildingSO.buildingIsImplemented) {
+            lastHoveredItemTemplateUI = this;
         }
     }
 

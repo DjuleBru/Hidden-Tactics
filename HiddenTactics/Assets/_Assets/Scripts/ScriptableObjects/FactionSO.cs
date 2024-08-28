@@ -27,6 +27,7 @@ public class FactionSO : ScriptableObject
     public Sprite panelLeftItem;
     public Sprite panelRightItem;
     public Sprite slotBackground;
+    public Sprite slotBackgroundSquare;
     public Sprite slotBorder;
 
     public Sprite troopIconBackgroundSprite_differentPlayerFaction;

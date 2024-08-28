@@ -199,7 +199,7 @@ public class IPlaceableDescriptionSlotTemplate : MonoBehaviour, IPointerEnterHan
         showOtherTroop2ButtonBackgroundImage.sprite = deckFactionSO.slotBackground;
 
         if(keywordDescriptionBackgroundImage != null) {
-            keywordDescriptionBackgroundImage.sprite = deckFactionSO.slotBackground;
+            keywordDescriptionBackgroundImage.sprite = deckFactionSO.slotBackgroundSquare;
         }
 
         keywordColor = deckFactionSO.color_samePlayerFaction_Opponent_fill;
@@ -652,7 +652,7 @@ public class IPlaceableDescriptionSlotTemplate : MonoBehaviour, IPointerEnterHan
         }
 
         if (unitKeyword == UnitSO.UnitKeyword.Charge) {
-            return "Charges after a dealay, increasing it's movement speed and damage";
+            return "Charges after a delay, increasing it's movement speed and damage";
         }
 
         if (unitKeyword == UnitSO.UnitKeyword.Jumper) {

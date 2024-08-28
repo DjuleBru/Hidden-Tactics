@@ -615,6 +615,7 @@ public class Unit : NetworkBehaviour, ITargetable {
         }
 
         OnAdditionalUnitActivated?.Invoke(this, EventArgs.Empty);
+        BattleManager.Instance.AddUnitToUnitListInBattlefield(this);
 
         unitVisual.gameObject.SetActive(true);
         GetComponent<Collider2D>().enabled = true;

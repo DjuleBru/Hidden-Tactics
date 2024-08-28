@@ -16,8 +16,8 @@ public class DeckSlotUI : MonoBehaviour
 
         addTroopText.gameObject.SetActive(false);
         addTroopText.faceColor = addTroopButtonColorWhenUnhovered;
-
     }
+
 
     private void Update()
     {
@@ -29,6 +29,7 @@ public class DeckSlotUI : MonoBehaviour
             }
         }
     }
+
     public void SetSelectingTroop(bool selectingTroop)
     {
         this.selectingTroop = selectingTroop;
@@ -38,7 +39,6 @@ public class DeckSlotUI : MonoBehaviour
         if (!DeckSlotMouseHoverManager.Instance.GetEditingDeck()) return;
         addTroopText.faceColor = Color.white;
     }
-
 
     public void SetAddTroopTextUnhovered()
     {

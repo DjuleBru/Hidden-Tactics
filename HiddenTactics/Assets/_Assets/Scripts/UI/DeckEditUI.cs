@@ -48,11 +48,16 @@ public class DeckEditUI : MonoBehaviour
 
     [SerializeField] private Image deckSelectionBorder;
     [SerializeField] private Image deckSelectionBorderShadow;
+    [SerializeField] private Image heroBorder;
+    [SerializeField] private Image heroBackground;
     [SerializeField] private Image unitsBorder;
+    [SerializeField] private Image unitsBackground;
     [SerializeField] private Image unitsBorderShadow;
     [SerializeField] private Image buildingsBorder;
+    [SerializeField] private Image buildingsBackground;
     [SerializeField] private Image buildingsBorderShadow;
     [SerializeField] private Image spellsBorder;
+    [SerializeField] private Image spellsBackground;
     [SerializeField] private Image spellsBorderShadow;
 
     [SerializeField] private GameObject elvesBorderShadow;
@@ -63,6 +68,11 @@ public class DeckEditUI : MonoBehaviour
     [SerializeField] private GameObject dwarvesBorder;
     [SerializeField] private GameObject greenSkinsBorderShadow;
     [SerializeField] private GameObject greenSkinsBorder;
+
+    [SerializeField] private Material cleanMaterial;
+    [SerializeField] private Material panelSelectingMaterial;
+    [SerializeField] private Color panelBackgroundSelectingColor;
+    [SerializeField] private Color panelBackgroundCleanColor;
 
     private void Awake() {
         Instance = this;
@@ -211,13 +221,16 @@ public class DeckEditUI : MonoBehaviour
             itemTemplateVisualUI.SetTroopSO(troopSO);
             itemTemplateVisualUI.SetDeckVisuals(deckSelected);
 
+            bool troopIsInDeck = false;
             foreach (TroopSO deckTroopSO in deckSelected.troopsInDeck)
             {
                 if(deckTroopSO == troopSO)
                 {
-                    itemTemplateVisualUI.SetSelected(true);
+                    troopIsInDeck = true;
                 }
             }
+            itemTemplateVisualUI.SetSelected(troopIsInDeck);
+
         }
     }
 
@@ -234,14 +247,15 @@ public class DeckEditUI : MonoBehaviour
             itemTemplateVisualUI.SetBuildingSO(buildingSO);
             itemTemplateVisualUI.SetDeckVisuals(deckSelected);
 
+            bool buildingIsInDeck = false;
             foreach (BuildingSO deckBuildingSOSO in deckSelected.buildingsInDeck)
             {
                 if (deckBuildingSOSO == buildingSO)
                 {
-                    itemTemplateVisualUI.SetSelected(true);
-
+                    buildingIsInDeck = true;
                 }
             }
+            itemTemplateVisualUI.SetSelected(buildingIsInDeck);
         }
     }
 
@@ -252,7 +266,6 @@ public class DeckEditUI : MonoBehaviour
         }
     }
 
-
     public void SetFactionSelected(FactionSO factionSO) {
         factionSelected = factionSO;
         SavingManager.Instance.SaveFactionSO(factionSO);
@@ -262,11 +275,104 @@ public class DeckEditUI : MonoBehaviour
     private void DeckSlot_OnAnyDeckSlotSelected(object sender, System.EventArgs e)
     {
         deckSlotSelected = (DeckSlot)sender;
+        HideSelectingTypes();
+
+        if (deckSlotSelected.GetCanHostTroop()) {
+            ShowSelectingTroop(true);
+        }
+
+        if (deckSlotSelected.GetCanHostBuilding()) {
+            ShowSelectingBuilding(true);
+        }
+
+        if (deckSlotSelected.GetCanHostSpell()) {
+            ShowSelectingSpell(true);
+        }
+
+        if (deckSlotSelected.GetCanHostHero()) {
+            ShowSelectingHero(true);
+        }
+
+    }
+
+    private void HideSelectingTypes() {
+        ShowSelectingTroop(false);
+        ShowSelectingBuilding(false);
+        ShowSelectingSpell(false);
+        ShowSelectingHero(false);
+    }
+
+    private void ShowSelectingTroop(bool selecting) {
+        if(selecting) {
+            unitsBorder.material = panelSelectingMaterial;
+            unitsBackground.color = panelBackgroundSelectingColor;
+
+            EnableButtonsInCategory(unitsMenuContainer, true);
+
+        } else {
+            unitsBorder.material = cleanMaterial;
+            unitsBackground.color = panelBackgroundCleanColor;
+
+            EnableButtonsInCategory(unitsMenuContainer, false);
+        }
+    }
+
+    private void ShowSelectingBuilding(bool selecting) {
+        if (selecting) {
+            buildingsBorder.material = panelSelectingMaterial;
+            buildingsBackground.color = panelBackgroundSelectingColor;
+
+            EnableButtonsInCategory(buildingsMenuContainer, true);
+        }
+        else {
+            buildingsBorder.material = cleanMaterial;
+            buildingsBackground.color = panelBackgroundCleanColor;
+
+            EnableButtonsInCategory(buildingsMenuContainer, false);
+        }
+    }
+
+    private void ShowSelectingSpell(bool selecting) {
+        if (selecting) {
+            spellsBorder.material = panelSelectingMaterial;
+            spellsBackground.color = panelBackgroundSelectingColor;
+
+            EnableButtonsInCategory(spellsMenuContainer, true);
+        }
+        else {
+            spellsBorder.material = cleanMaterial;
+            spellsBackground.color = panelBackgroundCleanColor;
+
+            EnableButtonsInCategory(spellsMenuContainer, false);
+        }
+    }
+
+    private void ShowSelectingHero(bool selecting) {
+        if (selecting) {
+            heroBorder.material = panelSelectingMaterial;
+            heroBackground.color = panelBackgroundSelectingColor;
+
+            EnableButtonsInCategory(heroMenuContainer, true);
+        }
+        else {
+            heroBorder.material = cleanMaterial;
+            heroBackground.color = panelBackgroundCleanColor;
+
+            EnableButtonsInCategory(heroMenuContainer, false);
+        }
+    }
+
+    private void EnableButtonsInCategory(Transform itemMenuContainer, bool enable) {
+
+        foreach (ItemTemplateUI_DeckCreation itemTemplate in itemMenuContainer.GetComponentsInChildren<ItemTemplateUI_DeckCreation>()) {
+            itemTemplate.EnableButton(enable);
+        }
     }
 
     private void DeckSlot_OnAnyDeckSlotUnSelected(object sender, System.EventArgs e) {
         if(deckSlotSelected == (DeckSlot)sender) {
             deckSlotSelected = null;
+            HideSelectingTypes();
         }
     }
 

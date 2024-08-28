@@ -14,15 +14,24 @@ public class PlayerCustomizationUI : MonoBehaviour
 
     [SerializeField] TMP_InputField deckNameInputField;
     [SerializeField] private TMP_InputField playerNameInputField;
+
+    [SerializeField] private GameObject playerIconsPanel;
     [SerializeField] private Transform playerIconsContainer;
-    private PlayerIconSelectSingleUI[] playerIcons;
+    [SerializeField] private Transform playerIconsTemplate;
+    private List<PlayerIconSelectSingleUI> playerIcons = new List<PlayerIconSelectSingleUI>();
+    private PlayerIconSO selectedPlayerIconSO;
+
     private bool playerIconsContainerActive;
     [SerializeField] private Image playerIcon;
-
+    [SerializeField] private Image playerIconBackground;
+    [SerializeField] private Image playerIconOuline;
 
     [SerializeField] private Image panelBackground;
     [SerializeField] private Image panelBorder;
     [SerializeField] private Image panelShadowBorder;
+
+    [SerializeField] private Image selectIconPanelBackground;
+    [SerializeField] private Image selectIconPanelBorder;
 
     [SerializeField] private ChangeDeckFactionButtonUI deckFactionChangeButton;
     [SerializeField] private Transform changeDeckFactionContainer;
@@ -42,8 +51,9 @@ public class PlayerCustomizationUI : MonoBehaviour
         deckNameInputField.onValueChanged.AddListener(delegate { deckNameInputField_OnValueChanged(); });
 
         playerIcon.sprite = PlayerCustomizationDataManager.Instance.GetPlayerIconSpriteFromSpriteId(HiddenTacticsMultiplayer.Instance.GetPlayerIconSpriteId());
-        playerIcons = playerIconsContainer.GetComponentsInChildren<PlayerIconSelectSingleUI>();
-        playerIconsContainer.gameObject.SetActive(false);
+        playerIconsPanel.gameObject.SetActive(false);
+        RefreshDeckVisual(DeckManager.LocalInstance.GetDeckSelected());
+        RefreshPlayerIconsPanel();
 
         playerNameInputField.onValueChanged.AddListener((string newText) => {
             HiddenTacticsMultiplayer.Instance.SetPlayerName(newText);
@@ -54,7 +64,6 @@ public class PlayerCustomizationUI : MonoBehaviour
         playerNameInputField.text = playerName;
     }
 
-
     private void RefreshDeckVisual(Deck deckSelected) {
         // Deck faction
         deckFactionChangeButton.SetFactionSO(deckSelected.deckFactionSO);
@@ -64,8 +73,14 @@ public class PlayerCustomizationUI : MonoBehaviour
 
         // Panel
         panelBackground.sprite = deckSelected.deckFactionSO.panelBackground;
-        panelBorder.sprite = deckSelected.deckFactionSO.panelBackgroundBorder;
-        panelShadowBorder.sprite = deckSelected.deckFactionSO.panelBackgroundBorder;
+        panelBorder.sprite = deckSelected.deckFactionSO.panelBackgroundBorderSimple;
+        selectIconPanelBackground.sprite = deckSelected.deckFactionSO.panelBackground;
+        selectIconPanelBorder.sprite = deckSelected.deckFactionSO.panelBackgroundBorderSimple;
+        panelShadowBorder.sprite = deckSelected.deckFactionSO.panelBackgroundBorderSimple;
+
+        // Player Icon
+        playerIconBackground.sprite = deckSelected.deckFactionSO.slotBackgroundSquare;
+        playerIconOuline.sprite = deckSelected.deckFactionSO.slotBorder;
     }
 
     private void deckNameInputField_OnValueChanged() {
@@ -74,6 +89,49 @@ public class PlayerCustomizationUI : MonoBehaviour
 
     private void DeckManager_OnDeckModified(object sender, DeckManager.OnDeckChangedEventArgs e) {
         RefreshDeckVisual(e.selectedDeck);
+        RefreshPlayerIconsPanel();
+    }
+
+    private void RefreshPlayerIconsPanel() {
+        playerIconsTemplate.gameObject.SetActive(false);
+
+        selectedPlayerIconSO = PlayerCustomizationDataManager.Instance.GetPlayerIconSOFromSpriteId(HiddenTacticsMultiplayer.Instance.GetPlayerIconSpriteId());
+
+        foreach (PlayerIconSelectSingleUI child in playerIcons) {
+            if (child == playerIconsTemplate) continue;
+            Destroy(child.gameObject);
+        }
+
+        playerIcons.Clear();
+        foreach (PlayerIconSO iconSO in PlayerCustomizationDataManager.Instance.GetplayerIconSOList()) {
+            PlayerIconSelectSingleUI icon = Instantiate(playerIconsTemplate, playerIconsContainer).GetComponent<PlayerIconSelectSingleUI>();
+            icon.gameObject.SetActive(true);
+            icon.SetFactionVisuals(DeckManager.LocalInstance.GetDeckSelected());
+            icon.SetPlayerIcon(iconSO);
+
+            if(iconSO == selectedPlayerIconSO) {
+                icon.SetIsSelected(true);
+            } else {
+                icon.SetIsSelected(false);
+            }
+
+            playerIcons.Add(icon);
+        };
+    }
+
+    public void SetSelectedIconSO(PlayerIconSO iconSO) {
+        foreach(PlayerIconSelectSingleUI playerIconSelectSingleUI in playerIcons) {
+            if(playerIconSelectSingleUI.GetPlayerIconSO() != iconSO) {
+                playerIconSelectSingleUI.SetIsSelected(false);
+            }
+            else
+            {
+                playerIconSelectSingleUI.SetIsSelected(true);
+            }
+        }
+
+        selectedPlayerIconSO = iconSO;
+        playerIcon.sprite = iconSO.iconSprite;
     }
 
     public void OpenChangeDeckFactionContainer() {
@@ -102,23 +160,23 @@ public class PlayerCustomizationUI : MonoBehaviour
         changeDeckFactionTemplate.gameObject.SetActive(false);
     }
 
-    public PlayerIconSelectSingleUI[] GetPlayerIconsArray() {
+    public List<PlayerIconSelectSingleUI> GetPlayerIconsArray() {
         return playerIcons;
     }
 
     public void ShowPlayerIconsPanel() {
-        playerIconsContainer.gameObject.SetActive(true);
+        playerIconsPanel.SetActive(true);
         playerIconsContainerActive = true;
     }
 
     private void HidePlayerIconsPanel() {
-        playerIconsContainer.gameObject.SetActive(false);
+        playerIconsPanel.gameObject.SetActive(false);
         playerIconsContainerActive = false;
     }
 
     public void TogglePlayerIconsPanel() {
         playerIconsContainerActive = !playerIconsContainerActive;
-        playerIconsContainer.gameObject.SetActive(playerIconsContainerActive);
+        playerIconsPanel.SetActive(playerIconsContainerActive);
     }
 
     public void ShowPanel() {

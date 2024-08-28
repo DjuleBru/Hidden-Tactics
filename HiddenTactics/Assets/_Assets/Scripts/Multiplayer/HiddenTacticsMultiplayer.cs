@@ -584,7 +584,6 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
     }
 
     public void SetPlayerFactionSO(int factionID) {
-        Debug.Log("setting faction so to " + factionID);
         playerFactionId = factionID;
         SavingManager.Instance.SavePlayerFactionId(factionID);
     }

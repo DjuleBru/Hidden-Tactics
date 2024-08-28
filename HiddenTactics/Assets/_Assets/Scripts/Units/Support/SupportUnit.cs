@@ -40,6 +40,7 @@ public class SupportUnit : NetworkBehaviour {
 
 
     protected void Start() {
+        if (unit.GetUnitIsOnlyVisual()) return;
         buffTargetTiles = GetComponentInParent<Troop>().GetTroopSO().buffedGridPositions;
         supportType = unit.GetParentTroop().GetTroopSO().supportType;
     }
@@ -247,7 +248,9 @@ public class SupportUnit : NetworkBehaviour {
     }
     public override void OnDestroy() {
         HideBuffedUnitBuffs();
-        GridHoverManager.Instance.RemoveSupportUnit(unit);
+        if(GridHoverManager.Instance != null) {
+            GridHoverManager.Instance.RemoveSupportUnit(unit);
+        }
     }
 
 }

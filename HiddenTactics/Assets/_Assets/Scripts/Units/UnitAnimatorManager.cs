@@ -132,6 +132,10 @@ public class UnitAnimatorManager : NetworkBehaviour
         unitGeneralAnimator.SetTrigger("UnitPlaced");
     }
 
+    public void TriggerUnitOnlyVisualPlaced() {
+        unitGeneralAnimator.SetTrigger("UnitOnlyVisualPlaced");
+    }
+
     private void Unit_OnUnitSelected(object sender, System.EventArgs e) {
         if (!unit.GetUnitIsBought()) return;
         if (!firstSelectionDone) {

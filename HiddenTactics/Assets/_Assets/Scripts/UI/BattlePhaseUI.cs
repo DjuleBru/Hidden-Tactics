@@ -13,6 +13,8 @@ public class BattlePhaseUI : MonoBehaviour
 
     [SerializeField] GameObject playerSpeedUpIndicator;
     [SerializeField] GameObject opponentSpeedUpIndicator;
+    [SerializeField] GameObject playerPanelSpeedUpIndicator;
+    [SerializeField] GameObject opponentPanelSpeedUpIndicator;
 
     [SerializeField] private TextMeshProUGUI turnText;
 
@@ -67,7 +69,9 @@ public class BattlePhaseUI : MonoBehaviour
         PlayerData opponentData = HiddenTacticsMultiplayer.Instance.GetLocalOpponentData();
 
         playerSpeedUpIndicator.SetActive(PlayerReadyManager.Instance.PlayerWantingToSpeedUp(playerData.clientId));
+        playerPanelSpeedUpIndicator.SetActive(PlayerReadyManager.Instance.PlayerWantingToSpeedUp(playerData.clientId));
         opponentSpeedUpIndicator.SetActive(PlayerReadyManager.Instance.PlayerWantingToSpeedUp(opponentData.clientId));
+        opponentPanelSpeedUpIndicator.SetActive(PlayerReadyManager.Instance.PlayerWantingToSpeedUp(opponentData.clientId));
     }
 
     public void Show() {

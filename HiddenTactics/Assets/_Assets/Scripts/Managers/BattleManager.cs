@@ -203,6 +203,7 @@ public class BattleManager : NetworkBehaviour
     }
 
     private void State_OnValueChanged(State previousValue, State newValue) {
+        Debug.Log(newValue);
         OnStateChanged?.Invoke(this, EventArgs.Empty);
         Time.timeScale = 1f;
 
@@ -264,6 +265,7 @@ public class BattleManager : NetworkBehaviour
 
     public void AddUnitToUnitListInBattlefield(Unit unit) {
         unitsOnBattlefieldList.Add(unit);
+        Debug.Log(unitsOnBattlefieldList.Count);
     }
 
     public void RemoveUnitFromUnitListInBattlefield(Unit unit) {
@@ -275,6 +277,7 @@ public class BattleManager : NetworkBehaviour
     }
 
     public void RemoveUnitFromUnitsStillInBattleList(Unit unit) {
+        Debug.Log(unitsStillInBattle.Count);
         unitsStillInBattle.Remove(unit);
 
         if(unitsStillInBattle.Count == 0) {

@@ -61,4 +61,18 @@ public class DeckSlotAnimatorManager : MonoBehaviour
     public void SetAnimatorActive(bool active) {
         animatorActive = active;
     }
+
+    public void SetIdle(bool idle) {
+        deckSlotVisualAnimator.SetBool("Idle", idle);
+    }
+
+    public void TriggerFlyUp() {
+        deckSlotVisualAnimator.SetTrigger("FlyUp");
+        deckSlotVisualAnimator.SetBool("Idle", false);
+    }
+
+    public void TriggerFlyDown() {
+        deckSlotVisualAnimator.SetTrigger("FlyDown");
+        deckSlotVisualAnimator.SetBool("Idle", true);
+    }
 }

@@ -14,6 +14,7 @@ public class ItemTemplateUI_DeckCreation : ItemTemplateUI
     private Button selectButton;
 
     private bool selected;
+    private bool interactable;
 
     private void Awake() {
         selectButton = GetComponent<Button>();
@@ -98,16 +99,33 @@ public class ItemTemplateUI_DeckCreation : ItemTemplateUI
             outlineImage.color = Color.white;
             outlineImage.material = selectedMaterial;
             backgroundImage.material = selectedMaterial;
+
+            illustrationImage.color = Color.white;
         }
         else {
             outlineImage.color = unSelectedColor;
             outlineImage.material = cleanMaterial;
             backgroundImage.material = cleanMaterial;
+
+            illustrationImage.color = unSelectedColor;
         }
+
+        if((buildingSO != null && !buildingSO.buildingIsImplemented) || troopSO != null && !troopSO.troopIsImplemented) {
+            Color semitransparent = Color.white;
+            semitransparent.a = .4f;
+            illustrationImage.color = semitransparent;
+        }
+    }
+
+    public void EnableButton(bool interactable) {
+        selectButton.interactable = interactable;
+        this.interactable = interactable;
     }
 
     public override void OnPointerExit(PointerEventData eventData) {
         base.OnPointerExit(eventData);
+        if (!interactable) return;
+
         if(selected) {
             backgroundImage.material = selectedMaterial;
             outlineImage.material = selectedMaterial;
@@ -119,6 +137,8 @@ public class ItemTemplateUI_DeckCreation : ItemTemplateUI
 
     public override void OnPointerEnter(PointerEventData eventData) {
         base.OnPointerEnter(eventData);
+        if (!interactable) return;
+
         backgroundImage.material = hoveredMaterial;
         outlineImage.material = hoveredMaterial;
     }

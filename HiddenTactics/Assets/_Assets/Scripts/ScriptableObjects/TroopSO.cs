@@ -31,4 +31,11 @@ public class TroopSO : ScriptableObject {
     public bool isGarrisonedTroop;
     public bool troopIsImplemented;
 
+    public enum UnitSizeInTroop {
+        small,
+        medium,
+        big,
+    }
+
+    public UnitSizeInTroop unitSizeInTroop;
 }

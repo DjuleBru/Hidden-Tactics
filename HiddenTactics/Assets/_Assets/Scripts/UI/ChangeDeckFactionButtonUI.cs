@@ -41,7 +41,7 @@ public class ChangeDeckFactionButtonUI : MonoBehaviour
         this.factionSO = factionSO;
         factionImage.sprite = factionSO.factionSprite;
         factionImageShadow.sprite = factionSO.factionSprite;
-        factionBackgroundImage.sprite = factionSO.slotBackground;
+        factionBackgroundImage.sprite = factionSO.slotBackgroundSquare;
         factionOutlineImage.sprite = factionSO.slotBorder;
         factionOutlineShadowImage.sprite = factionSO.slotBorder;
         PlayerCustomizationUI.Instance.CloseChangeDeckFactionContainer();

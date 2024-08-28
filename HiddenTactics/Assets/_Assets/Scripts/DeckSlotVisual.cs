@@ -17,6 +17,13 @@ public class DeckSlotVisual : MonoBehaviour
 
     private DeckSlotAnimatorManager deckSlotAnimatorManager;
 
+    [SerializeField] private GameObject troopTypeSlot;
+    [SerializeField] private GameObject buildingTypeSlot;
+    [SerializeField] private GameObject heroTypeSlot;
+    [SerializeField] private GameObject troopOrBuildingSlot;
+    [SerializeField] private GameObject troopOrSpellSlot;
+    [SerializeField] private GameObject buildingOrSpellSlot;
+
     private DeckSlot deckSlot;
     private bool deckSlotSelected;
     private bool deckSlotSelectionEnabled = true;
@@ -26,7 +33,9 @@ public class DeckSlotVisual : MonoBehaviour
         deckSlot = GetComponentInParent<DeckSlot>();
         deckSlotAnimatorManager = GetComponentInParent<DeckSlotAnimatorManager>();
         visualCollider = GetComponent<Collider2D>();
-        deckSlotVisualSpriteRenderer = GetComponent<SpriteRenderer>();  
+        deckSlotVisualSpriteRenderer = GetComponent<SpriteRenderer>();
+
+        EnableSlotTypeUI(false);
     }
 
     private void Start()
@@ -116,4 +125,46 @@ public class DeckSlotVisual : MonoBehaviour
         deckSlotSelectionEnabled = false;
     }
 
+    private void SetSlotTypeVisuals() {
+
+        if (deckSlot.GetCanHostBuilding() && deckSlot.GetCanHostTroop()) {
+            troopOrBuildingSlot.SetActive(true);
+            return;
+        }
+        if (deckSlot.GetCanHostSpell() && deckSlot.GetCanHostTroop()) {
+            troopOrSpellSlot.SetActive(true);
+            return;
+        }
+        if (deckSlot.GetCanHostSpell() && deckSlot.GetCanHostBuilding()) {
+            buildingOrSpellSlot.SetActive(true);
+            return;
+        }
+        if (deckSlot.GetCanHostTroop()) {
+            troopTypeSlot.gameObject.SetActive(true);
+            return;
+        }
+        if (deckSlot.GetCanHostBuilding()) {
+            buildingTypeSlot.gameObject.SetActive(true);
+            return;
+        }
+        if (deckSlot.GetCanHostHero()) {
+            heroTypeSlot.gameObject.SetActive(true);
+            return;
+        }
+
+    }
+
+    public void EnableSlotTypeUI(bool enable) {
+        if (enable) {
+            SetSlotTypeVisuals();
+        }
+        else {
+            troopTypeSlot.SetActive(false);
+            buildingTypeSlot.SetActive(false);
+            heroTypeSlot.SetActive(false);
+            troopOrSpellSlot.SetActive(false);
+            buildingOrSpellSlot.SetActive(false);
+            troopOrBuildingSlot.SetActive(false);
+        }
+    }
 }
