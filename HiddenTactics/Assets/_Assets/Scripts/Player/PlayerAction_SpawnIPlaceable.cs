@@ -98,16 +98,12 @@ public class PlayerAction_SpawnIPlaceable : NetworkBehaviour {
 
             if(iPlaceable is Building) {
                 Building buildingSpawned = (Building)iPlaceable;
-                if (HiddenTacticsMultiplayer.Instance.IsMultiplayer()) {
-                    PlayerGoldManager.Instance.SpendGold(buildingSpawned.GetBuildingSO().spawnBuildingCost, NetworkManager.Singleton.LocalClientId);
-                }
+                PlayerGoldManager.Instance.SpendGold(buildingSpawned.GetBuildingSO().spawnBuildingCost, NetworkManager.Singleton.LocalClientId);
             }
 
             if (iPlaceable is Troop) {
                 Troop troopSpawned = (Troop)iPlaceable;
-                if(HiddenTacticsMultiplayer.Instance.IsMultiplayer()) {
-                    PlayerGoldManager.Instance.SpendGold(troopSpawned.GetTroopSO().spawnTroopCost, NetworkManager.Singleton.LocalClientId);
-                }
+                PlayerGoldManager.Instance.SpendGold(troopSpawned.GetTroopSO().spawnTroopCost, NetworkManager.Singleton.LocalClientId);
             }
         }
 

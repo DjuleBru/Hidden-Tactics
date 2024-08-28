@@ -179,6 +179,7 @@ public class UnitAnimatorManager : NetworkBehaviour
     }
 
     public void SetXY(float xValue, float yValue) {
+        //Debug.Log("X " + xValue);
 
         if((xValue > 0 && X < 0) || (xValue < 0 && X > 0)) {
             OnUnitXChanged?.Invoke(this, EventArgs.Empty);
@@ -374,8 +375,11 @@ public class UnitAnimatorManager : NetworkBehaviour
     }
 
     private void Unit_OnAdditionalUnitActivated(object sender, System.EventArgs e) {
+        ResetAnimatorParameters();
+
         if (!BattleManager.Instance.IsPreparationPhase()) return;
         if (SettingsManager.Instance.GetTacticalViewSetting()) return;
+
         unitGeneralAnimator.SetTrigger("UnitPlaced");
     }
 

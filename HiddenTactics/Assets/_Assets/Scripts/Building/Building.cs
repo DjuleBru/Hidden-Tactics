@@ -57,7 +57,10 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
             BattleGrid.Instance.IPlaceableMovedGridPosition(this, currentGridPosition, newGridPosition);
             currentGridPosition = newGridPosition;
         }
-        BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
+
+        if(BattleManager.Instance != null) {
+            BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
+        }
     }
 
     protected virtual void BattleManager_OnStateChanged(object sender, EventArgs e) {
@@ -277,7 +280,7 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
         return currentGridPosition;
     }
 
-    public ITargetable.TargetType GetTargetType() {
+    public virtual ITargetable.TargetType GetTargetType() {
         return ITargetable.TargetType.building;
     }
 

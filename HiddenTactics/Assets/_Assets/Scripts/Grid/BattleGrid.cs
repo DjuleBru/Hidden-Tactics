@@ -249,15 +249,24 @@ public class BattleGrid : MonoBehaviour
     #endregion
 
     #region BUILDING
-    public void AddBuildingAtGridPosition(GridPosition gridPosition, Building building) {
+
+    public List<Building> GetBuildingListAtGridPosition(GridPosition gridPosition) {
+        // LIST OF BUILDINGS BECAUSE MULTIPLE VILLAGES ON 1 TILE
+
+        if (!IsValidGridPosition(gridPosition)) return null;
         GridObject gridObject = gridSystem.GetGridObject(gridPosition);
-        gridObject.AddIPlaceable(building);
+        return gridObject.GetBuildingList();
     }
 
     public Building GetBuildingAtGridPosition(GridPosition gridPosition) {
+        // LIST OF BUILDINGS BECAUSE MULTIPLE VILLAGES ON 1 TILE
+
         if (!IsValidGridPosition(gridPosition)) return null;
         GridObject gridObject = gridSystem.GetGridObject(gridPosition);
-        return gridObject.GetBuilding();
+
+        if (gridObject.GetBuildingList().Count == 0) return null;
+
+        return gridObject.GetBuildingList()[0];
     }
 
     #endregion

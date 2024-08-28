@@ -23,7 +23,6 @@ public class Village : Building {
     }
 
     public override void PlaceIPlaceable() {
-
         isPlaced = true;
         BattleGrid.Instance.AddIPlaceableAtGridPosition(currentGridPosition, this);
 
@@ -31,6 +30,10 @@ public class Village : Building {
         BattleGrid.Instance.SetIPlaceableSpawnedAtGridPosition(this, currentGridPosition);
         SetIPlaceableGridPosition(currentGridPosition);
         battlefieldOffset = transform.position - battlefieldOwner.transform.position;
+    }
+
+    public override ITargetable.TargetType GetTargetType() {
+        return ITargetable.TargetType.village;
     }
 
     public override void Die() {

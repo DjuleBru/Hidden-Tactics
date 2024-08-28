@@ -146,8 +146,9 @@ public class IPlaceableDescriptionSlotTemplate : MonoBehaviour, IPointerEnterHan
         if (MousePositionManager.Instance.IsPointerOverUIElement()) return;
 
         GridPosition mouseGridPosition = MousePositionManager.Instance.GetMouseGridPosition();
-        Troop troop = BattleGrid.Instance.GetTroopAtGridPosition(mouseGridPosition);
-        Building building = BattleGrid.Instance.GetBuildingAtGridPosition(mouseGridPosition);
+
+        Troop troop = BattleGrid.Instance.GetTroopAtGridPosition(mouseGridPosition) as Troop;
+        Building building = BattleGrid.Instance.GetBuildingAtGridPosition(mouseGridPosition) as Building;
 
         if (troop != null || building != null) {
 
@@ -857,5 +858,11 @@ public class IPlaceableDescriptionSlotTemplate : MonoBehaviour, IPointerEnterHan
 
     public bool GetCardOpen() {
         return cardOpened;
+    }
+
+    public void OnDestroy() {
+        DeckManager.LocalInstance.OnSelectedDeckChanged -= DeckManager_OnSelectedDeckChanged;
+        GameInput.Instance.OnLeftClickPerformed -= GameInput_OnLeftClickPerformed;
+        GameInput.Instance.OnRightClickPerformed -= GameInput_OnRightClickPerformed;
     }
 }

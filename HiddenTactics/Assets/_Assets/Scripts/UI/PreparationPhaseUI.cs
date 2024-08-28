@@ -13,6 +13,11 @@ public class PreparationPhaseUI : MonoBehaviour
     [SerializeField] Animator battleDeckUIPanelAnimator;
     [SerializeField] Button playerReadyButton;
 
+    [SerializeField] GameObject playerReadyIndicatorPlayerPanel;
+    [SerializeField] GameObject playerReadyIndicatorBattlePhasePanel;
+    [SerializeField] GameObject opponentReadyIndicatorPlayerPanel;
+    [SerializeField] GameObject opponentReadyIndicatorBattlePhasePanel;
+
     [SerializeField] private TextMeshProUGUI turnText;
     [SerializeField] private GameObject allPlaceablesUI;
 
@@ -35,12 +40,25 @@ public class PreparationPhaseUI : MonoBehaviour
 
     private void Start() {
         BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
+        PlayerReadyManager.Instance.OnReadyChanged += PlayerReadyManager_OnReadyChanged;
         turnText.text = "I/" + ConvertIntToRomanNumber(BattleManager.Instance.GetMaxTurns());
         Show();
     }
 
+
     private void Update() {
         preparationPhaseTimerImage.fillAmount = BattleManager.Instance.GetPreparationPhaseTimerNormalized();
+    }
+
+    private void PlayerReadyManager_OnReadyChanged(object sender, System.EventArgs e) {
+        PlayerData playerData = HiddenTacticsMultiplayer.Instance.GetLocalPlayerData();
+        PlayerData opponentData = HiddenTacticsMultiplayer.Instance.GetLocalOpponentData();
+
+        playerReadyIndicatorPlayerPanel.SetActive(PlayerReadyManager.Instance.IsPlayerReady(playerData.clientId));
+        opponentReadyIndicatorPlayerPanel.SetActive(PlayerReadyManager.Instance.IsPlayerReady(opponentData.clientId));
+
+        playerReadyIndicatorBattlePhasePanel.SetActive(PlayerReadyManager.Instance.IsPlayerReady(playerData.clientId));
+        opponentReadyIndicatorBattlePhasePanel.SetActive(PlayerReadyManager.Instance.IsPlayerReady(opponentData.clientId));
     }
 
     private void BattleManager_OnStateChanged(object sender, System.EventArgs e) {

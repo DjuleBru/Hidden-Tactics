@@ -19,8 +19,18 @@ public class GridHoverManager : MonoBehaviour
         Instance = this;
     }
 
+
     public void SubsribeToPlayerActions() {
         PlayerActionsManager.LocalInstance.OnActionChanged += PlayerActionsManager_OnActionChanged;
+        BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
+    }
+
+    private void BattleManager_OnStateChanged(object sender, System.EventArgs e) {
+        if (BattleManager.Instance.IsBattlePhaseStarting()) {
+            // Unhover any hovered grid tile
+            CancelPreviousUnitsSetAsTarget();
+            ResetPreviousTilesHovered();
+        }
     }
 
     private void PlayerActionsManager_OnActionChanged(object sender, System.EventArgs e) {
@@ -207,12 +217,7 @@ public class GridHoverManager : MonoBehaviour
     private void ShowHoveredTroopRangedAttackTiles() {
         Troop newHoveredTroop = BattleGrid.Instance.GetTroopAtGridPosition(currentHoveredGridPosition);
 
-        if(targetTilesGridObjectVisuals.Count > 0) {
-            foreach(GridObjectVisual gridObjectVisual in targetTilesGridObjectVisuals) {
-                gridObjectVisual.ResetVisual();
-            }
-            targetTilesGridObjectVisuals.Clear();
-        }
+        ResetPreviousTilesHovered();
 
         if (newHoveredTroop != null) {
             AttackSO troopMainAttackSO = newHoveredTroop.GetTroopSO().unitPrefab.GetComponent<Unit>().GetUnitSO().mainAttackSO;
@@ -233,15 +238,19 @@ public class GridHoverManager : MonoBehaviour
         }
     }
 
-    private void ShowTroopToPlaceRangedAttackTiles(TroopSO troopSO) {
-        if (!PlayerAction_SpawnIPlaceable.LocalInstance.IsValidIPlaceableSpawningTarget(currentHoveredGridPosition)) return;
-
+    private void ResetPreviousTilesHovered() {
         if (targetTilesGridObjectVisuals.Count > 0) {
             foreach (GridObjectVisual gridObjectVisual in targetTilesGridObjectVisuals) {
                 gridObjectVisual.ResetVisual();
             }
             targetTilesGridObjectVisuals.Clear();
         }
+    }
+
+    private void ShowTroopToPlaceRangedAttackTiles(TroopSO troopSO) {
+        if (!PlayerAction_SpawnIPlaceable.LocalInstance.IsValidIPlaceableSpawningTarget(currentHoveredGridPosition)) return;
+
+        ResetPreviousTilesHovered();
 
         AttackSO troopMainAttackSO = troopSO.unitPrefab.GetComponent<Unit>().GetUnitSO().mainAttackSO;
         AttackSO troopSideAttackSO = troopSO.unitPrefab.GetComponent<Unit>().GetUnitSO().sideAttackSO;

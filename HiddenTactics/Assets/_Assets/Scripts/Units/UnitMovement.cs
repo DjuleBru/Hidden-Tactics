@@ -289,6 +289,7 @@ public class UnitMovement : NetworkBehaviour {
 
     public void SetWatchDir(Transform targetTransform) {
         Vector3 watchDir = (targetTransform.position - transform.position).normalized;
+
         SetWatchDirServerRpc(watchDir);
     }
 
@@ -304,6 +305,7 @@ public class UnitMovement : NetworkBehaviour {
             watchDir3DNormalized.x = -watchDir3DNormalized.x;
         }
 
+        //Debug.Log("SetWatchDirClientRpc " + watchDir3DNormalized);
         watchDir = new Vector2(watchDir3DNormalized.x, watchDir3DNormalized.y);
     }
 

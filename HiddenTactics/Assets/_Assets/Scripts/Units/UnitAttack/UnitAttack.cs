@@ -73,7 +73,6 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
         BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
     }
 
-
     protected virtual void Update() {
 
         if(triggerDeathAttack) {
@@ -85,7 +84,9 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
 
         if (attackTarget as MonoBehaviour == null) return;
 
-        unitMovement.SetWatchDir((attackTarget as MonoBehaviour).transform);
+        if(IsServer) {
+            unitMovement.SetWatchDir((attackTarget as MonoBehaviour).transform);
+        }
 
         if (attacking && !dazed) {
             if (!attackDecomposition) {
@@ -94,7 +95,6 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
                 HandleDecomposedRangedAttack();
             }
         }
-
     }
 
     protected virtual void HandleStandardAttack() {

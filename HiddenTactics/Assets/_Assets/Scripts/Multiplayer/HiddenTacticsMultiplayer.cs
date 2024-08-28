@@ -358,9 +358,10 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
 
     [ServerRpc(RequireOwnership = false)]
     public void SetPlayerInitialConditionsServerRpc(ulong clientId) {
-        int initialPlayerGold = PlayerGoldManager.Instance.GetPlayerInitialgGold();
+
+        int initialPlayerGold = PlayerGoldManager.Instance.GetPlayerInitialGold();
         int initialPlayerVillages = 20;
-        int initialPlayerRevenue = PlayerGoldManager.Instance.GetPlayerBaseIncome();
+        int initialPlayerRevenue = PlayerGoldManager.Instance.GetPlayerBaseIncome() + Mathf.FloorToInt(initialPlayerGold*PlayerGoldManager.Instance.GetPlayerSavingsRevenueRate());
 
         int playerDataIndex = GetPlayerDataIndexFromClientId(clientId);
         PlayerData playerData = playerDataNetworkList[playerDataIndex];
@@ -373,6 +374,26 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
         playerGoldSinglePlayer = initialPlayerGold;
 
         playerDataNetworkList[playerDataIndex] = playerData;
+
+        OnPlayerGoldChanged?.Invoke(this, new OnPlayerGoldChangedEventArgs {
+            previousGold = playerData.playerGold,
+            newGold = playerData.playerGold
+        });
+    }
+
+    public int GetPlayerSavingsRevenue(ulong clientId) {
+        int playerDataIndex = GetPlayerDataIndexFromClientId(clientId);
+        PlayerData playerData = playerDataNetworkList[playerDataIndex];
+
+        int playerSavingsRevenue = Mathf.FloorToInt(playerData.playerGold * PlayerGoldManager.Instance.GetPlayerSavingsRevenueRate());
+        return playerSavingsRevenue;
+    }
+
+    public int GetPlayerRevenue(ulong clientId) {
+        int playerDataIndex = GetPlayerDataIndexFromClientId(clientId);
+        PlayerData playerData = playerDataNetworkList[playerDataIndex];
+
+        return playerData.playerRevenue;
     }
 
     public void DistributePlayerRevenue() {
@@ -384,14 +405,26 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
 
     [ServerRpc(RequireOwnership = false)]
     public void ChangePlayerGoldServerRpc(ulong clientId, int goldAmount) {
+
         if(isMultiplayer) {
+
             int playerDataIndex = GetPlayerDataIndexFromClientId(clientId);
             PlayerData playerData = playerDataNetworkList[playerDataIndex];
-            playerData.playerGold += goldAmount;
 
+            int initialPlayerSavingsRevenue = GetPlayerSavingsRevenue(clientId);
+
+            playerData.playerGold += goldAmount;
             playerDataNetworkList[playerDataIndex] = playerData;
+
+            int newPlayerSavingsRevenue = GetPlayerSavingsRevenue(clientId);
+
+            int changeInPlayerSavingsRevenue = newPlayerSavingsRevenue - initialPlayerSavingsRevenue;
+            ChangePlayerRevenueServerRpc(clientId, changeInPlayerSavingsRevenue);
+
             ChangePlayerGoldClientRpc(clientId, playerData.playerGold - goldAmount, playerData.playerGold);
+
         } else {
+
             int newGold = playerGoldSinglePlayer + goldAmount;
             OnPlayerGoldChanged?.Invoke(this, new OnPlayerGoldChangedEventArgs {
                 previousGold = playerGoldSinglePlayer,
@@ -399,6 +432,7 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
                 clientId = clientId,
             });
             playerGoldSinglePlayer = newGold;
+
         }
     }
 
@@ -411,7 +445,6 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
             clientId = clientId,
         });
     }
-
 
     public void RemoveOnePlayerVillage(ulong clientID) {
         int playerDataIndex = GetPlayerDataIndexFromClientId(clientID);
@@ -451,6 +484,10 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
             clientId = clientId,
             newRevenue = newRevenue
         });
+    }
+
+    public int GetPlayerGoldSinglePlayer() {
+        return playerGoldSinglePlayer;
     }
 
     public void SetPlayerSurrender(ulong clientId) {

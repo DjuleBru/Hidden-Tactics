@@ -607,19 +607,6 @@ public class Unit : NetworkBehaviour, ITargetable {
     }
 
     public void ActivateAdditionalUnit() {
-        ActivateAdditionalUnitServerRpc();
-    }
-
-    [ServerRpc(RequireOwnership = false)]
-    private void ActivateAdditionalUnitServerRpc() {
-        if (!BattleManager.Instance.GetUnitsInBattlefieldList().Contains(this)) {
-            BattleManager.Instance.AddUnitToUnitListInBattlefield(this);
-        }
-        ActivateAdditionalUnitClientRpc();
-    }
-
-    [ClientRpc]
-    private void ActivateAdditionalUnitClientRpc() {
         unitIsBought = true;
         unitIsPlaced = true;
 

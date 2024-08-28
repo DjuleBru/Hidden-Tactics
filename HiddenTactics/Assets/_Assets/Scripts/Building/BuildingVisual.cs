@@ -205,7 +205,8 @@ public class BuildingVisual : NetworkBehaviour
         }
     }
 
-    public void OnDestroy() {
+    public override void OnDestroy() {
+        base.OnDestroy();
         SettingsManager.Instance.OnTacticalViewEnabled -= SettingsManager_OnTacticalViewEnabled;
         SettingsManager.Instance.OnTacticalViewDisabled -= SettingsManager_OnTacticalViewDisabled;
         SettingsManager.Instance.OnShowTacticalIconsDisabled -= SettingsManager_OnShowTacticalIconsDisabled;

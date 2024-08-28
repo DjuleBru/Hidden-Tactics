@@ -25,19 +25,28 @@ public class RevenueDetailPanelUI : MonoBehaviour
 
     private void Start() {
         VillageManager.Instance.OnPlayerVillageDestroyed += VillageManager_OnPlayerVillageDestroyed;
+        HiddenTacticsMultiplayer.Instance.OnPlayerGoldChanged += HiddenTacticsMultiplayer_OnPlayerGoldChanged;
 
         revenueDetailIntList.Add(PlayerGoldManager.Instance.GetPlayerBaseIncome());
         revenueDetailTextList.Add("Base income");
+
+        revenueDetailIntList.Add(PlayerGoldManager.Instance.GetLocalPlayerSavingsRevenue());
+        revenueDetailTextList.Add("Savings (" + PlayerGoldManager.Instance.GetPlayerSavingsRevenueRate() * 100 + "%)");
 
         revenueDetailIntList.Add(0);
         revenueDetailTextList.Add("Villages lost" + " (" + playerVillagesDestroyed + ")");
         UpdateRevenueDetailBreakdown();
     }
 
+    private void HiddenTacticsMultiplayer_OnPlayerGoldChanged(object sender, HiddenTacticsMultiplayer.OnPlayerGoldChangedEventArgs e) {
+        revenueDetailIntList[1] = PlayerGoldManager.Instance.GetLocalPlayerSavingsRevenue();
+        revenueDetailTextList[1] = "Savings (" + PlayerGoldManager.Instance.GetPlayerSavingsRevenueRate() * 100 + "%)";
+        UpdateRevenueDetailPanelUI(PlayerGoldManager.Instance.GetLocalPlayerRevenue());
+    }
 
-    public void UpdateRevenueDetailPanelUI(int newGold) {
+    public void UpdateRevenueDetailPanelUI(int newRevenue) {
         UpdateRevenueDetailBreakdown();
-        totalIncomeAmountText.text = newGold.ToString();
+        totalIncomeAmountText.text = newRevenue.ToString();
     }
 
     private void UpdateRevenueDetailBreakdown() {
@@ -106,8 +115,8 @@ public class RevenueDetailPanelUI : MonoBehaviour
     private void VillageManager_OnPlayerVillageDestroyed(object sender, System.EventArgs e) {
         playerVillagesDestroyed++;
 
-        revenueDetailIntList[1] = playerVillagesDestroyed * PlayerGoldManager.Instance.GetPlayerVillageDestroyedBonusIncome();
-        revenueDetailTextList[1] = "Villages lost" + "(" + playerVillagesDestroyed + ")";
+        revenueDetailIntList[2] = playerVillagesDestroyed * PlayerGoldManager.Instance.GetPlayerVillageDestroyedBonusIncome();
+        revenueDetailTextList[2] = "Villages lost" + "(" + playerVillagesDestroyed + ")";
         UpdateRevenueDetailBreakdown();
     }
 

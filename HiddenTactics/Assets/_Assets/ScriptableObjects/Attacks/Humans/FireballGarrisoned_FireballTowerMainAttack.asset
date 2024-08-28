@@ -17,7 +17,7 @@ MonoBehaviour:
   attackHasAOE: 1
   attackHasAOECollider: 0
   projectilePrefab: {fileID: 2487143347385034294, guid: a8db0c7060a69fb46b41c683211d4acf, type: 3}
-  attackTargetTypes: 0000000001000000
+  attackTargetTypes: 00000000
   attackTargetTiles:
   - {x: 2, y: 0}
   - {x: 3, y: 0}
@@ -33,8 +33,8 @@ MonoBehaviour:
   - {x: 5, y: -2}
   meleeAttackTargetingRange: 0
   meleeAttackRange: 0
-  attackDamage: 5
-  attackRate: 8
+  attackDamage: 2
+  attackRate: 10
   attackKnockback: 2000
   attackDazedTime: 0.2
   attackAOE: 2

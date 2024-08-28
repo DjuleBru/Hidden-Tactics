@@ -23,6 +23,7 @@ public class Troop : NetworkBehaviour, IPlaceable {
     protected bool isPlaced;
     protected bool isOwnedByPlayer;
     protected bool additionalUnitsHaveBeenBought;
+    protected bool troopIsDead;
 
     [SerializeField] protected bool debugMode;
     [SerializeField] protected TroopSO troopSO;
@@ -110,8 +111,6 @@ public class Troop : NetworkBehaviour, IPlaceable {
             BattleGrid.Instance.IPlaceableMovedGridPosition(this, currentGridPosition, newGridPosition);
             currentGridPosition = newGridPosition;
         }
-
-        GameInput.Instance.OnRightClickPerformed += GameInput_OnRightClickPerformed;
     }
 
     public override void OnNetworkSpawn() {
@@ -136,6 +135,14 @@ public class Troop : NetworkBehaviour, IPlaceable {
                 DestroyTroop();
             }
 
+            if(troopSelected) {
+                SetTroopSelected(false);
+            }
+
+            if(troopHovered) {
+                SetTroopHovered(false);
+            }
+
             UpdateTroopServerRpc();
 
             troopWasPlacedThisPreparationPhase = false;
@@ -143,12 +150,10 @@ public class Troop : NetworkBehaviour, IPlaceable {
 
         if (BattleManager.Instance.IsBattlePhaseEnding()) {
             DeactivateAllDynamicallySpawnedUnits();
-        }
-
-        if (BattleManager.Instance.IsPreparationPhase()) {
             troopHP = maxTroopHP;
+            troopIsDead = false;
             OnTroopHPChanged?.Invoke(this, EventArgs.Empty);
-        } 
+        }
     }
 
     public void HandlePositioningOnGrid() {
@@ -246,6 +251,8 @@ public class Troop : NetworkBehaviour, IPlaceable {
 
     [ClientRpc]
     protected void BuyAdditionalUnitsClientRpc() {
+        Debug.Log("BuyAdditionalUnitsClientRpc isOwnedByPlayer " + isOwnedByPlayer);
+
         if (isOwnedByPlayer) {
             foreach (Unit unit in additionalUnitsInTroop) {
                 unit.ActivateAdditionalUnit();
@@ -307,6 +314,7 @@ public class Troop : NetworkBehaviour, IPlaceable {
 
         // Set placed troop on grid object
         BattleGrid.Instance.SetIPlaceableSpawnedAtGridPosition(this, currentGridPosition);
+        BattleGrid.Instance.AddIPlaceableAtGridPosition(currentGridPosition, this);
         SetIPlaceableGridPosition(currentGridPosition);
         battlefieldOffset = transform.position - battlefieldOwner.transform.position;
 
@@ -335,7 +343,8 @@ public class Troop : NetworkBehaviour, IPlaceable {
     }
 
     public void SetTroopHovered(bool hovered) {
-        if(hovered) {
+
+        if (hovered) {
             troopHovered = true;
             troopTypeUI.SetUIHovered();
             BattlePhaseIPlaceablePanel.Instance.OpenIPlaceableCard(this);
@@ -360,12 +369,13 @@ public class Troop : NetworkBehaviour, IPlaceable {
     }
 
     public void SetTroopSelected(bool selected) {
+
         troopTypeUI.SetUISelected(selected);
 
         if (selected) {
             troopSelected = true;
             OnTroopSelected?.Invoke(this, EventArgs.Empty);
-            if (BattleManager.Instance.IsPreparationPhase() && !troopSO.isGarrisonedTroop && !SettingsManager.Instance.GetTacticalViewSetting()) {
+            if (BattleManager.Instance.IsPreparationPhase() && !troopSO.isGarrisonedTroop && !SettingsManager.Instance.GetTacticalViewSetting() && IsOwnedByPlayer()) {
                 troopUI.ShowTroopSelectedUI();
             }
 
@@ -384,13 +394,6 @@ public class Troop : NetworkBehaviour, IPlaceable {
                 unit.SetUnitSelected(false);
             }
         }
-    }
-
-    private void GameInput_OnRightClickPerformed(object sender, EventArgs e) {
-        //if (troopHovered) {
-        //    IPlaceableDescriptionSlotTemplate.Instance.SetDescriptionSlot(troopSO, allUnitsInTroop[0].GetUnitSO(), false, false);
-        //    IPlaceableDescriptionSlotTemplate.Instance.Show();
-        //}
     }
 
     public virtual void ActivateNextSpawnedUnit(Vector3 spawnPosition) {
@@ -528,10 +531,19 @@ public class Troop : NetworkBehaviour, IPlaceable {
 
     protected void UnitHP_OnHealthChanged(object sender, UnitHP.OnHealthChangedEventArgs e) {
         float healthChange = e.newHealth - e.previousHealth;
+
         troopHP += healthChange;
 
+        if(troopHP <= 0) {
+            troopIsDead = true;
+        }
+
+        if (troopHP > maxTroopHP) {
+            troopHP = maxTroopHP;
+        }
+
         OnTroopHPChanged?.Invoke(this, EventArgs.Empty);
-    }
+     }
 
     public float GetTroopHPNormalized() {
         return troopHP/maxTroopHP;
@@ -543,6 +555,10 @@ public class Troop : NetworkBehaviour, IPlaceable {
 
     public bool GetIsPlaced() {
         return isPlaced;
+    }
+    
+    public bool GetIsDead() {
+        return troopIsDead;
     }
 
     public override void OnDestroy() {

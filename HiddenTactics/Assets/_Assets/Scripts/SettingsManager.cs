@@ -22,7 +22,11 @@ public class SettingsManager : MonoBehaviour
     private void Start() {
         GameInput.Instance.OnShowIPlaceableIconPerformed += GameInput_OnShowIPlaceableIconPerformed;
         GameInput.Instance.OnTacticalViewPerformed += GameInput_OnTacticalViewPerformed;
-        BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
+
+        if(BattleManager.Instance != null ) {
+            BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
+        }
+
         showTacticalIcons = SavingManager.Instance.LoadShowTacticalIcons();
     }
 

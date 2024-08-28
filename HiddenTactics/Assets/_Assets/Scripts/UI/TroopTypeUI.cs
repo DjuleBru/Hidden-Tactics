@@ -202,7 +202,6 @@ public class TroopTypeUI : NetworkBehaviour, IPointerEnterHandler, IPointerExitH
         }
         if (building != null) {
             BattlePhaseIPlaceablePanel.Instance.OpenIPlaceableCard(building);
-
         }
     }
 
@@ -244,7 +243,9 @@ public class TroopTypeUI : NetworkBehaviour, IPointerEnterHandler, IPointerExitH
     }
 
     public void SetUIHovered() {
-        if (troopIsGarrisoned) return;
+        if (troop != null && troopIsGarrisoned) return;
+        if(troop != null && troop.GetIsDead()) return;
+
         typeUIGameObject.SetActive(true);
         canvasGroup.alpha = 1f;
         animator.SetTrigger("Grow");
@@ -253,7 +254,9 @@ public class TroopTypeUI : NetworkBehaviour, IPointerEnterHandler, IPointerExitH
     }
 
     public void SetUIUnHovered() {
-        if (troopIsGarrisoned) return;
+        if (troop != null && troopIsGarrisoned) return;
+        if (troop != null && troop.GetIsDead()) return;
+
         if (!SettingsManager.Instance.GetTacticalViewSetting()) {
             canvasGroup.alpha = .7f;
         }
@@ -264,7 +267,9 @@ public class TroopTypeUI : NetworkBehaviour, IPointerEnterHandler, IPointerExitH
     }
 
     public void ResetUI() {
-        if (troopIsGarrisoned) return;
+        if (troop != null && troopIsGarrisoned) return;
+        if (troop != null && troop.GetIsDead()) return;
+
         if (!SettingsManager.Instance.GetTacticalViewSetting()) {
             canvasGroup.alpha = .7f;
         }
@@ -277,6 +282,8 @@ public class TroopTypeUI : NetworkBehaviour, IPointerEnterHandler, IPointerExitH
     }
 
     public void SetUISelected(bool selected) {
+        if (troop != null && troop.GetIsDead()) return;
+
         if (troopIsGarrisoned) return;
         if (selected) {
             canvasGroup.alpha = 1f;
@@ -301,7 +308,6 @@ public class TroopTypeUI : NetworkBehaviour, IPointerEnterHandler, IPointerExitH
         animator.SetTrigger("Shrink");
         animator.ResetTrigger("Grow");
         animator.ResetTrigger("Select");
-
 
         transform.localPosition = Vector3.zero;
 
@@ -362,7 +368,9 @@ public class TroopTypeUI : NetworkBehaviour, IPointerEnterHandler, IPointerExitH
     }
 
     public override void OnDestroy() {
-        BattleManager.Instance.OnStateChanged -= BattleManager_OnStateChanged; 
+        if(BattleManager.Instance != null) {
+            BattleManager.Instance.OnStateChanged -= BattleManager_OnStateChanged;
+        }
 
         SettingsManager.Instance.OnTacticalViewDisabled -= SettingsManager_OnTacticalViewDisabled;
         SettingsManager.Instance.OnTacticalViewEnabled -= SettingsManager_OnTacticalViewEnabled;

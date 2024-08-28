@@ -9,7 +9,7 @@ public class GridObject
     private List<IPlaceable> iPlaceableList;
 
     private Troop troopAtGridPosition;
-    private Building buildingAtGridPosition;
+    private List<Building> buildingListAtGridPosition = new List<Building>();
 
     private Troop troopSpawnedAtGridPosition;
     private Building buildingSpawnedAtGridPosition;
@@ -38,8 +38,7 @@ public class GridObject
         }
 
         if (iPlaceable is Building) {
-            if (buildingAtGridPosition != null) return;
-            buildingAtGridPosition = iPlaceable as Building;
+            buildingListAtGridPosition.Add(iPlaceable as Building);
         }
     }
 
@@ -55,12 +54,9 @@ public class GridObject
         }
 
         if (iPlaceable is Building) {
-            if (iPlaceable as Building == buildingAtGridPosition) {
-                buildingAtGridPosition = null;
-                buildingSpawnedAtGridPosition = null;
-                iPlaceableSpawnedAtGridPosition = null;
-            }
+            buildingListAtGridPosition.Remove(iPlaceable as Building);
         }
+
     }
 
     public void SetIPlaceableAsSpawned(IPlaceable iPlaceable) {
@@ -88,8 +84,8 @@ public class GridObject
         return troopAtGridPosition;
     }
 
-    public Building GetBuilding() {
-        return buildingAtGridPosition;
+    public List<Building> GetBuildingList() {
+        return buildingListAtGridPosition;
     }
 
     public List<IPlaceable> GetIPlaceableList() {

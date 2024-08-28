@@ -52,6 +52,14 @@ public class UnitTargetingSystem : NetworkBehaviour
         if(jumpAttackSO != null) {
             specialAttackGridPositionTargetList = FillGridPositionAttackTargetList(jumpAttackSO);
         }
+
+        unit.OnUnitReset += Unit_OnUnitReset;
+    }
+
+    private void Unit_OnUnitReset(object sender, System.EventArgs e) {
+        mainAttackITargetable = null;
+        sideAttackITargetable = null;
+        jumpAttackITargetable = null;
     }
 
     protected void Update() {
@@ -210,7 +218,7 @@ public class UnitTargetingSystem : NetworkBehaviour
             }
 
             List<Unit> unitListAtTargetGridPosition = BattleGrid.Instance.GetUnitListAtGridPosition(targetGridPosition);
-            Building buildingAtTargetGridPosition = BattleGrid.Instance.GetBuildingAtGridPosition(targetGridPosition);
+            List<Building> buildingListAtTargetGridPosition = BattleGrid.Instance.GetBuildingListAtGridPosition(targetGridPosition);
 
             foreach (Unit unit in unitListAtTargetGridPosition) {
                 if (unit.IsOwnedByPlayer() != this.unit.IsOwnedByPlayer() && !unit.GetIsDead() && unit.GetUnitIsBought() && attackSO.attackTargetTypes.Contains(unit.GetTargetType())) {
@@ -229,10 +237,12 @@ public class UnitTargetingSystem : NetworkBehaviour
                 }
             }
 
-            if(buildingAtTargetGridPosition != null) {
-                if (buildingAtTargetGridPosition.IsOwnedByPlayer() != unit.IsOwnedByPlayer() && attackSO.attackTargetTypes.Contains(buildingAtTargetGridPosition.GetTargetType())) {
-                    // target building is not from the same team AND building is targetable
-                    targetItargetableList.Add(buildingAtTargetGridPosition);
+            if (buildingListAtTargetGridPosition.Count != 0) {
+                foreach(Building building in buildingListAtTargetGridPosition) {
+                    if (building.IsOwnedByPlayer() != unit.IsOwnedByPlayer() && attackSO.attackTargetTypes.Contains(building.GetTargetType())) {
+                        // target building is not from the same team AND building is targetable
+                        targetItargetableList.Add(building);
+                    }
                 }
             }
             

@@ -229,6 +229,8 @@ public class UnitVisual : NetworkBehaviour
     }
 
     protected void Unit_OnAdditionalUnitActivated(object sender, System.EventArgs e) {
+        Debug.Log("Unit_OnAdditionalUnitActivated");
+
         if (SettingsManager.Instance.GetTacticalViewSetting()) return;
         ChangeSpriteRendererListMaterial(allVisualsSpriteRendererList, cleanMaterial);
         SetFactionVisualColor();

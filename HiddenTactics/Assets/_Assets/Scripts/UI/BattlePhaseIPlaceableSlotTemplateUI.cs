@@ -256,8 +256,11 @@ public class BattlePhaseIPlaceableSlotTemplateUI : MonoBehaviour, IPointerEnterH
 
     public void OnPointerExit(PointerEventData eventData) {
         pointerEntered = false;
-        if (cardSelected) return;
-        if (iPlaceable.GetSelected()) return;
+
+        if (cardSelected || iPlaceable.GetSelected()) {
+            HoverIPlaceableOnBattleField(true);
+            return;
+        }
 
         CloseIPlaceableCard();
     }

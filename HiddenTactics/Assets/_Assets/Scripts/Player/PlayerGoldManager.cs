@@ -8,10 +8,10 @@ public class PlayerGoldManager : NetworkBehaviour {
 
     public static PlayerGoldManager Instance;
 
-    private const int playerInitialGold = 20;
+    private const int playerInitialGold = 16;
     private const int playerBaseIncome = 10;
     private const int playerVillageDestroyedBonusIncome = 1;
-    private const float playerSavingsRevenue = .1f;
+    private const float playerSavingsRevenueRate = .25f;
 
     private const int opponentVillageDestroyedBoostGold = 2;
     private const int playerUnitFellBonusGold = 1;
@@ -39,6 +39,7 @@ public class PlayerGoldManager : NetworkBehaviour {
     private void HiddenTacticsMultiplayer_OnPlayerGoldChanged(object sender, HiddenTacticsMultiplayer.OnPlayerGoldChangedEventArgs e) {
         if (e.clientId == NetworkManager.Singleton.LocalClientId) {
             PlayerStateUI.Instance.RefreshPlayerGoldUI(e.previousGold, e.newGold);
+            PlayerStateUI.Instance.RefreshPlayerRevenueUI(GetLocalPlayerRevenue());
         }
     }
 
@@ -136,12 +137,33 @@ public class PlayerGoldManager : NetworkBehaviour {
         return playerData.playerGold;
     }
 
+    public int GetLocalPlayerSavingsRevenue() {
+        return HiddenTacticsMultiplayer.Instance.GetPlayerSavingsRevenue(NetworkManager.Singleton.LocalClientId);
+    }
+
+    public int GetLocalPlayerRevenue() {
+        return HiddenTacticsMultiplayer.Instance.GetPlayerRevenue(NetworkManager.Singleton.LocalClientId);
+    }
+
+    public int GetLocalPlayerGold() {
+        if(HiddenTacticsMultiplayer.Instance.IsMultiplayer()) {
+            PlayerData playerData = HiddenTacticsMultiplayer.Instance.GetLocalPlayerData();
+            return playerData.playerGold;
+        } else {
+            return HiddenTacticsMultiplayer.Instance.GetPlayerGoldSinglePlayer();
+        }
+    }
+
     public int GetPlayerBaseIncome() {
         return playerBaseIncome;
     }
 
-    public int GetPlayerInitialgGold() {
+    public int GetPlayerInitialGold() {
         return playerInitialGold;
+    }
+
+    public float GetPlayerSavingsRevenueRate() {
+        return playerSavingsRevenueRate;
     }
 
     public int GetPlayerVillageDestroyedBonusIncome() {
@@ -155,5 +177,6 @@ public class PlayerGoldManager : NetworkBehaviour {
     public int GetPlayerUnitJumpedBonusGold() {
         return playerUnitFellBonusGold;
     }
+
     #endregion
 }
