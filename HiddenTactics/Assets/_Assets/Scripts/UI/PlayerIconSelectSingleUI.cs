@@ -12,9 +12,9 @@ public class PlayerIconSelectSingleUI : MonoBehaviour, IPointerEnterHandler, IPo
     [SerializeField] private Image outlineImage;
     [SerializeField] private PlayerIconSO playerIconSO;
 
-    [SerializeField] private Material cleanMaterial;
-    [SerializeField] private Material selectedMaterial;
-    [SerializeField] private Material hoveredMaterial;
+    [SerializeField] private Color unselectedColor;
+    [SerializeField] private Color selectedColor;
+    [SerializeField] private Color hoveredColor;
 
     private bool isSelected = false;
 
@@ -39,11 +39,11 @@ public class PlayerIconSelectSingleUI : MonoBehaviour, IPointerEnterHandler, IPo
         this.isSelected = isSelected;
 
         if(isSelected) {
-            backgroundImage.material = selectedMaterial;
-            outlineImage.material = selectedMaterial;
+            backgroundImage.color = selectedColor;
+            outlineImage.color = selectedColor;
         } else {
-            backgroundImage.material = cleanMaterial;
-            outlineImage.material = cleanMaterial;
+            backgroundImage.color = unselectedColor;
+            outlineImage.color = unselectedColor;
         }
     }
 
@@ -65,13 +65,13 @@ public class PlayerIconSelectSingleUI : MonoBehaviour, IPointerEnterHandler, IPo
     public void OnPointerExit(PointerEventData eventData) {
         if (isSelected) return;
 
-        backgroundImage.material = cleanMaterial;
-        outlineImage.material = cleanMaterial;
+        backgroundImage.color = unselectedColor;
+        outlineImage.color = unselectedColor;
     }
 
     public void OnPointerEnter(PointerEventData eventData) {
         if (isSelected) return;
-        backgroundImage.material = hoveredMaterial;
-        outlineImage.material = hoveredMaterial;
+        backgroundImage.color = hoveredColor;
+        outlineImage.color = hoveredColor;
     }
 }

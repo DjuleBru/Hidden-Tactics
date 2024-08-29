@@ -246,6 +246,13 @@ public class DeckSlot : MonoBehaviour
         deckSlotAnimatorManager.TriggerFlyDown();
     }
 
+    public void TriggerFlyDownUp() {
+        deckSlotAnimatorManager.TriggerFlyDownUp();
+    }
+
+    public void TriggerFlyDownDown() {
+        deckSlotAnimatorManager.TriggerFlyDownDown();
+    }
     public void SetAnimatorActiveAndTriggerDown() {
         deckSlotAnimatorManager.SetAnimatorActive(true);
         deckSlotAnimatorManager.SetDeckSlotAnimationUnhoveredAbsolute();

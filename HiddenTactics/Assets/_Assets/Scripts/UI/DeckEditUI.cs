@@ -79,7 +79,6 @@ public class DeckEditUI : MonoBehaviour
         animator = GetComponent<Animator>();
         saveDeckButton.onClick.AddListener(() => {
             CloseEditDeckMenu();
-            PlayerCustomizationUI.Instance.ShowPanel();
             OnDeckEditMenuClosed?.Invoke(this, EventArgs.Empty);
         });
 
@@ -386,24 +385,18 @@ public class DeckEditUI : MonoBehaviour
     }
 
     public void CloseEditDeckMenu() {
-        MainMenuCameraManager.Instance.SetBaseCamera(.5f);
         DeckSlotMouseHoverManager.Instance.SetEditingDeck(false);
-        animator.SetTrigger("Close");
-        DeckVisualWorldUI.Instance.EnableEditDeckButton();
-
         foreach (DeckSlot deckSlot in deckSlotList) {
             deckSlot.SetUIActive(false);
         }
+
+        StartCoroutine(SwitchToMainMenuUI(.6f, .5f, .5f, 1.4f));
+
     }
 
     public void EnableEditDeckUI() {
+        StartCoroutine(SwitchToEditDeckUI(.5f, 1f, 1f));
 
-        MainMenuCameraManager.Instance.SetEditDeckCamera();
-        StartCoroutine(TriggerOpenPanelAfterDelay(1f));
-        StartCoroutine(ActivateDeckEditingUIAfterDelay(2f));
-        DeckSlotMouseHoverManager.Instance.SetEditingDeck(true);
-
-        PlayerCustomizationUI.Instance.HidePanel();
         deckSelected = DeckManager.LocalInstance.GetDeckSelected();
         RefreshAllSelectionMenus();
         RefreshPanelVisuals();
@@ -439,13 +432,51 @@ public class DeckEditUI : MonoBehaviour
         DeckManager.LocalInstance.SetDeckName(deckNameInputField.text);
     }
 
+    public IEnumerator SwitchToEditDeckUI(float delayToActivateCameraTransition, float delayToOpenEditDeckPanel, float delayToActivateEditDeckPanels) {
+
+        DeckVisualWorldUI.Instance.SetDeckVisualFlyUp();
+        yield return new WaitForSeconds(delayToActivateCameraTransition);
+
+        MainMenuCameraManager.Instance.SetEditDeckCamera();
+        MainMenuUI.Instance.MainMenuUIToEditDeckTransition();
+
+        yield return new WaitForSeconds(delayToOpenEditDeckPanel);
+
+        PlayerDeckVisual.Instance.SetEditDeckMenuVisual();
+        animator.SetTrigger("Open");
+
+        yield return new WaitForSeconds(delayToActivateEditDeckPanels);
+
+        ActivateDeckEditingUI();
+        DeckVisualWorldUI.Instance.SetDeckVisualFlyDown();
+        DeckVisualWorldUI.Instance.DisableEditDeckButton();
+        DeckSlotMouseHoverManager.Instance.SetEditingDeck(true);
+    }
+
+    public IEnumerator SwitchToMainMenuUI(float delayToCloseEditDeckUI, float delayToActivateCameraTransition, float delayToActivateMainMenuUI, float delayToFLyDownDeckVisual) {
+        DeckVisualWorldUI.Instance.SetDeckVisualFlyUp();
+
+        yield return new WaitForSeconds(delayToCloseEditDeckUI);
+        animator.SetTrigger("Close");
+
+        yield return new WaitForSeconds(delayToActivateCameraTransition);
+        MainMenuCameraManager.Instance.SetBaseCamera();
+        PlayerDeckVisual.Instance.SetMainMenuVisual();
+
+        yield return new WaitForSeconds(delayToActivateMainMenuUI);
+        MainMenuUI.Instance.MainMenuUIFromEditDeckTransition();
+
+        yield return new WaitForSeconds(delayToFLyDownDeckVisual);
+        DeckVisualWorldUI.Instance.SetDeckVisualFlyDown();
+        DeckVisualWorldUI.Instance.EnableEditDeckButton();
+    }
+
     public IEnumerator TriggerOpenPanelAfterDelay(float delay) {
         yield return new WaitForSeconds(delay);
-        animator.SetTrigger("Open");
     }
+
     public IEnumerator ActivateDeckEditingUIAfterDelay(float delay) {
         yield return new WaitForSeconds(delay);
-        ActivateDeckEditingUI();
     }
 
     private void ActivateDeckEditingUI() {

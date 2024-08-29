@@ -1,9 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class FactionSelectionButtonUI : MonoBehaviour
+public class FactionSelectionButtonUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     [SerializeField] private FactionSO factionSO;
     [SerializeField] private Image factionImage;
@@ -13,13 +14,16 @@ public class FactionSelectionButtonUI : MonoBehaviour
     [SerializeField] private Image factionBackgroundImage;
 
     [SerializeField] private ChangeDeckFactionButtonUI changeDeckFactionButtonUI;
+
     private Button button;
+    private Animator buttonAnimator;
+    private bool selected;
 
     private void Awake() {
         button = GetComponent<Button>();
+        buttonAnimator = GetComponent<Animator>();
 
         button.onClick.AddListener(() => {
-            PlayerCustomizationUI.Instance.CloseChangeDeckFactionContainer();
             DeckEditUI.Instance.CloseChangeDeckFactionContainer();
             DeckManager.LocalInstance.SetDeckSelected(factionSO);
             if(changeDeckFactionButtonUI != null) {
@@ -28,12 +32,27 @@ public class FactionSelectionButtonUI : MonoBehaviour
         });
 
         if(factionSO != null) {
-            factionImage.sprite = factionSO.factionSprite;
-            factionImageShadow.sprite = factionSO.factionSprite;
-            factionOutlineImage.sprite = factionSO.slotBorder;
-            factionOutlineShadowImage.sprite = factionSO.slotBorder;
-            factionBackgroundImage.sprite = factionSO.slotBackgroundSquare;
-            factionImage.preserveAspect = true;
+             SetFactionSO(factionSO);
+        }
+    }
+
+    private void Start() {
+        if(DeckManager.LocalInstance.GetDeckSelected().deckFactionSO == factionSO) {
+            SetSelected(true);
+        } else {
+            SetSelected(false);
+        }
+
+        DeckManager.LocalInstance.OnSelectedDeckChanged += DeckManager_OnSelectedDeckChanged;
+        
+    }
+
+    private void DeckManager_OnSelectedDeckChanged(object sender, DeckManager.OnDeckChangedEventArgs e) {
+        if (DeckManager.LocalInstance.GetDeckSelected().deckFactionSO == factionSO) {
+            SetSelected(true);
+        }
+        else {
+            SetSelected(false);
         }
     }
 
@@ -46,5 +65,26 @@ public class FactionSelectionButtonUI : MonoBehaviour
         factionBackgroundImage.sprite = factionSO.slotBackgroundSquare;
     }
 
+    private void SetSelected(bool selected) {
+        this.selected = selected;
+        buttonAnimator.SetBool("Selected", selected);
+        buttonAnimator.ResetTrigger("Hover");
+        buttonAnimator.ResetTrigger("Unhover");
 
+        if (selected) {
+            buttonAnimator.Play("Idle_Selected");
+        } else {
+            buttonAnimator.Play("Idle_Unselected");
+        }
+    }
+
+    public void OnPointerExit(PointerEventData eventData) {
+        if (selected) return;
+        buttonAnimator.SetTrigger("Unhover");
+    }
+
+    public void OnPointerEnter(PointerEventData eventData) {
+        if (selected) return;
+        buttonAnimator.SetTrigger("Hover");
+    }
 }

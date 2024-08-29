@@ -59,13 +59,7 @@ public class MainMenuCameraManager : MonoBehaviour
         editBattlefieldCamera.enabled = false;
     }
 
-    public void SetBaseCamera(float delay) {
-        StartCoroutine(SetBaseCameraAfterDelayCoroutine(delay));
-    }
-
-    public IEnumerator SetBaseCameraAfterDelayCoroutine(float delay) {
-        yield return new WaitForSeconds(delay);
-
+    public void SetBaseCamera() {
         mainMenuCamera.enabled = true;
         editBattlefieldGridTilesCamera.enabled = false;
         editBattlefieldVillagesCamera.enabled = false;
@@ -73,6 +67,7 @@ public class MainMenuCameraManager : MonoBehaviour
         editDeckCamera.enabled = false;
         editBattlefieldCamera.enabled = false;
     }
+
 
     public void SetEditDeckCamera()
     {
@@ -81,15 +76,6 @@ public class MainMenuCameraManager : MonoBehaviour
         editBattlefieldVillagesCamera.enabled = false;
         editBattlefieldBaseCamera.enabled = false;
         editDeckCamera.enabled = true;
-        editBattlefieldCamera.enabled = false;
-    }
-
-    public void SetBaseCamera() {
-        mainMenuCamera.enabled = true;
-        editBattlefieldGridTilesCamera.enabled = false;
-        editBattlefieldVillagesCamera.enabled = false;
-        editBattlefieldBaseCamera.enabled = false;
-        editDeckCamera.enabled = false;
         editBattlefieldCamera.enabled = false;
     }
 }

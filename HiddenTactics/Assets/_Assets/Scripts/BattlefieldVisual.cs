@@ -13,9 +13,13 @@ public class BattlefieldVisual : MonoBehaviour
     [SerializeField] private Sprite battlefieldBaseDefaultSprite;
 
     public event EventHandler OnBattlefieldBaseChanged;
+    private Animator battlefieldAnimator;
 
     private void Awake() {
         Instance = this;
+        if(BattleManager.Instance == null) {
+            battlefieldAnimator = GetComponentInParent<Animator>();
+        }
     }
 
     private void Start() {
@@ -59,5 +63,13 @@ public class BattlefieldVisual : MonoBehaviour
 
     private void SaveBattlefieldBaseSpriteInPlayerData(Sprite battlefieldBaseSprite) {
         HiddenTacticsMultiplayer.Instance.SetPlayerBattlefieldBaseSprite(PlayerCustomizationDataManager.Instance.GetBattlefieldBaseSpriteID(battlefieldBaseSprite));
+    }
+
+    public void MoveBattlefieldToEdit() {
+        battlefieldAnimator.SetTrigger("ToEdit");
+    }
+
+    public void MoveBattlefieldFromEdit() {
+        battlefieldAnimator.SetTrigger("FromEdit");
     }
 }

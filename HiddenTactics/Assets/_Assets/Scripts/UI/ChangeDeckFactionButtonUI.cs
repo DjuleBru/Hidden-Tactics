@@ -5,8 +5,6 @@ using UnityEngine.UI;
 
 public class ChangeDeckFactionButtonUI : MonoBehaviour
 {
-
-
     [SerializeField] private FactionSO factionSO;
     [SerializeField] private Image factionImage;
     [SerializeField] private Image factionImageShadow;
@@ -21,12 +19,10 @@ public class ChangeDeckFactionButtonUI : MonoBehaviour
         button = GetComponent<Button>();
         button.onClick.AddListener(() => {
             if (!selected) {
-                PlayerCustomizationUI.Instance.OpenChangeDeckFactionContainer();
                 DeckEditUI.Instance.OpenChangeDeckFactionContainer();
                 selected = true;
             }
             else {
-                PlayerCustomizationUI.Instance.CloseChangeDeckFactionContainer();
                 DeckEditUI.Instance.CloseChangeDeckFactionContainer();
                 selected = false;
             }
@@ -44,6 +40,5 @@ public class ChangeDeckFactionButtonUI : MonoBehaviour
         factionBackgroundImage.sprite = factionSO.slotBackgroundSquare;
         factionOutlineImage.sprite = factionSO.slotBorder;
         factionOutlineShadowImage.sprite = factionSO.slotBorder;
-        PlayerCustomizationUI.Instance.CloseChangeDeckFactionContainer();
     }
 }

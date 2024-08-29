@@ -6,7 +6,9 @@ using UnityEngine.UI;
 public class BattlefieldVillateTemplateUI : MonoBehaviour
 {
     [SerializeField] private Image villageImage;
-    [SerializeField] private Image villageSelectedImage;
+    [SerializeField] private Image villageOutlineImage;
+    [SerializeField] private Material selectedMaterial;
+    [SerializeField] private Material cleanMaterial;
 
     private bool selected;
     private Sprite villageSprite;
@@ -14,7 +16,6 @@ public class BattlefieldVillateTemplateUI : MonoBehaviour
 
     private void Awake() {
         button = GetComponent<Button>();
-        villageSelectedImage.gameObject.SetActive(false);
         button.onClick.AddListener(() => {
             AddOrRemoveVillageSprite();
         });
@@ -43,6 +44,11 @@ public class BattlefieldVillateTemplateUI : MonoBehaviour
 
     public void SetVillageSelected(bool selected) {
         this.selected = selected;
-        villageSelectedImage.gameObject.SetActive(selected);
+
+        if(selected) {
+            villageOutlineImage.material = selectedMaterial;
+        } else {
+            villageOutlineImage.material = cleanMaterial;
+        }
     }
 }

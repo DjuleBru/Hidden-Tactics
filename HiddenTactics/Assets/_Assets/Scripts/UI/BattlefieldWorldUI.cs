@@ -23,7 +23,7 @@ public class BattlefieldWorldUI : MonoBehaviour, IPointerEnterHandler, IPointerE
         button = GetComponent<Button>();
         button.onClick.AddListener(() =>
         {
-            EditBattlefieldUI.Instance.StartEditBattlefield();
+            EditBattlefieldUI.Instance.SwitchToEditBattlefield();
 
             BattleGrid.Instance.GetGridSystem().SetGridSpritesMaterial(cleanMaterial);
             BattleGrid.Instance.GetGridSystem().SetVillageSpritesMaterial(cleanMaterial);

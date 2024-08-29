@@ -20,6 +20,8 @@ public class BattleGrid : MonoBehaviour
     [SerializeField] private int gridHeight;
     [SerializeField] private int gridCellSize;
 
+    [SerializeField] private Vector3 gridOriginScale = new Vector3(1,1,1);
+
     private void Awake() {
         Instance = this;
 
@@ -33,6 +35,8 @@ public class BattleGrid : MonoBehaviour
             // Lobby scene : create grid for only player
             gridSystem.CreateGridObjectVisuals(gridObjectVisualPrefab, playerGridOrigin);
         }
+
+        playerGridOrigin.localScale = gridOriginScale;
     }
 
     private void Start() {

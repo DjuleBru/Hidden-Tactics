@@ -75,4 +75,14 @@ public class DeckSlotAnimatorManager : MonoBehaviour
         deckSlotVisualAnimator.SetTrigger("FlyDown");
         deckSlotVisualAnimator.SetBool("Idle", true);
     }
+
+    public void TriggerFlyDownUp() {
+        deckSlotVisualAnimator.SetTrigger("FlyDownUp");
+        deckSlotVisualAnimator.SetBool("Idle", true);
+    }
+
+    public void TriggerFlyDownDown() {
+        deckSlotVisualAnimator.SetTrigger("FlyDownDown");
+        deckSlotVisualAnimator.SetBool("Idle", false);
+    }
 }
