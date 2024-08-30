@@ -6,7 +6,7 @@ using UnityEngine.Rendering;
 public class SavingManager : MonoBehaviour
 {
     [SerializeField] private int saveSlot;
-    [SerializeField] private Sprite battlefieldBaseDefaultSprite;
+    [SerializeField] private BattlefieldBaseSO battlefieldBaseSODefault;
     [SerializeField] private FactionSO defaultFactionSO;
 
     public static SavingManager Instance { get; private set; }
@@ -59,9 +59,9 @@ public class SavingManager : MonoBehaviour
         ES3.Save(factionGridTilesSpriteKey, gridTileVisualSO);
     }
 
-    public void SaveBattlefieldBaseSprite(Sprite battlefieldBaseSprite) {
+    public void SaveBattlefieldBaseSO(BattlefieldBaseSO battlefieldBaseSO) {
         string battlefieldBaseSpriteKey = saveSlot.ToString() + DeckManager.LocalInstance.GetDeckSelected().deckFactionSO.ToString() + "_battlefieldBaseSprite";
-        ES3.Save(battlefieldBaseSpriteKey, battlefieldBaseSprite);
+        ES3.Save(battlefieldBaseSpriteKey, battlefieldBaseSO);
     }
 
     public void SaveVillageSprites(List<Sprite> villageSpriteList) {
@@ -96,10 +96,10 @@ public class SavingManager : MonoBehaviour
     #endregion
 
     #region LOAD PLAYER CUSTOMIZATION DATA
-    public Sprite LoadBattlefieldBaseSprite(Deck deck) {
+    public BattlefieldBaseSO LoadBattlefieldBaseSO(Deck deck) {
         string battlefieldBaseSpriteKey = saveSlot.ToString() + deck.deckFactionSO.ToString() + "_battlefieldBaseSprite";
 
-        return ES3.Load(battlefieldBaseSpriteKey, defaultValue: battlefieldBaseDefaultSprite);
+        return ES3.Load(battlefieldBaseSpriteKey, defaultValue: battlefieldBaseSODefault);
     }
 
     public List<Sprite> LoadVillageSpriteList(Deck deck) {

@@ -12,7 +12,7 @@ public class BattlefieldVisual_Opponent : MonoBehaviour
     private void Start() {
         PlayerCustomizationData opponentCustomizationData = HiddenTacticsMultiplayer.Instance.GetLocalOpponentCustomizationData();
 
-        Sprite opponentBattlefieldBaseSprite = PlayerCustomizationDataManager.Instance.GetBattlefieldBaseSpriteFromId(opponentCustomizationData.battlefieldBaseSpriteId);
+        Sprite opponentBattlefieldBaseSprite = PlayerCustomizationDataManager.Instance.GetBattlefieldBaseSOFromId(opponentCustomizationData.battlefieldBaseSOId).battlefieldBaseSprite;
         battlefieldBaseSpriteRenderer.sprite = opponentBattlefieldBaseSprite;
 
         GridTileVisualSO opponentGridTileVisualSO = PlayerCustomizationDataManager.Instance.GetPlayerGridTileVisualSOFromId(opponentCustomizationData.gridVisualSOId);

@@ -593,7 +593,7 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
         SavingManager.Instance.SavePlayerGridVisualSOId(gridVisualSOId);
     }
 
-    public void SetPlayerBattlefieldBaseSprite(int battlefieldBaseSpriteId) {
+    public void SetPlayerBattlefieldBaseSO(int battlefieldBaseSpriteId) {
         playerBattlefieldBaseSpriteId = battlefieldBaseSpriteId;
         SavingManager.Instance.SavePlayerBattlefieldBaseSpriteId(battlefieldBaseSpriteId);
     }
@@ -642,7 +642,7 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
 
         PlayerCustomizationData playerCustomizationData = playerCustomizationDataNetworkList[playerCustomizationDataIndex];
 
-        playerCustomizationData.battlefieldBaseSpriteId = battlefieldBaseSpriteId;
+        playerCustomizationData.battlefieldBaseSOId = battlefieldBaseSpriteId;
 
         playerCustomizationDataNetworkList[playerCustomizationDataIndex] = playerCustomizationData;
     }

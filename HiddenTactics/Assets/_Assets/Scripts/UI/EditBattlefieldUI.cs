@@ -25,6 +25,7 @@ public class EditBattlefieldUI : MonoBehaviour
     [SerializeField] private Button editBattlefieldGridTiles;
     [SerializeField] private Button editBattlefieldBase;
     [SerializeField] private Button editBattlefieldVillages;
+    [SerializeField] private Button saveButton;
 
     [SerializeField] private Image tileSlotOutlineImage;
     [SerializeField] private Image villageSlotOutlineImage;
@@ -58,16 +59,22 @@ public class EditBattlefieldUI : MonoBehaviour
         editBattlefieldVillages.onClick.AddListener(() => {
             StartEditBattlefieldVillages();
         });
+
+        saveButton.onClick.AddListener(() => {
+            SwitchToMainMenu();
+        });
     }
 
     private void Start() {
         DeckManager.LocalInstance.OnDeckModified += DeckManager_OnDeckModified;
 
+        RefreshSlotVisuals(DeckManager.LocalInstance.GetDeckSelected());
+
         editingGridTiles = true;
         battlefieldVisualGridContainer.gameObject.SetActive(true);
-        RefreshBattlefieldVisualGridContainer(DeckManager.LocalInstance.GetDeckSelected().deckFactionSO);
+        Deck deck = DeckManager.LocalInstance.GetDeckSelected();
+        RefreshBattlefieldVisualGridContainer(deck);
 
-        RefreshSlotVisuals(DeckManager.LocalInstance.GetDeckSelected());
     }
 
     private void DeckManager_OnDeckModified(object sender, DeckManager.OnDeckChangedEventArgs e) {
@@ -78,7 +85,7 @@ public class EditBattlefieldUI : MonoBehaviour
         }
 
         if(editingGridTiles) {
-            RefreshBattlefieldVisualGridContainer(e.selectedDeck.deckFactionSO);
+            RefreshBattlefieldVisualGridContainer(e.selectedDeck);
         }
     }
     private void RefreshSlotVisuals(Deck deck) {
@@ -99,9 +106,7 @@ public class EditBattlefieldUI : MonoBehaviour
         battlefieldVisualBaseContainer.gameObject.SetActive(false);
         battlefieldVillageSpritesContainer.gameObject.SetActive(false);
 
-        RefreshBattlefieldVisualGridContainer(DeckManager.LocalInstance.GetDeckSelected().deckFactionSO);
-
-        //MainMenuCameraManager.Instance.SetEditBattlefieldGridTilesCamera();
+        RefreshBattlefieldVisualGridContainer(DeckManager.LocalInstance.GetDeckSelected());
     }
 
     public void StartEditBattlefieldVillages() {
@@ -113,8 +118,6 @@ public class EditBattlefieldUI : MonoBehaviour
         battlefieldVillageSpritesContainer.gameObject.SetActive(true);
 
         RefreshBattlefieldVillageSpritesContainer(DeckManager.LocalInstance.GetDeckSelected());
-
-        //MainMenuCameraManager.Instance.SetEditBattlefieldVillagesCamera();
     }
 
     public void StartEditBattlefieldBase() {
@@ -123,12 +126,11 @@ public class EditBattlefieldUI : MonoBehaviour
         battlefieldVisualBaseContainer.gameObject.SetActive(true);
         battlefieldVillageSpritesContainer.gameObject.SetActive(false);
 
-        RefreshBattlefieldVisualBaseContainer();
-
-        //MainMenuCameraManager.Instance.SetEditBattlefieldBaseCamera();
+        RefreshBattlefieldVisualBaseContainer(DeckManager.LocalInstance.GetDeckSelected());
     }
 
-    private void RefreshBattlefieldVisualGridContainer(FactionSO factionSO) {
+    private void RefreshBattlefieldVisualGridContainer(Deck deck) {
+        FactionSO factionSO = deck.deckFactionSO;
         battlefieldVisualGridTemplate.gameObject.SetActive(true);
 
         foreach (Transform child in battlefieldVisualGridContainer) {
@@ -141,13 +143,22 @@ public class EditBattlefieldUI : MonoBehaviour
             if(tileSO.gridFactionSO != factionSO) continue;
             Transform visualGridTemplateInstantiated = Instantiate(battlefieldVisualGridTemplate, battlefieldVisualGridContainer);
             visualGridTemplateInstantiated.GetComponent<BattlefieldVisualGridTemplate>().SetGridTileVisualSO(tileSO);
+
+            if (SavingManager.Instance.LoadGridTileVisualSO(deck) == tileSO) {
+                visualGridTemplateInstantiated.GetComponent<BattlefieldVisualGridTemplate>().SetGridTileSelected(true);
+            } else {
+                visualGridTemplateInstantiated.GetComponent<BattlefieldVisualGridTemplate>().SetGridTileSelected(false);
+            }
+
             id++;
         }
+
+
 
         battlefieldVisualGridTemplate.gameObject.SetActive(false);
     }
 
-    private void RefreshBattlefieldVisualBaseContainer() {
+    private void RefreshBattlefieldVisualBaseContainer(Deck deck) {
         battlefieldVisualBaseTemplate.gameObject.SetActive(true);
 
         foreach (Transform child in battlefieldVisualBaseContainer) {
@@ -155,9 +166,17 @@ public class EditBattlefieldUI : MonoBehaviour
             Destroy(child.gameObject);
         }
 
-        foreach (Sprite battlefieldBaseSprite in PlayerCustomizationDataManager.Instance.GetBattlefieldBaseSpriteList()) {
+        foreach (BattlefieldBaseSO battlefieldBaseSO in PlayerCustomizationDataManager.Instance.GetBattlefieldBaseSOList()) {
             Transform battlefieldBaseVisualInstantiated = Instantiate(battlefieldVisualBaseTemplate, battlefieldVisualBaseContainer);
-            battlefieldBaseVisualInstantiated.GetComponent<BattlefieldVisualBaseTemplate>().SetBattlefieldBaseImage(battlefieldBaseSprite);
+            battlefieldBaseVisualInstantiated.GetComponent<BattlefieldVisualBaseTemplate>().SetBattlefieldBaseSO(battlefieldBaseSO);
+
+            if (SavingManager.Instance.LoadBattlefieldBaseSO(deck) == battlefieldBaseSO) {
+                battlefieldBaseVisualInstantiated.GetComponent<BattlefieldVisualBaseTemplate>().SetBattlefieldBaseSOSelected(true);
+            }
+            else {
+                battlefieldBaseVisualInstantiated.GetComponent<BattlefieldVisualBaseTemplate>().SetBattlefieldBaseSOSelected(false);
+            }
+
         }
 
         battlefieldVisualBaseTemplate.gameObject.SetActive(false);
@@ -191,7 +210,6 @@ public class EditBattlefieldUI : MonoBehaviour
 
     public void SwitchToEditBattlefield() {
         StartCoroutine(SwitchToEditBattlefieldCoroutine(.5f, .5f));
-
     }
 
     private IEnumerator SwitchToEditBattlefieldCoroutine(float delayToMoveBattlefield, float delayToOpenUI) {
@@ -214,12 +232,29 @@ public class EditBattlefieldUI : MonoBehaviour
     public void SwitchToMainMenu() {
         editingVillages = false;
         editingGridTiles = false;
-        battlefieldCustomizationUI.SetActive(false);
-        PlayerCustomizationUI.Instance.gameObject.SetActive(true);
-        MainMenuCameraManager.Instance.SetBaseCamera();
-
         battlefieldVisualGridContainer.gameObject.SetActive(false);
         battlefieldVisualBaseContainer.gameObject.SetActive(false);
         battlefieldVillageSpritesContainer.gameObject.SetActive(false);
+
+        StartCoroutine(SwitchToMainMenuCoroutine(1f,.5f,1f));
+
     }
+    private IEnumerator SwitchToMainMenuCoroutine(float delay1, float delay2, float delay3) {
+        MainMenuCameraManager.Instance.SetBaseCamera();
+        editBattlefieldAnimator.SetTrigger("Close");
+        BattlefieldVisual.Instance.MoveBattlefieldFromEdit();
+
+        yield return new WaitForSeconds(delay1);
+
+        MainMenuUI.Instance.MainMenuUIFromEditBattlefieldTransition();
+
+        yield return new WaitForSeconds(delay2);
+
+        DeckVisualWorldUI.Instance.SetDeckVisualFlyDownUp();
+
+        yield return new WaitForSeconds(delay3);
+
+        DeckVisualWorldUI.Instance.EnableEditDeckButton();
+    }
+
 }

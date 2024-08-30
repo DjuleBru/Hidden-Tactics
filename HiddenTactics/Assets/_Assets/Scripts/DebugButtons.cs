@@ -46,7 +46,7 @@ public class DebugButtons : MonoBehaviour
 
         Debug.Log("player icon sprite id " + playerData.iconSpriteId);
         Debug.Log("player grid sprite id " + playerData.gridVisualSOId);
-        Debug.Log("player battlefield base id " + playerData.battlefieldBaseSpriteId);
+        Debug.Log("player battlefield base id " + playerData.battlefieldBaseSOId);
         Debug.Log("player village sprite count " + playerData.villageSpriteNumber);
         Debug.Log("player village sprite id 0 " + playerData.villageSprite0Id);
         Debug.Log("player village sprite id 1 " + playerData.villageSprite1Id);
@@ -62,7 +62,7 @@ public class DebugButtons : MonoBehaviour
 
         Debug.Log("opponent icon sprite id " + opponentData.iconSpriteId);
         Debug.Log("opponent grid sprite id " + opponentData.gridVisualSOId);
-        Debug.Log("opponent battlefield base id " + opponentData.battlefieldBaseSpriteId);
+        Debug.Log("opponent battlefield base id " + opponentData.battlefieldBaseSOId);
         Debug.Log("opponent village sprite count " + opponentData.villageSpriteNumber);
         Debug.Log("opponent village sprite id 0 " + opponentData.villageSprite0Id);
         Debug.Log("opponent village sprite id 1 " + opponentData.villageSprite1Id);

@@ -202,15 +202,15 @@ PrefabInstance:
     - target: {fileID: 4815747763947093075, guid: ecaf4c1c39222ff458941abdb8115703, type: 3}
       propertyPath: _shadowData.shadow.shadow
       value: 
-      objectReference: {fileID: 417919779066184301}
+      objectReference: {fileID: 0}
     - target: {fileID: 4815747763947093075, guid: ecaf4c1c39222ff458941abdb8115703, type: 3}
       propertyPath: _shadowData.shadow.shadowSr
       value: 
-      objectReference: {fileID: 2133364694423313781}
+      objectReference: {fileID: 0}
     - target: {fileID: 4815747763947093075, guid: ecaf4c1c39222ff458941abdb8115703, type: 3}
       propertyPath: _shadowData.shadow.shadowPivot
       value: 
-      objectReference: {fileID: 7591148188649519246}
+      objectReference: {fileID: 0}
     - target: {fileID: 4826207507620020447, guid: ecaf4c1c39222ff458941abdb8115703, type: 3}
       propertyPath: m_Controller
       value: 
@@ -314,11 +314,6 @@ SpriteRenderer:
   m_CorrespondingSourceObject: {fileID: 4467826071772814740, guid: ecaf4c1c39222ff458941abdb8115703, type: 3}
   m_PrefabInstance: {fileID: 4281401351482345761}
   m_PrefabAsset: {fileID: 0}
---- !u!4 &417919779066184301 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 4514339705271225164, guid: ecaf4c1c39222ff458941abdb8115703, type: 3}
-  m_PrefabInstance: {fileID: 4281401351482345761}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1133931331262664849 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3807264971237317040, guid: ecaf4c1c39222ff458941abdb8115703, type: 3}
@@ -332,11 +327,6 @@ Transform:
 --- !u!95 &1690397202643269260 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 3179515588043489197, guid: ecaf4c1c39222ff458941abdb8115703, type: 3}
-  m_PrefabInstance: {fileID: 4281401351482345761}
-  m_PrefabAsset: {fileID: 0}
---- !u!212 &2133364694423313781 stripped
-SpriteRenderer:
-  m_CorrespondingSourceObject: {fileID: 2806213410428916820, guid: ecaf4c1c39222ff458941abdb8115703, type: 3}
   m_PrefabInstance: {fileID: 4281401351482345761}
   m_PrefabAsset: {fileID: 0}
 --- !u!198 &2488849807935527222 stripped
@@ -392,11 +382,6 @@ MonoBehaviour:
   mountedUnit_HasBodyAttackAnimation: 0
   upgradedMountAttackAnimation: 0
   startIsWeaponSprite: 0
---- !u!1 &5080694719648640392 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 9072738074909713577, guid: ecaf4c1c39222ff458941abdb8115703, type: 3}
-  m_PrefabInstance: {fileID: 4281401351482345761}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &5345157013768643322 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8162589759490075611, guid: ecaf4c1c39222ff458941abdb8115703, type: 3}
@@ -431,11 +416,6 @@ SpriteRenderer:
 --- !u!212 &6875869209786773952 stripped
 SpriteRenderer:
   m_CorrespondingSourceObject: {fileID: 7206156626738903265, guid: ecaf4c1c39222ff458941abdb8115703, type: 3}
-  m_PrefabInstance: {fileID: 4281401351482345761}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &7591148188649519246 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 5923283366198014383, guid: ecaf4c1c39222ff458941abdb8115703, type: 3}
   m_PrefabInstance: {fileID: 4281401351482345761}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &7648940769980904882 stripped
@@ -484,7 +464,6 @@ MonoBehaviour:
   baseCircleSpriteRenderer: {fileID: 8322797551777974551}
   selectedUnitSpriteRenderer: {fileID: 7911463710763301807}
   shadowGameObjectList:
-  - {fileID: 5080694719648640392}
   - {fileID: 7648940769980904882}
   shadowBaseSpriteRenderer: {fileID: 6875869209786773952}
   cleanMaterial: {fileID: 2100000, guid: 5472c483cff72494e8e1f9233fc2308a, type: 2}

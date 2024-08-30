@@ -22,7 +22,6 @@ public class ItemTemplateUI : MonoBehaviour, IPointerEnterHandler, IPointerExitH
         GameInput.Instance.OnRightClickPerformed += GameInput_OnRightClickPerformed;
     }
 
-
     public virtual void SetDeckVisuals(Deck deck) {
         outlineImage.sprite = deck.deckFactionSO.slotBorder;
         outlineShadowImage.sprite = deck.deckFactionSO.slotBorder;
@@ -114,5 +113,10 @@ public class ItemTemplateUI : MonoBehaviour, IPointerEnterHandler, IPointerExitH
 
     public virtual void OnPointerExit(PointerEventData eventData) {
         pointerEntered = false;
+    }
+
+    public void OnDestroy() {
+        GameInput.Instance.OnLeftClickPerformed -= GameInput_OnLeftClickPerformed;
+        GameInput.Instance.OnRightClickPerformed -= GameInput_OnRightClickPerformed;
     }
 }

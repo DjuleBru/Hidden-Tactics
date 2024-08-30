@@ -11,7 +11,7 @@ public class PlayerCustomizationDataManager : MonoBehaviour
 
     [SerializeField] private List<Sprite> playerIconSpriteList;
     [SerializeField] private List<GridTileVisualSO> gridTileVisualSOList;
-    [SerializeField] private List<Sprite> battlefieldBaseSpriteList;
+    [SerializeField] private List<BattlefieldBaseSO> battlefieldBaseSOList;
 
     [SerializeField] private List<Sprite> villageSpriteList;
     [SerializeField] private List<FactionSO> factionSOList;
@@ -49,8 +49,8 @@ public class PlayerCustomizationDataManager : MonoBehaviour
         return gridTileVisualSOList.IndexOf(gridTileVisualSO);
     }
 
-    public int GetBattlefieldBaseSpriteID(Sprite battlefieldBaseSprite) {
-        return battlefieldBaseSpriteList.IndexOf(battlefieldBaseSprite);
+    public int GetBattlefieldBaseSOID(BattlefieldBaseSO battlefieldBaseSO) {
+        return battlefieldBaseSOList.IndexOf(battlefieldBaseSO);
     }
 
     public int GetVillageSpriteID(Sprite villageSprite) {
@@ -61,11 +61,11 @@ public class PlayerCustomizationDataManager : MonoBehaviour
         return factionSOList.IndexOf(factionSO);
     }
 
-    public Sprite GetBattlefieldBaseSpriteFromId(int battlefieldBaseSpriteId) {
-        return battlefieldBaseSpriteList[battlefieldBaseSpriteId];
+    public BattlefieldBaseSO GetBattlefieldBaseSOFromId(int battlefieldBaseSpriteId) {
+        return battlefieldBaseSOList[battlefieldBaseSpriteId];
     }
 
     public List<GridTileVisualSO> GetGridTileVisualSOList() { return gridTileVisualSOList; }
-    public List<Sprite> GetBattlefieldBaseSpriteList() {  return battlefieldBaseSpriteList; }
+    public List<BattlefieldBaseSO> GetBattlefieldBaseSOList() {  return battlefieldBaseSOList; }
     public List<Sprite> GetVillageSpriteList() { return villageSpriteList; }
 }

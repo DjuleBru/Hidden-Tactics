@@ -11,7 +11,7 @@ public struct PlayerCustomizationData : IEquatable<PlayerCustomizationData>, INe
 
     public int factionID;
     public int iconSpriteId;
-    public int battlefieldBaseSpriteId;
+    public int battlefieldBaseSOId;
     public int gridVisualSOId;
 
     public int villageSpriteNumber;
@@ -46,7 +46,7 @@ public struct PlayerCustomizationData : IEquatable<PlayerCustomizationData>, INe
 
         serializer.SerializeValue(ref factionID);
         serializer.SerializeValue(ref iconSpriteId);
-        serializer.SerializeValue(ref battlefieldBaseSpriteId);
+        serializer.SerializeValue(ref battlefieldBaseSOId);
         serializer.SerializeValue(ref gridVisualSOId);
     }
 

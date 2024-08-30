@@ -13,8 +13,6 @@ public class FactionSelectionButtonUI : MonoBehaviour, IPointerEnterHandler, IPo
     [SerializeField] private Image factionOutlineShadowImage;
     [SerializeField] private Image factionBackgroundImage;
 
-    [SerializeField] private ChangeDeckFactionButtonUI changeDeckFactionButtonUI;
-
     private Button button;
     private Animator buttonAnimator;
     private bool selected;
@@ -24,11 +22,7 @@ public class FactionSelectionButtonUI : MonoBehaviour, IPointerEnterHandler, IPo
         buttonAnimator = GetComponent<Animator>();
 
         button.onClick.AddListener(() => {
-            DeckEditUI.Instance.CloseChangeDeckFactionContainer();
             DeckManager.LocalInstance.SetDeckSelected(factionSO);
-            if(changeDeckFactionButtonUI != null) {
-                changeDeckFactionButtonUI.SetSelected(false);
-            }
         });
 
         if(factionSO != null) {

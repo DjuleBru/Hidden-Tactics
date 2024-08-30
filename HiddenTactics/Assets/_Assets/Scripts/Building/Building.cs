@@ -292,9 +292,10 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
         return buildingUI;
     }
 
-    public void SetBuildingAsVisual()
+    public void SetBuildingAsVisual(int sortingLayerID)
     {
         buildingIsOnlyVisual = true;
+        GetComponentInChildren<BuildingVisual>().SetBuildingDeckSlotSpriteSortingOrder(sortingLayerID);
         GetComponent<BuildingHP>().enabled = false;
         GetComponent<NetworkObject>().enabled = false;
         transform.localScale = Vector3.one * .6f;

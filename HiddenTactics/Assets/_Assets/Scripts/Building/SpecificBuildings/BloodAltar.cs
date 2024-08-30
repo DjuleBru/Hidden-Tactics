@@ -28,6 +28,10 @@ public class BloodAltar : Building
         RefreshBloodBar();
         fillingBarFill.fillAmount = 0;
         bloodBarFill.fillAmount = 0;
+
+        if(buildingIsOnlyVisual) {
+            bloodBarGameObject.gameObject.SetActive(false);
+        }
     }
 
     protected override void Update() {

@@ -10,6 +10,7 @@ public class Farm : Building
 
     protected override void Start() {
         base.Start();
+        if (GetBuildingIsOnlyVisual()) return;
         OnBuildingPlaced += Farm_OnBuildingPlaced;
         OnBuildingDestroyed += Farm_OnBuildingDestroyed;
         BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
@@ -45,7 +46,9 @@ public class Farm : Building
     }
 
     public override void OnDestroy() {
-        BattleManager.Instance.OnStateChanged -= BattleManager_OnStateChanged;
+        if(!GetBuildingIsOnlyVisual()) {
+            BattleManager.Instance.OnStateChanged -= BattleManager_OnStateChanged;
+        }
         base.OnDestroy();
     }
 }

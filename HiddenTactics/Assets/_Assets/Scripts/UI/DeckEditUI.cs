@@ -20,9 +20,6 @@ public class DeckEditUI : MonoBehaviour
 
     [SerializeField] Button saveDeckButton;
     [SerializeField] TMP_InputField deckNameInputField;
-    [SerializeField] private ChangeDeckFactionButtonUI deckFactionChangeButton;
-    [SerializeField] private Transform changeDeckFactionContainer;
-    [SerializeField] private Transform changeDeckFactionTemplate;
 
     [SerializeField] Transform heroMenuContainer;
     [SerializeField] Transform heroSelectionSlotTemplate;
@@ -48,6 +45,11 @@ public class DeckEditUI : MonoBehaviour
 
     [SerializeField] private Image deckSelectionBorder;
     [SerializeField] private Image deckSelectionBorderShadow;
+    [SerializeField] private Image deckFactionSlotBorder;
+    [SerializeField] private Image deckFactionSlotShadowBorder;
+    [SerializeField] private Image deckFactionSlotBackground;
+    [SerializeField] private Image deckFactionSlotImage;
+    [SerializeField] private Image deckFactionSlotShadowImage;
     [SerializeField] private Image heroBorder;
     [SerializeField] private Image heroBackground;
     [SerializeField] private Image unitsBorder;
@@ -81,9 +83,6 @@ public class DeckEditUI : MonoBehaviour
             CloseEditDeckMenu();
             OnDeckEditMenuClosed?.Invoke(this, EventArgs.Empty);
         });
-
-        changeDeckFactionTemplate.gameObject.SetActive(false);
-        changeDeckFactionContainer.gameObject.SetActive(false);
     }
 
     private void Start()
@@ -106,9 +105,6 @@ public class DeckEditUI : MonoBehaviour
     private void RefreshAllSelectionMenus() {
         factionSelected = deckSelected.deckFactionSO;
 
-        // Deck faction button
-        deckFactionChangeButton.SetFactionSO(deckSelected.deckFactionSO);
-        
         // Deck Name
         deckNameInputField.text = DeckManager.LocalInstance.GetDeckSelected().deckName;
 
@@ -156,6 +152,12 @@ public class DeckEditUI : MonoBehaviour
         unitsBorderShadow.sprite = deckSelected.deckFactionSO.panelBackgroundBorderSimple;
         buildingsBorderShadow.sprite = deckSelected.deckFactionSO.panelBackgroundBorderSimple;
         spellsBorderShadow.sprite = deckSelected.deckFactionSO.panelBackgroundBorderSimple;
+
+        deckFactionSlotBackground.sprite = deckSelected.deckFactionSO.slotBackgroundSquare;
+        deckFactionSlotBorder.sprite = deckSelected.deckFactionSO.slotBorder;
+        deckFactionSlotShadowBorder.sprite = deckSelected.deckFactionSO.slotBorder;
+        deckFactionSlotImage.sprite = deckSelected.deckFactionSO.factionSprite;
+        deckFactionSlotShadowImage.sprite = deckSelected.deckFactionSO.factionSprite;
 
         if (deckSelected.deckFactionSO.factionName == FactionSO.FactionName.Greenskins) {
             elvesBorderShadow.gameObject.SetActive(false);
@@ -229,7 +231,10 @@ public class DeckEditUI : MonoBehaviour
                 }
             }
             itemTemplateVisualUI.SetSelected(troopIsInDeck);
+        }
 
+        if (deckSlotSelected != null) {
+            RefreshSelectedMenus(deckSlotSelected);
         }
     }
 
@@ -256,6 +261,10 @@ public class DeckEditUI : MonoBehaviour
             }
             itemTemplateVisualUI.SetSelected(buildingIsInDeck);
         }
+
+        if(deckSlotSelected != null) {
+            RefreshSelectedMenus(deckSlotSelected);
+        }
     }
 
     private void RefreshSpellsMenu() {
@@ -274,8 +283,11 @@ public class DeckEditUI : MonoBehaviour
     private void DeckSlot_OnAnyDeckSlotSelected(object sender, System.EventArgs e)
     {
         deckSlotSelected = (DeckSlot)sender;
-        HideSelectingTypes();
+        RefreshSelectedMenus(deckSlotSelected);
+    }
 
+    private void RefreshSelectedMenus(DeckSlot deckSlotSelected) {
+        HideSelectingTypes();
         if (deckSlotSelected.GetCanHostTroop()) {
             ShowSelectingTroop(true);
         }
@@ -291,7 +303,6 @@ public class DeckEditUI : MonoBehaviour
         if (deckSlotSelected.GetCanHostHero()) {
             ShowSelectingHero(true);
         }
-
     }
 
     private void HideSelectingTypes() {
@@ -400,32 +411,6 @@ public class DeckEditUI : MonoBehaviour
         deckSelected = DeckManager.LocalInstance.GetDeckSelected();
         RefreshAllSelectionMenus();
         RefreshPanelVisuals();
-    }
-
-    public void OpenChangeDeckFactionContainer() {
-        changeDeckFactionContainer.gameObject.SetActive(true);
-        changeDeckFactionTemplate.gameObject.SetActive(true);
-
-        foreach (Transform child in changeDeckFactionContainer) {
-            if (child == changeDeckFactionTemplate) continue;
-            Destroy(child.gameObject);
-        }
-
-        foreach (FactionSO factionSO in DeckManager.LocalInstance.GetFactionSOList()) {
-            if (factionSO == DeckManager.LocalInstance.GetDeckSelected().deckFactionSO) continue;
-
-            Transform changeDeckFactionTemplateInstantiated = Instantiate(changeDeckFactionTemplate, changeDeckFactionContainer);
-            FactionSelectionButtonUI factionSelectionButton = changeDeckFactionTemplateInstantiated.GetComponent<FactionSelectionButtonUI>();
-
-            factionSelectionButton.SetFactionSO(factionSO);
-        }
-
-        changeDeckFactionTemplate.gameObject.SetActive(false);
-    }
-
-    public void CloseChangeDeckFactionContainer() {
-        changeDeckFactionContainer.gameObject.SetActive(false);
-        changeDeckFactionTemplate.gameObject.SetActive(false);
     }
 
     private void deckNameInputField_OnValueChanged() {

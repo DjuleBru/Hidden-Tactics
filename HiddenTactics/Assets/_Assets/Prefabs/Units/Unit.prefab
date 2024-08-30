@@ -2226,7 +2226,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5382315898739115054}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &7206156626738903265
 SpriteRenderer:
@@ -2701,7 +2701,6 @@ MonoBehaviour:
   baseCircleSpriteRenderer: {fileID: 5254033487237480502}
   selectedUnitSpriteRenderer: {fileID: 6242478969158578830}
   shadowGameObjectList:
-  - {fileID: 9072738074909713577}
   - {fileID: 5858313138869206163}
   shadowBaseSpriteRenderer: {fileID: 7206156626738903265}
   cleanMaterial: {fileID: 2100000, guid: 5472c483cff72494e8e1f9233fc2308a, type: 2}
@@ -4058,7 +4057,8 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 5222026212130092397, guid: a3e3d85f4ceaeb142b56061e8aafdab8, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: a3e3d85f4ceaeb142b56061e8aafdab8, type: 3}
 --- !u!212 &4467826071772814740 stripped
 SpriteRenderer:
@@ -4096,11 +4096,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!1 &9072738074909713577 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8594120475836149143, guid: a3e3d85f4ceaeb142b56061e8aafdab8, type: 3}
-  m_PrefabInstance: {fileID: 769170229685668158}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1005175612228383886
 PrefabInstance:
   m_ObjectHideFlags: 0

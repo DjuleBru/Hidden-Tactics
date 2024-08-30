@@ -177,23 +177,36 @@ public class DeckVisualWorldUI : MonoBehaviour, IPointerEnterHandler, IPointerEx
 
     public void SetDeckVisualFlyUp() {
         flyingUp = true;
+
         flyingDown = false;
+        flyingDownDown = false;
+        flyingDownUp = false;
+
         flySlotIndex = 0;
     }
     public void SetDeckVisualFlyDown() {
-        flyingUp = false;
         flyingDown = true;
+
+        flyingUp = false;
+        flyingDownDown = false;
+        flyingDownUp = false;
         flySlotIndex = 0;
     }
 
     public void SetDeckVisualFlyDownUp() {
         flyingDownUp = true;
+
+        flyingUp = false;
+        flyingDown = false;
         flyingDownDown = false;
         flySlotIndex = 0;
     }
     public void SetDeckVisualFlyDownDown() {
-        flyingDownUp = false;
         flyingDownDown = true;
+
+        flyingDownUp = false;
+        flyingUp = false;
+        flyingDown = false;
         flySlotIndex = 0;
     }
 }

@@ -72,7 +72,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1836888947
-  m_SortingLayer: 4
+  m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -181,7 +181,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1836888947
-  m_SortingLayer: 4
+  m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: -252277514, guid: 22dab03cbb6355949bc6de2c57cb2d96, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -228,15 +228,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   weaponHoldPoint: {fileID: 0}
+  mainWeaponSO: {fileID: 0}
+  sideWeaponSO: {fileID: 0}
+  weaponMountedVisualSpriteRenderer: {fileID: 0}
+  makeIdleWeaponSpriteInactiveDuringAttackAnimation: 0
+  weaponScale: {x: 1, y: 1, z: 1}
+  orthogonalAnimations: 0
   legendaryWeaponAnimator: {fileID: 7684407336235352625}
   legendaryweaponVisualSpriteRenderer: {fileID: 3269924745705472728}
-  isMagicWeapon: 0
-  weaponBleed: {fileID: 0}
-  weaponFear: {fileID: 0}
-  weaponFire: {fileID: 0}
-  weaponIce: {fileID: 0}
-  weaponPoison: {fileID: 0}
-  weaponShock: {fileID: 0}
   IcebergBlade: {fileID: -799221744, guid: 2f6ec5b0354c1454f8302df26b9f01ef, type: 3}
   ThunderboltSword: {fileID: -486777423, guid: 2f6ec5b0354c1454f8302df26b9f01ef, type: 3}
   ViperScimitar: {fileID: 477182374, guid: 2f6ec5b0354c1454f8302df26b9f01ef, type: 3}

@@ -62,7 +62,7 @@ public class DeckSlot : MonoBehaviour
         DeckManager.LocalInstance.OnSelectedDeckChanged += DeckManager_OnSelectedDeckChanged;
 
         RefreshDeckSlotTroopSO(true);
-        RefreshDeckSlotBuildingSO();
+        RefreshDeckSlotBuildingSO(true);
     }
 
     #region TROOPS
@@ -143,7 +143,7 @@ public class DeckSlot : MonoBehaviour
     #endregion
 
     #region BUILDINGS
-    private void RefreshDeckSlotBuildingSO()
+    private void RefreshDeckSlotBuildingSO(bool refreshOnStart)
     {
         if (DeckManager.LocalInstance.GetDeckSelected().buildingsInDeck[deckSlotNumber] == null || DeckManager.LocalInstance.GetDeckSelected().buildingsInDeck[deckSlotNumber] != this.buildingSO)
         {
@@ -158,23 +158,30 @@ public class DeckSlot : MonoBehaviour
         BuildingSO buildingSO = DeckManager.LocalInstance.GetDeckSelected().buildingsInDeck[deckSlotNumber];
         if (buildingSO != null && buildingSO != this.buildingSO)
         {
-            SetBuildingSO(buildingSO);
+            SetBuildingSO(buildingSO, refreshOnStart);
         }
     }
 
-    public void SetBuildingSO(BuildingSO buildingSO)
+    public void SetBuildingSO(BuildingSO buildingSO, bool refreshOnStart)
     {
         this.buildingSO = buildingSO;
 
-        SpawnBuildingVisuals();
+        SpawnBuildingVisuals(refreshOnStart);
         deckSlotUI.DisableAddTroopText();
     }
 
-    private void SpawnBuildingVisuals()
+    private void SpawnBuildingVisuals(bool refreshOnStart)
     {
         Building buildingInstantiated = Instantiate(buildingSO.buildingPrefab, transform.position, Quaternion.identity, deckSlotVisualTransform).GetComponent<Building>();
         buildingInstantiated.transform.position -= buildingInstantiated.GetCenterPoint().localPosition;
-        buildingInstantiated.SetBuildingAsVisual();
+        buildingInstantiated.SetBuildingAsVisual(deckSlotNumber * 100 + 2);
+
+        Animator buildingAnimator = buildingInstantiated.GetComponent<Animator>();
+
+        if (!refreshOnStart) {
+            buildingAnimator.SetTrigger("BuildingIsOnlyVisual");
+        }
+
         buildingSpawned = buildingInstantiated;
     }
     #endregion
@@ -325,7 +332,7 @@ public class DeckSlot : MonoBehaviour
     {
         deckSelected = e.selectedDeck;
         RefreshDeckSlotTroopSO(false);
-        RefreshDeckSlotBuildingSO();
+        RefreshDeckSlotBuildingSO(false);
         deckSlotUI.RefreshAddRemoveButtons();
     }
 

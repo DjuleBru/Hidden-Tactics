@@ -68,21 +68,37 @@ public class DeckSlotAnimatorManager : MonoBehaviour
 
     public void TriggerFlyUp() {
         deckSlotVisualAnimator.SetTrigger("FlyUp");
+
+        deckSlotVisualAnimator.ResetTrigger("FlyDown");
+        deckSlotVisualAnimator.ResetTrigger("FlyDownDown");
+        deckSlotVisualAnimator.ResetTrigger("FlyDownUp");
         deckSlotVisualAnimator.SetBool("Idle", false);
     }
 
     public void TriggerFlyDown() {
         deckSlotVisualAnimator.SetTrigger("FlyDown");
+
+        deckSlotVisualAnimator.ResetTrigger("FlyUp");
+        deckSlotVisualAnimator.ResetTrigger("FlyDownDown");
+        deckSlotVisualAnimator.ResetTrigger("FlyDownUp");
         deckSlotVisualAnimator.SetBool("Idle", true);
     }
 
     public void TriggerFlyDownUp() {
         deckSlotVisualAnimator.SetTrigger("FlyDownUp");
+
+        deckSlotVisualAnimator.ResetTrigger("FlyUp");
+        deckSlotVisualAnimator.ResetTrigger("FlyDownDown");
+        deckSlotVisualAnimator.ResetTrigger("FlyDown");
         deckSlotVisualAnimator.SetBool("Idle", true);
     }
 
     public void TriggerFlyDownDown() {
         deckSlotVisualAnimator.SetTrigger("FlyDownDown");
+
+        deckSlotVisualAnimator.ResetTrigger("FlyUp");
+        deckSlotVisualAnimator.ResetTrigger("FlyDown");
+        deckSlotVisualAnimator.ResetTrigger("FlyDownUp");
         deckSlotVisualAnimator.SetBool("Idle", false);
     }
 }

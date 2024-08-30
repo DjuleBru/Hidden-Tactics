@@ -35,14 +35,14 @@ public class BattlefieldVisual : MonoBehaviour
 
         Sprite loadedBattlefieldOutlineSprite = playerGridTileVisualSO.battlefieldOutlineSprite;
 
-        Sprite loadeBattlefieldBaseSprite = SavingManager.Instance.LoadBattlefieldBaseSprite(selectedDeck);
+        BattlefieldBaseSO loadeBattlefieldBaseSO = SavingManager.Instance.LoadBattlefieldBaseSO(selectedDeck);
 
         // Save sprites to local machine
         SetBattlefieldOutlineSprite(loadedBattlefieldOutlineSprite);
-        SetBattlefieldBaseSprite(loadeBattlefieldBaseSprite);
+        SetBattlefieldBaseSO(loadeBattlefieldBaseSO);
 
         // Save sprites to player data
-        SaveBattlefieldBaseSpriteInPlayerData(loadeBattlefieldBaseSprite);
+        SaveBattlefieldBaseSpriteInPlayerData(loadeBattlefieldBaseSO);
     }
 
     private void DeckManager_OnSelectedDeckChanged(object sender, DeckManager.OnDeckChangedEventArgs e) {
@@ -53,16 +53,16 @@ public class BattlefieldVisual : MonoBehaviour
         battlefieldOutlineSpriteRenderer.sprite = battlefieldOutlineSprite;
     }
 
-    public void SetBattlefieldBaseSprite(Sprite battlefieldBaseSprite) {
-        battlefieldBaseSpriteRenderer.sprite = battlefieldBaseSprite;
+    public void SetBattlefieldBaseSO(BattlefieldBaseSO battlefieldBaseSO) {
+        battlefieldBaseSpriteRenderer.sprite = battlefieldBaseSO.battlefieldBaseSprite;
 
-        SavingManager.Instance.SaveBattlefieldBaseSprite(battlefieldBaseSprite);
+        SavingManager.Instance.SaveBattlefieldBaseSO(battlefieldBaseSO);
 
         OnBattlefieldBaseChanged?.Invoke(this, EventArgs.Empty);
     }
 
-    private void SaveBattlefieldBaseSpriteInPlayerData(Sprite battlefieldBaseSprite) {
-        HiddenTacticsMultiplayer.Instance.SetPlayerBattlefieldBaseSprite(PlayerCustomizationDataManager.Instance.GetBattlefieldBaseSpriteID(battlefieldBaseSprite));
+    private void SaveBattlefieldBaseSpriteInPlayerData(BattlefieldBaseSO battlefieldBaseSO) {
+        HiddenTacticsMultiplayer.Instance.SetPlayerBattlefieldBaseSO(PlayerCustomizationDataManager.Instance.GetBattlefieldBaseSOID(battlefieldBaseSO));
     }
 
     public void MoveBattlefieldToEdit() {
@@ -70,6 +70,7 @@ public class BattlefieldVisual : MonoBehaviour
     }
 
     public void MoveBattlefieldFromEdit() {
+        Debug.Log("from");
         battlefieldAnimator.SetTrigger("FromEdit");
     }
 }

@@ -14,6 +14,14 @@ public class BuildingVisual : NetworkBehaviour
     [SerializeField] List<SpriteRenderer> buildingSpriteRendererList;
     [SerializeField] List<SpriteRenderer> shadowSpriteRendererList;
 
+    [SerializeField] GameObject deckSlotVisualsGameObject;
+    [SerializeField] List<SpriteRenderer> deckSlotBackSpriteRendererList;
+    [SerializeField] List<SpriteRenderer> deckSlotFrontSpriteRendererList;
+    [SerializeField] List<SpriteRenderer> deckSlotShadowSpriteRendererList;
+    [SerializeField] List<SpriteRenderer> deckSlotUnitsSpriteRendererList;
+    [SerializeField] List<SpriteRenderer> deckSlotUnitsShadowSpriteRendererList;
+    [SerializeField] List<SpriteRenderer> deckSlotUnitsWeaponsSpriteRendererList;
+
     private Color hoveredColor;
     private Color selectedColor;
     private Color shadowColor;
@@ -23,6 +31,11 @@ public class BuildingVisual : NetworkBehaviour
     private void Awake() {
         building = GetComponentInParent<Building>();
         shadowColor = shadowSpriteRendererList[0].color;
+    }
+
+    private void Start() {
+        // Building is only visual
+        SetDeckSlotVisualsActive(true);
     }
 
     public override void OnNetworkSpawn() {
@@ -35,6 +48,9 @@ public class BuildingVisual : NetworkBehaviour
         building.OnBuildingSelled += Building_OnBuildingSelled;
 
         if (!building.GetBuildingIsOnlyVisual()) {
+
+            SetDeckSlotVisualsActive(false);
+
             if (SettingsManager.Instance.GetTacticalViewSetting()) {
                 ChangeSpriteRendererListMaterial(buildingSpriteRendererList, invisibleMaterial);
                 ChangeSpriteRendererListMaterial(shadowSpriteRendererList, invisibleMaterial);
@@ -48,7 +64,8 @@ public class BuildingVisual : NetworkBehaviour
             SettingsManager.Instance.OnTacticalViewDisabled += SettingsManager_OnTacticalViewDisabled;
             SettingsManager.Instance.OnShowTacticalIconsDisabled += SettingsManager_OnShowTacticalIconsDisabled;
             SettingsManager.Instance.OnShowTacticalIconsEnabled += SettingsManager_OnShowTacticalIconsEnabled;
-        }
+
+        } 
     }
 
     private void Building_OnBuildingSelled(object sender, System.EventArgs e) {
@@ -161,7 +178,7 @@ public class BuildingVisual : NetworkBehaviour
         }
         }
 
-        public void SetBuildingSelected(bool selected) {
+    public void SetBuildingSelected(bool selected) {
         if (selected) {
             foreach (SpriteRenderer shadowSpriteRenderer in shadowSpriteRendererList) {
                 shadowSpriteRenderer.color = selectedColor;
@@ -171,6 +188,41 @@ public class BuildingVisual : NetworkBehaviour
             foreach (SpriteRenderer shadowSpriteRenderer in shadowSpriteRendererList) {
                 shadowSpriteRenderer.color = shadowColor;
             }
+        }
+    }
+
+    public void SetDeckSlotVisualsActive(bool active) {
+        deckSlotVisualsGameObject.SetActive(active);
+
+
+        foreach (SpriteRenderer spriteRenderer in buildingSpriteRendererList) {
+            spriteRenderer.gameObject.SetActive(!active);
+        }
+        foreach (SpriteRenderer spriteRenderer in shadowSpriteRendererList) {
+            spriteRenderer.gameObject.SetActive(!active);
+        }
+
+    }
+
+    public void SetBuildingDeckSlotSpriteSortingOrder(int sortOrder) {
+
+        foreach (SpriteRenderer spriteRenderer in deckSlotBackSpriteRendererList) {
+            spriteRenderer.sortingOrder = sortOrder +1;
+        }
+        foreach (SpriteRenderer spriteRenderer in deckSlotFrontSpriteRendererList) {
+            spriteRenderer.sortingOrder = sortOrder +7;
+        }
+        foreach (SpriteRenderer spriteRenderer in deckSlotShadowSpriteRendererList) {
+            spriteRenderer.sortingOrder = sortOrder +2 ;
+        }
+        foreach (SpriteRenderer spriteRenderer in deckSlotUnitsSpriteRendererList) {
+            spriteRenderer.sortingOrder = sortOrder + 5;
+        }
+        foreach (SpriteRenderer spriteRenderer in deckSlotUnitsShadowSpriteRendererList) {
+            spriteRenderer.sortingOrder = sortOrder + 4;
+        }
+        foreach (SpriteRenderer spriteRenderer in deckSlotUnitsWeaponsSpriteRendererList) {
+            spriteRenderer.sortingOrder = sortOrder + 6;
         }
     }
 
