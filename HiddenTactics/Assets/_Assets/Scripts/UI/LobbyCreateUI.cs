@@ -15,10 +15,13 @@ public class LobbyCreateUI : MonoBehaviour {
         createPublicButton.onClick.AddListener(() => {
             CreateLobbyWithName(false);
         });
+
         createPrivateButton.onClick.AddListener(() => {
             CreateLobbyWithName(true);
         });
+
         closeButton.onClick.AddListener(Hide);
+        Hide();
     }
 
     private void CreateLobbyWithName(bool isPrivate) {
@@ -29,11 +32,8 @@ public class LobbyCreateUI : MonoBehaviour {
         HiddenTacticsLobby.Instance.CreateLobby(lobbyName, isPrivate);
     }
 
-    private void Start() {
-        Hide();
-    }
-
     public void Show() {
+        Debug.Log("show");
         gameObject.SetActive(true);
     }
 

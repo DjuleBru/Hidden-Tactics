@@ -9,13 +9,24 @@ public class MainMenuUI : MonoBehaviour
 
     public static MainMenuUI Instance;
 
+    [SerializeField] GameObject mainMenuButtonsGameObject;
+    [SerializeField] GameObject updatesPanelGameObject;
+    [SerializeField] GameObject lobbyPanelGameObject;
+    [SerializeField] GameObject playButtonsGameObject;
+
+    [SerializeField] Button playButton;
+    [SerializeField] Button settingsButton;
+    [SerializeField] Button collectionButton;
+    [SerializeField] Button creditsButton;
     [SerializeField] Button exitGameButton;
 
     [SerializeField] private Image deckNameOutline;
 
     [SerializeField] private TextMeshProUGUI deckNameText;
 
-    [SerializeField] private Animator playerPanelAnimator;
+    [SerializeField] private Animator leftPanelAnimator;
+    [SerializeField] private Animator mainMenuButtonsAnimator;
+    [SerializeField] private Animator playButtonsAnimator;
     private Animator mainMenuAnimator;
 
     private void Awake() {
@@ -24,6 +35,16 @@ public class MainMenuUI : MonoBehaviour
         exitGameButton.onClick.AddListener(() => {
             Application.Quit();
         });
+
+        playButton.onClick.AddListener(() => {
+            StartCoroutine(ShowLobbyPanel(.7f));
+        });
+
+        playButtonsGameObject.SetActive(false);
+        lobbyPanelGameObject.SetActive(false);
+        leftPanelAnimator.SetTrigger("Down");
+        mainMenuButtonsAnimator.Play("MainMenuButtons_Idle_Unfolded");
+        playButtonsAnimator.Play("MainMenuButtons_Idle_Folded");
     }
 
     private void Start() {
@@ -53,6 +74,23 @@ public class MainMenuUI : MonoBehaviour
 
     public void MainMenuUIFromEditBattlefieldTransition() {
         mainMenuAnimator.SetTrigger("FromEditBattlefield");
+    }
+
+    private IEnumerator ShowLobbyPanel(float delatToLeftPanelDown) {
+
+        leftPanelAnimator.SetTrigger("Up");
+        mainMenuButtonsAnimator.SetTrigger("Fold");
+
+        yield return new WaitForSeconds(delatToLeftPanelDown);
+
+        mainMenuButtonsGameObject.SetActive(false);
+        lobbyPanelGameObject.SetActive(true);
+        updatesPanelGameObject.SetActive(false);
+        playButtonsGameObject.SetActive(true);
+
+        leftPanelAnimator.SetTrigger("Down");
+        playButtonsAnimator.SetTrigger("Unfold");
+
     }
 
 }

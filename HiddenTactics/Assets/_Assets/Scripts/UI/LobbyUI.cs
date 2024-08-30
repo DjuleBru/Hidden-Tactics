@@ -14,16 +14,11 @@ public class LobbyUI : MonoBehaviour
     [SerializeField] private Button joinPrivateLobbyButton;
     [SerializeField] private TMP_InputField joinCodeInputField;
 
-    [SerializeField] private TextMeshProUGUI playerNameText;
-
-    [SerializeField] private SpriteRenderer playerIconSpriteRenderer;
-
     [SerializeField] private LobbyCreateUI lobbyCreateUI;
     [SerializeField] private Transform lobbyContainer;
     [SerializeField] private Transform lobbyTemplate;
 
     private void Start() {
-        playerNameText.text = HiddenTacticsMultiplayer.Instance.GetPlayerName();
         HiddenTacticsLobby.Instance.OnLobbyListChanged += HiddenTacticsLobby_OnLobbyListChanged;
         UpdateLobbyList(new List<Lobby>());
     }
@@ -39,13 +34,17 @@ public class LobbyUI : MonoBehaviour
         createLobbyButton.onClick.AddListener(() => {
             lobbyCreateUI.Show();
         });
+
         quickJoinButton.onClick.AddListener(() => {
             HiddenTacticsLobby.Instance.QuickJoin();
         });
-        mainMenuButton.onClick.AddListener(() => {
-            HiddenTacticsLobby.Instance.LeaveLobby();
-            SceneLoader.Load(SceneLoader.Scene.MultiplayerCleanupScene);
-        });
+
+        // TO DO : ADD BUTTON TO LEAVE LOBBY ONCE JOINED
+        //mainMenuButton.onClick.AddListener(() => {
+        //    HiddenTacticsLobby.Instance.LeaveLobby();
+        //    SceneLoader.Load(SceneLoader.Scene.MultiplayerCleanupScene);
+        //});
+
         joinPrivateLobbyButton.onClick.AddListener(() => {
             HiddenTacticsLobby.Instance.JoinWithCode(joinCodeInputField.text);
         });

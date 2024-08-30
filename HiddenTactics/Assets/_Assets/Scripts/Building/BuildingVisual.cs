@@ -14,13 +14,18 @@ public class BuildingVisual : NetworkBehaviour
     [SerializeField] List<SpriteRenderer> buildingSpriteRendererList;
     [SerializeField] List<SpriteRenderer> shadowSpriteRendererList;
 
+    [SerializeField] GameObject level1VisualGameObject;
+    [SerializeField] GameObject level2VisualGameObject;
+
     [SerializeField] GameObject deckSlotVisualsGameObject;
+    [SerializeField] List<GameObject> NPCGameObjectsToDeactivateForDeckSlot;
     [SerializeField] List<SpriteRenderer> deckSlotBackSpriteRendererList;
     [SerializeField] List<SpriteRenderer> deckSlotFrontSpriteRendererList;
     [SerializeField] List<SpriteRenderer> deckSlotShadowSpriteRendererList;
     [SerializeField] List<SpriteRenderer> deckSlotUnitsSpriteRendererList;
     [SerializeField] List<SpriteRenderer> deckSlotUnitsShadowSpriteRendererList;
     [SerializeField] List<SpriteRenderer> deckSlotUnitsWeaponsSpriteRendererList;
+    [SerializeField] List<Animator> deckSlotUnitsAnimatorList;
 
     private Color hoveredColor;
     private Color selectedColor;
@@ -35,7 +40,11 @@ public class BuildingVisual : NetworkBehaviour
 
     private void Start() {
         // Building is only visual
-        SetDeckSlotVisualsActive(true);
+        if(building.GetBuildingIsOnlyVisual()) {
+            SetDeckSlotVisualsActive(true);
+            level1VisualGameObject.SetActive(false);
+            level2VisualGameObject.SetActive(false);
+        }
     }
 
     public override void OnNetworkSpawn() {
@@ -50,6 +59,8 @@ public class BuildingVisual : NetworkBehaviour
         if (!building.GetBuildingIsOnlyVisual()) {
 
             SetDeckSlotVisualsActive(false);
+            level1VisualGameObject.SetActive(true);
+            level2VisualGameObject.SetActive(false);
 
             if (SettingsManager.Instance.GetTacticalViewSetting()) {
                 ChangeSpriteRendererListMaterial(buildingSpriteRendererList, invisibleMaterial);
@@ -194,14 +205,20 @@ public class BuildingVisual : NetworkBehaviour
     public void SetDeckSlotVisualsActive(bool active) {
         deckSlotVisualsGameObject.SetActive(active);
 
-
         foreach (SpriteRenderer spriteRenderer in buildingSpriteRendererList) {
             spriteRenderer.gameObject.SetActive(!active);
         }
         foreach (SpriteRenderer spriteRenderer in shadowSpriteRendererList) {
             spriteRenderer.gameObject.SetActive(!active);
         }
-
+        foreach (GameObject gameObject in NPCGameObjectsToDeactivateForDeckSlot) {
+            gameObject.SetActive(!active);
+        }
+        foreach (Animator unitAnimator in deckSlotUnitsAnimatorList) {
+            unitAnimator.SetFloat("Y", -1); 
+            float randomOffset = UnityEngine.Random.Range(0f, 1f);
+            unitAnimator.Play("Idle", 0, randomOffset);
+        }
     }
 
     public void SetBuildingDeckSlotSpriteSortingOrder(int sortOrder) {

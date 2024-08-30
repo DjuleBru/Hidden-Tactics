@@ -25,6 +25,7 @@ public class DwarfWallBlade : NetworkBehaviour, IDamageSource
     }
 
     private void Start() {
+        if (parentBuilding.GetBuildingIsOnlyVisual()) return;
         BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
     }
 
@@ -109,6 +110,13 @@ public class DwarfWallBlade : NetworkBehaviour, IDamageSource
             };
         }
         return targetUnitList;
+    }
+
+    public override void OnDestroy() {
+        base.OnDestroy();
+        if(BattleManager.Instance != null ) {
+            BattleManager.Instance.OnStateChanged -= BattleManager_OnStateChanged;
+        }
     }
 
 }

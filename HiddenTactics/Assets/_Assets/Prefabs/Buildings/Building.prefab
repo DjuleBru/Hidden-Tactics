@@ -1199,7 +1199,10 @@ MonoBehaviour:
   shadowSpriteRendererList:
   - {fileID: 8331313115355839646}
   - {fileID: 1946531853438748068}
+  level1VisualGameObject: {fileID: 7236345148894600409}
+  level2VisualGameObject: {fileID: 2111626829108963439}
   deckSlotVisualsGameObject: {fileID: 3279472709545861709}
+  NPCGameObjectsToDeactivateForDeckSlot: []
   deckSlotBackSpriteRendererList:
   - {fileID: 5663602175375291612}
   deckSlotFrontSpriteRendererList:
@@ -1209,6 +1212,7 @@ MonoBehaviour:
   deckSlotUnitsSpriteRendererList: []
   deckSlotUnitsShadowSpriteRendererList: []
   deckSlotUnitsWeaponsSpriteRendererList: []
+  deckSlotUnitsAnimatorList: []
 --- !u!1 &2069300169384222976
 GameObject:
   m_ObjectHideFlags: 0

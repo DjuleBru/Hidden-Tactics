@@ -53,9 +53,11 @@ public class EditBattlefieldUI : MonoBehaviour
         editBattlefieldGridTiles.onClick.AddListener(() => {
             StartEditBattlefieldGridTiles();
         });
+
         editBattlefieldBase.onClick.AddListener(() => {
             StartEditBattlefieldBase();
         });
+
         editBattlefieldVillages.onClick.AddListener(() => {
             StartEditBattlefieldVillages();
         });
@@ -63,6 +65,8 @@ public class EditBattlefieldUI : MonoBehaviour
         saveButton.onClick.AddListener(() => {
             SwitchToMainMenu();
         });
+
+
     }
 
     private void Start() {
@@ -70,11 +74,11 @@ public class EditBattlefieldUI : MonoBehaviour
 
         RefreshSlotVisuals(DeckManager.LocalInstance.GetDeckSelected());
 
-        editingGridTiles = true;
         battlefieldVisualGridContainer.gameObject.SetActive(true);
         Deck deck = DeckManager.LocalInstance.GetDeckSelected();
-        RefreshBattlefieldVisualGridContainer(deck);
 
+        editingGridTiles = true;
+        RefreshBattlefieldVisualGridContainer(deck);
     }
 
     private void DeckManager_OnDeckModified(object sender, DeckManager.OnDeckChangedEventArgs e) {

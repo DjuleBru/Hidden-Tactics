@@ -110,7 +110,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 830550043524015573}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -0.20000005, y: 0.01999998, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -411,7 +411,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2998094160958032534}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -0.20000005, y: 0.01999998, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -887,7 +887,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4151820273177328521}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -0.20000005, y: 0.01999998, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1217,7 +1217,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5189045494181182540}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -0.20000005, y: 0.01999998, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1356,7 +1356,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5496150898893600789}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -0.2, y: 0.02, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2095,6 +2095,30 @@ PrefabInstance:
       propertyPath: m_LocalPosition.y
       value: -0.75
       objectReference: {fileID: 0}
+    - target: {fileID: 1081329643232455075, guid: e3e93ece8e3f9f342bf64a8dd15cb760, type: 3}
+      propertyPath: deckSlotUnitsAnimatorList.Array.size
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1081329643232455075, guid: e3e93ece8e3f9f342bf64a8dd15cb760, type: 3}
+      propertyPath: deckSlotUnitsAnimatorList.Array.data[0]
+      value: 
+      objectReference: {fileID: 8097359210666329868}
+    - target: {fileID: 1081329643232455075, guid: e3e93ece8e3f9f342bf64a8dd15cb760, type: 3}
+      propertyPath: deckSlotUnitsAnimatorList.Array.data[1]
+      value: 
+      objectReference: {fileID: 7970831627665978509}
+    - target: {fileID: 1081329643232455075, guid: e3e93ece8e3f9f342bf64a8dd15cb760, type: 3}
+      propertyPath: deckSlotUnitsAnimatorList.Array.data[2]
+      value: 
+      objectReference: {fileID: 7867500813918185388}
+    - target: {fileID: 1081329643232455075, guid: e3e93ece8e3f9f342bf64a8dd15cb760, type: 3}
+      propertyPath: deckSlotUnitsAnimatorList.Array.data[3]
+      value: 
+      objectReference: {fileID: 3021045005556137247}
+    - target: {fileID: 1081329643232455075, guid: e3e93ece8e3f9f342bf64a8dd15cb760, type: 3}
+      propertyPath: deckSlotUnitsAnimatorList.Array.data[4]
+      value: 
+      objectReference: {fileID: 8801559165477922982}
     - target: {fileID: 1081329643232455075, guid: e3e93ece8e3f9f342bf64a8dd15cb760, type: 3}
       propertyPath: deckSlotUnitsSpriteRendererList.Array.size
       value: 5

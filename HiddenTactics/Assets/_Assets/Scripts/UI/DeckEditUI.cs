@@ -401,7 +401,7 @@ public class DeckEditUI : MonoBehaviour
             deckSlot.SetUIActive(false);
         }
 
-        StartCoroutine(SwitchToMainMenuUI(.6f, .5f, .5f, 1.4f));
+        StartCoroutine(SwitchToMainMenuUI(.6f, .5f, .5f, 1.4f, 1.5f));
 
     }
 
@@ -438,7 +438,7 @@ public class DeckEditUI : MonoBehaviour
         DeckSlotMouseHoverManager.Instance.SetEditingDeck(true);
     }
 
-    public IEnumerator SwitchToMainMenuUI(float delayToCloseEditDeckUI, float delayToActivateCameraTransition, float delayToActivateMainMenuUI, float delayToFLyDownDeckVisual) {
+    public IEnumerator SwitchToMainMenuUI(float delayToCloseEditDeckUI, float delayToActivateCameraTransition, float delayToActivateMainMenuUI, float delayToFLyDownDeckVisual, float delayToActivateEditDeckButton) {
         DeckVisualWorldUI.Instance.SetDeckVisualFlyUp();
 
         yield return new WaitForSeconds(delayToCloseEditDeckUI);
@@ -453,6 +453,8 @@ public class DeckEditUI : MonoBehaviour
 
         yield return new WaitForSeconds(delayToFLyDownDeckVisual);
         DeckVisualWorldUI.Instance.SetDeckVisualFlyDown();
+
+        yield return new WaitForSeconds(delayToActivateEditDeckButton);
         DeckVisualWorldUI.Instance.EnableEditDeckButton();
     }
 
