@@ -56,6 +56,18 @@ public class BattleManager : NetworkBehaviour
         Instance = this;
     }
 
+    private void Start() {
+        if(!HiddenTacticsMultiplayer.Instance.IsMultiplayer()) {
+            //OnAllPlayersLoaded?.Invoke(this, EventArgs.Empty);
+        }
+        //StartCoroutine(DebugOnAllPlayersLoaded());
+    }
+
+    private IEnumerator DebugOnAllPlayersLoaded() {
+        yield return new WaitForSeconds(1.5f);
+        OnAllPlayersLoaded?.Invoke(this, EventArgs.Empty);
+    }
+
     public override void OnNetworkSpawn() {
         state.OnValueChanged += State_OnValueChanged;
         PlayerReadyManager.Instance.OnAllPlayersReady += PlayersReadyManager_OnAllPlayersReady;
@@ -265,7 +277,6 @@ public class BattleManager : NetworkBehaviour
 
     public void AddUnitToUnitListInBattlefield(Unit unit) {
         unitsOnBattlefieldList.Add(unit);
-        Debug.Log(unitsOnBattlefieldList.Count);
     }
 
     public void RemoveUnitFromUnitListInBattlefield(Unit unit) {

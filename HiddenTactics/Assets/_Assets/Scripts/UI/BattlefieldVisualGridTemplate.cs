@@ -35,7 +35,6 @@ public class BattlefieldVisualGridTemplate : MonoBehaviour
     }
 
     private void BattlefieldVisualGridTemplate_OnAnyBattlefieldGridSelected(object sender, EventArgs e) {
-        Debug.Log("received");
         if(sender as  BattlefieldVisualGridTemplate != this) {
             SetGridTileSelected(false);
         } 

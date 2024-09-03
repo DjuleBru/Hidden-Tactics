@@ -40,6 +40,7 @@ public class PlayerCustomizationUI : MonoBehaviour
 
         playerNameInputField.onValueChanged.AddListener((string newText) => {
             HiddenTacticsMultiplayer.Instance.SetPlayerName(newText);
+            MainMenuUI_PlayerPanel.Instance.RefreshPlayerName(newText);
         });
 
         string playerName = SavingManager.Instance.LoadPlayerName();

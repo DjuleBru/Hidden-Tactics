@@ -35,7 +35,6 @@ public class BattleGridVisual : MonoBehaviour
             // Battle scene : create grid for both player AND opponent
             LoadOpponentSprites();
             RefreshPlayerAndOpponentBattlefieldVisualSprites();
-
         }
     }
 

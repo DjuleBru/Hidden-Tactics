@@ -9,11 +9,13 @@ public class LobbyListSingleUI : MonoBehaviour
 {
 
     [SerializeField] private TextMeshProUGUI lobbyNameText;
+    [SerializeField] private TextMeshProUGUI lobbyHostText;
 
     private Lobby lobby;
 
     private void Awake() {
         GetComponent<Button>().onClick.AddListener(() => {
+
             HiddenTacticsLobby.Instance.JoinWithId(lobby.Id);
         });
     }

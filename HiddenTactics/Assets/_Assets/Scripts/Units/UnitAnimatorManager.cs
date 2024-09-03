@@ -50,7 +50,23 @@ public class UnitAnimatorManager : NetworkBehaviour
     }
 
     public override void OnNetworkSpawn() {
-        if(unit.GetUnitSO().isInvisibleGarrisonedUnit) return; 
+        if(unit.GetUnitSO().isInvisibleGarrisonedUnit) return;
+        SubscribeToEvents();
+    }
+
+    protected void Start() {
+        if (unit.GetUnitIsFakeVisualUnit()) {
+            SubscribeToEvents();
+        }
+
+        if (unit.GetUnitIsOnlyVisual()) return;
+        if (unit.GetUnitSO().isInvisibleGarrisonedUnit) return;
+
+        SetUnitWatchDirectionBasedOnPlayerOwnance();
+        OnUnitXChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    private void SubscribeToEvents() {
         unitHP.OnHealthChanged += Unit_OnHealthChanged;
         unit.OnUnitReset += Unit_OnUnitReset;
         unitAI.OnStateChanged += UnitAI_OnStateChanged;
@@ -62,14 +78,6 @@ public class UnitAnimatorManager : NetworkBehaviour
         unitAttack.OnUnitAttack += UnitAttack_OnUnitAttack;
         unitAttack.OnUnitAttackStarted += UnitAttack_OnUnitAttackStarted;
         unitAttack.OnUnitAttackEnded += UnitAttack_OnUnitAttackEnded;
-
-    }
-
-    protected void Start() {
-        if (unit.GetUnitIsOnlyVisual()) return;
-        if (unit.GetUnitSO().isInvisibleGarrisonedUnit) return;
-        SetUnitWatchDirectionBasedOnPlayerOwnance();
-        OnUnitXChanged?.Invoke(this, EventArgs.Empty);
     }
 
     protected virtual void Update() {

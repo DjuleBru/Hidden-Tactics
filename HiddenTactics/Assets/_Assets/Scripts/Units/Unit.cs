@@ -84,6 +84,7 @@ public class Unit : NetworkBehaviour, ITargetable {
     protected bool unitIsBought;
     protected bool unitIsOnlyVisual;
     protected bool isSelected;
+    protected bool isFakeVisualUnit;
 
     protected virtual void Awake() {
         collider2d = GetComponent<Collider2D>();
@@ -102,6 +103,12 @@ public class Unit : NetworkBehaviour, ITargetable {
 
     protected void Update() {
         if (unitIsOnlyVisual) return;
+
+        if(isFakeVisualUnit) {
+            transform.position = unitPositionInTroop + parentTroop.transform.position;
+            return;
+        }
+
         HandlePositionOnGrid();
 
         if(IsServer && BattleManager.Instance.IsBattlePhase()) {
@@ -204,8 +211,7 @@ public class Unit : NetworkBehaviour, ITargetable {
     }
 
     protected virtual void ParentTroop_OnTroopPlaced(object sender, System.EventArgs e) {
-
-        if(unitSO.doesNotMoveGarrisonedUnit) {
+        if (unitSO.doesNotMoveGarrisonedUnit) {
             collider2d.enabled = false;
         }
 
@@ -529,6 +535,10 @@ public class Unit : NetworkBehaviour, ITargetable {
 
     #region SET PARAMETERS
 
+    public void SetAsFakeVisualUnit() {
+        isFakeVisualUnit = true;
+    }
+
     public void SetParentTroop(Troop parentTroop) {
         this.parentTroop = parentTroop;
         parentTroop.OnTroopPlaced += ParentTroop_OnTroopPlaced;
@@ -721,6 +731,10 @@ public class Unit : NetworkBehaviour, ITargetable {
     public bool GetUnitIsOnlyVisual()
     {
         return unitIsOnlyVisual;
+    }
+
+    public bool GetUnitIsFakeVisualUnit() {
+        return isFakeVisualUnit;
     }
 
     public override void OnDestroy() {

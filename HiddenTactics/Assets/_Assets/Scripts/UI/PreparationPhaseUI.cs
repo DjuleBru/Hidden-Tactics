@@ -20,6 +20,7 @@ public class PreparationPhaseUI : MonoBehaviour
 
     [SerializeField] private TextMeshProUGUI turnText;
     [SerializeField] private GameObject allPlaceablesUI;
+    [SerializeField] private GameObject allPreparationPhasePanelsUI;
 
     private bool panelOpen = true;
     [SerializeField] private bool debugMode;
@@ -40,14 +41,25 @@ public class PreparationPhaseUI : MonoBehaviour
 
     private void Start() {
         BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
+        BattleManager.Instance.OnAllPlayersLoaded += BattleManager_OnAllPlayersLoaded;
         PlayerReadyManager.Instance.OnReadyChanged += PlayerReadyManager_OnReadyChanged;
         turnText.text = "I/" + ConvertIntToRomanNumber(BattleManager.Instance.GetMaxTurns());
-        Show();
+        allPreparationPhasePanelsUI.SetActive(false);
     }
 
 
     private void Update() {
         preparationPhaseTimerImage.fillAmount = BattleManager.Instance.GetPreparationPhaseTimerNormalized();
+    }
+
+    private void BattleManager_OnAllPlayersLoaded(object sender, System.EventArgs e) {
+        StartCoroutine(ShowPreparationPhaseUIAfterDelay(2f));
+    }
+
+    private IEnumerator ShowPreparationPhaseUIAfterDelay(float delay) {
+        yield return new WaitForSeconds(delay);
+        allPreparationPhasePanelsUI.SetActive(true);
+        Show();
     }
 
     private void PlayerReadyManager_OnReadyChanged(object sender, System.EventArgs e) {

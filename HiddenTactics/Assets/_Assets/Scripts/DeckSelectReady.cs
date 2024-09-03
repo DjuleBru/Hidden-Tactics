@@ -9,6 +9,7 @@ public class DeckSelectReady : NetworkBehaviour {
     public static DeckSelectReady Instance { get; private set; }
 
     public event EventHandler OnReadyChanged;
+    public event EventHandler OnAllPlayersReady;
 
     private Dictionary<ulong, bool> playerReadyDictionary;
 
@@ -18,21 +19,15 @@ public class DeckSelectReady : NetworkBehaviour {
         playerReadyDictionary = new Dictionary<ulong, bool>();
     }
 
-    //TMP 
-    private void Start() {
-        //SetPlayerReady();
-    }
-    //TMP
-
-    public void SetPlayerReady() {
-        SetPlayerReadyServerRpc();
+    public void SetPlayerReadyOrUnready(bool ready) {
+        SetPlayerReadyServerRpc(ready);
     }
 
     [ServerRpc(RequireOwnership = false)]
-    private void SetPlayerReadyServerRpc(ServerRpcParams serverRpcParams = default) {
-        SetPlayerReadyClientRpc(serverRpcParams.Receive.SenderClientId);
+    private void SetPlayerReadyServerRpc(bool ready, ServerRpcParams serverRpcParams = default) {
+        SetPlayerReadyClientRpc(serverRpcParams.Receive.SenderClientId, ready);
 
-        playerReadyDictionary[serverRpcParams.Receive.SenderClientId] = true;
+        playerReadyDictionary[serverRpcParams.Receive.SenderClientId] = ready;
 
         bool allClientsReady = true;
         foreach (ulong clientId in NetworkManager.Singleton.ConnectedClientsIds) {
@@ -50,17 +45,28 @@ public class DeckSelectReady : NetworkBehaviour {
 
         if (allClientsReady) {
             HiddenTacticsLobby.Instance.DeleteLobby();
-            SceneLoader.LoadNetwork(SceneLoader.Scene.BattleScene);
+            StartCoroutine(LoadBattleScene());
+            SetAllPlayerSReadyClientRpc();
         }
     }
 
+    private IEnumerator LoadBattleScene() {
+        yield return new WaitForSeconds(1f);
+        SceneLoader.LoadNetwork(SceneLoader.Scene.BattleScene);
+    }
+
     [ClientRpc]
-    private void SetPlayerReadyClientRpc(ulong clientId) {
-        playerReadyDictionary[clientId] = true;
+    private void SetPlayerReadyClientRpc(ulong clientId, bool ready) {
+        playerReadyDictionary[clientId] = ready;
 
         OnReadyChanged?.Invoke(this, EventArgs.Empty);
     }
 
+    [ClientRpc]
+    private void SetAllPlayerSReadyClientRpc() {
+        CrossfadeTransition.Instance.FadeIn();
+        OnAllPlayersReady?.Invoke(this, EventArgs.Empty);
+    }
 
     public bool IsPlayerReady(ulong clientId) {
         return playerReadyDictionary.ContainsKey(clientId) && playerReadyDictionary[clientId];

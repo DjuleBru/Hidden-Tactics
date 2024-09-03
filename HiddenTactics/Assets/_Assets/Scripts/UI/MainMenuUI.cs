@@ -13,6 +13,7 @@ public class MainMenuUI : MonoBehaviour
     [SerializeField] GameObject updatesPanelGameObject;
     [SerializeField] GameObject lobbyPanelGameObject;
     [SerializeField] GameObject playButtonsGameObject;
+    [SerializeField] GameObject settingsPanelGameObject;
 
     [SerializeField] Button playButton;
     [SerializeField] Button settingsButton;
@@ -38,6 +39,10 @@ public class MainMenuUI : MonoBehaviour
 
         playButton.onClick.AddListener(() => {
             StartCoroutine(ShowLobbyPanel(.7f));
+        });
+
+        settingsButton.onClick.AddListener(() => {
+            settingsPanelGameObject.SetActive(true);
         });
 
         playButtonsGameObject.SetActive(false);

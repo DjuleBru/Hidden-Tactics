@@ -43,4 +43,8 @@ public class TroopButtonUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     protected virtual void CancelButtonShowVisuals() {
 
     }
-}
+
+    protected void OnDestroy() {
+        GameInput.Instance.OnRightClickPerformed -= GameInput_OnRightClickPerformed;
+    }
+} 

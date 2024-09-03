@@ -253,6 +253,8 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
 
         GridPosition iPlaceableGridPosition = iPlaceable.GetIPlaceableGridPosition();
         BattleGrid.Instance.RemoveIPlaceableAtGridPosition(iPlaceableGridPosition, iPlaceable);
+
+        Debug.Log("removed IPlaceable client received");
     }
     #endregion
 

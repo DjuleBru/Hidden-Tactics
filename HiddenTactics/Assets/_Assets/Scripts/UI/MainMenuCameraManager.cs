@@ -13,6 +13,7 @@ public class MainMenuCameraManager : MonoBehaviour
     [SerializeField] private CinemachineVirtualCamera editBattlefieldBaseCamera;
     [SerializeField] private CinemachineVirtualCamera editBattlefieldCamera;
     [SerializeField] private CinemachineVirtualCamera editDeckCamera;
+    [SerializeField] private CinemachineVirtualCamera fadeInCamera;
 
     [SerializeField] private CinemachineBrain brain;
 
@@ -30,6 +31,7 @@ public class MainMenuCameraManager : MonoBehaviour
         editBattlefieldBaseCamera.enabled = false;
         editDeckCamera.enabled = false;
         editBattlefieldCamera.enabled = true;
+        fadeInCamera.enabled = false;
     }
 
     public void SetEditBattlefieldGridTilesCamera() {
@@ -39,6 +41,7 @@ public class MainMenuCameraManager : MonoBehaviour
         editBattlefieldBaseCamera.enabled = false;
         editDeckCamera.enabled = false;
         editBattlefieldCamera.enabled = false;
+        fadeInCamera.enabled = false;
     }
 
     public void SetEditBattlefieldVillagesCamera() {
@@ -48,6 +51,7 @@ public class MainMenuCameraManager : MonoBehaviour
         editBattlefieldBaseCamera.enabled = false;
         editDeckCamera.enabled = false;
         editBattlefieldCamera.enabled = false;
+        fadeInCamera.enabled = false;
     }
 
     public void SetEditBattlefieldBaseCamera() {
@@ -57,6 +61,7 @@ public class MainMenuCameraManager : MonoBehaviour
         editBattlefieldBaseCamera.enabled = true;
         editDeckCamera.enabled = false;
         editBattlefieldCamera.enabled = false;
+        fadeInCamera.enabled = false;
     }
 
     public void SetBaseCamera() {
@@ -66,6 +71,7 @@ public class MainMenuCameraManager : MonoBehaviour
         editBattlefieldBaseCamera.enabled = false;
         editDeckCamera.enabled = false;
         editBattlefieldCamera.enabled = false;
+        fadeInCamera.enabled = false;
     }
 
 
@@ -77,5 +83,16 @@ public class MainMenuCameraManager : MonoBehaviour
         editBattlefieldBaseCamera.enabled = false;
         editDeckCamera.enabled = true;
         editBattlefieldCamera.enabled = false;
+        fadeInCamera.enabled = false;
+    }
+
+    public void SetFadeInCamera() {
+        mainMenuCamera.enabled = false;
+        editBattlefieldGridTilesCamera.enabled = false;
+        editBattlefieldVillagesCamera.enabled = false;
+        editBattlefieldBaseCamera.enabled = false;
+        editDeckCamera.enabled = false;
+        editBattlefieldCamera.enabled = false;
+        fadeInCamera.enabled = true;
     }
 }

@@ -7,6 +7,9 @@ using UnityEngine.UI;
 public class MainMenuUI_PlayerPanel : MonoBehaviour
 {
 
+    public static MainMenuUI_PlayerPanel Instance;
+
+    [SerializeField] private Animator playerPanelAnimator;
     [SerializeField] private Image playerIcon;
     [SerializeField] private Image playerIconBackground;
     [SerializeField] private Image playerIconOuline;
@@ -16,6 +19,8 @@ public class MainMenuUI_PlayerPanel : MonoBehaviour
     [SerializeField] private Button customizePlayerButton;
 
     private void Awake() {
+        Instance = this;
+        playerPanelAnimator.SetTrigger("Down");
         customizePlayerButton.onClick.AddListener(() => {
             EditBattlefieldUI.Instance.SwitchToEditBattlefield();
         });
@@ -40,5 +45,15 @@ public class MainMenuUI_PlayerPanel : MonoBehaviour
         // Player Icon
         playerIconBackground.sprite = deckSelected.deckFactionSO.slotBackgroundSquare;
         playerIconOuline.sprite = deckSelected.deckFactionSO.slotBorder;
+    }
+
+    public void RefreshPlayerName(string playerName) {
+        // Player Icon
+        playerNameText.text = playerName;
+    }
+
+    public void HidePlayerPanel() {
+        Debug.Log("hide");
+        playerPanelAnimator.SetTrigger("Up");
     }
 }

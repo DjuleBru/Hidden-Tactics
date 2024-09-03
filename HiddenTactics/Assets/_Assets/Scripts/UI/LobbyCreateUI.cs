@@ -10,10 +10,14 @@ public class LobbyCreateUI : MonoBehaviour {
     [SerializeField] private Button createPublicButton;
     [SerializeField] private Button createPrivateButton;
     [SerializeField] private TMP_InputField lobbyNameInputField;
+    [SerializeField] private TextMeshProUGUI panelTitleText;
+
+    [SerializeField] private GameObject lobbyCreatePanelUI;
 
     private void Awake() {
         createPublicButton.onClick.AddListener(() => {
             CreateLobbyWithName(false);
+            RemoveCustomizationPanels();
         });
 
         createPrivateButton.onClick.AddListener(() => {
@@ -32,13 +36,18 @@ public class LobbyCreateUI : MonoBehaviour {
         HiddenTacticsLobby.Instance.CreateLobby(lobbyName, isPrivate);
     }
 
+    private void RemoveCustomizationPanels() {
+        DeckVisualWorldUI.Instance.SetDeckVisualFlyUp();
+        DeckVisualWorldUI.Instance.DisableEditDeckButton();
+    }
+
     public void Show() {
         Debug.Log("show");
-        gameObject.SetActive(true);
+        lobbyCreatePanelUI.SetActive(true);
     }
 
     private void Hide() {
-        gameObject.SetActive(false);
+        lobbyCreatePanelUI.SetActive(false);
     }
 
 }

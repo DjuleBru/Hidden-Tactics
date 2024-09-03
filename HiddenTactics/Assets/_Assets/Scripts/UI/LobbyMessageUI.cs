@@ -9,11 +9,9 @@ public class LobbyMessageUI : MonoBehaviour
 {
 
     [SerializeField] private TextMeshProUGUI messageText;
-    [SerializeField] private Button closeButton;
-
-    private void Awake() {
-        closeButton.onClick.AddListener(Hide);
-    }
+    private bool messageShown;
+    private float messageShowTimer;
+    private float messageShowTime = 5f;
 
     private void Start() {
         HiddenTacticsMultiplayer.Instance.OnFailedToJoinGame += HiddenTacticsMultiplayer_OnFailedToJoinGame;
@@ -24,6 +22,16 @@ public class LobbyMessageUI : MonoBehaviour
         HiddenTacticsLobby.Instance.OnJoinFailed += HiddenTacticsLobby_OnJoinFailed;
 
         Hide();
+    }
+
+    private void Update() {
+        if (messageShown) {
+            messageShowTimer -= Time.deltaTime;
+            if(messageShowTimer < 0) {
+                messageShown = false;
+                Hide();
+            }
+        }
     }
 
     private void HiddenTacticsLobby_OnJoinFailed(object sender, System.EventArgs e) {
@@ -56,6 +64,9 @@ public class LobbyMessageUI : MonoBehaviour
 
     private void ShowMessage(string message) {
         Show();
+        messageShown = true;
+        messageShowTimer = messageShowTime;
+
         messageText.text = message;
     }
 

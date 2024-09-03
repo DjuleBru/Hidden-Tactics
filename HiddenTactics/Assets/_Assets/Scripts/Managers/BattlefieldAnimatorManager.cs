@@ -20,8 +20,11 @@ public class BattlefieldAnimatorManager : NetworkBehaviour {
     public event EventHandler OnBattlefieldsSplit;
 
     [SerializeField] ParticleSystem[] particleSystems;
+    [SerializeField] private bool isPlayerBattlefield;
+
     private void Start() {
         battlefieldAnimator = GetComponent<Animator>();
+
         if(HiddenTacticsMultiplayer.Instance.IsMultiplayer()) {
             battlefieldAnimator.enabled = false;
         }

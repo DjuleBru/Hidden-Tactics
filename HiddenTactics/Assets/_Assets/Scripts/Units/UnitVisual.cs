@@ -72,36 +72,15 @@ public class UnitVisual : NetworkBehaviour
 
     public override void OnNetworkSpawn() {
         if (unit.GetUnitSO().isInvisibleGarrisonedUnit) return;
-
-        unit.OnUnitUpgraded += Unit_OnUnitUpgraded;
-        unit.OnAdditionalUnitActivated += Unit_OnAdditionalUnitActivated;
-        unit.OnUnitDynamicallySpawned += Unit_OnUnitDynamicallySpawned;
-        unit.OnUnitPlaced += Unit_OnUnitPlaced;
-        unit.OnUnitSetAsAdditionalUnit += Unit_OnUnitSetAsAdditionalUnit;
-        unit.OnUnitDied += Unit_OnUnitDied;
-        unit.OnUnitFell += Unit_OnUnitFell;
-        unit.OnUnitReset += Unit_OnUnitReset;
-        unit.OnUnitHovered += Unit_OnUnitHovered;
-        unit.OnUnitUnhovered += Unit_OnUnitUnhovered;
-        unit.OnUnitSelectedFromTroop += Unit_OnUnitSelected;
-        unit.OnSingleUnitSelected += Unit_OnSingleUnitSelected;
-        unit.OnUnitUnselected += Unit_OnUnitUnselected;
-        unit.OnUnitSold += Unit_OnUnitSold;
-
-        unitAnimatorManager.OnUnitXChanged += UnitAnimatorManager_OnUnitXChanged;
-
-        if(!unit.GetUnitIsOnlyVisual()) {
-            SettingsManager.Instance.OnTacticalViewEnabled += SettingsManager_OnTacticalViewEnabled;
-            SettingsManager.Instance.OnTacticalViewDisabled += SettingsManager_OnTacticalViewDisabled;
-            SettingsManager.Instance.OnShowTacticalIconsDisabled += SettingsManager_OnShowTacticalIconsDisabled;
-            SettingsManager.Instance.OnShowTacticalIconsEnabled += SettingsManager_OnShowTacticalIconsEnabled;
-        } else {
-            return;
-        }
+        SubscribeToEvents();
 
     }
 
     protected virtual void Start() {
+        if(unit.GetUnitIsFakeVisualUnit()) {
+            SubscribeToEvents();
+        }
+
         if (unit.GetUnitSO().isInvisibleGarrisonedUnit) {
             selectedVisual.gameObject.SetActive(false);
             gameObject.SetActive(false);
@@ -133,6 +112,36 @@ public class UnitVisual : NetworkBehaviour
         }
     }
     
+    private void SubscribeToEvents() {
+
+        unit.OnUnitUpgraded += Unit_OnUnitUpgraded;
+        unit.OnAdditionalUnitActivated += Unit_OnAdditionalUnitActivated;
+        unit.OnUnitDynamicallySpawned += Unit_OnUnitDynamicallySpawned;
+        unit.OnUnitPlaced += Unit_OnUnitPlaced;
+        unit.OnUnitSetAsAdditionalUnit += Unit_OnUnitSetAsAdditionalUnit;
+        unit.OnUnitDied += Unit_OnUnitDied;
+        unit.OnUnitFell += Unit_OnUnitFell;
+        unit.OnUnitReset += Unit_OnUnitReset;
+        unit.OnUnitHovered += Unit_OnUnitHovered;
+        unit.OnUnitUnhovered += Unit_OnUnitUnhovered;
+        unit.OnUnitSelectedFromTroop += Unit_OnUnitSelected;
+        unit.OnSingleUnitSelected += Unit_OnSingleUnitSelected;
+        unit.OnUnitUnselected += Unit_OnUnitUnselected;
+        unit.OnUnitSold += Unit_OnUnitSold;
+
+        unitAnimatorManager.OnUnitXChanged += UnitAnimatorManager_OnUnitXChanged;
+
+        if (!unit.GetUnitIsOnlyVisual()) {
+            SettingsManager.Instance.OnTacticalViewEnabled += SettingsManager_OnTacticalViewEnabled;
+            SettingsManager.Instance.OnTacticalViewDisabled += SettingsManager_OnTacticalViewDisabled;
+            SettingsManager.Instance.OnShowTacticalIconsDisabled += SettingsManager_OnShowTacticalIconsDisabled;
+            SettingsManager.Instance.OnShowTacticalIconsEnabled += SettingsManager_OnShowTacticalIconsEnabled;
+        }
+        else {
+            return;
+        }
+    }
+
     private void SettingsManager_OnTacticalViewDisabled(object sender, EventArgs e) {
         SetUnitCircleGameObjectsActive(true);
 

@@ -135,7 +135,12 @@ public class HiddenTacticsLobby : MonoBehaviour
 
     public async void CreateLobby(string lobbyName, bool isPrivate) {
         OnCreateLobbyStarted?.Invoke(this, EventArgs.Empty);
+
         try {
+
+            CrossfadeTransition.Instance.FadeIn();
+            MainMenuCameraManager.Instance.SetFadeInCamera();
+
             joinedLobby = await LobbyService.Instance.CreateLobbyAsync(lobbyName, HiddenTacticsMultiplayer.MAX_PLAYER_AMOUNT, new CreateLobbyOptions {
                 IsPrivate = isPrivate
             });
@@ -151,9 +156,10 @@ public class HiddenTacticsLobby : MonoBehaviour
             });
             NetworkManager.Singleton.GetComponent<UnityTransport>().SetRelayServerData(new RelayServerData(allocation, "dtls"));
             HiddenTacticsMultiplayer.Instance.StartHost();
+
             SceneLoader.LoadNetwork(SceneLoader.Scene.DeckSelectionScene);
 
-        } catch(LobbyServiceException e){
+        } catch(LobbyServiceException e) {
             Debug.Log(e);
             OnCreateLobbyFailed?.Invoke(this, EventArgs.Empty);
         }

@@ -11,11 +11,14 @@ public class DeckSelectPlayer : MonoBehaviour
 
     [SerializeField] private Button kickButton;
     [SerializeField] private Image readyIcon;
-    [SerializeField] private Sprite readySprite;
-    [SerializeField] private Sprite unreadySprite;
     [SerializeField] private TextMeshProUGUI playerNameText;
 
-    [SerializeField] private PlayerVisual playerVisual;
+    [SerializeField] private Image playerIconImage;
+    [SerializeField] private Image playerIconOutlineImage;
+    [SerializeField] private Image playerIconOutlineShadowImage;
+    [SerializeField] private Image playerIconBackgroundImage;
+    [SerializeField] private Image playerFactionImage;
+    [SerializeField] private Image playerFactionShadowImage;
 
     private void Awake() {
         if (playerIndex == 1) {
@@ -29,6 +32,7 @@ public class DeckSelectPlayer : MonoBehaviour
 
     private void Start() {
         HiddenTacticsMultiplayer.Instance.OnPlayerCustomizationDataNetworkListChanged += HiddenTactics_OnPlayerCustomizationDataNetworkListChanged;
+        HiddenTacticsMultiplayer.Instance.OnPlayerDataNetworkListChanged += HiddenTactics_OnPlayerDataNetworkListChanged;
         DeckSelectReady.Instance.OnReadyChanged += DeckSelectReady_OnReadyChanged;
 
         if(playerIndex == 1) {
@@ -47,21 +51,34 @@ public class DeckSelectPlayer : MonoBehaviour
         UpdatePlayer();
     }
 
-    private void UpdatePlayer() {
+    private void HiddenTactics_OnPlayerDataNetworkListChanged(object sender, System.EventArgs e) {
+        UpdatePlayer();
+    }
 
+    private void UpdatePlayer() {
         if(HiddenTacticsMultiplayer.Instance.IsPlayerIndexConnected(playerIndex)) {
             Show();
 
-            PlayerCustomizationData playerCustomizationData = HiddenTacticsMultiplayer.Instance.GetPlayerCustomizationDataFromPlayerIndex(playerIndex);
+            PlayerCustomizationData playerCustomizationData = HiddenTacticsMultiplayer.Instance.GetLocalPlayerCustomizationData();
 
-            playerVisual.SetPlayerIcon(PlayerCustomizationDataManager.Instance.GetPlayerIconSpriteFromSpriteId(playerCustomizationData.iconSpriteId));
+            if (playerIndex == 1) {
+                playerCustomizationData = HiddenTacticsMultiplayer.Instance.GetLocalOpponentCustomizationData();
+            }
+
+            playerIconImage.sprite = PlayerCustomizationDataManager.Instance.GetPlayerIconSpriteFromSpriteId(playerCustomizationData.iconSpriteId);
+            FactionSO faction = PlayerCustomizationDataManager.Instance.GetFactionSOFromId(playerCustomizationData.factionID);
+            playerFactionImage.sprite = faction.factionSprite;
+            playerFactionShadowImage.sprite = faction.factionSprite;
+            playerIconOutlineImage.sprite = faction.slotBorder;
+            playerIconOutlineShadowImage.sprite = faction.slotBorder;
+            playerIconBackgroundImage.sprite = faction.slotBackgroundSquare;
 
             playerNameText.text = playerCustomizationData.playerName.ToString();
 
             if (DeckSelectReady.Instance.IsPlayerReady(playerCustomizationData.clientId)) {
-                readyIcon.sprite = readySprite;
+                readyIcon.gameObject.SetActive(true);
             } else {
-                readyIcon.sprite = unreadySprite;
+                readyIcon.gameObject.SetActive(false);
             }
         } else {
             Hide();
@@ -78,5 +95,6 @@ public class DeckSelectPlayer : MonoBehaviour
 
     private void OnDestroy() {
         HiddenTacticsMultiplayer.Instance.OnPlayerDataNetworkListChanged -= HiddenTactics_OnPlayerCustomizationDataNetworkListChanged;
+        HiddenTacticsMultiplayer.Instance.OnPlayerDataNetworkListChanged -= HiddenTactics_OnPlayerDataNetworkListChanged;
     }
 }

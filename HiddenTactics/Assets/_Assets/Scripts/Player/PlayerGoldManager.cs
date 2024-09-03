@@ -17,6 +17,7 @@ public class PlayerGoldManager : NetworkBehaviour {
     private const int playerUnitFellBonusGold = 1;
 
     private int playerGoldSinglePlayer;
+    private int playerRevenueSinglePlayer;
     
     private void Awake() {
         Instance = this;
@@ -37,14 +38,21 @@ public class PlayerGoldManager : NetworkBehaviour {
     }
 
     private void HiddenTacticsMultiplayer_OnPlayerGoldChanged(object sender, HiddenTacticsMultiplayer.OnPlayerGoldChangedEventArgs e) {
-        if (e.clientId == NetworkManager.Singleton.LocalClientId) {
+
+        if (HiddenTacticsMultiplayer.Instance.IsMultiplayer()) {
+            if (e.clientId == NetworkManager.Singleton.LocalClientId) {
+                PlayerStateUI.Instance.RefreshPlayerGoldUI(e.previousGold, e.newGold);
+                PlayerStateUI.Instance.RefreshPlayerRevenueUI(GetLocalPlayerRevenue());
+            }
+        }
+        else {
             PlayerStateUI.Instance.RefreshPlayerGoldUI(e.previousGold, e.newGold);
             PlayerStateUI.Instance.RefreshPlayerRevenueUI(GetLocalPlayerRevenue());
         }
+        
     }
 
     private void HiddenTacticsMultiplayer_OnPlayerRevenueChanged(object sender, HiddenTacticsMultiplayer.OnPlayerRevenueChangedEventArgs e) {
-        Debug.Log("revenue changed !");
         if (e.clientId == NetworkManager.Singleton.LocalClientId) {
             PlayerStateUI.Instance.RefreshPlayerRevenueUI(e.newRevenue);
             RevenueDetailPanelUI.Instance.UpdateRevenueDetailPanelUI(e.newRevenue);
@@ -138,11 +146,15 @@ public class PlayerGoldManager : NetworkBehaviour {
     }
 
     public int GetLocalPlayerSavingsRevenue() {
-        return HiddenTacticsMultiplayer.Instance.GetPlayerSavingsRevenue(NetworkManager.Singleton.LocalClientId);
+        PlayerData playerDaya = HiddenTacticsMultiplayer.Instance.GetLocalPlayerData();
+
+        return Mathf.FloorToInt(playerDaya.playerGold * PlayerGoldManager.Instance.GetPlayerSavingsRevenueRate());
     }
 
     public int GetLocalPlayerRevenue() {
-        return HiddenTacticsMultiplayer.Instance.GetPlayerRevenue(NetworkManager.Singleton.LocalClientId);
+        PlayerData playerDaya = HiddenTacticsMultiplayer.Instance.GetLocalPlayerData();
+
+        return playerDaya.playerRevenue;
     }
 
     public int GetLocalPlayerGold() {
