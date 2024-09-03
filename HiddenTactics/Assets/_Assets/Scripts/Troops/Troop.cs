@@ -19,11 +19,13 @@ public class Troop : NetworkBehaviour, IPlaceable {
     public float troopHP;
 
     protected ulong ownerClientId;
+    protected int troopID;
 
     protected bool isPlaced;
     protected bool isOwnedByPlayer;
     protected bool additionalUnitsHaveBeenBought;
     protected bool troopIsDead;
+    protected bool isSpawnedOnServer;
 
     [SerializeField] protected bool debugMode;
     [SerializeField] protected TroopSO troopSO;
@@ -115,6 +117,7 @@ public class Troop : NetworkBehaviour, IPlaceable {
 
     public override void OnNetworkSpawn() {
         BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
+        isSpawnedOnServer = true;
     }
 
     protected void Update() {
@@ -228,6 +231,18 @@ public class Troop : NetworkBehaviour, IPlaceable {
         }
     }
 
+    public void ReplaceLocalIPleaceable() {
+        PlayerAction_SpawnIPlaceable.LocalInstance.RemoveFakeIPlaceable(troopID);
+    }
+
+    public void SetIPlaceableID(int id) {
+        troopID = id;
+    }
+
+    public int GetIPlaceableID() {
+        return troopID;
+    }
+
     public void DeActivateOpponentIPlaceable() {
         if (!isOwnedByPlayer) {
             gameObject.SetActive(false);
@@ -330,6 +345,35 @@ public class Troop : NetworkBehaviour, IPlaceable {
         }
 
         isPlaced = true;
+        OnTroopPlaced?.Invoke(this, null);
+        OnAnyTroopPlaced?.Invoke(this, EventArgs.Empty);
+    }
+
+    public void SetIPlaceablePlaced() {
+        Debug.Log("SetIPlaceablePlaced");
+        if (!isOwnedByPlayer) {
+            gameObject.SetActive(true);
+        }
+
+        // Set placed troop on grid object
+        BattleGrid.Instance.SetIPlaceableSpawnedAtGridPosition(this, currentGridPosition);
+        BattleGrid.Instance.AddIPlaceableAtGridPosition(currentGridPosition, this);
+        SetIPlaceableGridPosition(currentGridPosition);
+        battlefieldOffset = transform.position - battlefieldOwner.transform.position;
+
+        // Set base units as bought (not in additionalUnitsInTroop), Set unit initial grid positions, Set Troop max HP
+        foreach (Unit unit in allUnitsInTroop) {
+            unit.SetInitialUnitPosition(currentGridPosition);
+
+            if (!additionalUnitsInTroop.Contains(unit) && !spawnedUnitsInTroop.Contains(unit)) {
+                unit.ActivateAdditionalUnit();
+                troopHP += unit.GetComponent<UnitHP>().GetHP();
+                maxTroopHP = troopHP;
+            }
+        }
+
+        isPlaced = true;
+
         OnTroopPlaced?.Invoke(this, null);
         OnAnyTroopPlaced?.Invoke(this, EventArgs.Empty);
     }
@@ -492,6 +536,9 @@ public class Troop : NetworkBehaviour, IPlaceable {
 
     public TroopSO GetTroopSO() {
         return troopSO;
+    }
+    public bool GetIsSpawnedOnServer() {
+        return isSpawnedOnServer;
     }
 
     public void DestroySelf() {

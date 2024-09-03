@@ -21,6 +21,7 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
     public static event EventHandler OnAnyBuildingDestroyed;
     
     protected ulong ownerClientId;
+    protected int buildingID;
 
     [SerializeField] protected Transform buildingCenterPoint;
     [SerializeField] protected List<Transform> projectileTargetList;
@@ -33,6 +34,7 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
     protected bool isOwnedByPlayer;
     protected bool isPlaced;
     protected bool isDestroyed;
+    protected bool isSpawnedOnServer;
 
     protected GridPosition currentGridPosition;
     protected Transform battlefieldOwner;
@@ -61,6 +63,11 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
         if(BattleManager.Instance != null) {
             BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
         }
+    }
+
+    public override void OnNetworkSpawn() {
+        isSpawnedOnServer = true;
+        ReplaceLocalIPleaceable();
     }
 
     protected virtual void BattleManager_OnStateChanged(object sender, EventArgs e) {
@@ -200,6 +207,10 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
         garrisonedTroop = BattleGrid.Instance.GetTroopAtGridPosition(currentGridPosition);
     }
 
+    public void SetIPlaceablePlaced() {
+
+    }
+
     public void SellBuilding() {
         buildingSelled = true;
         OnBuildingUnselected?.Invoke(this, EventArgs.Empty);
@@ -223,6 +234,18 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
             battlefieldOwner = BattleGrid.Instance.GetOpponentGridOrigin();
         }
     }
+    public void ReplaceLocalIPleaceable() {
+        PlayerAction_SpawnIPlaceable.LocalInstance.RemoveFakeIPlaceable(buildingID);
+    }
+
+    public void SetIPlaceableID(int id) {
+        buildingID = id;
+    }
+
+    public int GetIPlaceableID() {
+        return buildingID;
+    }
+
     public void DeActivateOpponentIPlaceable() {
         if (!isOwnedByPlayer) {
             gameObject.SetActive(false);
@@ -317,6 +340,9 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
     public Transform GetCenterPoint()
     {
         return buildingCenterPoint;
+    }
+    public bool GetIsSpawnedOnServer() {
+        return isSpawnedOnServer;
     }
 
     public bool GetSelected() {
