@@ -57,6 +57,11 @@ public class PlayerActionsManager : NetworkBehaviour {
         }
     }
 
+    private IEnumerator ChangeActionAtFrameEnd(Action action) {
+        yield return new WaitForEndOfFrame();
+        ChangeAction(action);
+    }
+
     public void ChangeAction(Action newAction) {
         if(newAction == Action.SelectingIPlaceableToSpawn) {
             // Deselect any selected troop
