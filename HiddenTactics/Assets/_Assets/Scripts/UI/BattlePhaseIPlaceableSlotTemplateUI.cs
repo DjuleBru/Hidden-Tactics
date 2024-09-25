@@ -82,17 +82,8 @@ public class BattlePhaseIPlaceableSlotTemplateUI : MonoBehaviour, IPointerEnterH
             iPlaceableTypeIcon.sprite = troop.GetTroopSO().troopTypeIconSprite;
             RefreshSingleUnitTemplates(troop);
         }
-
-        // Do not add building cards
-
-        //if(iPlaceable is Building) {
-        //    iPlaceableNameText.text = (iPlaceable as Building).GetBuildingSO().buildingName;
-        //    Building building = iPlaceable as Building;
-        //    building.OnBuildingSelected += Building_OnTroopSelected;
-        //    building.OnBuildingUnselected += Building_OnTroopUnselected;
-        //    iPlaceableTypeIcon.sprite = building.GetBuildingSO().buildingTypeSprite;
-        //}
     }
+
     private void Troop_OnAdditionalUnitsBought(object sender, System.EventArgs e) {
         RefreshSingleUnitTemplates(sender as Troop);
     }
@@ -268,5 +259,13 @@ public class BattlePhaseIPlaceableSlotTemplateUI : MonoBehaviour, IPointerEnterH
     public void OnDestroy() {
         GameInput.Instance.OnLeftClickPerformed -= GameInput_OnLeftClickPerformed;
         GameInput.Instance.OnRightClickPerformed -= GameInput_OnRightClickPerformed;
+
+        if (iPlaceable is Troop) {
+            Troop troop = iPlaceable as Troop;
+            troop.OnTroopHPChanged -= Troop_OnTroopHPChanged;
+            troop.OnTroopSelected -= Troop_OnTroopSelected;
+            troop.OnTroopUnselected -= Troop_OnTroopUnselected;
+            troop.OnAdditionalUnitsBought -= Troop_OnAdditionalUnitsBought;
+        }
     }
 }

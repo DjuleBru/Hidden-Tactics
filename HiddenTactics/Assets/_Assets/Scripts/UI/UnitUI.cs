@@ -112,9 +112,11 @@ public class UnitUI : NetworkBehaviour
         unit.OnUnitWebbed += Unit_OnUnitWebbed;
         unit.OnUnitWebbedEnded += Unit_OnUnitWebbedEnded;
         unit.OnUnitSold += Unit_OnUnitSold;
+        unit.OnUnitActivated += Unit_OnUnitActivated;
 
         SetUnitHPBar();
     }
+
 
     private void Update() {
 
@@ -255,6 +257,11 @@ public class UnitUI : NetworkBehaviour
 
     private void Unit_OnUnitSold(object sender, System.EventArgs e) {
         gameObject.SetActive(false);
+    }
+
+    private void Unit_OnUnitActivated(object sender, System.EventArgs e) {
+        gameObject.SetActive(true);
+        HideUnitTargetUI();
     }
 
     private void Unit_OnUnitDied(object sender, System.EventArgs e) {

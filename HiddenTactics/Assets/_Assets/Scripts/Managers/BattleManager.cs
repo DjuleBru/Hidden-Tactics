@@ -177,6 +177,7 @@ public class BattleManager : NetworkBehaviour
 
     [ClientRpc]
     private void SetPlayersLoadedClientRpc() {
+        Debug.Log("all players loadded");
         allPlayersLoaded = true;
         OnAllPlayersLoaded?.Invoke(this, EventArgs.Empty);
     }

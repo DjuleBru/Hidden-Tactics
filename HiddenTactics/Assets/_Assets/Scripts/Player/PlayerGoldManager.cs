@@ -85,7 +85,15 @@ public class PlayerGoldManager : NetworkBehaviour {
 
     [ServerRpc(RequireOwnership = false)]
     private void EarnGoldServerRpc(ulong clientID, int goldAmount) {
-        HiddenTacticsMultiplayer.Instance.ChangePlayerGoldServerRpc(clientID, goldAmount);
+
+        if (HiddenTacticsMultiplayer.Instance.IsMultiplayer()) {
+            HiddenTacticsMultiplayer.Instance.ChangePlayerGoldServerRpc(clientID, goldAmount);
+        }
+        else {
+            //HiddenTacticsMultiplayer.Instance.ChangePlayerGoldClientRpc(clientID, playerGoldSinglePlayer, playerGoldSinglePlayer - goldAmount);
+            playerGoldSinglePlayer += goldAmount;
+        }
+
     }
 
     public bool CanSpendGold(int goldAmount, ulong clientID) {
@@ -99,12 +107,14 @@ public class PlayerGoldManager : NetworkBehaviour {
     }
 
     public void SpendGold(int goldAmount, ulong clientID) {
+
         if(HiddenTacticsMultiplayer.Instance.IsMultiplayer()) {
             SpendGoldServerRpc(goldAmount, clientID);
         } else {
-            HiddenTacticsMultiplayer.Instance.ChangePlayerGoldClientRpc(clientID, playerGoldSinglePlayer, playerGoldSinglePlayer - goldAmount);
+            //HiddenTacticsMultiplayer.Instance.ChangePlayerGoldClientRpc(clientID, playerGoldSinglePlayer, playerGoldSinglePlayer - goldAmount);
             playerGoldSinglePlayer -= goldAmount;
         }
+
     }
 
     [ServerRpc(RequireOwnership = false)]

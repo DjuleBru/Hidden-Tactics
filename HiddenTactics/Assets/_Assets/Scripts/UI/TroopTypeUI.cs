@@ -107,6 +107,7 @@ public class TroopTypeUI : NetworkBehaviour, IPointerEnterHandler, IPointerExitH
             troop.OnTroopPlaced += Troop_OnTroopPlaced;
             troop.OnTroopHPChanged += Troop_OnTroopHPChanged;
             troop.OnTroopSelled += Troop_OnTroopSelled;
+            troop.OnTroopActivated += Troop_OnTroopActivated;
         } else {
             building.OnBuildingPlaced += Building_OnBuildingPlaced;
             building.OnBuildingDestroyed += Building_OnBuildingDestroyed;
@@ -164,6 +165,10 @@ public class TroopTypeUI : NetworkBehaviour, IPointerEnterHandler, IPointerExitH
 
     private void Troop_OnTroopSelled(object sender, System.EventArgs e) {
         gameObject.SetActive(false);
+    }
+
+    private void Troop_OnTroopActivated(object sender, System.EventArgs e) {
+        gameObject.SetActive(true);
     }
 
     private void Building_OnBuildingSelled(object sender, System.EventArgs e) {

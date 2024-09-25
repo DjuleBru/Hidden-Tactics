@@ -7,7 +7,8 @@ public class PlayerAction_SpawnIPlaceable : NetworkBehaviour {
 
     public static PlayerAction_SpawnIPlaceable LocalInstance;
 
-    private List<IPlaceable> iPlaceableToSpawnList;
+    private List<IPlaceable> iPlaceableToPlaceList;
+    private List<IPlaceable> iPlaceablePoolList;
 
     private Dictionary<int, IPlaceable> spawnedIPlaceablesDictionary;
     private Dictionary<int, GridPosition> spawnedIPlaceableGridPositions;
@@ -18,19 +19,23 @@ public class PlayerAction_SpawnIPlaceable : NetworkBehaviour {
         spawnedIPlaceablesDictionary = new Dictionary<int, IPlaceable>();
         spawnedIPlaceableGridPositions = new Dictionary<int, GridPosition>();
 
-        iPlaceableToSpawnList = new List<IPlaceable>();
+        iPlaceableToPlaceList = new List<IPlaceable>();
+        iPlaceablePoolList = new List<IPlaceable>();
     }
 
     public override void OnNetworkSpawn() {
+
         if (IsOwner) {
             LocalInstance = this;
         }
+
         BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
     }
 
+
     private void BattleManager_OnStateChanged(object sender, System.EventArgs e) {
         // Destroy troop to spawn 
-        if (iPlaceableToSpawnList.Count != 0) {
+        if (iPlaceableToPlaceList.Count != 0) {
             CancelIPlaceablePlacement();
         };
 
@@ -52,21 +57,22 @@ public class PlayerAction_SpawnIPlaceable : NetworkBehaviour {
             spawnedIPlaceablesDictionary.Clear();
             spawnedIPlaceableGridPositions.Clear();
         }
+
     }
 
     public void SelectTroopToSpawn(int troopListSOIndex) {
-        if (iPlaceableToSpawnList != null) {
+        if (iPlaceableToPlaceList != null) {
             CancelIPlaceablePlacement();
         };
 
         TroopSO troopToSpawnSO = BattleDataManager.Instance.GetTroopSOFromIndex(troopListSOIndex);
         PlayerStateUI.Instance.SetPlayerGoldChangingUI(-troopToSpawnSO.spawnTroopCost);
 
-        SpawnTroopServerRpc(troopListSOIndex, NetworkManager.Singleton.LocalClientId);
+        ActivatePooledTroop(troopListSOIndex, NetworkManager.Singleton.LocalClientId);
     }
 
     public void SelectBuildingToSpawn(int buildingListSOIndex) {
-        if (iPlaceableToSpawnList != null) {
+        if (iPlaceableToPlaceList != null) {
             CancelIPlaceablePlacement();
         };
 
@@ -89,7 +95,7 @@ public class PlayerAction_SpawnIPlaceable : NetworkBehaviour {
     }
 
     public void PlaceIPlaceableList() {
-        foreach(IPlaceable iPlaceable in iPlaceableToSpawnList) {
+        foreach(IPlaceable iPlaceable in iPlaceableToPlaceList) {
 
             iPlaceable.PlaceIPlaceable();
             spawnedIPlaceablesDictionary.Add(troopDictionaryInt, iPlaceable);
@@ -107,18 +113,78 @@ public class PlayerAction_SpawnIPlaceable : NetworkBehaviour {
             }
         }
 
-        iPlaceableToSpawnList = new List<IPlaceable>();
+        iPlaceableToPlaceList = new List<IPlaceable>();
     }
 
     public void CancelIPlaceablePlacement() {
-        foreach (IPlaceable iPlaceable in iPlaceableToSpawnList) {
-            NetworkObjectReference iPlaceableNetworkObjectReference = (iPlaceable as MonoBehaviour).GetComponent<NetworkObject>();
-            HiddenTacticsMultiplayer.Instance.DestroyIPlaceable(iPlaceableNetworkObjectReference);
+
+        foreach (IPlaceable iPlaceable in iPlaceableToPlaceList) {
+            //NetworkObjectReference iPlaceableNetworkObjectReference = (iPlaceable as MonoBehaviour).GetComponent<NetworkObject>();
+            //HiddenTacticsMultiplayer.Instance.DestroyIPlaceable(iPlaceableNetworkObjectReference);
+
+            iPlaceable.SetAsPooledIPlaceable();
+            iPlaceablePoolList.Add(iPlaceable);
         }
-        iPlaceableToSpawnList = new List<IPlaceable>();
+
+        iPlaceableToPlaceList = new List<IPlaceable>();
 
         PlayerStateUI.Instance.ResetPlayerGoldChangingUI();
     }
+
+
+    #region OBJECT POOLING
+
+    public void SpawnPlayerPoolTroopList(ulong clientID, Deck deck) {
+
+        foreach (TroopSO troopSO in deck.troopsInDeck) {
+            if(troopSO == null) continue;
+            int troopSOIndex = BattleDataManager.Instance.GetTroopSOIndex(troopSO);
+            SpawnTroopServerRpc(troopSOIndex, clientID);
+        }
+
+        iPlaceableToPlaceList.Clear();
+    }
+
+    public void ActivatePooledTroop(int troopSOIndex, ulong ownerClientId) {
+        int iPlaceableOfTypeNumber = 0;
+        TroopSO troopToSpawnSO = BattleDataManager.Instance.GetTroopSOFromIndex(troopSOIndex);
+
+        // First check how many iplaceables of the same type in the pool list
+        foreach (IPlaceable iPlaceable in iPlaceablePoolList) {
+            if (iPlaceable is Troop) {
+                Troop troop = iPlaceable as Troop;
+
+                if (troop.GetTroopSO() == troopToSpawnSO) {
+                    iPlaceableOfTypeNumber++;
+                }
+            }
+        }
+
+        // Then activated the troop from the pool and remove it from the pool list
+        IPlaceable identifiedIPlaceableInPoolList = null;
+
+        foreach(IPlaceable iPlaceable in iPlaceablePoolList) {
+            if(iPlaceable is Troop) {
+                Troop troop = iPlaceable as Troop;
+
+                if (troop.GetTroopSO() == troopToSpawnSO) {
+                    troop.SetPlacingIPlaceable();
+                    identifiedIPlaceableInPoolList = troop;
+                }
+            }
+        }
+
+        iPlaceablePoolList.Remove(identifiedIPlaceableInPoolList);
+        iPlaceableToPlaceList.Add(identifiedIPlaceableInPoolList);
+    }
+
+    public void AddIPlaceabledToPoolList(IPlaceable iPlaceable) {
+        if(!iPlaceablePoolList.Contains(iPlaceable)) {
+            iPlaceablePoolList.Add(iPlaceable); 
+        }
+    }
+
+    #endregion
 
     #region SPAWN TROOPS, UNITS AND BUILDINGS
     [ServerRpc(RequireOwnership = false)]
@@ -166,6 +232,7 @@ public class PlayerAction_SpawnIPlaceable : NetworkBehaviour {
         }
 
         DeActivateOpponentIPlaceableClientRpc(troopNetworkObject);
+        iPlaceablePoolList.Add(troopToSpawnTroop);
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -194,9 +261,10 @@ public class PlayerAction_SpawnIPlaceable : NetworkBehaviour {
         iPlaceableToSpawnNetworkObjectReference.TryGet(out NetworkObject iPlaceableToSpawnNetworkObject);
         IPlaceable iPlaceableToSpawn = iPlaceableToSpawnNetworkObject.GetComponent<IPlaceable>();
 
-        if (ownerClientId == NetworkManager.Singleton.LocalClientId) {
-            iPlaceableToSpawnList.Add(iPlaceableToSpawn);
-        }
+        //if (ownerClientId == NetworkManager.Singleton.LocalClientId) {
+        //    iPlaceableToPlaceList.Add(iPlaceableToSpawn);
+        //}
+
         // Set Owner
         iPlaceableToSpawn.SetIPlaceableOwnerClientId(ownerClientId);
         iPlaceableToSpawn.SetIPlaceableBattlefieldOwner();

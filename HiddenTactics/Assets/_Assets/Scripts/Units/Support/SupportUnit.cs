@@ -35,6 +35,7 @@ public class SupportUnit : NetworkBehaviour {
         unit.OnUnitDied += Unit_OnUnitDied;
         unit.OnUnitPlaced += Unit_OnUnitPlaced;
         unit.OnUnitSold += Unit_OnUnitSold;
+        //unit.OnUnitActivated += Unit_OnUnitActivated;
         BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
     }
 
@@ -246,6 +247,7 @@ public class SupportUnit : NetworkBehaviour {
     private void Unit_OnUnitSold(object sender, System.EventArgs e) {
         GridHoverManager.Instance.RemoveSupportUnit(unit);
     }
+
     public override void OnDestroy() {
         HideBuffedUnitBuffs();
         if(GridHoverManager.Instance != null) {

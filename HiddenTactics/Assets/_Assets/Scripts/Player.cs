@@ -23,8 +23,11 @@ public class Player : NetworkBehaviour
 
     private void Start() {
         BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
-    }
 
+        Debug.Log("start");
+        Deck deck = DeckManager.LocalInstance.GetDeckSelected();
+        PlayerAction_SpawnIPlaceable.LocalInstance.SpawnPlayerPoolTroopList(NetworkManager.Singleton.LocalClientId, deck);
+    }
 
     public void SetPlayerReadyOrUnready() {
         isReady = !isReady;

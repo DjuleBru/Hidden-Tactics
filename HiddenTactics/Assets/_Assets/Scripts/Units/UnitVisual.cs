@@ -77,9 +77,6 @@ public class UnitVisual : NetworkBehaviour
     }
 
     protected virtual void Start() {
-        if(unit.GetUnitIsFakeVisualUnit()) {
-            SubscribeToEvents();
-        }
 
         if (unit.GetUnitSO().isInvisibleGarrisonedUnit) {
             selectedVisual.gameObject.SetActive(false);
@@ -87,28 +84,37 @@ public class UnitVisual : NetworkBehaviour
         }
 
         if (!unit.GetUnitIsOnlyVisual()) {
-            if (!unit.IsOwnedByPlayer()) return;
+            SetInitialVisuals();
 
-            if(!unit.GetUnitIsDynamicallySpawnedUnit()) {
-                // Unit is a basic unit
-
-                if(SettingsManager.Instance.GetTacticalViewSetting()) {
-
-                    ChangeSpriteRendererListMaterial(allVisualsSpriteRendererList, invisibleMaterial); 
-                    foreach (GameObject shadowGameObject in shadowGameObjectList) {
-                        shadowGameObject.SetActive(false);
-                    }
-
-                } else {
-                    ChangeSpriteRendererListMaterial(allVisualsSpriteRendererList, placingUnitMaterial);
-                }
-
-                OnUnitVisualPlacingMaterialSet?.Invoke(this, EventArgs.Empty);
-            }
         } else
         // Unit is only visual : main menu, etc.
         {
             ChangeSpriteRendererListMaterial(allVisualsSpriteRendererList, cleanMaterial);
+        }
+    }
+
+    private void SetInitialVisuals() {
+        if (!unit.IsOwnedByPlayer()) return;
+
+        if (!unit.GetUnitIsDynamicallySpawnedUnit()) {
+            // Unit is a basic unit
+
+            if (SettingsManager.Instance.GetTacticalViewSetting()) {
+
+                ChangeSpriteRendererListMaterial(allVisualsSpriteRendererList, invisibleMaterial);
+                foreach (GameObject shadowGameObject in shadowGameObjectList) {
+                    shadowGameObject.SetActive(false);
+                }
+
+            }
+            else {
+                ChangeSpriteRendererListMaterial(allVisualsSpriteRendererList, placingUnitMaterial);
+                foreach (GameObject shadowGameObject in shadowGameObjectList) {
+                    shadowGameObject.SetActive(true);
+                }
+            }
+
+            OnUnitVisualPlacingMaterialSet?.Invoke(this, EventArgs.Empty);
         }
     }
     
@@ -118,6 +124,7 @@ public class UnitVisual : NetworkBehaviour
         unit.OnAdditionalUnitActivated += Unit_OnAdditionalUnitActivated;
         unit.OnUnitDynamicallySpawned += Unit_OnUnitDynamicallySpawned;
         unit.OnUnitPlaced += Unit_OnUnitPlaced;
+        unit.OnUnitActivated += Unit_OnUnitActivated;
         unit.OnUnitSetAsAdditionalUnit += Unit_OnUnitSetAsAdditionalUnit;
         unit.OnUnitDied += Unit_OnUnitDied;
         unit.OnUnitFell += Unit_OnUnitFell;
@@ -218,7 +225,6 @@ public class UnitVisual : NetworkBehaviour
 
     private void Unit_OnUnitReset(object sender, System.EventArgs e) {
         ResetUnitVisuals();
-        
     }
 
     private void Unit_OnUnitDied(object sender, System.EventArgs e) {
@@ -285,6 +291,12 @@ public class UnitVisual : NetworkBehaviour
     private void Unit_OnUnitSold(object sender, EventArgs e) {
         SetUnitCircleGameObjectsActive(false);
         gameObject.SetActive(false);
+    }
+
+    private void Unit_OnUnitActivated(object sender, EventArgs e) {
+        gameObject.SetActive(true);
+        SetUnitCircleGameObjectsActive(true);
+        SetInitialVisuals();
     }
 
     private void SetFactionVisualColor() {

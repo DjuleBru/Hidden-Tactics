@@ -12,6 +12,7 @@ public class Troop : NetworkBehaviour, IPlaceable {
     public event EventHandler OnTroopSelected;
     public event EventHandler OnTroopUnselected;
     public event EventHandler OnTroopSelled;
+    public event EventHandler OnTroopActivated;
     public event EventHandler OnAdditionalUnitsBought;
 
     public event EventHandler OnTroopHPChanged;
@@ -20,6 +21,7 @@ public class Troop : NetworkBehaviour, IPlaceable {
 
     protected ulong ownerClientId;
 
+    protected bool isPooled = true;
     protected bool isPlaced;
     protected bool isOwnedByPlayer;
     protected bool additionalUnitsHaveBeenBought;
@@ -97,6 +99,7 @@ public class Troop : NetworkBehaviour, IPlaceable {
     }
 
     protected void Start() {
+
         if (debugMode) {
             PlaceIPlaceable();
             Unit[] unitArray = GetComponentsInChildren<Unit>();
@@ -106,11 +109,9 @@ public class Troop : NetworkBehaviour, IPlaceable {
                 unit.DebugModeStartFunction();
             }
         }
-        if(isOwnedByPlayer) {
-            GridPosition newGridPosition = BattleGrid.Instance.GetFirstValidGridPosition();
-            BattleGrid.Instance.IPlaceableMovedGridPosition(this, currentGridPosition, newGridPosition);
-            currentGridPosition = newGridPosition;
-        }
+
+        gameObject.SetActive(false);
+
     }
 
     public override void OnNetworkSpawn() {
@@ -118,7 +119,11 @@ public class Troop : NetworkBehaviour, IPlaceable {
     }
 
     protected void Update() {
+
+        if (isPooled) return;
+
         HandleAllUnitsMiddlePoint();
+
         if (!isPlaced) {
             HandlePositioningOnGrid();
             HandleIPlaceablePositionDuringPlacement();
@@ -132,7 +137,7 @@ public class Troop : NetworkBehaviour, IPlaceable {
         if(BattleManager.Instance.IsBattlePhaseStarting()) {
 
             if (troopSelled) {
-                DestroyTroop();
+                SetAsPooledIPlaceable();
             }
 
             if(troopSelected) {
@@ -298,13 +303,7 @@ public class Troop : NetworkBehaviour, IPlaceable {
             unit.SellUnit();
         }
 
-        BattleGrid.Instance.RemoveIPlaceableAtGridPosition(currentGridPosition, this);
-        BattleGrid.Instance.ResetIPlaceableSpawnedAtGridPosition(currentGridPosition);
-    }
-
-    protected void DestroyTroop() {
-        NetworkObject networkObject = GetComponent<NetworkObject>();
-        HiddenTacticsMultiplayer.Instance.DestroyIPlaceable(networkObject);
+        SetAsPooledIPlaceable();
     }
 
     public void PlaceIPlaceable() {
@@ -452,6 +451,39 @@ public class Troop : NetworkBehaviour, IPlaceable {
         }
     }
 
+    public void SetPlacingIPlaceable() {
+        isPooled = false;
+
+        if (isOwnedByPlayer) {
+            SetInitialGridPosition();
+            gameObject.SetActive(true);
+
+            foreach (Unit unit in allUnitsInTroop) {
+                if (additionalUnitsInTroop.Contains(unit)) continue;
+                unit.ActivateUnit();
+            }
+            OnTroopActivated?.Invoke(this, EventArgs.Empty);
+        }
+
+    }
+
+    public void SetAsPooledIPlaceable() {
+
+        isPooled = true;
+        isPlaced = false;
+
+        BattleGrid.Instance.RemoveIPlaceableAtGridPosition(currentGridPosition, this);
+        gameObject.SetActive(false);
+        PlayerAction_SpawnIPlaceable.LocalInstance.AddIPlaceabledToPoolList(this);
+
+    }
+
+    private void SetInitialGridPosition() {
+        GridPosition newGridPosition = BattleGrid.Instance.GetFirstValidGridPosition();
+        BattleGrid.Instance.IPlaceableMovedGridPosition(this, currentGridPosition, newGridPosition);
+        currentGridPosition = newGridPosition;
+    }
+
     public void SetParentBuilding(Building building) {
         parentBuilding = building;
         parentBuilding.OnBuildingDestroyed += ParentBuilding_OnBuildingDestroyed;
@@ -463,7 +495,7 @@ public class Troop : NetworkBehaviour, IPlaceable {
     }
 
     protected void ParentBuilding_OnBuildingDestroyed(object sender, EventArgs e) {
-        HiddenTacticsMultiplayer.Instance.DestroyIPlaceable(GetComponent<NetworkObject>());
+        SetAsPooledIPlaceable();
     }
 
     public List<Unit> GetUnitsInAdditionalUnitsInTroopList() {

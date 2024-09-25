@@ -20,7 +20,7 @@ public class TroopButtonUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         GameInput.Instance.OnRightClickPerformed += GameInput_OnRightClickPerformed;
     }
 
-    private void GameInput_OnRightClickPerformed(object sender, System.EventArgs e) {
+    protected virtual void GameInput_OnRightClickPerformed(object sender, System.EventArgs e) {
         if (!buttonEnabled) return;
         if (!BattleManager.Instance.IsPreparationPhase()) return;
         CancelButtonShowVisuals();

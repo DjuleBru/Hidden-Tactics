@@ -55,9 +55,6 @@ public class UnitAnimatorManager : NetworkBehaviour
     }
 
     protected void Start() {
-        if (unit.GetUnitIsFakeVisualUnit()) {
-            SubscribeToEvents();
-        }
 
         if (unit.GetUnitIsOnlyVisual()) return;
         if (unit.GetUnitSO().isInvisibleGarrisonedUnit) return;
@@ -72,6 +69,7 @@ public class UnitAnimatorManager : NetworkBehaviour
         unitAI.OnStateChanged += UnitAI_OnStateChanged;
         unit.OnUnitPlaced += Unit_OnUnitPlaced;
         unit.OnUnitSelectedFromTroop += Unit_OnUnitSelected;
+        unit.OnUnitSold += Unit_OnUnitSold;
 
         unit.OnAdditionalUnitActivated += Unit_OnAdditionalUnitActivated;
 
@@ -132,6 +130,9 @@ public class UnitAnimatorManager : NetworkBehaviour
         transform.localScale = Vector3.one;
         transform.localPosition = Vector3.zero;
         ResetAnimatorParameters();
+    }
+    private void Unit_OnUnitSold(object sender, EventArgs e) {
+        firstSelectionDone = false;
     }
 
     protected void Unit_OnUnitPlaced(object sender, System.EventArgs e) {

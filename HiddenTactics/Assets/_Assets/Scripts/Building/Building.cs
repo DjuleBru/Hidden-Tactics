@@ -30,6 +30,7 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
 
     private Troop garrisonedTroop;
 
+    protected bool isPooled;
     protected bool isOwnedByPlayer;
     protected bool isPlaced;
     protected bool isDestroyed;
@@ -52,12 +53,6 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
     }
 
     protected virtual void Start() {
-        if(isOwnedByPlayer && !(this is Village)) {
-            GridPosition newGridPosition = BattleGrid.Instance.GetFirstValidGridPosition();
-            BattleGrid.Instance.IPlaceableMovedGridPosition(this, currentGridPosition, newGridPosition);
-            currentGridPosition = newGridPosition;
-        }
-
         if(BattleManager.Instance != null) {
             BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
         }
@@ -68,7 +63,7 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
         if (BattleManager.Instance.IsBattlePhaseStarting()) {
 
             if (buildingSelled) {
-                DestroyBuilding();
+                SetAsPooledIPlaceable();
             }
 
             buildingWasPlacedThisPreparationPhase = false;
@@ -167,7 +162,7 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
 
         yield return new WaitForSeconds(1f);
 
-        HiddenTacticsMultiplayer.Instance.DestroyIPlaceable(this.GetComponent<NetworkObject>());
+        SetAsPooledIPlaceable();
     }
 
     public virtual void HandleIPlaceablePosition() {
@@ -210,6 +205,30 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
         BattleGrid.Instance.ResetIPlaceableSpawnedAtGridPosition(currentGridPosition);
     }
 
+    public void SetPlacingIPlaceable() {
+        isPooled = false;
+        SetInitialGridPosition();
+
+        if (isOwnedByPlayer) {
+            gameObject.SetActive(true);
+        }
+    }
+
+    public void SetAsPooledIPlaceable() {
+        isPooled = true;
+        BattleGrid.Instance.RemoveIPlaceableAtGridPosition(currentGridPosition, this);
+        gameObject.SetActive(false);
+        PlayerAction_SpawnIPlaceable.LocalInstance.AddIPlaceabledToPoolList(this);
+    }
+
+    private void SetInitialGridPosition() {
+        if (isOwnedByPlayer && !(this is Village)) {
+            GridPosition newGridPosition = BattleGrid.Instance.GetFirstValidGridPosition();
+            BattleGrid.Instance.IPlaceableMovedGridPosition(this, currentGridPosition, newGridPosition);
+            currentGridPosition = newGridPosition;
+        }
+    }
+
     public void SetIPlaceableOwnerClientId(ulong clientId) {
         ownerClientId = clientId;
         isOwnedByPlayer = (ownerClientId == NetworkManager.Singleton.LocalClientId);
@@ -229,10 +248,6 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
         }
     }
 
-    private void DestroyBuilding() {
-        NetworkObject networkObject = GetComponent<NetworkObject>();
-        HiddenTacticsMultiplayer.Instance.DestroyIPlaceable(networkObject);
-    }
     public virtual void SetIPlaceableGridPosition(GridPosition iPlaceableGridPosition) {
         Vector3 buildingWorldPosition = BattleGrid.Instance.GetWorldPosition(iPlaceableGridPosition);
 

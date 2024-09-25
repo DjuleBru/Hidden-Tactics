@@ -10,7 +10,7 @@ using UnityEngine;
 public class Unit : NetworkBehaviour, ITargetable {
 
     public event EventHandler OnUnitUpgraded;
-    public event EventHandler OnUnitSpawned;
+    public event EventHandler OnUnitActivated;
     public event EventHandler OnUnitPlaced;
     public event EventHandler OnUnitDied;
     public static event EventHandler OnAnyUnitDied;
@@ -84,7 +84,6 @@ public class Unit : NetworkBehaviour, ITargetable {
     protected bool unitIsBought;
     protected bool unitIsOnlyVisual;
     protected bool isSelected;
-    protected bool isFakeVisualUnit;
 
     protected virtual void Awake() {
         collider2d = GetComponent<Collider2D>();
@@ -103,11 +102,6 @@ public class Unit : NetworkBehaviour, ITargetable {
 
     protected void Update() {
         if (unitIsOnlyVisual) return;
-
-        if(isFakeVisualUnit) {
-            transform.position = unitPositionInTroop + parentTroop.transform.position;
-            return;
-        }
 
         HandlePositionOnGrid();
 
@@ -255,8 +249,8 @@ public class Unit : NetworkBehaviour, ITargetable {
         OnUnitUpgraded?.Invoke(this, EventArgs.Empty);
     }
 
-    public void SpawnUnit() {
-        OnUnitSpawned?.Invoke(this, EventArgs.Empty);
+    public void ActivateUnit() {
+        OnUnitActivated?.Invoke(this, EventArgs.Empty);
     }
 
     public void TakeKnockBack(Vector2 force) {
@@ -535,10 +529,6 @@ public class Unit : NetworkBehaviour, ITargetable {
 
     #region SET PARAMETERS
 
-    public void SetAsFakeVisualUnit() {
-        isFakeVisualUnit = true;
-    }
-
     public void SetParentTroop(Troop parentTroop) {
         this.parentTroop = parentTroop;
         parentTroop.OnTroopPlaced += ParentTroop_OnTroopPlaced;
@@ -604,7 +594,6 @@ public class Unit : NetworkBehaviour, ITargetable {
         // Ony for wolf because he is not DYNAMICALLY spawned
         this.isSpawnedUnit = isSpawnedUnit;
     }
-
 
     #endregion
 
@@ -731,10 +720,6 @@ public class Unit : NetworkBehaviour, ITargetable {
     public bool GetUnitIsOnlyVisual()
     {
         return unitIsOnlyVisual;
-    }
-
-    public bool GetUnitIsFakeVisualUnit() {
-        return isFakeVisualUnit;
     }
 
     public override void OnDestroy() {

@@ -28,7 +28,6 @@ public class SellTroopButtonUI : TroopButtonUI, IPointerExitHandler, IPointerEnt
 
                 troop.SellTroop();
                 PlayerGoldManager.Instance.EarnGold(goldRedundValue);
-                sellTroopUnitsButton.enabled = false;
             }
 
             if(building != null) {
@@ -41,7 +40,6 @@ public class SellTroopButtonUI : TroopButtonUI, IPointerExitHandler, IPointerEnt
 
                 building.SellBuilding();
                 PlayerGoldManager.Instance.EarnGold(goldRedundValue);
-                sellTroopUnitsButton.enabled = false;
             }
 
         });
@@ -95,5 +93,9 @@ public class SellTroopButtonUI : TroopButtonUI, IPointerExitHandler, IPointerEnt
         if(pointerEntered) {
             HideSelling();
         }
+    }
+
+    protected void OnEnable() {
+        buttonEnabled = true;
     }
 }

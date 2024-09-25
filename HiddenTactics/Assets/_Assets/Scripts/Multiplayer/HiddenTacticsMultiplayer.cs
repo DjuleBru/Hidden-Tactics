@@ -48,9 +48,6 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
     private NetworkList<PlayerCustomizationData> playerCustomizationDataNetworkList;
 
     private void Awake() {
-
-        Application.targetFrameRate = 60;
-
         Instance = this;
 
         DontDestroyOnLoad(gameObject);
@@ -68,6 +65,41 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
         if (!isMultiplayer) {
             NetworkManager.Singleton.StartHost();
         }
+    }
+
+    private void PlayerDataNetworkList_OnListChanged(NetworkListEvent<PlayerData> changeEvent) {
+        OnPlayerDataNetworkListChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    private void PlayerCustomizationDataNetworkList_OnListChanged(NetworkListEvent<PlayerCustomizationData> changeEvent) {
+        OnPlayerCustomizationDataNetworkListChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void SetPlayerIdServerRpc(string playerId, ServerRpcParams serverRpcParams = default) {
+        int playerDataIndex = GetPlayerDataIndexFromClientId(serverRpcParams.Receive.SenderClientId);
+
+        PlayerData playerData = playerDataNetworkList[playerDataIndex];
+
+        playerData.playerId = playerId;
+
+        playerDataNetworkList[playerDataIndex] = playerData;
+    }
+
+    public bool IsPlayerIndexConnected(int playerIndex) {
+        return playerIndex < playerDataNetworkList.Count;
+    }
+
+    public void KickPlayer(ulong clientId) {
+        NetworkManager.Singleton.DisconnectClient(clientId);
+        NetworkManager_Server_OnClientDisconnectCallback(clientId);
+    }
+    public bool IsMultiplayer() {
+        return isMultiplayer;
+    }
+    public bool GetPlayerAndOpponentSameFaction() {
+        if (GetLocalPlayerCustomizationData().factionID == GetLocalOpponentCustomizationData().factionID) return true;
+        return false;
     }
 
     #region HOST
@@ -166,51 +198,6 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
         OnFailedToJoinGame?.Invoke(this, EventArgs.Empty);
     }
     #endregion
-
-    private void LoadPlayerCustomizationData() {
-        playerName = SavingManager.Instance.LoadPlayerName();
-        playerIconSpriteId = SavingManager.Instance.LoadPlayerIconSpriteId();
-        playerFactionId = SavingManager.Instance.LoadPlayerFactionId();
-        playerGridVisualSOId = SavingManager.Instance.LoadPlayerGridVisualSOId();
-        playerBattlefieldBaseSpriteId = SavingManager.Instance.LoadPlayerBattlefieldBaseSpriteId();
-        villageSpriteIdList = SavingManager.Instance.LoadPlayerVillageSpriteIdList();
-    }
-
-    private void PlayerDataNetworkList_OnListChanged(NetworkListEvent<PlayerData> changeEvent) {
-        OnPlayerDataNetworkListChanged?.Invoke(this, EventArgs.Empty);
-    }
-
-    private void PlayerCustomizationDataNetworkList_OnListChanged(NetworkListEvent<PlayerCustomizationData> changeEvent) {
-        OnPlayerCustomizationDataNetworkListChanged?.Invoke(this, EventArgs.Empty);
-    }
-
-    [ServerRpc(RequireOwnership = false)]
-    private void SetPlayerIdServerRpc(string playerId, ServerRpcParams serverRpcParams = default) {
-        int playerDataIndex = GetPlayerDataIndexFromClientId(serverRpcParams.Receive.SenderClientId);
-
-        PlayerData playerData = playerDataNetworkList[playerDataIndex];
-
-        playerData.playerId = playerId;
-
-        playerDataNetworkList[playerDataIndex] = playerData;
-    }
-
-    public bool IsPlayerIndexConnected(int playerIndex) {
-        return playerIndex < playerDataNetworkList.Count;
-    }
-
-    public void KickPlayer(ulong clientId) {
-        NetworkManager.Singleton.DisconnectClient(clientId);
-        NetworkManager_Server_OnClientDisconnectCallback(clientId);
-    }
-    public bool IsMultiplayer() {
-        return isMultiplayer;
-    }
-
-    public bool GetPlayerAndOpponentSameFaction() {
-        if(GetLocalPlayerCustomizationData().factionID == GetLocalOpponentCustomizationData().factionID) return true;
-        return false;
-    }
 
     #region HANDLE IPLACEABLES
     public void DestroyIPlaceable(NetworkObjectReference iPlaceableNetworkObjectReference) {
@@ -550,7 +537,14 @@ public class HiddenTacticsMultiplayer : NetworkBehaviour
     #endregion
 
     #region PLAYER CUSTOMIZATION
-
+    private void LoadPlayerCustomizationData() {
+        playerName = SavingManager.Instance.LoadPlayerName();
+        playerIconSpriteId = SavingManager.Instance.LoadPlayerIconSpriteId();
+        playerFactionId = SavingManager.Instance.LoadPlayerFactionId();
+        playerGridVisualSOId = SavingManager.Instance.LoadPlayerGridVisualSOId();
+        playerBattlefieldBaseSpriteId = SavingManager.Instance.LoadPlayerBattlefieldBaseSpriteId();
+        villageSpriteIdList = SavingManager.Instance.LoadPlayerVillageSpriteIdList();
+    }
     public string GetPlayerName() {
         return playerName;
     }
