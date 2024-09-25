@@ -34,6 +34,7 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
     protected bool isOwnedByPlayer;
     protected bool isPlaced;
     protected bool isDestroyed;
+    protected bool isSpawnedOnServer;
 
     protected GridPosition currentGridPosition;
     protected Transform battlefieldOwner;
@@ -62,6 +63,11 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
         if(BattleManager.Instance != null) {
             BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
         }
+    }
+
+    public override void OnNetworkSpawn() {
+        isSpawnedOnServer = true;
+        ReplaceLocalIPleaceable();
     }
 
     protected virtual void BattleManager_OnStateChanged(object sender, EventArgs e) {
@@ -228,6 +234,17 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
             battlefieldOwner = BattleGrid.Instance.GetOpponentGridOrigin();
         }
     }
+    public void ReplaceLocalIPleaceable() {
+        PlayerAction_SpawnIPlaceable.LocalInstance.RemoveFakeIPlaceable(buildingID);
+    }
+
+    public void SetIPlaceableID(int id) {
+        buildingID = id;
+    }
+
+    public int GetIPlaceableID() {
+        return buildingID;
+    }
 
     public void DeActivateOpponentIPlaceable() {
         if (!isOwnedByPlayer) {
@@ -324,15 +341,16 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
     {
         return buildingCenterPoint;
     }
+    public bool GetIsSpawnedOnServer() {
+        return isSpawnedOnServer;
+    }
 
     public bool GetSelected() {
         return buildingSelected;
     }
-
     public bool GetIsPlaced() {
         return isPlaced;
     }
-
     protected void InvokeOnBuildingPlaced() {
         OnBuildingPlaced?.Invoke(this, EventArgs.Empty);
     }

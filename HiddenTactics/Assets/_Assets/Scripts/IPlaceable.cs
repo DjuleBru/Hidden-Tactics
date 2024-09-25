@@ -15,13 +15,17 @@ public interface IPlaceable {
 
     void SetIPlaceableOwnerClientId(ulong clientId);
     void SetIPlaceableBattlefieldOwner();
+    void SetIPlaceableID(int id);
     void SetIPlaceablePlaced();
     void DeActivateOpponentIPlaceable();
+    void ReplaceLocalIPleaceable();
     void SetIPlaceableGridPosition(GridPosition iPlaceableGridPosition);
 
     GridPosition GetIPlaceableGridPosition();
 
     void DestroySelf();
+    bool GetIsSpawnedOnServer();
     bool GetSelected();
     bool IsOwnedByPlayer();
+    int GetIPlaceableID();
 }
