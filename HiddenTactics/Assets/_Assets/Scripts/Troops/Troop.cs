@@ -25,7 +25,6 @@ public class Troop : NetworkBehaviour, IPlaceable {
     protected bool isOwnedByPlayer;
     protected bool additionalUnitsHaveBeenBought;
     protected bool troopIsDead;
-    protected bool isSpawnedOnServer;
 
     [SerializeField] protected bool debugMode;
     [SerializeField] protected TroopSO troopSO;
@@ -117,7 +116,6 @@ public class Troop : NetworkBehaviour, IPlaceable {
 
     public override void OnNetworkSpawn() {
         BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
-        isSpawnedOnServer = true;
     }
 
     protected void Update() {
@@ -229,18 +227,6 @@ public class Troop : NetworkBehaviour, IPlaceable {
         else {
             battlefieldOwner = BattleGrid.Instance.GetOpponentGridOrigin();
         }
-    }
-
-    public void ReplaceLocalIPleaceable() {
-        PlayerAction_SpawnIPlaceable.LocalInstance.RemoveFakeIPlaceable(troopID);
-    }
-
-    public void SetIPlaceableID(int id) {
-        troopID = id;
-    }
-
-    public int GetIPlaceableID() {
-        return troopID;
     }
 
     public void DeActivateOpponentIPlaceable() {
@@ -536,9 +522,6 @@ public class Troop : NetworkBehaviour, IPlaceable {
 
     public TroopSO GetTroopSO() {
         return troopSO;
-    }
-    public bool GetIsSpawnedOnServer() {
-        return isSpawnedOnServer;
     }
 
     public void DestroySelf() {
