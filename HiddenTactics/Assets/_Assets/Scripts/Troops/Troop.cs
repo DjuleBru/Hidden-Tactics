@@ -239,12 +239,6 @@ public class Troop : NetworkBehaviour, IPlaceable {
         }
     }
 
-    public void ActivateOpponentIPlaceable() {
-        if (!isOwnedByPlayer) {
-            gameObject.SetActive(true);
-        }
-    }
-
     public void UpgradeTroop() {
         foreach(Unit unit in allUnitsInTroop) {
             unit.UpgradeUnit();
@@ -313,6 +307,7 @@ public class Troop : NetworkBehaviour, IPlaceable {
     }
 
     public void PlaceIPlaceable() {
+        Debug.Log("PlaceIPlaceable");
         if (!isOwnedByPlayer) {
             gameObject.SetActive(true);
         }

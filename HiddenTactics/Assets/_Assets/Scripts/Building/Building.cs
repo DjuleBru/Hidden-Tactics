@@ -247,11 +247,6 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
             gameObject.SetActive(false);
         }
     }
-    public void ActivateOpponentIPlaceable() {
-        if (!isOwnedByPlayer) {
-            gameObject.SetActive(true);
-        }
-    }
 
     public virtual void SetIPlaceableGridPosition(GridPosition iPlaceableGridPosition) {
         Vector3 buildingWorldPosition = BattleGrid.Instance.GetWorldPosition(iPlaceableGridPosition);
