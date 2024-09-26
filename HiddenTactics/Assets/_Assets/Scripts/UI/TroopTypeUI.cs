@@ -112,6 +112,7 @@ public class TroopTypeUI : NetworkBehaviour, IPointerEnterHandler, IPointerExitH
             building.OnBuildingPlaced += Building_OnBuildingPlaced;
             building.OnBuildingDestroyed += Building_OnBuildingDestroyed;
             building.OnBuildingSelled += Building_OnBuildingSelled;
+            building.OnBuildingActivated += Building_OnBuildingActivated;
         }
     }
 
@@ -175,6 +176,9 @@ public class TroopTypeUI : NetworkBehaviour, IPointerEnterHandler, IPointerExitH
         gameObject.SetActive(false);
     }
 
+    private void Building_OnBuildingActivated(object sender, System.EventArgs e) {
+        gameObject.SetActive(true);
+    }
     private void Building_OnBuildingPlaced(object sender, System.EventArgs e) {
 
         if (SettingsManager.Instance.GetTacticalViewSetting()) {

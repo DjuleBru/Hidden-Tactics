@@ -44,16 +44,27 @@ public class UnitTargetingSystem : NetworkBehaviour
     }
 
     protected void Start() {
+        unit.OnUnitReset += Unit_OnUnitReset;
+        unit.OnParentTroopSet += Unit_OnParentTroopSet;
+        InitializeAttackPositions();
+    }
+
+    private void Unit_OnParentTroopSet(object sender, System.EventArgs e) {
+        //InitializeAttackPositions();
+    }
+
+    private void InitializeAttackPositions() {
+        mainAttackGridPositionTargetList = new List<GridPosition>();
+        sideAttackGridPositionTargetList = new List<GridPosition>();
+        specialAttackGridPositionTargetList = new List<GridPosition>();
 
         mainAttackGridPositionTargetList = FillGridPositionAttackTargetList(mainAttackSO);
-        if(sideAttackSO != null) {
+        if (sideAttackSO != null) {
             sideAttackGridPositionTargetList = FillGridPositionAttackTargetList(sideAttackSO);
         }
-        if(jumpAttackSO != null) {
+        if (jumpAttackSO != null) {
             specialAttackGridPositionTargetList = FillGridPositionAttackTargetList(jumpAttackSO);
         }
-
-        unit.OnUnitReset += Unit_OnUnitReset;
     }
 
     private void Unit_OnUnitReset(object sender, System.EventArgs e) {

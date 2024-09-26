@@ -59,7 +59,6 @@ public class UnitAnimatorManager : NetworkBehaviour
         if (unit.GetUnitIsOnlyVisual()) return;
         if (unit.GetUnitSO().isInvisibleGarrisonedUnit) return;
 
-        SetUnitWatchDirectionBasedOnPlayerOwnance();
         OnUnitXChanged?.Invoke(this, EventArgs.Empty);
     }
 
@@ -70,6 +69,7 @@ public class UnitAnimatorManager : NetworkBehaviour
         unit.OnUnitPlaced += Unit_OnUnitPlaced;
         unit.OnUnitSelectedFromTroop += Unit_OnUnitSelected;
         unit.OnUnitSold += Unit_OnUnitSold;
+        unit.OnParentTroopSet += Unit_OnParentTroopSet;
 
         unit.OnAdditionalUnitActivated += Unit_OnAdditionalUnitActivated;
 
@@ -77,6 +77,7 @@ public class UnitAnimatorManager : NetworkBehaviour
         unitAttack.OnUnitAttackStarted += UnitAttack_OnUnitAttackStarted;
         unitAttack.OnUnitAttackEnded += UnitAttack_OnUnitAttackEnded;
     }
+
 
     protected virtual void Update() {
 
@@ -122,6 +123,9 @@ public class UnitAnimatorManager : NetworkBehaviour
         
     }
 
+    private void Unit_OnParentTroopSet(object sender, EventArgs e) {
+        SetUnitWatchDirectionBasedOnPlayerOwnance();
+    }
     protected void Unit_OnUnitReset(object sender, System.EventArgs e) {
         if (!unit.GetUnitIsBought()) return;
 
@@ -147,6 +151,7 @@ public class UnitAnimatorManager : NetworkBehaviour
 
     private void Unit_OnUnitSelected(object sender, System.EventArgs e) {
         if (!unit.GetUnitIsBought()) return;
+
         if (!firstSelectionDone) {
             firstSelectionDone = true;
             return;

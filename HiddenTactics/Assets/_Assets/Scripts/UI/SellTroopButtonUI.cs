@@ -7,9 +7,6 @@ using UnityEngine.UI;
 
 public class SellTroopButtonUI : TroopButtonUI, IPointerExitHandler, IPointerEnterHandler {
 
-    [SerializeField] Troop troop;
-    [SerializeField] Building building;
-
     private Button sellTroopUnitsButton;
     private int goldRedundValue;
 

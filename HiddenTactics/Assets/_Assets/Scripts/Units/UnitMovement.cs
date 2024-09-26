@@ -39,6 +39,8 @@ public class UnitMovement : NetworkBehaviour {
     private bool dazed;
     private bool canMove;
     private bool inFormation;
+    private bool parentTroopSet;
+
     private float moveSpeed;
     private float moveSpeedMultiplier = 1f;
 
@@ -64,10 +66,11 @@ public class UnitMovement : NetworkBehaviour {
         unit.OnUnitReset += Unit_OnUnitReset;
         unit.OnUnitDynamicallySpawned += Unit_OnUnitDynamicallySpawned;
         unit.OnAdditionalUnitActivated += Unit_OnAdditionalUnitActivated;
+        unit.OnParentTroopSet += Unit_OnParentTroopSet;
     }
 
-
     private void Update() {
+        if (!parentTroopSet) return;
 
         pathCalculationTimer -= Time.deltaTime;
         if (pathCalculationTimer < 0) {
@@ -349,4 +352,9 @@ public class UnitMovement : NetworkBehaviour {
     private void Unit_OnAdditionalUnitActivated(object sender, EventArgs e) {
         SetMoveForwardsPoint();
     }
+
+    private void Unit_OnParentTroopSet(object sender, EventArgs e) {
+        parentTroopSet = true;
+    }
+
 }

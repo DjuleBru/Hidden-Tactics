@@ -15,6 +15,7 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
     public event EventHandler OnBuildingHovered;
     public event EventHandler OnBuildingUnhovered;
     public event EventHandler OnBuildingSelled;
+    public event EventHandler OnBuildingActivated;
 
     public static event EventHandler OnAnyBuildingPlaced;
     public static event EventHandler OnAnyBuildingSelled;
@@ -59,6 +60,9 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
     }
 
     protected virtual void BattleManager_OnStateChanged(object sender, EventArgs e) {
+        if (!gameObject.activeInHierarchy) return;
+
+        Debug.Log("synchronizing building data");
 
         if (BattleManager.Instance.IsBattlePhaseStarting()) {
 
@@ -201,8 +205,7 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
         OnAnyBuildingSelled?.Invoke(this, EventArgs.Empty);
         OnBuildingSelled?.Invoke(this, EventArgs.Empty);
 
-        BattleGrid.Instance.RemoveIPlaceableAtGridPosition(currentGridPosition, this);
-        BattleGrid.Instance.ResetIPlaceableSpawnedAtGridPosition(currentGridPosition);
+        SetAsPooledIPlaceable();
     }
 
     public void SetPlacingIPlaceable() {
@@ -211,12 +214,15 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
 
         if (isOwnedByPlayer) {
             gameObject.SetActive(true);
+            OnBuildingActivated?.Invoke(this, EventArgs.Empty);
         }
     }
 
     public void SetAsPooledIPlaceable() {
         isPooled = true;
+        isPlaced = false;
         BattleGrid.Instance.RemoveIPlaceableAtGridPosition(currentGridPosition, this);
+        BattleGrid.Instance.ResetIPlaceableSpawnedAtGridPosition(currentGridPosition);
         gameObject.SetActive(false);
         PlayerAction_SpawnIPlaceable.LocalInstance.AddIPlaceabledToPoolList(this);
     }
@@ -224,6 +230,7 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
     private void SetInitialGridPosition() {
         if (isOwnedByPlayer && !(this is Village)) {
             GridPosition newGridPosition = BattleGrid.Instance.GetFirstValidGridPosition();
+
             BattleGrid.Instance.IPlaceableMovedGridPosition(this, currentGridPosition, newGridPosition);
             currentGridPosition = newGridPosition;
         }
@@ -242,10 +249,8 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
             battlefieldOwner = BattleGrid.Instance.GetOpponentGridOrigin();
         }
     }
-    public void DeActivateOpponentIPlaceable() {
-        if (!isOwnedByPlayer) {
-            gameObject.SetActive(false);
-        }
+    public void DeActivateIPlaceable() {
+        gameObject.SetActive(false);
     }
 
     public virtual void SetIPlaceableGridPosition(GridPosition iPlaceableGridPosition) {

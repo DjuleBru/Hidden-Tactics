@@ -7,8 +7,6 @@ using UnityEngine.UI;
 
 public class UpgradeTroopButton : TroopButtonUI, IPointerExitHandler, IPointerEnterHandler
 {
-    [SerializeField] Troop troop;
-    [SerializeField] Building building;
 
     private Button upgradeTroopButton;
 

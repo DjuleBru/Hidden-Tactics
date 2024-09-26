@@ -7,8 +7,6 @@ using UnityEngine.UI;
 
 public class BuyAdditionalUnitsButton : TroopButtonUI, IPointerEnterHandler, IPointerExitHandler {
 
-    [SerializeField] Troop troop;
-
     private Button buyAdditionalUnitsButton;
 
     protected override void Awake() {
@@ -20,6 +18,7 @@ public class BuyAdditionalUnitsButton : TroopButtonUI, IPointerEnterHandler, IPo
             int goldCost = troop.GetTroopSO().buyAdditionalUnitsCost;
             if ((PlayerGoldManager.Instance.CanSpendGold(goldCost, NetworkManager.Singleton.LocalClientId))) {
                 buttonEnabled = false;
+                Debug.Log("buttonEnabled = false;");
                 buyAdditionalUnitsButton.interactable = false;
                 PlayerGoldManager.Instance.SpendGold(troop.GetTroopSO().buyAdditionalUnitsCost, NetworkManager.Singleton.LocalClientId);
                 troop.BuyAdditionalUnits();

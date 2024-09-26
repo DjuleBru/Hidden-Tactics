@@ -29,6 +29,12 @@ public class BuildingUI : NetworkBehaviour
         building.OnBuildingDestroyed += Building_OnBuildingDestroyed;
         building.OnBuildingPlaced += Building_OnBuildingPlaced;
         building.OnBuildingSelled += Building_OnBuildingSelled;
+        building.OnBuildingActivated += Building_OnBuildingActivated;
+    }
+
+    private void Building_OnBuildingActivated(object sender, System.EventArgs e) {
+        gameObject.SetActive(true);
+        HideBuildingTargetUI();
     }
 
     private void Building_OnBuildingSelled(object sender, System.EventArgs e) {

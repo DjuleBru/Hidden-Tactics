@@ -40,7 +40,7 @@ public class DeckManager : NetworkBehaviour
         OnDeckModified += DeckManager_OnDeckModified;
 
         if (BattleManager.Instance != null && IsOwner) {
-            PlayerAction_SpawnIPlaceable.LocalInstance.SpawnPlayerPoolTroopList(NetworkManager.Singleton.LocalClientId, deckSelected);
+            PlayerAction_SpawnIPlaceable.LocalInstance.SpawnPlayerIPlaceablePoolList(NetworkManager.Singleton.LocalClientId, deckSelected);
         }
     }
 

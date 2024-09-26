@@ -8,6 +8,8 @@ public class TroopButtonUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 {
     [SerializeField] protected Animator animator;
     [SerializeField] protected bool buttonEnabled = true;
+    [SerializeField] protected Troop troop;
+    [SerializeField] protected Building building;
     protected bool pointerEntered;
 
     protected virtual void Awake() {
@@ -18,6 +20,22 @@ public class TroopButtonUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 
     protected void Start() {
         GameInput.Instance.OnRightClickPerformed += GameInput_OnRightClickPerformed;
+        if(troop != null) {
+            troop.OnTroopSelled += Troop_OnTroopSelled;
+        }
+        if(building != null) {
+            building.OnBuildingSelled += Building_OnBuildingSelled;
+        }
+    }
+
+    private void Building_OnBuildingSelled(object sender, System.EventArgs e) {
+        buttonEnabled = true;
+        GetComponent<Button>().interactable = true;
+    }
+
+    private void Troop_OnTroopSelled(object sender, System.EventArgs e) {
+        buttonEnabled = true;
+        GetComponent<Button>().interactable = true;
     }
 
     protected virtual void GameInput_OnRightClickPerformed(object sender, System.EventArgs e) {

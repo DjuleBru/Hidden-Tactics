@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.Playables;
 
 public class Troop : NetworkBehaviour, IPlaceable {
 
@@ -34,6 +35,7 @@ public class Troop : NetworkBehaviour, IPlaceable {
     [SerializeField] protected TroopTypeUI troopTypeUI;
 
     protected List<Unit> allUnitsInTroop;
+    protected List<Unit> originalAdditionalUnitsInTroop;
     protected List<Unit> additionalUnitsInTroop;
     protected List<Unit> spawnedUnitsInTroop;
     protected Building parentBuilding;
@@ -61,6 +63,7 @@ public class Troop : NetworkBehaviour, IPlaceable {
     protected void Awake() {
         allUnitsInTroop = new List<Unit>();
         additionalUnitsInTroop = new List<Unit>();
+        originalAdditionalUnitsInTroop = new List<Unit>();
         spawnedUnitsInTroop = new List<Unit>();
 
         foreach (Transform position in baseUnitPositions) {
@@ -110,8 +113,6 @@ public class Troop : NetworkBehaviour, IPlaceable {
             }
         }
 
-        gameObject.SetActive(false);
-
     }
 
     public override void OnNetworkSpawn() {
@@ -134,7 +135,11 @@ public class Troop : NetworkBehaviour, IPlaceable {
 
     protected virtual void BattleManager_OnStateChanged(object sender, EventArgs e) {
 
-        if(BattleManager.Instance.IsBattlePhaseStarting()) {
+        if (!gameObject.activeInHierarchy) return;
+
+        Debug.Log("synchronizing troop data");
+
+        if (BattleManager.Instance.IsBattlePhaseStarting()) {
 
             if (troopSelled) {
                 SetAsPooledIPlaceable();
@@ -233,10 +238,16 @@ public class Troop : NetworkBehaviour, IPlaceable {
         }
     }
 
-    public void DeActivateOpponentIPlaceable() {
-        if (!isOwnedByPlayer) {
-            gameObject.SetActive(false);
+    public void DeActivateIPlaceable() {
+
+        foreach(Unit unit in allUnitsInTroop) {
+            unit.GetComponent<NetworkObject>().TryRemoveParent();
+            unit.GetComponent<NetworkObject>().Despawn(false);
+            unit.gameObject.SetActive(false);
         }
+
+        GetComponent<NetworkObject>().Despawn(false);
+        gameObject.SetActive(false);
     }
 
     public void UpgradeTroop() {
@@ -295,6 +306,7 @@ public class Troop : NetworkBehaviour, IPlaceable {
 
     public void SellTroop() {
         troopSelled = true;
+        additionalUnitsHaveBeenBought = false;
         OnTroopUnselected?.Invoke(this, EventArgs.Empty);
         OnAnyTroopSelled?.Invoke(this, EventArgs.Empty);
         OnTroopSelled?.Invoke(this, EventArgs.Empty);
@@ -308,6 +320,7 @@ public class Troop : NetworkBehaviour, IPlaceable {
 
     public void PlaceIPlaceable() {
         Debug.Log("PlaceIPlaceable");
+
         if (!isOwnedByPlayer) {
             gameObject.SetActive(true);
         }
@@ -330,6 +343,7 @@ public class Troop : NetworkBehaviour, IPlaceable {
         }
 
         isPlaced = true;
+        isPooled = false;
         OnTroopPlaced?.Invoke(this, null);
         OnAnyTroopPlaced?.Invoke(this, EventArgs.Empty);
     }
@@ -443,7 +457,14 @@ public class Troop : NetworkBehaviour, IPlaceable {
     }
 
     public void AddUnitToAdditionalUnitsInTroopList(Unit unit) {
-        additionalUnitsInTroop.Add(unit);
+
+        if(!additionalUnitsInTroop.Contains(unit)) {
+            additionalUnitsInTroop.Add(unit);
+        }
+
+        if(!originalAdditionalUnitsInTroop.Contains(unit)) {
+            originalAdditionalUnitsInTroop.Add(unit);
+        }
     }
 
     public void AddUnitToSpawnedUnitsInTroopList(Unit unit) {
@@ -452,31 +473,39 @@ public class Troop : NetworkBehaviour, IPlaceable {
         }
     }
 
-
     public void SetPlacingIPlaceable() {
         isPooled = false;
+        ActivateIPlaceable();
+        Debug.Log("SetPlacingIPlaceable");
 
         if (isOwnedByPlayer) {
             SetInitialGridPosition();
             gameObject.SetActive(true);
 
             foreach (Unit unit in allUnitsInTroop) {
-                if (additionalUnitsInTroop.Contains(unit)) continue;
+                //if (additionalUnitsInTroop.Contains(unit)) continue;
                 unit.ActivateUnit();
+            }
+            foreach(Unit unit in originalAdditionalUnitsInTroop) {
+                unit.SetUnitAsAdditionalUnit();
             }
             OnTroopActivated?.Invoke(this, EventArgs.Empty);
         }
     }
 
-    public void SetAsPooledIPlaceable() {
+    private void ActivateIPlaceable() {
+        GetComponent<NetworkObject>().Spawn();
+    }
 
+    public void SetAsPooledIPlaceable() {
+        Debug.Log("SetAsPooledIPlaceable");
         isPooled = true;
         isPlaced = false;
 
         BattleGrid.Instance.RemoveIPlaceableAtGridPosition(currentGridPosition, this);
-        gameObject.SetActive(false);
+        BattleGrid.Instance.ResetIPlaceableSpawnedAtGridPosition(currentGridPosition);
+        DeActivateIPlaceable();
         PlayerAction_SpawnIPlaceable.LocalInstance.AddIPlaceabledToPoolList(this);
-
     }
 
     private void SetInitialGridPosition() {
@@ -501,6 +530,9 @@ public class Troop : NetworkBehaviour, IPlaceable {
 
     public List<Unit> GetUnitsInAdditionalUnitsInTroopList() {
         return additionalUnitsInTroop;
+    }
+    public List<Unit> GetUnitsInOriginalAdditionalUnitsInTroopList() {
+        return originalAdditionalUnitsInTroop;
     }
 
     public GridPosition GetIPlaceableGridPosition() {

@@ -83,12 +83,7 @@ public class UnitVisual : NetworkBehaviour
             gameObject.SetActive(false);
         }
 
-        if (!unit.GetUnitIsOnlyVisual()) {
-            SetInitialVisuals();
-
-        } else
-        // Unit is only visual : main menu, etc.
-        {
+        if (unit.GetUnitIsOnlyVisual()) {
             ChangeSpriteRendererListMaterial(allVisualsSpriteRendererList, cleanMaterial);
         }
     }
@@ -135,6 +130,7 @@ public class UnitVisual : NetworkBehaviour
         unit.OnSingleUnitSelected += Unit_OnSingleUnitSelected;
         unit.OnUnitUnselected += Unit_OnUnitUnselected;
         unit.OnUnitSold += Unit_OnUnitSold;
+        unit.OnParentTroopSet += Unit_OnParentTroopSet;
 
         unitAnimatorManager.OnUnitXChanged += UnitAnimatorManager_OnUnitXChanged;
 
@@ -277,6 +273,7 @@ public class UnitVisual : NetworkBehaviour
         foreach(GameObject shadowGameObject in shadowGameObjectList) {
             shadowGameObject.SetActive(false);
         }
+        SetUnitCircleGameObjectsEnabled(false);
     }
 
     private void Unit_OnUnitFell(object sender, System.EventArgs e) {
@@ -293,9 +290,14 @@ public class UnitVisual : NetworkBehaviour
         gameObject.SetActive(false);
     }
 
+    private void Unit_OnParentTroopSet(object sender, EventArgs e) {
+        SetInitialVisuals();
+    }
+
     private void Unit_OnUnitActivated(object sender, EventArgs e) {
         gameObject.SetActive(true);
         SetUnitCircleGameObjectsActive(true);
+        SetUnitCircleGameObjectsEnabled(true);
         SetInitialVisuals();
     }
 
@@ -438,6 +440,7 @@ public class UnitVisual : NetworkBehaviour
     }
 
     public void ShowAsAdditionalUnitToBuy() {
+        ChangeSpriteRendererListMaterial(allVisualsSpriteRendererList, placingUnitMaterial);
         SetFactionVisualColor();
         gameObject.SetActive(true);
         baseOutlineSpriteRenderer.enabled = true;
@@ -447,6 +450,7 @@ public class UnitVisual : NetworkBehaviour
     }
 
     public void HideAsAdditionalUnitToBuy() {
+        ChangeSpriteRendererListMaterial(allVisualsSpriteRendererList, invisibleMaterial);
         gameObject.SetActive(false);
         baseOutlineSpriteRenderer.enabled = false;
         baseCircleSpriteRenderer.enabled = false;
@@ -475,6 +479,13 @@ public class UnitVisual : NetworkBehaviour
         baseCircleSpriteRenderer.gameObject.SetActive(active);
         selectedUnitSpriteRenderer.gameObject.SetActive(active);
         shadowBaseSpriteRenderer.gameObject.SetActive(active);
+    }
+
+    private void SetUnitCircleGameObjectsEnabled(bool enabled) {
+        baseOutlineSpriteRenderer.enabled = enabled;
+        baseCircleSpriteRenderer.enabled = enabled;
+        selectedUnitSpriteRenderer.enabled = enabled;
+        shadowBaseSpriteRenderer.enabled = enabled;
     }
 
     public override void OnDestroy() {

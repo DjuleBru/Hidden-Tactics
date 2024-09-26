@@ -17,7 +17,7 @@ public interface IPlaceable {
     void SetIPlaceableBattlefieldOwner();
     void SetAsPooledIPlaceable();
     void SetPlacingIPlaceable();
-    void DeActivateOpponentIPlaceable();
+    void DeActivateIPlaceable();
     void SetIPlaceableGridPosition(GridPosition iPlaceableGridPosition);
 
     GridPosition GetIPlaceableGridPosition();

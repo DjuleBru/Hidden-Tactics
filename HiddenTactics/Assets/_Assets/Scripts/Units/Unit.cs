@@ -20,6 +20,7 @@ public class Unit : NetworkBehaviour, ITargetable {
     public event EventHandler OnUnitSetAsAdditionalUnit;
     public event EventHandler OnAdditionalUnitActivated;
     public event EventHandler OnUnitDynamicallySpawned;
+    public event EventHandler OnParentTroopSet;
 
     public event EventHandler OnUnitHovered;
     public event EventHandler OnUnitUnhovered;
@@ -226,6 +227,11 @@ public class Unit : NetworkBehaviour, ITargetable {
 
     }
 
+    private void ParentTroop_OnTroopActivated(object sender, EventArgs e) {
+        GetComponent<NetworkObject>().Spawn();
+        GetComponent<NetworkObject>().TrySetParent(parentTroop.gameObject, true);
+    }
+
     public void SetParentBuilding() {
         GridPosition parentTroopCenterPointGridPosition = BattleGrid.Instance.GetGridPosition(parentTroop.GetTroopCenterPoint());
         Building parentBuilding = BattleGrid.Instance.GetBuildingAtGridPosition(parentTroopCenterPointGridPosition);
@@ -251,6 +257,7 @@ public class Unit : NetworkBehaviour, ITargetable {
 
     public void ActivateUnit() {
         OnUnitActivated?.Invoke(this, EventArgs.Empty);
+        gameObject.SetActive(true);
     }
 
     public void TakeKnockBack(Vector2 force) {
@@ -378,6 +385,7 @@ public class Unit : NetworkBehaviour, ITargetable {
     public void SellUnit() {
         OnUnitSold?.Invoke(this, EventArgs.Empty);
         collider2d.enabled = false;
+        unitIsBought = false;
     }
 
     public void RemoveUnitFromBattlePhaseUnitList() {
@@ -532,8 +540,11 @@ public class Unit : NetworkBehaviour, ITargetable {
     public void SetParentTroop(Troop parentTroop) {
         this.parentTroop = parentTroop;
         parentTroop.OnTroopPlaced += ParentTroop_OnTroopPlaced;
+        parentTroop.OnTroopActivated += ParentTroop_OnTroopActivated;
 
         parentTroop.AddUnitToUnitInTroopList(this);
+
+        OnParentTroopSet?.Invoke(this, EventArgs.Empty);
     }
 
     public void SetLocalPosition(Vector3 positionInTroop, bool debugMode) {

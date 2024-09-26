@@ -55,6 +55,7 @@ public class BuildingVisual : NetworkBehaviour
         building.OnBuildingHovered += Building_OnBuildingHovered;
         building.OnBuildingUnhovered += Building_OnBuildingUnhovered;
         building.OnBuildingSelled += Building_OnBuildingSelled;
+        building.OnBuildingActivated += Building_OnBuildingActivated;
 
         if (!building.GetBuildingIsOnlyVisual()) {
 
@@ -77,6 +78,10 @@ public class BuildingVisual : NetworkBehaviour
             SettingsManager.Instance.OnShowTacticalIconsEnabled += SettingsManager_OnShowTacticalIconsEnabled;
 
         } 
+    }
+
+    private void Building_OnBuildingActivated(object sender, System.EventArgs e) {
+        gameObject.SetActive(true);
     }
 
     private void Building_OnBuildingSelled(object sender, System.EventArgs e) {
