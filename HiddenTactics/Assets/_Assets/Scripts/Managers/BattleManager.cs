@@ -177,7 +177,6 @@ public class BattleManager : NetworkBehaviour
 
     [ClientRpc]
     private void SetPlayersLoadedClientRpc() {
-        Debug.Log("all players loadded");
         allPlayersLoaded = true;
         OnAllPlayersLoaded?.Invoke(this, EventArgs.Empty);
     }
@@ -216,7 +215,6 @@ public class BattleManager : NetworkBehaviour
     }
 
     private void State_OnValueChanged(State previousValue, State newValue) {
-        Debug.Log(newValue);
         OnStateChanged?.Invoke(this, EventArgs.Empty);
         Time.timeScale = 1f;
 
@@ -289,7 +287,6 @@ public class BattleManager : NetworkBehaviour
     }
 
     public void RemoveUnitFromUnitsStillInBattleList(Unit unit) {
-        Debug.Log(unitsStillInBattle.Count);
         unitsStillInBattle.Remove(unit);
 
         if(unitsStillInBattle.Count == 0) {

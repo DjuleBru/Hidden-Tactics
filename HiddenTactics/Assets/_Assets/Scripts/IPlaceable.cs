@@ -18,6 +18,7 @@ public interface IPlaceable {
     void SetAsPooledIPlaceable();
     void SetPlacingIPlaceable();
     void DeActivateOpponentIPlaceable();
+    void ActivateOpponentIPlaceable();
     void SetIPlaceableGridPosition(GridPosition iPlaceableGridPosition);
 
     GridPosition GetIPlaceableGridPosition();

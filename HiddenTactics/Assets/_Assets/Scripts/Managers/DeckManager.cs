@@ -2,9 +2,10 @@ using Sirenix.Utilities;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-public class DeckManager : MonoBehaviour
+public class DeckManager : NetworkBehaviour
 {
 
     public static DeckManager LocalInstance;
@@ -26,7 +27,7 @@ public class DeckManager : MonoBehaviour
     }
 
     private void Start() {
-        // Load previous deck (or default deck) on awake
+        // Load previous deck (or default deck)
         deckSelected = SavingManager.Instance.LoadDeck();
         Debug.Log("loaded deck " + deckSelected.deckName);
 
@@ -37,6 +38,10 @@ public class DeckManager : MonoBehaviour
         });
 
         OnDeckModified += DeckManager_OnDeckModified;
+
+        if (BattleManager.Instance != null && IsOwner) {
+            PlayerAction_SpawnIPlaceable.LocalInstance.SpawnPlayerPoolTroopList(NetworkManager.Singleton.LocalClientId, deckSelected);
+        }
     }
 
     private void DeckManager_OnDeckModified(object sender, OnDeckChangedEventArgs e) {

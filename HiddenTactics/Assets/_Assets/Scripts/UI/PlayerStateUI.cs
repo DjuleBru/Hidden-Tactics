@@ -92,7 +92,6 @@ public class PlayerStateUI : MonoBehaviour {
         if (isOpponentPanel) {
             PlayerCustomizationData opponentCustomizationData = HiddenTacticsMultiplayer.Instance.GetLocalOpponentCustomizationData();
             deckFactionSO = PlayerCustomizationDataManager.Instance.GetFactionSOFromId(opponentCustomizationData.factionID);
-            Debug.Log("opponent faction " + deckFactionSO);
         }
 
         backgroundImage.sprite = deckFactionSO.panelBackground;
