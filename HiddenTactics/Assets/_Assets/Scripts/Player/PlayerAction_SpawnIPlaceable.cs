@@ -33,7 +33,6 @@ public class PlayerAction_SpawnIPlaceable : NetworkBehaviour {
         BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
     }
 
-
     private void BattleManager_OnStateChanged(object sender, System.EventArgs e) {
         // Destroy troop to spawn 
         if (iPlaceableToPlaceList.Count != 0) {
@@ -65,6 +64,7 @@ public class PlayerAction_SpawnIPlaceable : NetworkBehaviour {
 
     }
 
+    #region CONTROLS
     public void SelectTroopToSpawn(int troopListSOIndex) {
         if (iPlaceableToPlaceList != null) {
             CancelIPlaceablePlacement();
@@ -87,6 +87,17 @@ public class PlayerAction_SpawnIPlaceable : NetworkBehaviour {
         ActivatePooledIPlaceable(buildingListSOIndex, false, true);
     }
 
+    public void CancelIPlaceablePlacement() {
+
+        foreach (IPlaceable iPlaceable in iPlaceableToPlaceList) {
+            iPlaceable.SetAsPooledIPlaceable();
+        }
+
+        iPlaceableToPlaceList = new List<IPlaceable>();
+
+        PlayerStateUI.Instance.ResetPlayerGoldChangingUI();
+    }
+
     public bool IsMousePositionValidIPlaceableSpawningTarget() {
         GridPosition iPlaceableSpawnGridPosition = MousePositionManager.Instance.GetMouseGridPosition();
 
@@ -101,7 +112,7 @@ public class PlayerAction_SpawnIPlaceable : NetworkBehaviour {
 
     public void PlaceIPlaceableList() {
 
-        foreach(IPlaceable iPlaceable in iPlaceableToPlaceList) {
+        foreach (IPlaceable iPlaceable in iPlaceableToPlaceList) {
 
             iPlaceable.PlaceIPlaceable();
             spawnedOpponentIPlaceablesDictionary.Add(troopDictionaryInt, iPlaceable);
@@ -128,16 +139,8 @@ public class PlayerAction_SpawnIPlaceable : NetworkBehaviour {
         iPlaceableToPlaceList = new List<IPlaceable>();
     }
 
-    public void CancelIPlaceablePlacement() {
 
-        foreach (IPlaceable iPlaceable in iPlaceableToPlaceList) {
-            iPlaceable.SetAsPooledIPlaceable();
-        }
-
-        iPlaceableToPlaceList = new List<IPlaceable>();
-
-        PlayerStateUI.Instance.ResetPlayerGoldChangingUI();
-    }
+    #endregion
 
     #region OBJECT POOLING
 
@@ -148,7 +151,7 @@ public class PlayerAction_SpawnIPlaceable : NetworkBehaviour {
             int troopSOIndex = BattleDataManager.Instance.GetTroopSOIndex(troopSO);
 
             //int troopAmountToSpawn = (int)Mathf.Round(PlayerGoldManager.Instance.GetPlayerInitialGold() / troopSO.spawnTroopCost);
-            int troopAmountToSpawn = 1;
+            int troopAmountToSpawn = 5;
             for (int i = 0; i < troopAmountToSpawn; i++) {
                 SpawnTroopServerRpc(troopSOIndex, clientID);
             }

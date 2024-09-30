@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class Unit : NetworkBehaviour, ITargetable {
 
@@ -45,6 +46,9 @@ public class Unit : NetworkBehaviour, ITargetable {
     public class OnUnitSpecialEventArgs : EventArgs {
         public float effectDuration;
     }
+
+    protected float positionSyncDistanceTreshold = .05f;
+    protected Vector2 lastPosition;
 
     protected bool isPooled = true;
     private bool burning;
@@ -103,13 +107,16 @@ public class Unit : NetworkBehaviour, ITargetable {
     }
 
     protected void Update() {
+
         if (unitIsOnlyVisual) return;
         if (isPooled) return;
 
         HandlePositionOnGrid();
 
+        if (!unitIsBought) return;
+
         if(IsServer && BattleManager.Instance.IsBattlePhase()) {
-            HandlePositionSyncServerRpc(transform.position);
+            HandlePositionSync();
         }
 
         if(IsServer) {
@@ -165,16 +172,30 @@ public class Unit : NetworkBehaviour, ITargetable {
         }
     }
 
+    protected void HandlePositionSync() {
+        if (Vector2.Distance(lastPosition, transform.position) > positionSyncDistanceTreshold) {
+            lastPosition = transform.position;
+
+            short positionShortX = (short)(lastPosition.x * 100);  // Multiplier par 100 pour convertir en entier
+            short positionShortY = (short)(lastPosition.y * 100);
+            Vector2 positionShort = new Vector2(positionShortX, positionShortY);
+            HandlePositionSyncServerRpc(positionShort);
+
+        }
+    }
+
     [ServerRpc(RequireOwnership = false)]
-    protected void HandlePositionSyncServerRpc(Vector3 position) {
-        HandlePositionSyncClientRpc(position);
+    protected void HandlePositionSyncServerRpc(Vector2 positionShort) {
+        HandlePositionSyncClientRpc(positionShort);
     }
 
     [ClientRpc]
-    protected void HandlePositionSyncClientRpc(Vector3 position) {
+    protected void HandlePositionSyncClientRpc(Vector2 positionShort) {
         if (!IsServer) {
             // Mirror x position 
-            transform.position = new Vector3(position.x + (BattleGrid.Instance.GetBattlefieldMiddlePoint() - position.x) * 2, position.y, 0);
+            float posXx = positionShort.x / 100.0f;
+            float posYy = positionShort.y / 100.0f;
+            transform.position = new Vector3(posXx + (BattleGrid.Instance.GetBattlefieldMiddlePoint() - posXx) * 2, posYy, 0);
         }
     }
 

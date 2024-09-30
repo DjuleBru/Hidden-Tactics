@@ -469,6 +469,7 @@ public class Troop : NetworkBehaviour, IPlaceable {
 
     public void SetPlacingIPlaceable() {
         Debug.Log("SetPlacingIPlaceable");
+        SetInitialGridPosition();
 
         if (isOwnedByPlayer) {
             ActivateIPlaceable();
@@ -480,7 +481,6 @@ public class Troop : NetworkBehaviour, IPlaceable {
         isPooled = false;
 
         gameObject.SetActive(true);
-        SetInitialGridPosition();
 
         foreach (Unit unit in allUnitsInTroop) {
             //if (additionalUnitsInTroop.Contains(unit)) continue;
@@ -489,6 +489,7 @@ public class Troop : NetworkBehaviour, IPlaceable {
         foreach (Unit unit in originalAdditionalUnitsInTroop) {
             unit.SetUnitAsAdditionalUnit();
         }
+
         OnTroopActivated?.Invoke(this, EventArgs.Empty);
     }
 
