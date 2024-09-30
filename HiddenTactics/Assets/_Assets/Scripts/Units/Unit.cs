@@ -46,6 +46,7 @@ public class Unit : NetworkBehaviour, ITargetable {
         public float effectDuration;
     }
 
+    protected bool isPooled = true;
     private bool burning;
     private float burningTimer;
     private float burningDuration;
@@ -103,6 +104,7 @@ public class Unit : NetworkBehaviour, ITargetable {
 
     protected void Update() {
         if (unitIsOnlyVisual) return;
+        if (isPooled) return;
 
         HandlePositionOnGrid();
 
@@ -227,11 +229,6 @@ public class Unit : NetworkBehaviour, ITargetable {
 
     }
 
-    private void ParentTroop_OnTroopActivated(object sender, EventArgs e) {
-        GetComponent<NetworkObject>().Spawn();
-        GetComponent<NetworkObject>().TrySetParent(parentTroop.gameObject, true);
-    }
-
     public void SetParentBuilding() {
         GridPosition parentTroopCenterPointGridPosition = BattleGrid.Instance.GetGridPosition(parentTroop.GetTroopCenterPoint());
         Building parentBuilding = BattleGrid.Instance.GetBuildingAtGridPosition(parentTroopCenterPointGridPosition);
@@ -256,8 +253,14 @@ public class Unit : NetworkBehaviour, ITargetable {
     }
 
     public void ActivateUnit() {
+        isPooled = false;
         OnUnitActivated?.Invoke(this, EventArgs.Empty);
         gameObject.SetActive(true);
+    }
+
+    public void DeactivateUnit() {
+        isPooled = false;
+        gameObject.SetActive(false);
     }
 
     public void TakeKnockBack(Vector2 force) {
@@ -540,7 +543,6 @@ public class Unit : NetworkBehaviour, ITargetable {
     public void SetParentTroop(Troop parentTroop) {
         this.parentTroop = parentTroop;
         parentTroop.OnTroopPlaced += ParentTroop_OnTroopPlaced;
-        parentTroop.OnTroopActivated += ParentTroop_OnTroopActivated;
 
         parentTroop.AddUnitToUnitInTroopList(this);
 

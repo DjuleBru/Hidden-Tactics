@@ -241,12 +241,9 @@ public class Troop : NetworkBehaviour, IPlaceable {
     public void DeActivateIPlaceable() {
 
         foreach(Unit unit in allUnitsInTroop) {
-            unit.GetComponent<NetworkObject>().TryRemoveParent();
-            unit.GetComponent<NetworkObject>().Despawn(false);
-            unit.gameObject.SetActive(false);
+            unit.DeactivateUnit();
         }
 
-        GetComponent<NetworkObject>().Despawn(false);
         gameObject.SetActive(false);
     }
 
@@ -321,9 +318,7 @@ public class Troop : NetworkBehaviour, IPlaceable {
     public void PlaceIPlaceable() {
         Debug.Log("PlaceIPlaceable");
 
-        if (!isOwnedByPlayer) {
-            gameObject.SetActive(true);
-        }
+        ActivateIPlaceable();
 
         // Set placed troop on grid object
         BattleGrid.Instance.SetIPlaceableSpawnedAtGridPosition(this, currentGridPosition);
@@ -343,7 +338,6 @@ public class Troop : NetworkBehaviour, IPlaceable {
         }
 
         isPlaced = true;
-        isPooled = false;
         OnTroopPlaced?.Invoke(this, null);
         OnAnyTroopPlaced?.Invoke(this, EventArgs.Empty);
     }
@@ -474,27 +468,28 @@ public class Troop : NetworkBehaviour, IPlaceable {
     }
 
     public void SetPlacingIPlaceable() {
-        isPooled = false;
-        ActivateIPlaceable();
         Debug.Log("SetPlacingIPlaceable");
 
         if (isOwnedByPlayer) {
-            SetInitialGridPosition();
-            gameObject.SetActive(true);
-
-            foreach (Unit unit in allUnitsInTroop) {
-                //if (additionalUnitsInTroop.Contains(unit)) continue;
-                unit.ActivateUnit();
-            }
-            foreach(Unit unit in originalAdditionalUnitsInTroop) {
-                unit.SetUnitAsAdditionalUnit();
-            }
-            OnTroopActivated?.Invoke(this, EventArgs.Empty);
+            ActivateIPlaceable();
         }
     }
 
     private void ActivateIPlaceable() {
-        GetComponent<NetworkObject>().Spawn();
+        Debug.Log("ActivateIPlaceable");
+        isPooled = false;
+
+        gameObject.SetActive(true);
+        SetInitialGridPosition();
+
+        foreach (Unit unit in allUnitsInTroop) {
+            //if (additionalUnitsInTroop.Contains(unit)) continue;
+            unit.ActivateUnit();
+        }
+        foreach (Unit unit in originalAdditionalUnitsInTroop) {
+            unit.SetUnitAsAdditionalUnit();
+        }
+        OnTroopActivated?.Invoke(this, EventArgs.Empty);
     }
 
     public void SetAsPooledIPlaceable() {

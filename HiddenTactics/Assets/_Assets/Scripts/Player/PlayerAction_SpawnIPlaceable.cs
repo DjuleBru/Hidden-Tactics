@@ -11,14 +11,14 @@ public class PlayerAction_SpawnIPlaceable : NetworkBehaviour {
     private List<IPlaceable> iPlaceableToPlaceList;
     private List<IPlaceable> iPlaceablePoolList;
 
-    private Dictionary<int, IPlaceable> spawnedPlayerIPlaceablesDictionary;
-    private Dictionary<int, GridPosition> spawnedPlayerIPlaceableGridPositions;
+    private Dictionary<int, IPlaceable> spawnedOpponentIPlaceablesDictionary;
+    private Dictionary<int, GridPosition> spawnedOpponentIPlaceableGridPositions;
     private int troopDictionaryInt;
 
 
     private void Awake() {
-        spawnedPlayerIPlaceablesDictionary = new Dictionary<int, IPlaceable>();
-        spawnedPlayerIPlaceableGridPositions = new Dictionary<int, GridPosition>();
+        spawnedOpponentIPlaceablesDictionary = new Dictionary<int, IPlaceable>();
+        spawnedOpponentIPlaceableGridPositions = new Dictionary<int, GridPosition>();
 
         iPlaceableToPlaceList = new List<IPlaceable>();
         iPlaceablePoolList = new List<IPlaceable>();
@@ -45,22 +45,22 @@ public class PlayerAction_SpawnIPlaceable : NetworkBehaviour {
         if (BattleManager.Instance.IsBattlePhaseStarting()) {
             // Set & Fetch spawned troops data from server
 
-            Debug.Log("spawnedPlayerIPlaceablesDictionary.Count " + spawnedPlayerIPlaceablesDictionary.Count);
+            Debug.Log("spawnedOpponentIPlaceablesDictionary.Count " + spawnedOpponentIPlaceablesDictionary.Count);
 
-            for (int i = 0; i < spawnedPlayerIPlaceablesDictionary.Count; i++) {
-                IPlaceable spawnedIPLaceable = spawnedPlayerIPlaceablesDictionary[i];
-                GridPosition spawnedIPlaceableGridPosition = spawnedPlayerIPlaceableGridPositions[i];
+            for (int i = 0; i < spawnedOpponentIPlaceablesDictionary.Count; i++) {
+                IPlaceable spawnedIPLaceable = spawnedOpponentIPlaceablesDictionary[i];
+                GridPosition spawnedIPlaceableGridPosition = spawnedOpponentIPlaceableGridPositions[i];
 
                 Debug.Log(i);
 
                 if((spawnedIPLaceable as MonoBehaviour) != null) {
                     NetworkObjectReference spawnedIPlaceableNetworkObject = (spawnedIPLaceable as MonoBehaviour).GetComponent<NetworkObject>();
-                    SetOpponentIPlaceablePositionServerRpc(spawnedIPlaceableNetworkObject, spawnedIPlaceableGridPosition.x, spawnedIPlaceableGridPosition.y);
+                    ActivateOpponentPlaceableServerRpc(spawnedIPlaceableNetworkObject, spawnedIPlaceableGridPosition.x, spawnedIPlaceableGridPosition.y);
                 }
             }
 
-            spawnedPlayerIPlaceablesDictionary.Clear();
-            spawnedPlayerIPlaceableGridPositions.Clear();
+            spawnedOpponentIPlaceablesDictionary.Clear();
+            spawnedOpponentIPlaceableGridPositions.Clear();
         }
 
     }
@@ -104,18 +104,24 @@ public class PlayerAction_SpawnIPlaceable : NetworkBehaviour {
         foreach(IPlaceable iPlaceable in iPlaceableToPlaceList) {
 
             iPlaceable.PlaceIPlaceable();
-            spawnedPlayerIPlaceablesDictionary.Add(troopDictionaryInt, iPlaceable);
-            spawnedPlayerIPlaceableGridPositions.Add(troopDictionaryInt, iPlaceable.GetIPlaceableGridPosition());
+            spawnedOpponentIPlaceablesDictionary.Add(troopDictionaryInt, iPlaceable);
+            spawnedOpponentIPlaceableGridPositions.Add(troopDictionaryInt, iPlaceable.GetIPlaceableGridPosition());
             troopDictionaryInt++;
 
             if (iPlaceable is Building) {
                 Building buildingSpawned = (Building)iPlaceable;
                 PlayerGoldManager.Instance.SpendGold(buildingSpawned.GetBuildingSO().spawnBuildingCost, NetworkManager.Singleton.LocalClientId);
+
+                NetworkObject troopNetworkObject = buildingSpawned.GetComponent<NetworkObject>();
+                AddIPlaceableToOpponentDictionaryServerRpc(troopNetworkObject, NetworkManager.Singleton.LocalClientId, buildingSpawned.GetIPlaceableGridPosition().x, buildingSpawned.GetIPlaceableGridPosition().y);
             }
 
             if (iPlaceable is Troop) {
                 Troop troopSpawned = (Troop)iPlaceable;
                 PlayerGoldManager.Instance.SpendGold(troopSpawned.GetTroopSO().spawnTroopCost, NetworkManager.Singleton.LocalClientId);
+
+                NetworkObject troopNetworkObject = troopSpawned.GetComponent<NetworkObject>();
+                AddIPlaceableToOpponentDictionaryServerRpc(troopNetworkObject, NetworkManager.Singleton.LocalClientId, troopSpawned.GetIPlaceableGridPosition().x, troopSpawned.GetIPlaceableGridPosition().y);
             }
         }
 
@@ -284,6 +290,26 @@ public class PlayerAction_SpawnIPlaceable : NetworkBehaviour {
         }
     }
 
+    [ServerRpc(RequireOwnership = false)]
+    private void AddIPlaceableToOpponentDictionaryServerRpc(NetworkObjectReference iPlaceableToSpawnNetworkObjectReference, ulong ownerClientId, int gridPositionx, int gridPositiony) {
+        AddIPlaceableToOpponentDictionaryClientRpc(iPlaceableToSpawnNetworkObjectReference, ownerClientId, gridPositionx, gridPositiony);
+    }
+
+    [ClientRpc]
+    private void AddIPlaceableToOpponentDictionaryClientRpc(NetworkObjectReference iPlaceableToSpawnNetworkObjectReference, ulong ownerClientId, int gridPositionx, int gridPositiony) {
+
+        iPlaceableToSpawnNetworkObjectReference.TryGet(out NetworkObject iPlaceableToSpawnNetworkObject);
+        IPlaceable iPlaceable = iPlaceableToSpawnNetworkObject.GetComponent<IPlaceable>();
+        GridPosition spawnedIPlaceableGridPosition = new GridPosition(gridPositionx, gridPositiony);
+
+        if (ownerClientId != NetworkManager.Singleton.LocalClientId) {
+            spawnedOpponentIPlaceablesDictionary.Add(troopDictionaryInt, iPlaceable);
+            spawnedOpponentIPlaceableGridPositions.Add(troopDictionaryInt, spawnedIPlaceableGridPosition);
+            troopDictionaryInt++;
+
+            Debug.Log("added to opponent dictionary");
+        }
+    }
     #endregion
 
     #region SPAWN TROOPS, UNITS AND BUILDINGS
@@ -447,12 +473,12 @@ public class PlayerAction_SpawnIPlaceable : NetworkBehaviour {
     }
 
     [ServerRpc(RequireOwnership = false)]
-    private void SetOpponentIPlaceablePositionServerRpc(NetworkObjectReference IPlaceableNetworkObjectReference, int gridPositionx, int gridPositiony) {
-        SetOpponentIPlaceablePositionClientRpc(IPlaceableNetworkObjectReference, gridPositionx, gridPositiony);
+    private void ActivateOpponentPlaceableServerRpc(NetworkObjectReference IPlaceableNetworkObjectReference, int gridPositionx, int gridPositiony) {
+        ActivateOpponentIPlaceableClientRpc(IPlaceableNetworkObjectReference, gridPositionx, gridPositiony);
     }
 
     [ClientRpc]
-    private void SetOpponentIPlaceablePositionClientRpc(NetworkObjectReference IPlaceableNetworkObjectReference, int gridPositionx, int gridPositiony) {
+    private void ActivateOpponentIPlaceableClientRpc(NetworkObjectReference IPlaceableNetworkObjectReference, int gridPositionx, int gridPositiony) {
         IPlaceableNetworkObjectReference.TryGet(out NetworkObject IPlaceableToSpawnNetworkObject);
         IPlaceable iPlaceableSpawned = IPlaceableToSpawnNetworkObject.GetComponent<IPlaceable>();
         GridPosition spawnedIPlaceableGridPosition = new GridPosition(gridPositionx, gridPositiony);
