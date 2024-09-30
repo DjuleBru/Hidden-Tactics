@@ -229,7 +229,9 @@ public class Unit : NetworkBehaviour, ITargetable {
 
     private void ParentTroop_OnTroopActivated(object sender, EventArgs e) {
         GetComponent<NetworkObject>().Spawn();
+        Debug.Log("before unit try set parent");
         GetComponent<NetworkObject>().TrySetParent(parentTroop.gameObject, true);
+        Debug.Log("after unit try set parent");
     }
 
     public void SetParentBuilding() {
@@ -258,6 +260,14 @@ public class Unit : NetworkBehaviour, ITargetable {
     public void ActivateUnit() {
         OnUnitActivated?.Invoke(this, EventArgs.Empty);
         gameObject.SetActive(true);
+    }
+
+    public void DeActivateUnit() {
+        Debug.Log("before unit try remove parent");
+        GetComponent<NetworkObject>().TryRemoveParent();
+        Debug.Log("after unit try remove parent");
+        PlayerAction_SpawnIPlaceable.LocalInstance.DespawnPooledObject(GetComponent<NetworkObject>());
+        gameObject.SetActive(false);
     }
 
     public void TakeKnockBack(Vector2 force) {

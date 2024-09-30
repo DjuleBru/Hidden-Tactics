@@ -62,7 +62,7 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
     protected virtual void BattleManager_OnStateChanged(object sender, EventArgs e) {
         if (!gameObject.activeInHierarchy) return;
 
-        Debug.Log("synchronizing building data");
+        //Debug.Log("synchronizing building data");
 
         if (BattleManager.Instance.IsBattlePhaseStarting()) {
 

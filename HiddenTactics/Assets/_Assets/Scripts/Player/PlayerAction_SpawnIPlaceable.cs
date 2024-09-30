@@ -13,8 +13,13 @@ public class PlayerAction_SpawnIPlaceable : NetworkBehaviour {
 
     private Dictionary<int, IPlaceable> spawnedPlayerIPlaceablesDictionary;
     private Dictionary<int, GridPosition> spawnedPlayerIPlaceableGridPositions;
+    private Dictionary<ulong, NetworkObject> despawnedObjects = new Dictionary<ulong, NetworkObject>();
+    
     private int troopDictionaryInt;
 
+    //private List<ulong> clientsConfirmedSpawn = new List<ulong>();
+    private Dictionary<ulong, int> clientsConfirmedSpawn = new Dictionary<ulong, int>();
+    private ulong totalClients = 2;
 
     private void Awake() {
         spawnedPlayerIPlaceablesDictionary = new Dictionary<int, IPlaceable>();
@@ -159,10 +164,6 @@ public class PlayerAction_SpawnIPlaceable : NetworkBehaviour {
             }
         }
 
-        foreach (IPlaceable iPlaceable in iPlaceablePoolList) {
-            iPlaceable.DeActivateIPlaceable();
-        }
-
         iPlaceableToPlaceList.Clear();
     }
 
@@ -197,15 +198,44 @@ public class PlayerAction_SpawnIPlaceable : NetworkBehaviour {
         }
 
         foreach(IPlaceable iPlaceableToActivate in identifiedIPlaceableInPoolList) {
-
             iPlaceableToActivate.SetPlacingIPlaceable();
             iPlaceablePoolList.Remove(iPlaceableToActivate);
             iPlaceableToPlaceList.Add(iPlaceableToActivate);
-
         }
 
     }
-    
+
+    [ServerRpc(RequireOwnership = false)]
+    public void SpawnPooledIPlaceableServerRpc(ulong networkObjectId) {
+        if (!IsServer) return;
+
+        // Récupère l'objet depuis le dictionnaire des objets despawned
+        if (despawnedObjects.TryGetValue(networkObjectId, out NetworkObject networkObject)) {
+            if (!networkObject.IsSpawned) {
+                networkObject.Spawn();  // Re-spawn l'objet
+            }
+        }
+        else {
+            Debug.LogError($"Object with NetworkObjectId {networkObjectId} not found in despawned objects.");
+        }
+    }
+
+    public void DespawnPooledObject(NetworkObject networkObject) {
+
+        // Ajoute l'objet au dictionnaire avant de le despawner
+        if(!despawnedObjects.ContainsKey(networkObject.NetworkObjectId)) {
+            despawnedObjects[networkObject.NetworkObjectId] = networkObject;
+        }
+
+        DespawnPooledObjectServerRpc(networkObject);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void DespawnPooledObjectServerRpc(NetworkObjectReference networkObjectReference) {
+        networkObjectReference.TryGet(out NetworkObject networkObject);
+        networkObject.Despawn(false);  // Désactive sans le détruire
+    }
+
     private int CountIPlaceablesOfTypeInObjectPool(TroopSO troopSO) {
         int iPlaceableOfTypeNumber = 0;
 
@@ -247,7 +277,6 @@ public class PlayerAction_SpawnIPlaceable : NetworkBehaviour {
         foreach (IPlaceable iPlaceable in iPlaceablePoolList) {
             if (iPlaceable is Troop) {
                 Troop troop = iPlaceable as Troop;
-
                 if (troop.GetTroopSO() == troopSO && troop.IsOwnedByPlayer()) {
                     identifiedIPlaceableInPoolList = troop;
                 }
@@ -308,30 +337,30 @@ public class PlayerAction_SpawnIPlaceable : NetworkBehaviour {
         List<Transform> units2ToSpawnAdditionalPositions = troopToSpawnTroop.GetAdditionalUnit2Positions();
         List<Transform> spawnedUnitPositions = troopToSpawnTroop.GetSpawnedUnitsPositions();
 
-        SpawnUnits(troopToSpawnGameObject, unitsToSpawnBasePositions, false, false, 0);
-        SpawnUnits(troopToSpawnGameObject, unitsToSpawnAdditionalPositions, true, false, 0);
+        SpawnUnits(troopToSpawnGameObject, unitsToSpawnBasePositions, false, false, 0, ownerClientId);
+        SpawnUnits(troopToSpawnGameObject, unitsToSpawnAdditionalPositions, true, false, 0, ownerClientId);
 
         if(units1ToSpawnBasePositions.Count > 0) {
-            SpawnUnits(troopToSpawnGameObject, units1ToSpawnBasePositions, false, false, 1);
+            SpawnUnits(troopToSpawnGameObject, units1ToSpawnBasePositions, false, false, 1, ownerClientId);
         }
 
         if (units1ToSpawnAdditionalPositions.Count > 0) {
-            SpawnUnits(troopToSpawnGameObject, units1ToSpawnAdditionalPositions, true, false, 1);
+            SpawnUnits(troopToSpawnGameObject, units1ToSpawnAdditionalPositions, true, false, 1, ownerClientId);
         }
 
         if (units2ToSpawnBasePositions.Count > 0) {
-            SpawnUnits(troopToSpawnGameObject, units2ToSpawnBasePositions, false, false, 2);
+            SpawnUnits(troopToSpawnGameObject, units2ToSpawnBasePositions, false, false, 2, ownerClientId);
         }
 
         if (units2ToSpawnAdditionalPositions.Count > 0) {
-            SpawnUnits(troopToSpawnGameObject, units2ToSpawnAdditionalPositions, true, false, 2);
+            SpawnUnits(troopToSpawnGameObject, units2ToSpawnAdditionalPositions, true, false, 2, ownerClientId);
         }
 
         if (spawnedUnitPositions.Count > 0) {
-            SpawnUnits(troopToSpawnGameObject, spawnedUnitPositions, false, true, 3);
+            SpawnUnits(troopToSpawnGameObject, spawnedUnitPositions, false, true, 3, ownerClientId);
         }
 
-        DeActivateOpponentIPlaceableClientRpc(troopNetworkObject);
+        SpawnObjectClientRpc(troopNetworkObject.NetworkObjectId, ownerClientId);
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -351,15 +380,17 @@ public class PlayerAction_SpawnIPlaceable : NetworkBehaviour {
             SpawnTroopServerRpc(troopIndex, ownerClientId);
         }
 
-        DeActivateOpponentIPlaceableClientRpc(buildingNetworkObject);
+        //DeActivateIPlaceableClientRpc(buildingNetworkObject);
     }
 
     [ClientRpc]
     private void SpawnIPlaceableClientRpc(NetworkObjectReference iPlaceableToSpawnNetworkObjectReference, ulong ownerClientId) {
+        Debug.Log("SpawnIPlaceableClientRpc");
         iPlaceableToSpawnNetworkObjectReference.TryGet(out NetworkObject iPlaceableToSpawnNetworkObject);
         IPlaceable iPlaceableToSpawn = iPlaceableToSpawnNetworkObject.GetComponent<IPlaceable>();
 
         if (ownerClientId == NetworkManager.Singleton.LocalClientId) {
+            Debug.Log("added to local iPlaceablePoolList");
             iPlaceablePoolList.Add(iPlaceableToSpawn);
         }
 
@@ -369,14 +400,64 @@ public class PlayerAction_SpawnIPlaceable : NetworkBehaviour {
     }
 
     [ClientRpc]
-    private void DeActivateOpponentIPlaceableClientRpc(NetworkObjectReference iPlaceableToSpawnNetworkObjectReference) {
-        iPlaceableToSpawnNetworkObjectReference.TryGet(out NetworkObject iPlaceableToSpawnNetworkObject);
-        IPlaceable iPlaceableToSpawn = iPlaceableToSpawnNetworkObject.GetComponent<IPlaceable>();
+    private void SpawnObjectClientRpc(ulong networkObjectId, ulong ownerClientId) {
+        // Le client reçoit l'instruction de spawn
+        if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(networkObjectId, out NetworkObject networkObject)) {
+            // Logique supplémentaire après le spawn côté client (si nécessaire)
+            Debug.Log("Troop spawned on client: " + networkObjectId);
 
-        iPlaceableToSpawn.DeActivateIPlaceable();
+            // Confirmer au serveur que l'objet a été spawné côté client
+            ConfirmSpawnServerRpc(networkObjectId);
+        }
     }
 
-    private List<NetworkObject> SpawnUnits(NetworkObjectReference troopToSpawnNetworkObjectReference, List<Transform> unitsToSpawnPositionList, bool isAdditionalUnits, bool isSpawnedUnit, int unitTypeNumberInTroop) {
+    [ServerRpc(RequireOwnership =false)]
+    private void ConfirmSpawnServerRpc(ulong networkObjectId) {
+        Debug.Log("confirm spawn client RPC");
+        // Chaque client envoie une confirmation au serveur
+        OnClientConfirmedSpawn(networkObjectId);
+    }
+
+    public void OnClientConfirmedSpawn(ulong networkObjectId) {
+        // Ajoute le client actuel à la liste des clients ayant confirmé
+        if(!clientsConfirmedSpawn.ContainsKey(networkObjectId)) {
+            clientsConfirmedSpawn[networkObjectId] = 0;
+        }
+        clientsConfirmedSpawn[networkObjectId] += 1;
+        //clientsConfirmedSpawn.Add(NetworkManager.Singleton.LocalClientId);
+
+        Debug.Log(clientsConfirmedSpawn[networkObjectId] + " clients confirmed spawn of object " + networkObjectId);
+        // Si tous les clients ont confirmé le spawn
+
+        if (clientsConfirmedSpawn[networkObjectId] == (int)totalClients) {
+
+            // Désactivé ou despawn l'objet une fois toutes les confirmations reçues
+            Debug.Log("All clients confirmed, despawning object.");
+            StartCoroutine(DespawnAfterAllClientsConfirmed(networkObjectId));
+            
+        }
+    }
+    private IEnumerator DespawnAfterAllClientsConfirmed(ulong networkObjectId) {
+        Debug.Log("Start Coroutine DespawnAfterAllClientsConfirmed");
+        // Attendre 1 ou 2 secondes après les confirmations de spawn
+        yield return new WaitForSeconds(2.0f);
+
+        if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(networkObjectId, out NetworkObject networkObject)) {
+            networkObject.Despawn(false); // Désactive sans détruire
+            Debug.Log($"Despawning object {networkObjectId} after waiting.");
+
+            // Réinitialise la liste de confirmation
+            clientsConfirmedSpawn[networkObjectId] = 0;
+        }
+    }
+
+    [ClientRpc]
+    private void DeActivateIPlaceableClientRpc(NetworkObjectReference iPlaceableToSpawnNetworkObjectReference) {
+        iPlaceableToSpawnNetworkObjectReference.TryGet(out NetworkObject iPlaceableToSpawnNetworkObject);
+        IPlaceable iPlaceableToSpawn = iPlaceableToSpawnNetworkObject.GetComponent<IPlaceable>();
+    }
+
+    private List<NetworkObject> SpawnUnits(NetworkObjectReference troopToSpawnNetworkObjectReference, List<Transform> unitsToSpawnPositionList, bool isAdditionalUnits, bool isSpawnedUnit, int unitTypeNumberInTroop, ulong ownerClientId) {
         troopToSpawnNetworkObjectReference.TryGet(out NetworkObject troopToSpawnNetworkObject);
         Troop troopToSpawnTroop = troopToSpawnNetworkObject.GetComponent<Troop>();
         GameObject troopToSpawnGameObject = troopToSpawnTroop.gameObject;
@@ -409,6 +490,8 @@ public class PlayerAction_SpawnIPlaceable : NetworkBehaviour {
             SetUnitInitialConditionsClientRpc(unitNetworkObject, troopToSpawnNetworkObject, unitPositionTransform.position, isAdditionalUnits, isSpawnedUnit);
 
             unitsSpawnedNetworkObjectList.Add(unitNetworkObject);
+
+            SpawnObjectClientRpc(unitNetworkObject.NetworkObjectId, ownerClientId);
         }
 
         return unitsSpawnedNetworkObjectList;

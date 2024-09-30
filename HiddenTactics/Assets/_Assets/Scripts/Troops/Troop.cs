@@ -24,6 +24,7 @@ public class Troop : NetworkBehaviour, IPlaceable {
 
     protected bool isPooled = true;
     protected bool isPlaced;
+    protected bool isFirstSpawn = true;
     protected bool isOwnedByPlayer;
     protected bool additionalUnitsHaveBeenBought;
     protected bool troopIsDead;
@@ -116,7 +117,12 @@ public class Troop : NetworkBehaviour, IPlaceable {
     }
 
     public override void OnNetworkSpawn() {
-        BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
+        base.OnNetworkSpawn();
+
+        Debug.Log("OnNetworkSpawn on client");
+        if (isFirstSpawn) {
+            BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
+        }
     }
 
     protected void Update() {
@@ -225,6 +231,7 @@ public class Troop : NetworkBehaviour, IPlaceable {
     }
 
     public void SetIPlaceableOwnerClientId(ulong clientId) {
+        Debug.Log(this + " SetIPlaceableOwnerClientId ");
         ownerClientId = clientId;
         isOwnedByPlayer = (ownerClientId == NetworkManager.Singleton.LocalClientId);
     }
@@ -240,13 +247,11 @@ public class Troop : NetworkBehaviour, IPlaceable {
 
     public void DeActivateIPlaceable() {
 
-        foreach(Unit unit in allUnitsInTroop) {
-            unit.GetComponent<NetworkObject>().TryRemoveParent();
-            unit.GetComponent<NetworkObject>().Despawn(false);
-            unit.gameObject.SetActive(false);
+        foreach (Unit unit in allUnitsInTroop) {
+            unit.DeActivateUnit();
         }
 
-        GetComponent<NetworkObject>().Despawn(false);
+        PlayerAction_SpawnIPlaceable.LocalInstance.DespawnPooledObject(GetComponent<NetworkObject>());
         gameObject.SetActive(false);
     }
 
@@ -494,7 +499,7 @@ public class Troop : NetworkBehaviour, IPlaceable {
     }
 
     private void ActivateIPlaceable() {
-        GetComponent<NetworkObject>().Spawn();
+        PlayerAction_SpawnIPlaceable.LocalInstance.SpawnPooledIPlaceableServerRpc(GetComponent<NetworkObject>().NetworkObjectId);
     }
 
     public void SetAsPooledIPlaceable() {
@@ -627,6 +632,7 @@ public class Troop : NetworkBehaviour, IPlaceable {
     }
 
     public override void OnDestroy() {
+        Debug.Log("troop destroyed");
         BattleManager.Instance.OnStateChanged -= BattleManager_OnStateChanged;
     }
 }
