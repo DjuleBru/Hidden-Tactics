@@ -39,10 +39,10 @@ public class Unit : NetworkBehaviour, ITargetable {
     public event EventHandler OnUnitScaredEnded;
     public event EventHandler OnUnitWebbedEnded;
 
-
     [SerializeField] private Transform projectileTarget;
     [SerializeField] private UnitVisual unitVisual;
     [SerializeField] private UnitUI unitUI;
+
     public class OnUnitSpecialEventArgs : EventArgs {
         public float effectDuration;
     }
@@ -105,6 +105,8 @@ public class Unit : NetworkBehaviour, ITargetable {
             BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
         }
     }
+
+    
 
     protected void Update() {
 
@@ -233,10 +235,6 @@ public class Unit : NetworkBehaviour, ITargetable {
             collider2d.enabled = false;
         }
 
-        if(parentTroop.GetTroopSO().isGarrisonedTroop) {
-            SetParentBuilding();
-        }
-
         currentGridPosition = parentTroop.GetIPlaceableGridPosition();
         GridPosition newGridPosition = BattleGrid.Instance.GetGridPosition(transform.position);
         BattleGrid.Instance.UnitMovedGridPosition(this, currentGridPosition, newGridPosition);
@@ -250,11 +248,8 @@ public class Unit : NetworkBehaviour, ITargetable {
 
     }
 
-    public void SetParentBuilding() {
-        GridPosition parentTroopCenterPointGridPosition = BattleGrid.Instance.GetGridPosition(parentTroop.GetTroopCenterPoint());
-        Building parentBuilding = BattleGrid.Instance.GetBuildingAtGridPosition(parentTroopCenterPointGridPosition);
-        this.parentBuilding = parentBuilding;
-        parentTroop.SetParentBuilding(parentBuilding);
+    public void SetParentBuilding(Building building) {
+        this.parentBuilding = building;
     }
 
     public virtual void ResetUnit() {
@@ -560,7 +555,6 @@ public class Unit : NetworkBehaviour, ITargetable {
     #endregion
 
     #region SET PARAMETERS
-
     public void SetParentTroop(Troop parentTroop) {
         this.parentTroop = parentTroop;
         parentTroop.OnTroopPlaced += ParentTroop_OnTroopPlaced;

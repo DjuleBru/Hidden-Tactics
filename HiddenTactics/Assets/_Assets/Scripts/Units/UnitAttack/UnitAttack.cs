@@ -21,6 +21,8 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
     protected UnitAI unitAI;
     protected UnitMovement unitMovement;
 
+    protected List<Projectile> projectilePool = new List<Projectile>();
+
     protected AttackSO activeAttackSO;
     protected ITargetable attackTarget;
     protected float attackDamage;
@@ -71,6 +73,10 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
         unitAI.OnStateChanged += UnitAI_OnStateChanged;
 
         BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
+
+        if(IsServer) {
+            InitializeProjectilePoolServerRpc();
+        }
     }
 
     protected virtual void Update() {
@@ -190,8 +196,18 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
     protected void Shoot(ITargetable target) {
         if (target as MonoBehaviour == null) return;
         NetworkObject targetUnitNetworkObject = (target as MonoBehaviour).GetComponent<NetworkObject>();
+
+        NetworkObject projectileNetworkObject = null;
+
+        foreach (Projectile projectile in projectilePool) {
+            if (projectile.GetIsPooledProjectile()) {
+                projectileNetworkObject = projectile.GetComponent<NetworkObject>();
+                break;
+            }
+        }
+
         if(IsServer) {
-            SpawnProjectileServerRpc(targetUnitNetworkObject);
+            InitializeProjectileServerRpc(projectileNetworkObject, targetUnitNetworkObject);
         }
     }
 
@@ -409,32 +425,57 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
         attackHasAOE = attackSO.attackHasAOE;
         attackSpecialList = attackSO.attackSpecialList;
     }
-        
+
+    #region PROJECTILES
+
     [ServerRpc(RequireOwnership = false)]
-    protected void SpawnProjectileServerRpc(NetworkObjectReference targetUnitNetworkObjectReference) {
+    public void InitializeProjectilePoolServerRpc() {
 
-        targetUnitNetworkObjectReference.TryGet(out NetworkObject targetUnitNetworkObject);
+        if (unit.GetUnitSO().mainAttackSO.projectilePrefab != null) {
+            int projectileNumber = 2;
 
-        GameObject projectile = Instantiate(activeAttackSO.projectilePrefab, projectileSpawnPoint.position, Quaternion.identity);
+            for (int i = 0; i < projectileNumber; i++) {
+                SpawnProjectileServerRpc();
+            }
+        }
+       
+    }
+
+
+    [ServerRpc(RequireOwnership = false)]
+    protected void SpawnProjectileServerRpc() {
+        GameObject projectile = Instantiate(unit.GetUnitSO().mainAttackSO.projectilePrefab, projectileSpawnPoint.position, Quaternion.identity);
         NetworkObject projectileNetworkObject = projectile.GetComponent<NetworkObject>();
 
         projectileNetworkObject.Spawn(true);
+        SpawnProjectileClientRpc(projectileNetworkObject);
+    }
 
-        InitializeProjectileClientRpc(projectileNetworkObject, targetUnitNetworkObject);
+    [ClientRpc]
+    protected void SpawnProjectileClientRpc(NetworkObjectReference projectileNetworkObjectReferenc) {
+        projectileNetworkObjectReferenc.TryGet(out NetworkObject projectileNetworkObject);
+        projectileNetworkObject.gameObject.SetActive(false);
+
+        projectilePool.Add(projectileNetworkObject.GetComponent<Projectile>());
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    protected void InitializeProjectileServerRpc(NetworkObjectReference projectileNetworkObjectReference, NetworkObjectReference targetUnitNetworkObjectReference) {
+        InitializeProjectileClientRpc(projectileNetworkObjectReference, targetUnitNetworkObjectReference);
     }
 
     [ClientRpc]
     protected void InitializeProjectileClientRpc(NetworkObjectReference projectileNetworkObjectReference, NetworkObjectReference targetNetworkReference) {
-
         targetNetworkReference.TryGet(out NetworkObject targetNetworkObject);
         ITargetable target = targetNetworkObject.GetComponent<ITargetable>();
 
         projectileNetworkObjectReference.TryGet(out NetworkObject projectileNetworkObject);
         Projectile projectile = projectileNetworkObject.GetComponent<Projectile>();
 
-        projectile.GetComponent<Projectile>().Initialize(this, target);
+        projectile.GetComponent<Projectile>().ActivateAndInitialize(this, target);
     }
 
+    #endregion
 
     [ServerRpc(RequireOwnership = false)]
     protected void RandomizeAttackTimersServerRpc() {

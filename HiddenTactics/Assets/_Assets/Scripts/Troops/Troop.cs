@@ -135,15 +135,7 @@ public class Troop : NetworkBehaviour, IPlaceable {
 
     protected virtual void BattleManager_OnStateChanged(object sender, EventArgs e) {
 
-        if (!gameObject.activeInHierarchy) return;
-
-        Debug.Log("synchronizing troop data");
-
         if (BattleManager.Instance.IsBattlePhaseStarting()) {
-
-            if (troopSelled) {
-                SetAsPooledIPlaceable();
-            }
 
             if(troopSelected) {
                 SetTroopSelected(false);
@@ -153,10 +145,14 @@ public class Troop : NetworkBehaviour, IPlaceable {
                 SetTroopHovered(false);
             }
 
-            UpdateTroopServerRpc();
+            if(isOwnedByPlayer) {
+                UpdateTroopServerRpc(additionalUnitsHaveBeenBought, troopSelled);
+            }
 
             troopWasPlacedThisPreparationPhase = false;
         }
+
+        if (!gameObject.activeInHierarchy) return;
 
         if (BattleManager.Instance.IsBattlePhaseEnding()) {
             DeactivateAllDynamicallySpawnedUnits();
@@ -264,7 +260,6 @@ public class Troop : NetworkBehaviour, IPlaceable {
 
     [ClientRpc]
     protected void BuyAdditionalUnitsClientRpc() {
-        Debug.Log("BuyAdditionalUnitsClientRpc isOwnedByPlayer " + isOwnedByPlayer);
 
         if (isOwnedByPlayer) {
             foreach (Unit unit in additionalUnitsInTroop) {
@@ -286,24 +281,36 @@ public class Troop : NetworkBehaviour, IPlaceable {
     }
 
     [ServerRpc(RequireOwnership =false)]
-    protected void UpdateTroopServerRpc() {
-        UpdateTroopClientRpc();
+    protected void UpdateTroopServerRpc(bool additionalUnitsHaveBeenBought, bool troopSelled) {
+
+        if(additionalUnitsHaveBeenBought) {
+            UpdateAdditionalTroopsClientRpc();
+        }
+
+        if(troopSelled) {
+            UpdateSellTroopClientRpc();
+        }
+
     }
 
     [ClientRpc]
-    protected void UpdateTroopClientRpc() {
-        if (!isOwnedByPlayer && additionalUnitsHaveBeenBought == true) {
-
-            foreach (Unit unit in additionalUnitsInTroop) {
-                unit.ActivateAdditionalUnit();
-            }
-            additionalUnitsInTroop.Clear();
+    protected void UpdateAdditionalTroopsClientRpc() {
+        foreach (Unit unit in additionalUnitsInTroop) {
+            unit.ActivateAdditionalUnit();
         }
+        additionalUnitsInTroop.Clear();
+    }
+
+    [ClientRpc]
+    protected void UpdateSellTroopClientRpc() {
+        Debug.Log(this + " SellTroopClientRpc");
+        SetAsPooledIPlaceable();
     }
 
     public void SellTroop() {
+        Debug.Log("sell troop");
+
         troopSelled = true;
-        additionalUnitsHaveBeenBought = false;
         OnTroopUnselected?.Invoke(this, EventArgs.Empty);
         OnAnyTroopSelled?.Invoke(this, EventArgs.Empty);
         OnTroopSelled?.Invoke(this, EventArgs.Empty);
@@ -315,9 +322,8 @@ public class Troop : NetworkBehaviour, IPlaceable {
         SetAsPooledIPlaceable();
     }
 
-    public void PlaceIPlaceable() {
-        Debug.Log("PlaceIPlaceable");
 
+    public void PlaceIPlaceable() {
         ActivateIPlaceable();
 
         // Set placed troop on grid object
@@ -477,9 +483,8 @@ public class Troop : NetworkBehaviour, IPlaceable {
     }
 
     private void ActivateIPlaceable() {
-        Debug.Log("ActivateIPlaceable");
         isPooled = false;
-
+        troopSelled = false;
         gameObject.SetActive(true);
 
         foreach (Unit unit in allUnitsInTroop) {
@@ -497,6 +502,8 @@ public class Troop : NetworkBehaviour, IPlaceable {
         Debug.Log("SetAsPooledIPlaceable");
         isPooled = true;
         isPlaced = false;
+        additionalUnitsHaveBeenBought = false;
+        troopIsDead = false;
 
         BattleGrid.Instance.RemoveIPlaceableAtGridPosition(currentGridPosition, this);
         BattleGrid.Instance.ResetIPlaceableSpawnedAtGridPosition(currentGridPosition);
@@ -514,6 +521,10 @@ public class Troop : NetworkBehaviour, IPlaceable {
         parentBuilding = building;
         parentBuilding.OnBuildingDestroyed += ParentBuilding_OnBuildingDestroyed;
         parentBuilding.OnBuildingSelled += ParentBuilding_OnBuildingSelled;
+
+        foreach(Unit unit in allUnitsInTroop) {
+            unit.SetParentBuilding(building);
+        }
     }
 
     protected void ParentBuilding_OnBuildingSelled(object sender, EventArgs e) {

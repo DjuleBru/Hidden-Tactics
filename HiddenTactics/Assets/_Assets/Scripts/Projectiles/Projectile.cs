@@ -45,6 +45,7 @@ public class Projectile : NetworkBehaviour
     protected float nextPositionXCorrectionAbsolute;
 
     protected bool projectileHasHit;
+    protected bool projectileIsPooled = true;
 
     protected void Start() {
         trajectoryStartPoint = transform.position;
@@ -54,6 +55,7 @@ public class Projectile : NetworkBehaviour
     }
 
     private void BattleManager_OnStateChanged(object sender, EventArgs e) {
+        if (projectileIsPooled) return;
         if(BattleManager.Instance.IsBattlePhaseEnding()) {
             projectileHasHit = true;
             StartCoroutine(DestroyProjectile());
@@ -62,6 +64,7 @@ public class Projectile : NetworkBehaviour
 
     protected virtual void Update() {
         if (projectileHasHit) return;
+        if (projectileIsPooled) return;
 
         UpdateProjectilePosition();
         UpdateTrajectoryEndPoint();
@@ -76,7 +79,11 @@ public class Projectile : NetworkBehaviour
         }
     }
 
-    public void Initialize(UnitAttack unitAttackOrigin, ITargetable target) {
+    public void ActivateAndInitialize(UnitAttack unitAttackOrigin, ITargetable target) {
+        gameObject.SetActive(true);
+        projectileIsPooled = false;
+        projectileHasHit = false;
+
         this.target = target;
         this.unitAttackOrigin = unitAttackOrigin;
         targetTransform = target.GetProjectileTarget();
@@ -202,7 +209,7 @@ public class Projectile : NetworkBehaviour
         yield return new WaitForSeconds(.5f);
 
         if(IsServer) {
-            Destroy(gameObject);
+            SetAsPooledProjectile();
         }
     }
 
@@ -226,7 +233,6 @@ public class Projectile : NetworkBehaviour
 
         projectileHitVisual.Initialize(transform.position);
     }
-
 
     public Vector2 GetTrajectoryEndPoint() {
         return trajectoryEndPointRandomized;
@@ -267,6 +273,15 @@ public class Projectile : NetworkBehaviour
     }
     public float GetNextPositionXCorrectionAbsolute() {
         return nextPositionXCorrectionAbsolute;
+    }
+
+    public void SetAsPooledProjectile() {
+        gameObject.SetActive(false);
+        projectileIsPooled = true;
+    }
+
+    public bool GetIsPooledProjectile() {
+        return projectileIsPooled;
     }
 
     public override void OnDestroy() {

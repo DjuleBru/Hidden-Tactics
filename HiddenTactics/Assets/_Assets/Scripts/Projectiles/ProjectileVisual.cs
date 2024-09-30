@@ -25,6 +25,8 @@ public class ProjectileVisual : MonoBehaviour
     }
 
     private void Update() {
+        if (projectile.GetIsPooledProjectile()) return;
+
         UpdateShadowPosition();
         UpdateProjectileRotation();
     }
@@ -62,7 +64,8 @@ public class ProjectileVisual : MonoBehaviour
 
 
     public void InitializeProjectileVisual(ITargetable target) {
-        if(target is Building) {
+        SetProjectileVisualActive();
+        if (target is Building) {
             trailRenderer.endColor = new Color(1f, .1f, 0f, 1f);
             trailRenderer.startColor = new Color(1f, .8f, 0f, 1f);
         }
@@ -71,5 +74,10 @@ public class ProjectileVisual : MonoBehaviour
     public void SetProjectileVisualInactive() {
         bodyVisual.gameObject.SetActive(false);
         shadowVisual.gameObject.SetActive(false);
+    }
+
+    public void SetProjectileVisualActive() {
+        bodyVisual.gameObject.SetActive(true);
+        shadowVisual.gameObject.SetActive(true);
     }
 }

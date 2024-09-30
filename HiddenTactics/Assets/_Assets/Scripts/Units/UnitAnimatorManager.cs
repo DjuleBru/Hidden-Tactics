@@ -143,6 +143,7 @@ public class UnitAnimatorManager : NetworkBehaviour
         if (!unit.GetUnitIsBought()) return;
         if (SettingsManager.Instance.GetTacticalViewSetting()) return;
         unitGeneralAnimator.SetTrigger("UnitPlaced");
+
     }
 
     public void TriggerUnitOnlyVisualPlaced() {

@@ -73,19 +73,20 @@ public class UnitVisual : NetworkBehaviour
     public override void OnNetworkSpawn() {
         if (unit.GetUnitSO().isInvisibleGarrisonedUnit) return;
         SubscribeToEvents();
-
     }
 
     protected virtual void Start() {
+
+        if (unit.GetUnitIsOnlyVisual()) {
+            ChangeSpriteRendererListMaterial(allVisualsSpriteRendererList, cleanMaterial);
+            return;
+        }
 
         if (unit.GetUnitSO().isInvisibleGarrisonedUnit) {
             selectedVisual.gameObject.SetActive(false);
             gameObject.SetActive(false);
         }
 
-        if (unit.GetUnitIsOnlyVisual()) {
-            ChangeSpriteRendererListMaterial(allVisualsSpriteRendererList, cleanMaterial);
-        }
     }
 
     private void SetInitialVisuals() {
@@ -243,7 +244,6 @@ public class UnitVisual : NetworkBehaviour
 
         if (SettingsManager.Instance.GetTacticalViewSetting()) return;
         ChangeSpriteRendererListMaterial(allVisualsSpriteRendererList, cleanMaterial);
-        SetFactionVisualColor();
 
         //Activate shadows
         foreach (GameObject shadowGameObject in shadowGameObjectList) {
@@ -253,7 +253,6 @@ public class UnitVisual : NetworkBehaviour
 
     private void Unit_OnUnitDynamicallySpawned(object sender, EventArgs e) {
         ChangeSpriteRendererListMaterial(allVisualsSpriteRendererList, cleanMaterial);
-        SetFactionVisualColor();
 
         //Activate shadows
         foreach (GameObject shadowGameObject in shadowGameObjectList) {
@@ -262,8 +261,6 @@ public class UnitVisual : NetworkBehaviour
     }
 
     protected virtual void Unit_OnUnitPlaced(object sender, System.EventArgs e) {
-        SetFactionVisualColor();
-
         if (SettingsManager.Instance.GetTacticalViewSetting()) return;
         ChangeSpriteRendererListMaterial(allVisualsSpriteRendererList, cleanMaterial);
     }
@@ -295,10 +292,16 @@ public class UnitVisual : NetworkBehaviour
     }
 
     private void Unit_OnUnitActivated(object sender, EventArgs e) {
+        SetFactionVisualColor();
         gameObject.SetActive(true);
         SetUnitCircleGameObjectsActive(true);
-        SetUnitCircleGameObjectsEnabled(true);
         SetInitialVisuals();
+
+        if (unit.IsOwnedByPlayer()) {
+            SetUnitCircleGameObjectsEnabled(true);
+        } else {
+            ResetUnitCircleVisuals();
+        }
     }
 
     private void SetFactionVisualColor() {
@@ -441,7 +444,6 @@ public class UnitVisual : NetworkBehaviour
 
     public void ShowAsAdditionalUnitToBuy() {
         ChangeSpriteRendererListMaterial(allVisualsSpriteRendererList, placingUnitMaterial);
-        SetFactionVisualColor();
         gameObject.SetActive(true);
         baseOutlineSpriteRenderer.enabled = true;
         baseCircleSpriteRenderer.enabled = true;
@@ -458,6 +460,7 @@ public class UnitVisual : NetworkBehaviour
     }
 
     public void ResetUnitVisuals() {
+        SetUnitHovered(false);
         ChangeSpriteRendererListMaterial(allVisualsSpriteRendererList, cleanMaterial);
         ChangeSpriteRendererListSortingOrder(allVisualsSpriteRendererList, 0);
 
@@ -486,6 +489,13 @@ public class UnitVisual : NetworkBehaviour
         baseCircleSpriteRenderer.enabled = enabled;
         selectedUnitSpriteRenderer.enabled = enabled;
         shadowBaseSpriteRenderer.enabled = enabled;
+    }
+
+    private void ResetUnitCircleVisuals() {
+        baseOutlineSpriteRenderer.enabled = false;
+        baseCircleSpriteRenderer.enabled = false;
+        selectedUnitSpriteRenderer.enabled = false;
+        shadowBaseSpriteRenderer.enabled = true;
     }
 
     public override void OnDestroy() {

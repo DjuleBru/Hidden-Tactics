@@ -45,12 +45,15 @@ public class UnitTargetingSystem : NetworkBehaviour
 
     protected void Start() {
         unit.OnUnitReset += Unit_OnUnitReset;
+    }
+
+    public override void OnNetworkSpawn() {
+        base.OnNetworkSpawn();
         unit.OnParentTroopSet += Unit_OnParentTroopSet;
-        InitializeAttackPositions();
     }
 
     private void Unit_OnParentTroopSet(object sender, System.EventArgs e) {
-        //InitializeAttackPositions();
+        InitializeAttackPositions();
     }
 
     private void InitializeAttackPositions() {
@@ -397,7 +400,7 @@ public class UnitTargetingSystem : NetworkBehaviour
 
         int xMultiplier = 1;
         // Reverse x if unit is opponent troop
-        if(!unit.GetParentTroop().IsOwnedByPlayer()) {
+        if(!unit.IsOwnedByPlayer()) {
             xMultiplier = -1;
         }
 

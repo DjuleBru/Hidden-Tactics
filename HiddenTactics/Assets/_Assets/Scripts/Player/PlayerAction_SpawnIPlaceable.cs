@@ -34,6 +34,8 @@ public class PlayerAction_SpawnIPlaceable : NetworkBehaviour {
     }
 
     private void BattleManager_OnStateChanged(object sender, System.EventArgs e) {
+        if (!IsOwner) return;
+
         // Destroy troop to spawn 
         if (iPlaceableToPlaceList.Count != 0) {
             CancelIPlaceablePlacement();
@@ -42,15 +44,11 @@ public class PlayerAction_SpawnIPlaceable : NetworkBehaviour {
         troopDictionaryInt = 0;
 
         if (BattleManager.Instance.IsBattlePhaseStarting()) {
-            // Set & Fetch spawned troops data from server
 
-            Debug.Log("spawnedOpponentIPlaceablesDictionary.Count " + spawnedOpponentIPlaceablesDictionary.Count);
-
+            // Activate opponent IPlaceables
             for (int i = 0; i < spawnedOpponentIPlaceablesDictionary.Count; i++) {
                 IPlaceable spawnedIPLaceable = spawnedOpponentIPlaceablesDictionary[i];
                 GridPosition spawnedIPlaceableGridPosition = spawnedOpponentIPlaceableGridPositions[i];
-
-                Debug.Log(i);
 
                 if((spawnedIPLaceable as MonoBehaviour) != null) {
                     NetworkObjectReference spawnedIPlaceableNetworkObject = (spawnedIPLaceable as MonoBehaviour).GetComponent<NetworkObject>();
@@ -111,7 +109,6 @@ public class PlayerAction_SpawnIPlaceable : NetworkBehaviour {
     }
 
     public void PlaceIPlaceableList() {
-
         foreach (IPlaceable iPlaceable in iPlaceableToPlaceList) {
 
             iPlaceable.PlaceIPlaceable();
@@ -161,8 +158,8 @@ public class PlayerAction_SpawnIPlaceable : NetworkBehaviour {
             if (buildingSO == null) continue;
             int buildingSOIndex = BattleDataManager.Instance.GetBuildingSOIndex(buildingSO);
 
-            int buildingAmountToSpawn = (int)Mathf.Round(PlayerGoldManager.Instance.GetPlayerInitialGold() / buildingSO.spawnBuildingCost);
-
+            //int buildingAmountToSpawn = (int)Mathf.Round(PlayerGoldManager.Instance.GetPlayerInitialGold() / buildingSO.spawnBuildingCost);
+            int buildingAmountToSpawn = 3;
             for (int i = 0; i < buildingAmountToSpawn; i++) {
                 SpawnBuildingServerRpc(buildingSOIndex, clientID);
             }
@@ -205,6 +202,7 @@ public class PlayerAction_SpawnIPlaceable : NetworkBehaviour {
             identifiedIPlaceableInPoolList = FindPlaceableList(buildingToSpawnSO);
         }
 
+        Debug.Log("activating " + identifiedIPlaceableInPoolList.Count + " iPlaceables");
         foreach(IPlaceable iPlaceableToActivate in identifiedIPlaceableInPoolList) {
 
             iPlaceableToActivate.SetPlacingIPlaceable();
@@ -281,6 +279,7 @@ public class PlayerAction_SpawnIPlaceable : NetworkBehaviour {
                     }
 
                     identifiedIPlaceableInPoolList.Add(building);
+                    break;
                 }
             }
         }
@@ -309,8 +308,6 @@ public class PlayerAction_SpawnIPlaceable : NetworkBehaviour {
             spawnedOpponentIPlaceablesDictionary.Add(troopDictionaryInt, iPlaceable);
             spawnedOpponentIPlaceableGridPositions.Add(troopDictionaryInt, spawnedIPlaceableGridPosition);
             troopDictionaryInt++;
-
-            Debug.Log("added to opponent dictionary");
         }
     }
     #endregion
@@ -435,6 +432,7 @@ public class PlayerAction_SpawnIPlaceable : NetworkBehaviour {
             NetworkObject unitNetworkObject = unitToSpawnPrefab.GetComponent<NetworkObject>();
             unitNetworkObject.Spawn(true);
             unitNetworkObject.TrySetParent(troopToSpawnGameObject, true);
+
             SetUnitInitialConditionsClientRpc(unitNetworkObject, troopToSpawnNetworkObject, unitPositionTransform.position, isAdditionalUnits, isSpawnedUnit);
 
             unitsSpawnedNetworkObjectList.Add(unitNetworkObject);

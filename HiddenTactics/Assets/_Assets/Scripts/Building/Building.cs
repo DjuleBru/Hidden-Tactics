@@ -60,12 +60,11 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
     }
 
     protected virtual void BattleManager_OnStateChanged(object sender, EventArgs e) {
-        if (!gameObject.activeInHierarchy) return;
 
         if (BattleManager.Instance.IsBattlePhaseStarting()) {
 
             if (buildingSelled) {
-                SetAsPooledIPlaceable();
+                UpdateBuildingServerRpc(buildingSelled);
             }
 
             buildingWasPlacedThisPreparationPhase = false;
@@ -195,6 +194,20 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
         }
 
         garrisonedTroop = BattleGrid.Instance.GetTroopAtGridPosition(currentGridPosition);
+        Debug.Log(this + " garrisonedTroop " +  garrisonedTroop);
+        garrisonedTroop.SetParentBuilding(this);
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    protected void UpdateBuildingServerRpc(bool buildingSelled) {
+        if (buildingSelled) {
+            UpdateSellBuildingClientRpc();
+        }
+    }
+
+    [ClientRpc]
+    protected void UpdateSellBuildingClientRpc() {
+        SetAsPooledIPlaceable();
     }
 
     public void SellBuilding() {
@@ -207,7 +220,10 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
     }
 
     public void SetPlacingIPlaceable() {
+        Debug.Log("SetPlacingIPlaceable");
         isPooled = false;
+        buildingSelled = false;
+
         SetInitialGridPosition();
 
         if (isOwnedByPlayer) {
@@ -219,6 +235,7 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
     public void SetAsPooledIPlaceable() {
         isPooled = true;
         isPlaced = false;
+
         BattleGrid.Instance.RemoveIPlaceableAtGridPosition(currentGridPosition, this);
         BattleGrid.Instance.ResetIPlaceableSpawnedAtGridPosition(currentGridPosition);
         gameObject.SetActive(false);
