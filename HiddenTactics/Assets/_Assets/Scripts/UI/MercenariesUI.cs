@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class MercenariesUI : MonoBehaviour
 {
+    public static MercenariesUI Instance;
+
     private Animator mercenariesAnimator;
     [SerializeField] private ItemTemplateUI_BattleDeck level1MercenarySlot;
     [SerializeField] private ItemTemplateUI_BattleDeck level2MercenarySlot;
@@ -20,7 +22,11 @@ public class MercenariesUI : MonoBehaviour
 
     private int mercenaryImageIndex;
 
+    private bool allPlayersLoaded;
+    private bool preparationPhaseUIReady;
+
     private void Awake() {
+        Instance = this;
         mercenariesAnimator = GetComponent<Animator>();
 
         level1MercenarySlot.gameObject.SetActive(false);
@@ -30,7 +36,12 @@ public class MercenariesUI : MonoBehaviour
     }
 
     private void Start() {
-        BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
+        BattleManager.Instance.OnAllPlayersLoaded += BattleManager_OnAllPlayersLoaded;
+    }
+
+    private void BattleManager_OnAllPlayersLoaded(object sender, System.EventArgs e) {
+        allPlayersLoaded = true;
+        TryStartShowingRandomizingMercenary();
     }
 
     private void Update() {
@@ -57,13 +68,22 @@ public class MercenariesUI : MonoBehaviour
         }
     }
 
-    private void BattleManager_OnStateChanged(object sender, System.EventArgs e) {
-        if (BattleManager.Instance.IsPreparationPhase()) {
-            if (BattleManager.Instance.GetCurrentTurn() == 0) {
-                mercenariesAnimator.SetTrigger("Grow");
-                randomizingMercenary = true;
-            }
+    public void SetPreparationPhaseUIReady() {
+        preparationPhaseUIReady = true;
+        TryStartShowingRandomizingMercenary();
+    }
+
+    public void TryStartShowingRandomizingMercenary() {
+        if(allPlayersLoaded && preparationPhaseUIReady) {
+            mercenariesAnimator.SetTrigger("Grow");
+            StartCoroutine(StartShowingMercenaryRandomizing(1f));
+            mercenariesAnimator.ResetTrigger("Show");
         }
+    }
+
+    private IEnumerator StartShowingMercenaryRandomizing(float delay) {
+        yield return new WaitForSeconds(delay);
+        randomizingMercenary = true;
     }
 
     private void RandomizeMercenaryImage(int mercenaryLevel) {

@@ -100,6 +100,7 @@ public class PreparationPhaseUI : MonoBehaviour
 
         if(!BattleManager.Instance.IsFirstPreparationPhase()) {
             mercenariesPanelAnimator.SetTrigger("Show");
+            MercenariesUI.Instance.SetPreparationPhaseUIReady();
             mercenariesPanelAnimator.ResetTrigger("Hide");
         }
     }

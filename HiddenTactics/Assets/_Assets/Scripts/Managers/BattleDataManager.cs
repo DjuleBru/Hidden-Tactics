@@ -10,7 +10,6 @@ public class BattleDataManager : NetworkBehaviour
 
     [SerializeField] private IPlaceableListSO IPlaceableListSO;
 
-
     [SerializeField] private List<TroopSO> level1MercenaryTroopSOList;
     [SerializeField] private List<TroopSO> level2MercenaryTroopSOList;
     [SerializeField] private List<TroopSO> level3MercenaryTroopSOList;
@@ -21,19 +20,43 @@ public class BattleDataManager : NetworkBehaviour
     }
 
     public List<TroopSO> GetLevel1MercenaryTroopSOList() {
-        return level1MercenaryTroopSOList;
+        List<TroopSO> implementedLevel1MercenaryList = new List<TroopSO>();
+        foreach(TroopSO troopSO in level1MercenaryTroopSOList) {
+            if(troopSO.troopIsImplemented) {
+                implementedLevel1MercenaryList.Add(troopSO);
+            }
+        }
+        return implementedLevel1MercenaryList;
     }
 
     public List<TroopSO> GetLevel2MercenaryTroopSOList() {
-        return level2MercenaryTroopSOList;
+        List<TroopSO> implementedLevel2MercenaryList = new List<TroopSO>();
+        foreach (TroopSO troopSO in level2MercenaryTroopSOList) {
+            if (troopSO.troopIsImplemented) {
+                implementedLevel2MercenaryList.Add(troopSO);
+            }
+        }
+        return implementedLevel2MercenaryList;
     }
 
     public List<TroopSO> GetLevel3MercenaryTroopSOList() {
-        return level3MercenaryTroopSOList;
+        List<TroopSO> implementedLevel3MercenaryList = new List<TroopSO>();
+        foreach (TroopSO troopSO in level3MercenaryTroopSOList) {
+            if (troopSO.troopIsImplemented) {
+                implementedLevel3MercenaryList.Add(troopSO);
+            }
+        }
+        return implementedLevel3MercenaryList;
     }
 
     public List<TroopSO> GetLevel4MercenaryTroopSOList() {
-        return level4MercenaryTroopSOList;
+        List<TroopSO> implementedLevel4MercenaryList = new List<TroopSO>();
+        foreach (TroopSO troopSO in level4MercenaryTroopSOList) {
+            if (troopSO.troopIsImplemented) {
+                implementedLevel4MercenaryList.Add(troopSO);
+            }
+        }
+        return implementedLevel4MercenaryList;
     }
 
     public int GetTroopSOIndex(TroopSO troopSO) {

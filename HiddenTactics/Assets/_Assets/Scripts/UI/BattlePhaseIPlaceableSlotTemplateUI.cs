@@ -260,6 +260,11 @@ public class BattlePhaseIPlaceableSlotTemplateUI : MonoBehaviour, IPointerEnterH
         GameInput.Instance.OnLeftClickPerformed -= GameInput_OnLeftClickPerformed;
         GameInput.Instance.OnRightClickPerformed -= GameInput_OnRightClickPerformed;
 
+        foreach (IPlaceableSlotTemplate_SingleUnitIcon singleUnit in singleUnitIconsList) {
+            singleUnit.ResetUnit();
+            Destroy(singleUnit.gameObject);
+        }
+
         if (iPlaceable is Troop) {
             Troop troop = iPlaceable as Troop;
             troop.OnTroopHPChanged -= Troop_OnTroopHPChanged;

@@ -327,6 +327,8 @@ public class UnitUI : NetworkBehaviour
     }
 
     private void Unit_OnUnitReset(object sender, System.EventArgs e) {
+        if (!unit.gameObject.activeInHierarchy) return;
+
         if (!unit.GetUnitIsBought() || unit.GetUnitIsDynamicallySpawnedUnit()) {
             unitHPBarGameObject.SetActive(false);
         } else {

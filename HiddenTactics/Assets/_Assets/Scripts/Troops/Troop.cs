@@ -112,7 +112,6 @@ public class Troop : NetworkBehaviour, IPlaceable {
                 unit.DebugModeStartFunction();
             }
         }
-
     }
 
     public override void OnNetworkSpawn() {
@@ -145,8 +144,8 @@ public class Troop : NetworkBehaviour, IPlaceable {
                 SetTroopHovered(false);
             }
 
-            if(isOwnedByPlayer) {
-                UpdateTroopServerRpc(additionalUnitsHaveBeenBought, troopSelled);
+            if(!isOwnedByPlayer) {
+                UpdateOpponentTroop();
             }
 
             troopWasPlacedThisPreparationPhase = false;
@@ -159,6 +158,16 @@ public class Troop : NetworkBehaviour, IPlaceable {
             troopHP = maxTroopHP;
             troopIsDead = false;
             OnTroopHPChanged?.Invoke(this, EventArgs.Empty);
+        }
+    }
+
+    private void UpdateOpponentTroop() {
+        // Update troop sell & upgrades
+        if (troopSelled) {
+            SellTroop();
+        }
+        if (additionalUnitsHaveBeenBought) {
+            ActivateAdditionalUnits();
         }
     }
 
@@ -251,6 +260,11 @@ public class Troop : NetworkBehaviour, IPlaceable {
 
     public void BuyAdditionalUnits() {
         BuyAdditionalUnitsServerRpc();
+
+        if (isOwnedByPlayer) {
+            ActivateAdditionalUnits();
+            OnAdditionalUnitsBought?.Invoke(this, EventArgs.Empty);
+        }
     }
 
     [ServerRpc(RequireOwnership = false)]
@@ -260,57 +274,54 @@ public class Troop : NetworkBehaviour, IPlaceable {
 
     [ClientRpc]
     protected void BuyAdditionalUnitsClientRpc() {
-
-        if (isOwnedByPlayer) {
-            foreach (Unit unit in additionalUnitsInTroop) {
-                unit.ActivateAdditionalUnit();
-
-                // Update troop HP
-                troopHP += unit.GetComponent<UnitHP>().GetHP();
-                maxTroopHP = troopHP;
-            }
-            additionalUnitsInTroop.Clear();
-        }
-
-        if(singleUnitUpgradeNewPosition != null) {
-            allUnitsInTroop[0].SetLocalPosition(singleUnitUpgradeNewPosition.localPosition, false);
-        }
-
-        OnAdditionalUnitsBought?.Invoke(this, EventArgs.Empty);
         additionalUnitsHaveBeenBought = true;
     }
 
-    [ServerRpc(RequireOwnership =false)]
-    protected void UpdateTroopServerRpc(bool additionalUnitsHaveBeenBought, bool troopSelled) {
-
-        if(additionalUnitsHaveBeenBought) {
-            UpdateAdditionalTroopsClientRpc();
-        }
-
-        if(troopSelled) {
-            UpdateSellTroopClientRpc();
-        }
-
-    }
-
-    [ClientRpc]
-    protected void UpdateAdditionalTroopsClientRpc() {
+    private void ActivateAdditionalUnits() {
         foreach (Unit unit in additionalUnitsInTroop) {
             unit.ActivateAdditionalUnit();
         }
+
         additionalUnitsInTroop.Clear();
+        UpdateTroopMaxXP();
+
+        if (singleUnitUpgradeNewPosition != null) {
+            allUnitsInTroop[0].SetLocalPosition(singleUnitUpgradeNewPosition.localPosition, false);
+        }
+    }
+
+    private void UpdateTroopMaxXP() {
+        maxTroopHP = 0;
+        troopHP = 0;
+
+        foreach (Unit unit in allUnitsInTroop) {
+            if (!additionalUnitsInTroop.Contains(unit) && !spawnedUnitsInTroop.Contains(unit)) {
+                troopHP += unit.GetComponent<UnitHP>().GetHP();
+                maxTroopHP = troopHP;
+            }
+        }
+    }
+
+    public void SetTroopSelled() {
+        SetTroopSelledServerRpc();
+
+        if(isOwnedByPlayer) {
+            SellTroop();
+        }
+
+    }
+
+    [ServerRpc(RequireOwnership =false)]
+    private void SetTroopSelledServerRpc() {
+        SetTroopSelledClientRpc();
     }
 
     [ClientRpc]
-    protected void UpdateSellTroopClientRpc() {
-        Debug.Log(this + " SellTroopClientRpc");
-        SetAsPooledIPlaceable();
+    private void SetTroopSelledClientRpc() {
+        troopSelled = true;
     }
 
-    public void SellTroop() {
-        Debug.Log("sell troop");
-
-        troopSelled = true;
+    private void SellTroop() {
         OnTroopUnselected?.Invoke(this, EventArgs.Empty);
         OnAnyTroopSelled?.Invoke(this, EventArgs.Empty);
         OnTroopSelled?.Invoke(this, EventArgs.Empty);
@@ -322,8 +333,9 @@ public class Troop : NetworkBehaviour, IPlaceable {
         SetAsPooledIPlaceable();
     }
 
-
     public void PlaceIPlaceable() {
+        if (troopSelled) return;
+
         ActivateIPlaceable();
 
         // Set placed troop on grid object
@@ -338,14 +350,16 @@ public class Troop : NetworkBehaviour, IPlaceable {
 
             if (!additionalUnitsInTroop.Contains(unit) && !spawnedUnitsInTroop.Contains(unit)) {
                 unit.ActivateAdditionalUnit();
-                troopHP += unit.GetComponent<UnitHP>().GetHP();
-                maxTroopHP = troopHP;
             }
         }
+
+        UpdateTroopMaxXP();
 
         isPlaced = true;
         OnTroopPlaced?.Invoke(this, null);
         OnAnyTroopPlaced?.Invoke(this, EventArgs.Empty);
+
+        UpdateOpponentTroop();
     }
 
     public void SetIPlaceableGridPosition(GridPosition troopGridPosition) {
@@ -528,7 +542,7 @@ public class Troop : NetworkBehaviour, IPlaceable {
     }
 
     protected void ParentBuilding_OnBuildingSelled(object sender, EventArgs e) {
-        SellTroop();
+        SetTroopSelled();
     }
 
     protected void ParentBuilding_OnBuildingDestroyed(object sender, EventArgs e) {
@@ -615,7 +629,7 @@ public class Troop : NetworkBehaviour, IPlaceable {
         }
 
         OnTroopHPChanged?.Invoke(this, EventArgs.Empty);
-     }
+    }
 
     public float GetTroopHPNormalized() {
         return troopHP/maxTroopHP;

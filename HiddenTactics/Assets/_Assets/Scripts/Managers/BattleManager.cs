@@ -155,6 +155,8 @@ public class BattleManager : NetworkBehaviour
         level2Mercenary = BattleDataManager.Instance.GetLevel2MercenaryTroopSOList()[level2MercenaryIndex];
         level3Mercenary = BattleDataManager.Instance.GetLevel3MercenaryTroopSOList()[level3MercenaryIndex];
         level4Mercenary = BattleDataManager.Instance.GetLevel4MercenaryTroopSOList()[level4MercenaryIndex];
+
+        //PlayerAction_SpawnIPlaceable.LocalInstance.SpawnMercenaryPool(NetworkManager.Singleton.LocalClientId);
     }
 
     private void PlayersReadyManager_OnAllPlayersReady(object sender, EventArgs e) {
@@ -352,15 +354,19 @@ public class BattleManager : NetworkBehaviour
     }
 
     public TroopSO GetLevel1Mercenary() {
+        Debug.Log(level1Mercenary);
         return level1Mercenary;
     }
     public TroopSO GetLevel2Mercenary() {
+        Debug.Log(level2Mercenary);
         return level2Mercenary;
     }
     public TroopSO GetLevel3Mercenary() {
+        Debug.Log(level3Mercenary);
         return level3Mercenary;
     }
     public TroopSO GetLevel4Mercenary() {
+        Debug.Log(level4Mercenary);
         return level4Mercenary;
     }
 

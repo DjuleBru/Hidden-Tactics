@@ -106,8 +106,6 @@ public class Unit : NetworkBehaviour, ITargetable {
         }
     }
 
-    
-
     protected void Update() {
 
         if (unitIsOnlyVisual) return;
@@ -641,10 +639,11 @@ public class Unit : NetworkBehaviour, ITargetable {
             OnUnitSelectedFromTroop?.Invoke(this, EventArgs.Empty);
         }
 
-        OnAdditionalUnitActivated?.Invoke(this, EventArgs.Empty);
         BattleManager.Instance.AddUnitToUnitListInBattlefield(this);
 
         unitVisual.gameObject.SetActive(true);
+        OnAdditionalUnitActivated?.Invoke(this, EventArgs.Empty);
+
         GetComponent<Collider2D>().enabled = true;
         GetComponent<UnitMovement>().enabled = true;
         GetComponent<UnitAI>().enabled = true;

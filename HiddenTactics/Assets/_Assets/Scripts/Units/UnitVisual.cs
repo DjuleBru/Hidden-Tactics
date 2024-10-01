@@ -249,6 +249,14 @@ public class UnitVisual : NetworkBehaviour
         foreach (GameObject shadowGameObject in shadowGameObjectList) {
             shadowGameObject.SetActive(true);
         }
+
+        // Reset Circle visuals
+        if (unit.IsOwnedByPlayer()) {
+            SetUnitCircleGameObjectsEnabled(true);
+        }
+        else {
+            ResetUnitCircleVisuals();
+        }
     }
 
     private void Unit_OnUnitDynamicallySpawned(object sender, EventArgs e) {

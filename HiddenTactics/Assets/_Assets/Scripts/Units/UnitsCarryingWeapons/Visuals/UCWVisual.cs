@@ -38,9 +38,6 @@ public class UCWVisual : UnitVisual
     [SerializeField] private SpriteRenderer mountSpriteRenderer;
 
     [FoldoutGroup("Upgrade visual attributes"), ShowIf("upgradeChangesMountShader")]
-    [SerializeField] private GameObject mountShadowGameObject;
-
-    [FoldoutGroup("Upgrade visual attributes"), ShowIf("upgradeChangesMountShader")]
     [SerializeField] private Material ugradedMountShader;
 
     [FoldoutGroup("Weapon visual attributes")]
@@ -115,7 +112,6 @@ public class UCWVisual : UnitVisual
         base.Unit_OnUnitSetAsAdditionalUnit(sender, e);
 
         if(ucw.GetIsMountedUnit()) {
-            mountShadowGameObject.SetActive(false);
             mountSpriteRenderer.material = invisibleMaterial;
         }
     }

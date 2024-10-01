@@ -62,8 +62,7 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
     }
 
     protected void Start() {
-
-        if (IsServer) {
+        if (IsServer) {;
             RandomizeAttackTimersServerRpc();
         }
     }

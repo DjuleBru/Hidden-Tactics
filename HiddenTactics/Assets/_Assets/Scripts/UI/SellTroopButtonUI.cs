@@ -23,7 +23,7 @@ public class SellTroopButtonUI : TroopButtonUI, IPointerExitHandler, IPointerEnt
                     goldRedundValue = troop.GetTroopSO().spawnTroopCost / 3;
                 }
 
-                troop.SellTroop();
+                troop.SetTroopSelled();
                 PlayerGoldManager.Instance.EarnGold(goldRedundValue);
             }
 
@@ -35,7 +35,7 @@ public class SellTroopButtonUI : TroopButtonUI, IPointerExitHandler, IPointerEnt
                     goldRedundValue = building.GetBuildingSO().spawnBuildingCost / 3;
                 }
 
-                building.SellBuilding();
+                building.SetBuildingSelled();
                 PlayerGoldManager.Instance.EarnGold(goldRedundValue);
             }
 

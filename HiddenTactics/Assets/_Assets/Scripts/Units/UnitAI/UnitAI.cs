@@ -144,7 +144,7 @@ public class UnitAI : NetworkBehaviour
     }
 
     protected void State_OnValueChanged(State previousValue, State newValue) {
-        if (!IsSpawned) return;
+        if (!gameObject.activeInHierarchy) return;
         ChangeStateServerRpc();
     }
 

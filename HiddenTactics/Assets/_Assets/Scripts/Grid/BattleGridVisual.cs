@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -20,6 +21,9 @@ public class BattleGridVisual : MonoBehaviour
 
     private BattleGrid battleGrid;
     private GridTileVisualSO gridTileVisualSO;
+
+    public event EventHandler OnPlayerSpritesLoaded;
+    public event EventHandler OnOpponentSpritesLoaded;
 
     private void Awake() {
         Instance = this;
@@ -66,12 +70,13 @@ public class BattleGridVisual : MonoBehaviour
             HiddenTacticsMultiplayer.Instance.SetPlayerGridVisualSO(PlayerCustomizationDataManager.Instance.GetGridTileVisualSOID(playerGridTileVisualSO));
             SetPlayerVillageSprites(playerVillageSprites);
 
-
             if (BattleManager.Instance == null)
             {
                 // Lobby scene : create grid only for player 
                 RefreshPlayerBattlefieldVisualSprites();
             }
+            OnPlayerSpritesLoaded?.Invoke(this, EventArgs.Empty);
+            Debug.Log("OnPlayerSpritesLoaded");
         }
     }
 
@@ -110,6 +115,9 @@ public class BattleGridVisual : MonoBehaviour
             Sprite villageSprite = PlayerCustomizationDataManager.Instance.GetVillageSpriteFromSpriteId(opponentCustomizationData.villageSprite5Id);
             opponentVillageSprites.Add(villageSprite);
         }
+
+        OnOpponentSpritesLoaded?.Invoke(this, EventArgs.Empty);
+        Debug.Log("OnOpponentSpritesLoaded");
     }
 
     private void LoadPlayerSprites() {
@@ -206,11 +214,11 @@ public class BattleGridVisual : MonoBehaviour
     }
 
     public Sprite GetRandomPlayerVillageSprite() {
-        return playerVillageSprites[Random.Range(0, playerVillageSprites.Count)];
+        return playerVillageSprites[UnityEngine.Random.Range(0, playerVillageSprites.Count)];
     }
 
     public Sprite GetRandomOpponentVillageSprite() {
-        return opponentVillageSprites[Random.Range(0, opponentVillageSprites.Count)];
+        return opponentVillageSprites[UnityEngine.Random.Range(0, opponentVillageSprites.Count)];
     }
 
 }

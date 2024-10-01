@@ -12,10 +12,7 @@ public class CrossfadeTransition : MonoBehaviour
         animator = GetComponent<Animator>();
     }
 
-
     private void Start() {
-
-        Debug.Log(" Crossfade Start");
         if (MainMenuUI.Instance == null) {
             FadeOut();
         }

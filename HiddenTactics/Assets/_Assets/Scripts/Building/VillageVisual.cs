@@ -20,18 +20,32 @@ public class VillageVisual : MonoBehaviour
         village = GetComponentInParent<Village>();
         villageHP = GetComponentInParent<BuildingHP>();
         villageAnimator = GetComponent<Animator>();
+
+        BattleGridVisual.Instance.OnPlayerSpritesLoaded += BattleGridVisual_OnPlayerSpritesLoaded;
+        BattleGridVisual.Instance.OnOpponentSpritesLoaded += BattleGridVisual_OnOpponentSpritesLoaded;
     }
 
     private void Start() {
-        if(village.IsOwnedByPlayer()) {
+        villageHP.OnHealthChanged += VillageHP_OnHealthChanged;
+    }
+
+    private void BattleGridVisual_OnPlayerSpritesLoaded(object sender, System.EventArgs e) {
+        SetVillageSprite();
+    }
+    private void BattleGridVisual_OnOpponentSpritesLoaded(object sender, System.EventArgs e) {
+        SetVillageSprite();
+    }
+
+    public void SetVillageSprite() {
+        if (village.IsOwnedByPlayer()) {
             villageCleanRenderer.sprite = BattleGridVisual.Instance.GetRandomPlayerVillageSprite();
-        } else {
+        }
+        else {
             villageCleanRenderer.sprite = BattleGridVisual.Instance.GetRandomOpponentVillageSprite();
         }
 
         villageBurningRenderer.sprite = villageCleanRenderer.sprite;
 
-        villageHP.OnHealthChanged += VillageHP_OnHealthChanged;
     }
 
     private void Update() {

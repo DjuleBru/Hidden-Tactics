@@ -63,8 +63,8 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
 
         if (BattleManager.Instance.IsBattlePhaseStarting()) {
 
-            if (buildingSelled) {
-                UpdateBuildingServerRpc(buildingSelled);
+            if (!isOwnedByPlayer && buildingSelled) {
+                SellBuilding();
             }
 
             buildingWasPlacedThisPreparationPhase = false;
@@ -171,6 +171,7 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
     }
 
     public virtual void PlaceIPlaceable() {
+        if (buildingSelled) return;
 
         if (!isOwnedByPlayer) {
             gameObject.SetActive(true);
@@ -194,23 +195,29 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
         }
 
         garrisonedTroop = BattleGrid.Instance.GetTroopAtGridPosition(currentGridPosition);
-        Debug.Log(this + " garrisonedTroop " +  garrisonedTroop);
         garrisonedTroop.SetParentBuilding(this);
     }
 
-    [ServerRpc(RequireOwnership = false)]
-    protected void UpdateBuildingServerRpc(bool buildingSelled) {
-        if (buildingSelled) {
-            UpdateSellBuildingClientRpc();
+    public void SetBuildingSelled() {
+        SetBuildingSelledServerRpc();
+
+        if (isOwnedByPlayer) {
+            SellBuilding();
         }
     }
 
-    [ClientRpc]
-    protected void UpdateSellBuildingClientRpc() {
-        SetAsPooledIPlaceable();
+    [ServerRpc(RequireOwnership = false)]
+    private void SetBuildingSelledServerRpc() {
+        SetBuildingSelledClientRpc();
     }
 
-    public void SellBuilding() {
+    [ClientRpc]
+    private void SetBuildingSelledClientRpc() {
+        buildingSelled = true;
+    }
+
+    private void SellBuilding() {
+        Debug.Log("SellBuilding");
         buildingSelled = true;
         OnBuildingUnselected?.Invoke(this, EventArgs.Empty);
         OnAnyBuildingSelled?.Invoke(this, EventArgs.Empty);
@@ -220,7 +227,6 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
     }
 
     public void SetPlacingIPlaceable() {
-        Debug.Log("SetPlacingIPlaceable");
         isPooled = false;
         buildingSelled = false;
 

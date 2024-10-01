@@ -1,8 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.Playables;
 
 public class PlayerAction_SpawnIPlaceable : NetworkBehaviour {
 
@@ -14,7 +14,6 @@ public class PlayerAction_SpawnIPlaceable : NetworkBehaviour {
     private Dictionary<int, IPlaceable> spawnedOpponentIPlaceablesDictionary;
     private Dictionary<int, GridPosition> spawnedOpponentIPlaceableGridPositions;
     private int troopDictionaryInt;
-
 
     private void Awake() {
         spawnedOpponentIPlaceablesDictionary = new Dictionary<int, IPlaceable>();
@@ -143,12 +142,24 @@ public class PlayerAction_SpawnIPlaceable : NetworkBehaviour {
 
     public void SpawnPlayerIPlaceablePoolList(ulong clientID, Deck deck) {
 
+        SpawnPlayerDeckPool(clientID, deck);
+        SpawnFactionPool(clientID, deck);
+
+        foreach (IPlaceable iPlaceable in iPlaceablePoolList) {
+            iPlaceable.DeActivateIPlaceable();
+        }
+
+        iPlaceableToPlaceList.Clear();
+    }
+
+    public void SpawnPlayerDeckPool(ulong clientID, Deck deck) {
         foreach (TroopSO troopSO in deck.troopsInDeck) {
-            if(troopSO == null) continue;
+            if (troopSO == null) continue;
             int troopSOIndex = BattleDataManager.Instance.GetTroopSOIndex(troopSO);
 
-            //int troopAmountToSpawn = (int)Mathf.Round(PlayerGoldManager.Instance.GetPlayerInitialGold() / troopSO.spawnTroopCost);
-            int troopAmountToSpawn = 5;
+            int troopAmountToSpawn = (int)Mathf.Round(PlayerGoldManager.Instance.GetPlayerInitialGold() / troopSO.spawnTroopCost);
+            //int troopAmountToSpawn = 5;
+
             for (int i = 0; i < troopAmountToSpawn; i++) {
                 SpawnTroopServerRpc(troopSOIndex, clientID);
             }
@@ -158,18 +169,69 @@ public class PlayerAction_SpawnIPlaceable : NetworkBehaviour {
             if (buildingSO == null) continue;
             int buildingSOIndex = BattleDataManager.Instance.GetBuildingSOIndex(buildingSO);
 
-            //int buildingAmountToSpawn = (int)Mathf.Round(PlayerGoldManager.Instance.GetPlayerInitialGold() / buildingSO.spawnBuildingCost);
-            int buildingAmountToSpawn = 3;
+            int buildingAmountToSpawn = (int)Mathf.Round(PlayerGoldManager.Instance.GetPlayerInitialGold() / buildingSO.spawnBuildingCost);
+            //int buildingAmountToSpawn = 3;
+            Debug.Log("spawned " + buildingAmountToSpawn + " " + buildingSO);
+            for (int i = 0; i < buildingAmountToSpawn; i++) {
+                SpawnBuildingServerRpc(buildingSOIndex, clientID);
+            }
+        }
+    }
+
+    public void SpawnFactionPool(ulong clientID, Deck deck) {
+
+        foreach (TroopSO troopSO in deck.deckFactionSO.troopsInFaction) {
+            if (deck.troopsInDeck.Contains(troopSO)) continue;
+            if (!troopSO.troopIsImplemented) continue;
+
+            int troopSOIndex = BattleDataManager.Instance.GetTroopSOIndex(troopSO);
+
+            int troopAmountToSpawn = 1;
+
+            Debug.Log("spawned " + troopAmountToSpawn + " " + troopSO);
+            for (int i = 0; i < troopAmountToSpawn; i++) {
+                SpawnTroopServerRpc(troopSOIndex, clientID);
+            }
+        }
+
+        foreach (BuildingSO buildingSO in deck.deckFactionSO.buildingsInFaction) {
+            if (deck.buildingsInDeck.Contains(buildingSO)) continue;
+            int buildingSOIndex = BattleDataManager.Instance.GetBuildingSOIndex(buildingSO);
+
+            int buildingAmountToSpawn = 1;
             for (int i = 0; i < buildingAmountToSpawn; i++) {
                 SpawnBuildingServerRpc(buildingSOIndex, clientID);
             }
         }
 
-        foreach (IPlaceable iPlaceable in iPlaceablePoolList) {
-            iPlaceable.DeActivateIPlaceable();
+    }
+
+    public void SpawnMercenaryPool(ulong clientID) {
+        Debug.Log("SpawnMercenaryPool");
+
+        int level1MercenaryAmountToSpawn = 5;
+        for (int i = 0; i < level1MercenaryAmountToSpawn; i++) {
+            int troopSOIndex = BattleDataManager.Instance.GetTroopSOIndex(BattleManager.Instance.GetLevel1Mercenary());
+            SpawnTroopServerRpc(troopSOIndex, clientID);
         }
 
-        iPlaceableToPlaceList.Clear();
+        int level2MercenaryAmountToSpawn = 3;
+        for (int i = 0; i < level2MercenaryAmountToSpawn; i++) {
+            int troopSOIndex = BattleDataManager.Instance.GetTroopSOIndex(BattleManager.Instance.GetLevel2Mercenary());
+            SpawnTroopServerRpc(troopSOIndex, clientID);
+        }
+
+        int level3MercenaryAmountToSpawn = 2;
+        for (int i = 0; i < level3MercenaryAmountToSpawn; i++) {
+            int troopSOIndex = BattleDataManager.Instance.GetTroopSOIndex(BattleManager.Instance.GetLevel3Mercenary());
+            SpawnTroopServerRpc(troopSOIndex, clientID);
+        }
+
+        int level4MercenaryAmountToSpawn = 1;
+        for (int i = 0; i < level4MercenaryAmountToSpawn; i++) {
+            int troopSOIndex = BattleDataManager.Instance.GetTroopSOIndex(BattleManager.Instance.GetLevel4Mercenary());
+            SpawnTroopServerRpc(troopSOIndex, clientID);
+        }
     }
 
     public void ActivatePooledIPlaceable(int iPlaceableSOIndex, bool isTroop, bool isBuilding) {

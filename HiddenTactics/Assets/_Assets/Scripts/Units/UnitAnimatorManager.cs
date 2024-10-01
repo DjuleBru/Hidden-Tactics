@@ -198,8 +198,6 @@ public class UnitAnimatorManager : NetworkBehaviour
     }
 
     public void SetXY(float xValue, float yValue) {
-        //Debug.Log("X " + xValue);
-
         if((xValue > 0 && X < 0) || (xValue < 0 && X > 0)) {
             OnUnitXChanged?.Invoke(this, EventArgs.Empty);
         }
