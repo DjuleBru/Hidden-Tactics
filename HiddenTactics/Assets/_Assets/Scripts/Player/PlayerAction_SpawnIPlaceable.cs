@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.Netcode;
+using UnityEditor.PackageManager;
 using UnityEngine;
 
 public class PlayerAction_SpawnIPlaceable : NetworkBehaviour {
@@ -14,6 +15,7 @@ public class PlayerAction_SpawnIPlaceable : NetworkBehaviour {
     private Dictionary<int, IPlaceable> spawnedOpponentIPlaceablesDictionary;
     private Dictionary<int, GridPosition> spawnedOpponentIPlaceableGridPositions;
     private int troopDictionaryInt;
+    private int objectsToSpawnNumber;
 
     private void Awake() {
         spawnedOpponentIPlaceablesDictionary = new Dictionary<int, IPlaceable>();
@@ -141,6 +143,11 @@ public class PlayerAction_SpawnIPlaceable : NetworkBehaviour {
     #region OBJECT POOLING
 
     public void SpawnPlayerIPlaceablePoolList(ulong clientID, Deck deck) {
+        objectsToSpawnNumber += CountIPlaceablesToSpawsInPlayerDeck(deck);
+        objectsToSpawnNumber += CountIPlaceablesToSpawsInFactionPool(deck);
+        objectsToSpawnNumber += 11; // MercenaryAmount
+
+        Debug.Log("there are " + objectsToSpawnNumber + " iPlaceables to spawn for player " + clientID);
 
         SpawnPlayerDeckPool(clientID, deck);
         SpawnFactionPool(clientID, deck);
@@ -160,6 +167,7 @@ public class PlayerAction_SpawnIPlaceable : NetworkBehaviour {
             int troopAmountToSpawn = (int)Mathf.Round(PlayerGoldManager.Instance.GetPlayerInitialGold() / troopSO.spawnTroopCost);
             //int troopAmountToSpawn = 5;
 
+            Debug.Log("spawned " + troopAmountToSpawn + " " + troopSO);
             for (int i = 0; i < troopAmountToSpawn; i++) {
                 SpawnTroopServerRpc(troopSOIndex, clientID);
             }
@@ -179,7 +187,7 @@ public class PlayerAction_SpawnIPlaceable : NetworkBehaviour {
     }
 
     public void SpawnFactionPool(ulong clientID, Deck deck) {
-
+        Debug.Log("SpawnFactionPool");
         foreach (TroopSO troopSO in deck.deckFactionSO.troopsInFaction) {
             if (deck.troopsInDeck.Contains(troopSO)) continue;
             if (!troopSO.troopIsImplemented) continue;
@@ -187,8 +195,6 @@ public class PlayerAction_SpawnIPlaceable : NetworkBehaviour {
             int troopSOIndex = BattleDataManager.Instance.GetTroopSOIndex(troopSO);
 
             int troopAmountToSpawn = 1;
-
-            Debug.Log("spawned " + troopAmountToSpawn + " " + troopSO);
             for (int i = 0; i < troopAmountToSpawn; i++) {
                 SpawnTroopServerRpc(troopSOIndex, clientID);
             }
@@ -207,7 +213,6 @@ public class PlayerAction_SpawnIPlaceable : NetworkBehaviour {
     }
 
     public void SpawnMercenaryPool(ulong clientID) {
-        Debug.Log("SpawnMercenaryPool");
 
         int level1MercenaryAmountToSpawn = 5;
         for (int i = 0; i < level1MercenaryAmountToSpawn; i++) {
@@ -372,6 +377,56 @@ public class PlayerAction_SpawnIPlaceable : NetworkBehaviour {
             troopDictionaryInt++;
         }
     }
+
+    private int CountIPlaceablesToSpawsInPlayerDeck(Deck deck) {
+        int iPlaceablesToSpawnInPlayerDeck = 0;
+
+        foreach (TroopSO troopSO in deck.troopsInDeck) {
+            if (troopSO == null) continue;
+            int troopSOIndex = BattleDataManager.Instance.GetTroopSOIndex(troopSO);
+
+            int troopAmountToSpawn = (int)Mathf.Round(PlayerGoldManager.Instance.GetPlayerInitialGold() / troopSO.spawnTroopCost);
+            iPlaceablesToSpawnInPlayerDeck += troopAmountToSpawn;
+        }
+
+        foreach (BuildingSO buildingSO in deck.buildingsInDeck) {
+            if (buildingSO == null) continue;
+            int buildingSOIndex = BattleDataManager.Instance.GetBuildingSOIndex(buildingSO);
+
+            int buildingAmountToSpawn = (int)Mathf.Round(PlayerGoldManager.Instance.GetPlayerInitialGold() / buildingSO.spawnBuildingCost);
+            iPlaceablesToSpawnInPlayerDeck += buildingAmountToSpawn;
+
+            if(buildingSO.hasGarrisonedTroop) {
+                iPlaceablesToSpawnInPlayerDeck++;
+            }
+        }
+
+        return iPlaceablesToSpawnInPlayerDeck;
+    }
+
+    private int CountIPlaceablesToSpawsInFactionPool(Deck deck) {
+        int iPlaceablesToSpawnInPlayerDeck = 0;
+
+        foreach (TroopSO troopSO in deck.deckFactionSO.troopsInFaction) {
+            if (deck.troopsInDeck.Contains(troopSO)) continue;
+            if (!troopSO.troopIsImplemented) continue;
+
+            iPlaceablesToSpawnInPlayerDeck ++;
+        }
+
+        foreach (BuildingSO buildingSO in deck.deckFactionSO.buildingsInFaction) {
+            if (deck.buildingsInDeck.Contains(buildingSO)) continue;
+            if (!buildingSO.buildingIsImplemented) continue;
+
+            iPlaceablesToSpawnInPlayerDeck++;
+            if (buildingSO.hasGarrisonedTroop) {
+                iPlaceablesToSpawnInPlayerDeck++;
+            }
+        }
+
+        return iPlaceablesToSpawnInPlayerDeck;
+    }
+
     #endregion
 
     #region SPAWN TROOPS, UNITS AND BUILDINGS

@@ -98,10 +98,11 @@ public class PreparationPhaseUI : MonoBehaviour
         battleDeckUIPanelAnimator.SetTrigger("Show");
         battleDeckUIPanelAnimator.ResetTrigger("Hide");
 
-        if(!BattleManager.Instance.IsFirstPreparationPhase()) {
-            mercenariesPanelAnimator.SetTrigger("Show");
+        mercenariesPanelAnimator.SetTrigger("Show");
+        mercenariesPanelAnimator.ResetTrigger("Hide");
+
+        if(BattleManager.Instance.IsFirstPreparationPhase()) {
             MercenariesUI.Instance.SetPreparationPhaseUIReady();
-            mercenariesPanelAnimator.ResetTrigger("Hide");
         }
     }
 

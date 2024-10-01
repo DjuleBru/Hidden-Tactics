@@ -52,6 +52,9 @@ public class BattleManager : NetworkBehaviour
 
     private NetworkVariable<State> state = new NetworkVariable<State>();
 
+    private int objectsSpawnedNumber;
+    private List<ulong> spawnedObjectsIDs = new List<ulong>();
+
     private void Awake() {
         Instance = this;
     }
@@ -139,6 +142,28 @@ public class BattleManager : NetworkBehaviour
         }
     }
 
+    public void AddIPlaceableSpawned(ulong networkObjectID) {
+        AddIPlaceableSpawnedServerRpc(networkObjectID);
+    }
+
+    [ServerRpc(RequireOwnership =false)]
+    private void AddIPlaceableSpawnedServerRpc(ulong networkObjectID) {
+        AddIPlaceableSpawnedClientRpc(networkObjectID);
+    }
+
+    [ClientRpc]
+    private void AddIPlaceableSpawnedClientRpc(ulong networkObjectID) {
+        if(spawnedObjectsIDs.Contains(networkObjectID)) {
+            // Second time the ID is being added to the list : object has been loaded on both clients
+            objectsSpawnedNumber++;
+            Debug.Log("AddIPlaceableSpawned " + objectsSpawnedNumber);
+
+        } else {
+            spawnedObjectsIDs.Add(networkObjectID);
+        }
+    }
+
+
     [ServerRpc(RequireOwnership = false)]
     private void SetMercenariesForBattleServerRpc() {
         int level1Mercenary = UnityEngine.Random.Range(0, BattleDataManager.Instance.GetLevel1MercenaryTroopSOList().Count);
@@ -156,7 +181,7 @@ public class BattleManager : NetworkBehaviour
         level3Mercenary = BattleDataManager.Instance.GetLevel3MercenaryTroopSOList()[level3MercenaryIndex];
         level4Mercenary = BattleDataManager.Instance.GetLevel4MercenaryTroopSOList()[level4MercenaryIndex];
 
-        //PlayerAction_SpawnIPlaceable.LocalInstance.SpawnMercenaryPool(NetworkManager.Singleton.LocalClientId);
+        PlayerAction_SpawnIPlaceable.LocalInstance.SpawnMercenaryPool(NetworkManager.Singleton.LocalClientId);
     }
 
     private void PlayersReadyManager_OnAllPlayersReady(object sender, EventArgs e) {
@@ -181,6 +206,7 @@ public class BattleManager : NetworkBehaviour
     private void SetPlayersLoadedClientRpc() {
         allPlayersLoaded = true;
         OnAllPlayersLoaded?.Invoke(this, EventArgs.Empty);
+        Debug.Log("OnAllPlayersLoaded");
     }
 
     private void SceneManager_OnLoadEventCompleted(string sceneName, UnityEngine.SceneManagement.LoadSceneMode loadSceneMode, List<ulong> clientsCompleted, List<ulong> clientsTimedOut) {
@@ -354,19 +380,15 @@ public class BattleManager : NetworkBehaviour
     }
 
     public TroopSO GetLevel1Mercenary() {
-        Debug.Log(level1Mercenary);
         return level1Mercenary;
     }
     public TroopSO GetLevel2Mercenary() {
-        Debug.Log(level2Mercenary);
         return level2Mercenary;
     }
     public TroopSO GetLevel3Mercenary() {
-        Debug.Log(level3Mercenary);
         return level3Mercenary;
     }
     public TroopSO GetLevel4Mercenary() {
-        Debug.Log(level4Mercenary);
         return level4Mercenary;
     }
 

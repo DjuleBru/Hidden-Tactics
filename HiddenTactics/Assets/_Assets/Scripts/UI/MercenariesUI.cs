@@ -41,10 +41,12 @@ public class MercenariesUI : MonoBehaviour
 
     private void BattleManager_OnAllPlayersLoaded(object sender, System.EventArgs e) {
         allPlayersLoaded = true;
+        Debug.Log("Mercenaries UI allPlayersLoaded");
         TryStartShowingRandomizingMercenary();
     }
 
     private void Update() {
+
         if(randomizingMercenary) {
             changeMercenaryImageTimer += Time.deltaTime;
             changeMercenaryLevelTimer += Time.deltaTime;
@@ -70,65 +72,68 @@ public class MercenariesUI : MonoBehaviour
 
     public void SetPreparationPhaseUIReady() {
         preparationPhaseUIReady = true;
+        Debug.Log("Mercenaries UI preparationPhaseUIReady");
         TryStartShowingRandomizingMercenary();
     }
 
     public void TryStartShowingRandomizingMercenary() {
-        if(allPlayersLoaded && preparationPhaseUIReady) {
+        if(preparationPhaseUIReady) {
             mercenariesAnimator.SetTrigger("Grow");
-            StartCoroutine(StartShowingMercenaryRandomizing(1f));
+            randomizingMercenary = true;
             mercenariesAnimator.ResetTrigger("Show");
         }
     }
 
-    private IEnumerator StartShowingMercenaryRandomizing(float delay) {
-        yield return new WaitForSeconds(delay);
-        randomizingMercenary = true;
-    }
-
     private void RandomizeMercenaryImage(int mercenaryLevel) {
         if(mercenaryLevel == 1) {
+
+            mercenaryImageIndex++;
+            if (mercenaryImageIndex >= BattleDataManager.Instance.GetLevel1MercenaryTroopSOList().Count) {
+                mercenaryImageIndex = 0;
+            }
+
             level1MercenarySlot.gameObject.SetActive(true);
             level1MercenarySlot.GetSlotImage().gameObject.SetActive(true);
             level1MercenarySlot.GetSlotImage().sprite = BattleDataManager.Instance.GetLevel1MercenaryTroopSOList()[mercenaryImageIndex].troopIllustrationSlotSprite;
 
-            mercenaryImageIndex++;
-            if (mercenaryImageIndex == BattleDataManager.Instance.GetLevel1MercenaryTroopSOList().Count) {
-                mercenaryImageIndex = 0;
-            }
         }
 
         if (mercenaryLevel == 2) {
+
+            mercenaryImageIndex++;
+            if (mercenaryImageIndex >= BattleDataManager.Instance.GetLevel2MercenaryTroopSOList().Count) {
+                mercenaryImageIndex = 0;
+            }
+
             level2MercenarySlot.gameObject.SetActive(true);
             level2MercenarySlot.GetSlotImage().gameObject.SetActive(true);
             level2MercenarySlot.GetSlotImage().sprite = BattleDataManager.Instance.GetLevel2MercenaryTroopSOList()[mercenaryImageIndex].troopIllustrationSlotSprite;
 
-            mercenaryImageIndex++;
-            if (mercenaryImageIndex == BattleDataManager.Instance.GetLevel2MercenaryTroopSOList().Count) {
-                mercenaryImageIndex = 0;
-            }
         }
 
         if (mercenaryLevel == 3) {
+
+            mercenaryImageIndex++;
+            if (mercenaryImageIndex >= BattleDataManager.Instance.GetLevel3MercenaryTroopSOList().Count) {
+                mercenaryImageIndex = 0;
+            }
+
             level3MercenarySlot.gameObject.SetActive(true);
             level3MercenarySlot.GetSlotImage().gameObject.SetActive(true);
             level3MercenarySlot.GetSlotImage().sprite = BattleDataManager.Instance.GetLevel3MercenaryTroopSOList()[mercenaryImageIndex].troopIllustrationSlotSprite;
-
-            mercenaryImageIndex++;
-            if (mercenaryImageIndex == BattleDataManager.Instance.GetLevel3MercenaryTroopSOList().Count) {
-                mercenaryImageIndex = 0;
-            }
         }
 
         if (mercenaryLevel == 4) {
+
+            mercenaryImageIndex++;
+            if (mercenaryImageIndex >= BattleDataManager.Instance.GetLevel4MercenaryTroopSOList().Count) {
+                mercenaryImageIndex = 0;
+            }
+
             level4MercenarySlot.gameObject.SetActive(true);
             level4MercenarySlot.GetSlotImage().gameObject.SetActive(true);
             level4MercenarySlot.GetSlotImage().sprite = BattleDataManager.Instance.GetLevel4MercenaryTroopSOList()[mercenaryImageIndex].troopIllustrationSlotSprite;
 
-            mercenaryImageIndex++;
-            if (mercenaryImageIndex == BattleDataManager.Instance.GetLevel4MercenaryTroopSOList().Count) {
-                mercenaryImageIndex = 0;
-            }
         }
 
     }

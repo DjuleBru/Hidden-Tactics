@@ -59,6 +59,12 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
         }
     }
 
+    public override void OnNetworkSpawn() {
+        base.OnNetworkSpawn();
+        BattleManager.Instance.AddIPlaceableSpawned(NetworkObjectId);
+        Debug.Log("AddIPlaceableSpawned " + this);
+    }
+
     protected virtual void BattleManager_OnStateChanged(object sender, EventArgs e) {
 
         if (BattleManager.Instance.IsBattlePhaseStarting()) {

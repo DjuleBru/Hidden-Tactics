@@ -115,7 +115,10 @@ public class Troop : NetworkBehaviour, IPlaceable {
     }
 
     public override void OnNetworkSpawn() {
+        base.OnNetworkSpawn();
         BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
+        BattleManager.Instance.AddIPlaceableSpawned(NetworkObjectId);
+        Debug.Log("AddIPlaceableSpawned " + this);
     }
 
     protected void Update() {
