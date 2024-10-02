@@ -372,6 +372,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 77f0f7da6ee79734c87a04f9523663a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  visualTransform: {fileID: 5762846181625190598}
   projectileTarget: {fileID: 1133931331262664849}
   unitVisual: {fileID: 7096053914295724965}
   unitUI: {fileID: 4314942328368532868}
@@ -390,6 +391,11 @@ GameObject:
 --- !u!198 &5434656116740465933 stripped
 ParticleSystem:
   m_CorrespondingSourceObject: {fileID: 8070821247338130476, guid: ecaf4c1c39222ff458941abdb8115703, type: 3}
+  m_PrefabInstance: {fileID: 4281401351482345761}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &5762846181625190598 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8400103676882440679, guid: ecaf4c1c39222ff458941abdb8115703, type: 3}
   m_PrefabInstance: {fileID: 4281401351482345761}
   m_PrefabAsset: {fileID: 0}
 --- !u!95 &6310573961516158758 stripped
@@ -491,7 +497,6 @@ MonoBehaviour:
   upgradedWeaponScale: {x: 0, y: 0, z: 0}
   upgradedWeaponMaterial: {fileID: 0}
   mountSpriteRenderer: {fileID: 0}
-  mountShadowGameObject: {fileID: 0}
   ugradedMountShader: {fileID: 0}
   hasSideWeapon: 0
   bodySideWeaponAnimator: {fileID: 0}

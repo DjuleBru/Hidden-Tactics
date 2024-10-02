@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class UnitAI_MeleeAttackWhileMoving : UnitAI
 {
-    [ClientRpc]
-    protected override void ChangeStateClientRpc() {
+    //[ClientRpc]
+    protected override void ChangeState() {
         if (state.Value == State.idle) {
             unitAttack.ResetAttackTarget();
             ActivateMainAttack();

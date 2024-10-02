@@ -144,17 +144,11 @@ public class UnitAI : NetworkBehaviour
     }
 
     protected void State_OnValueChanged(State previousValue, State newValue) {
-        if (!gameObject.activeInHierarchy) return;
-        ChangeStateServerRpc();
+        if (!unit.GetUnitIsBought()) return;
+        ChangeState();
     }
 
-    [ServerRpc(RequireOwnership =false)]
-    protected void ChangeStateServerRpc() {
-        ChangeStateClientRpc();
-    }
-
-    [ClientRpc]
-    protected virtual void ChangeStateClientRpc() {
+    protected virtual void ChangeState() {
         if (state.Value == State.idle) {
             unitAttack.ResetAttackTarget();
             ActivateMainAttack();
@@ -364,6 +358,7 @@ public class UnitAI : NetworkBehaviour
 
     [ClientRpc]
     private void InvokeOnMainAttackActivatedClientRpc() {
+        Debug.Log("InvokeOnMainAttackActivatedClientRpc");
         OnMainAttackActivated?.Invoke(this, EventArgs.Empty);
     }
 
@@ -373,6 +368,7 @@ public class UnitAI : NetworkBehaviour
     }
     [ClientRpc]
     private void InvokeOnSideAttackActivatedClientRpc() {
+        Debug.Log("InvokeOnSideAttackActivatedClientRpc");
         OnSideAttackActivated?.Invoke(this, EventArgs.Empty);
     }
     #endregion

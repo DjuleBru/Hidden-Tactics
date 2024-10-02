@@ -59,5 +59,6 @@ public class UnitSO : ScriptableObject {
 
     public Sprite singleUnitSprite;
 
+    public int projectileNumberToPool = 1;
     public int damageToVillages;
 }

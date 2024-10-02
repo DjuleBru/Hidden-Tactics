@@ -118,7 +118,7 @@ public class Troop : NetworkBehaviour, IPlaceable {
         base.OnNetworkSpawn();
         BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
         BattleManager.Instance.AddIPlaceableSpawned(NetworkObjectId);
-        Debug.Log("AddIPlaceableSpawned " + this);
+        Debug.Log("AddIPlaceableSpawned " + this + " NetworkObjectId " + NetworkObjectId);
     }
 
     protected void Update() {
@@ -218,7 +218,7 @@ public class Troop : NetworkBehaviour, IPlaceable {
 
             foreach (Unit unit in allUnitsInTroop) {
                 if (unit.GetUnitIsBought() && !unit.GetIsDead() && !unit.GetUnitIsDynamicallySpawnedUnit()) {
-                    allUnitsSum += unit.transform.position;
+                    allUnitsSum += unit.GetAllVisualTransform().position;
                     allUnitsCount++;
                 }
             }

@@ -17,7 +17,6 @@ public class Player : NetworkBehaviour
     public override void OnNetworkSpawn() {
         if (IsOwner) {
             LocalInstance = this;
-            VillageManager.Instance.GeneratePlayerVillagesServerRpc(NetworkManager.Singleton.LocalClientId);
         }
     }
 

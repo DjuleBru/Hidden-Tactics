@@ -23,12 +23,13 @@ public class BattlefieldVisual_Opponent : MonoBehaviour
         battlefieldOutlineSpriteRenderer.enabled = false;
         battlefieldShadowSpriteRenderer.enabled = false;
 
-        BattleManager.Instance.OnAllPlayersLoaded += BattleManager_OnAllPlayersLoaded;
+        BattleManager.Instance.OnAllIPlaceablesSpawned += BattleManager_OnAllIPlaceablesSpawned;
     }
 
-    private void BattleManager_OnAllPlayersLoaded(object sender, System.EventArgs e) {
+    private void BattleManager_OnAllIPlaceablesSpawned(object sender, System.EventArgs e) {
         battlefieldBaseSpriteRenderer.enabled = true;
         battlefieldOutlineSpriteRenderer.enabled = true;
         battlefieldShadowSpriteRenderer.enabled = true;
     }
+
 }

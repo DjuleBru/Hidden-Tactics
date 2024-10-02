@@ -14,6 +14,9 @@ public class BattleManager : NetworkBehaviour
     public event EventHandler OnStateChanged;
     public event EventHandler OnAllPlayersLoaded;
     public event EventHandler OnGameEnded;
+    public event EventHandler OnAllIPlaceablesSpawned;
+    public event EventHandler OnIPlaceableSpawned;
+
     public bool allPlayersLoaded;
     public bool isFirstPreparationPhase = true;
 
@@ -52,8 +55,16 @@ public class BattleManager : NetworkBehaviour
 
     private NetworkVariable<State> state = new NetworkVariable<State>();
 
-    private int objectsSpawnedNumber;
+    private int objectsSpawnedNumberServer;
+    private int objectsSpawnedNumberClient;
+    private int totalIPlaceablesToSpawn;
+    private int totalIPlaceablesToSpawnClient;
+    private int clientsConfirmedTotalObjectsSpawnedReceived;
+
     private List<ulong> spawnedObjectsIDs = new List<ulong>();
+
+    private int clientsSetSpawnedIplaceablesNumber_Server;
+
 
     private void Awake() {
         Instance = this;
@@ -142,27 +153,80 @@ public class BattleManager : NetworkBehaviour
         }
     }
 
+    #region LOAD PLAYER IPLACEABLES SPAWNING
+
+    [ServerRpc(RequireOwnership = false)]
+    public void AddPlayerIPlaceablesNumberToSpawnServerRpc(int objectsToSpawnNumber) {
+        totalIPlaceablesToSpawn += objectsToSpawnNumber;
+        clientsSetSpawnedIplaceablesNumber_Server++;
+
+        if(clientsSetSpawnedIplaceablesNumber_Server == 2) {
+            SetPlayerIPlaceablesNumberToSpawnClientRpc(totalIPlaceablesToSpawn);
+        }
+    }
+
+    [ClientRpc]
+    private void SetPlayerIPlaceablesNumberToSpawnClientRpc(int totalObjectsToSpawnNumber) {
+        Debug.Log("SetPlayerIPlaceablesNumberToSpawnClientRpc " + totalObjectsToSpawnNumber);
+
+        totalIPlaceablesToSpawnClient = totalObjectsToSpawnNumber;
+        ConfirmTotalObjectsToSpawnNumberReceivedServerRpc();
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void ConfirmTotalObjectsToSpawnNumberReceivedServerRpc() {
+        clientsConfirmedTotalObjectsSpawnedReceived++;
+
+        Debug.Log("ConfirmTotalObjectsToSpawnNumberReceivedServerRpc " + clientsConfirmedTotalObjectsSpawnedReceived);
+        if (clientsConfirmedTotalObjectsSpawnedReceived == 2) {
+            ConfirmTotalObjectsToSpawnNumberReceivedClientRpc();
+        }
+    }
+
+    [ClientRpc]
+    private void ConfirmTotalObjectsToSpawnNumberReceivedClientRpc() {
+        Debug.Log("ConfirmTotalObjectsToSpawnNumberReceivedClientRpc ");
+        VillageManager.Instance.GeneratePlayerVillagesServerRpc(NetworkManager.Singleton.LocalClientId);
+        PlayerAction_SpawnIPlaceable.LocalInstance.SpawnPlayerIPlaceablePoolList(NetworkManager.Singleton.LocalClientId, DeckManager.LocalInstance.GetDeckSelected());
+        PlayerAction_SpawnIPlaceable.LocalInstance.SpawnMercenaryPool(NetworkManager.Singleton.LocalClientId);
+    }
+
     public void AddIPlaceableSpawned(ulong networkObjectID) {
         AddIPlaceableSpawnedServerRpc(networkObjectID);
     }
 
     [ServerRpc(RequireOwnership =false)]
     private void AddIPlaceableSpawnedServerRpc(ulong networkObjectID) {
-        AddIPlaceableSpawnedClientRpc(networkObjectID);
-    }
 
-    [ClientRpc]
-    private void AddIPlaceableSpawnedClientRpc(ulong networkObjectID) {
-        if(spawnedObjectsIDs.Contains(networkObjectID)) {
+        Debug.Log("BattleManager AddIPlaceableSpawnedServerRpc " + networkObjectID);
+
+        if (spawnedObjectsIDs.Contains(networkObjectID)) {
             // Second time the ID is being added to the list : object has been loaded on both clients
-            objectsSpawnedNumber++;
-            Debug.Log("AddIPlaceableSpawned " + objectsSpawnedNumber);
-
-        } else {
+            objectsSpawnedNumberServer++;
+            ConfirmIPlaceableSpawnedClientRpc(objectsSpawnedNumberServer, networkObjectID);
+        }
+        else {
             spawnedObjectsIDs.Add(networkObjectID);
         }
     }
 
+    [ClientRpc]
+    private void ConfirmIPlaceableSpawnedClientRpc(int totalObjectsSpawned, ulong networkObjectID) {
+        objectsSpawnedNumberClient = totalObjectsSpawned;
+        Debug.Log("Total iPlaceable spawned on both clients = " + objectsSpawnedNumberClient + " / " + totalIPlaceablesToSpawnClient + " NETWORKID " + networkObjectID);
+
+        OnIPlaceableSpawned?.Invoke(this, EventArgs.Empty);
+
+        if (objectsSpawnedNumberClient == totalIPlaceablesToSpawnClient) {
+            OnAllIPlaceablesSpawned?.Invoke(this, EventArgs.Empty);
+        }
+    }
+
+    public float GetIPlaceableSpawnProgress() {
+        return (float)objectsSpawnedNumberClient / (float)totalIPlaceablesToSpawnClient;
+    }
+
+    #endregion
 
     [ServerRpc(RequireOwnership = false)]
     private void SetMercenariesForBattleServerRpc() {
@@ -180,8 +244,6 @@ public class BattleManager : NetworkBehaviour
         level2Mercenary = BattleDataManager.Instance.GetLevel2MercenaryTroopSOList()[level2MercenaryIndex];
         level3Mercenary = BattleDataManager.Instance.GetLevel3MercenaryTroopSOList()[level3MercenaryIndex];
         level4Mercenary = BattleDataManager.Instance.GetLevel4MercenaryTroopSOList()[level4MercenaryIndex];
-
-        PlayerAction_SpawnIPlaceable.LocalInstance.SpawnMercenaryPool(NetworkManager.Singleton.LocalClientId);
     }
 
     private void PlayersReadyManager_OnAllPlayersReady(object sender, EventArgs e) {

@@ -4,6 +4,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
+using Unity.Netcode.Components;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -39,9 +40,11 @@ public class Unit : NetworkBehaviour, ITargetable {
     public event EventHandler OnUnitScaredEnded;
     public event EventHandler OnUnitWebbedEnded;
 
+    [SerializeField] private Transform visualTransform;
     [SerializeField] private Transform projectileTarget;
     [SerializeField] private UnitVisual unitVisual;
     [SerializeField] private UnitUI unitUI;
+    private NetworkTransform networkTransform;
 
     public class OnUnitSpecialEventArgs : EventArgs {
         public float effectDuration;
@@ -94,9 +97,14 @@ public class Unit : NetworkBehaviour, ITargetable {
     protected virtual void Awake() {
         collider2d = GetComponent<Collider2D>();
         rb = GetComponent<Rigidbody2D>();
+        networkTransform = GetComponent<NetworkTransform>();
         collider2d.enabled = false;
 
         rb.mass = unitSO.mass;
+
+        if (IsServer) {
+            networkTransform.enabled = false;
+        }
     }
 
     protected virtual void Start() {
@@ -115,8 +123,13 @@ public class Unit : NetworkBehaviour, ITargetable {
 
         if (!unitIsBought) return;
 
+        if(!IsServer) {
+            // Mirror x position 
+            visualTransform.transform.position = new Vector3(transform.position.x + (BattleGrid.Instance.GetBattlefieldMiddlePoint() - transform.position.x) * 2, transform.position.y, 0);
+        }
+
         if(IsServer && BattleManager.Instance.IsBattlePhase()) {
-            HandlePositionSync();
+            //HandlePositionSync();
         }
 
         if(IsServer) {
@@ -178,19 +191,19 @@ public class Unit : NetworkBehaviour, ITargetable {
 
             short positionShortX = (short)(lastPosition.x * 100);  // Multiplier par 100 pour convertir en entier
             short positionShortY = (short)(lastPosition.y * 100);
-            Vector2 positionShort = new Vector2(positionShortX, positionShortY);
-            HandlePositionSyncServerRpc(positionShort);
-
+            HandlePositionSyncServerRpc(positionShortX, positionShortY);
         }
     }
 
     [ServerRpc(RequireOwnership = false)]
-    protected void HandlePositionSyncServerRpc(Vector2 positionShort) {
-        HandlePositionSyncClientRpc(positionShort);
+    protected void HandlePositionSyncServerRpc(short positionShortX, short positionShortY) {
+        HandlePositionSyncClientRpc(positionShortX, positionShortY);
     }
 
     [ClientRpc]
-    protected void HandlePositionSyncClientRpc(Vector2 positionShort) {
+    protected void HandlePositionSyncClientRpc(short positionShortX, short positionShortY) {
+        Vector2 positionShort = new Vector2(positionShortX, positionShortY);
+
         if (!IsServer) {
             // Mirror x position 
             float posXx = positionShort.x / 100.0f;
@@ -270,6 +283,10 @@ public class Unit : NetworkBehaviour, ITargetable {
         isPooled = false;
         OnUnitActivated?.Invoke(this, EventArgs.Empty);
         gameObject.SetActive(true);
+
+        if(IsServer) {
+            networkTransform.enabled = true;
+        }
     }
 
     public void DeactivateUnit() {
@@ -424,6 +441,7 @@ public class Unit : NetworkBehaviour, ITargetable {
         }
     }
 
+
     public void SetUnitSelected(bool selected) {
 
         if(selected) {
@@ -548,6 +566,10 @@ public class Unit : NetworkBehaviour, ITargetable {
 
     public bool GetScared() {
         return scared;
+    }
+
+    public Transform GetAllVisualTransform() {
+        return visualTransform;
     }
 
     #endregion

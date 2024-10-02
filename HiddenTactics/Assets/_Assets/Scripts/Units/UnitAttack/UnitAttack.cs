@@ -20,7 +20,6 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
     protected Unit unit;
     protected UnitAI unitAI;
     protected UnitMovement unitMovement;
-
     protected List<Projectile> projectilePool = new List<Projectile>();
 
     protected AttackSO activeAttackSO;
@@ -51,6 +50,9 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
     protected bool dazed;
     protected bool triggerDeathAttack;
     protected float deadTimer;
+
+    protected float syncWatchDirTimer;
+    protected float syncWatchDirRate = .3f;
 
     protected void Awake() {
         unitAI = GetComponent<UnitAI>();
@@ -90,7 +92,12 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
         if (attackTarget as MonoBehaviour == null) return;
 
         if(IsServer) {
-            unitMovement.SetWatchDir((attackTarget as MonoBehaviour).transform);
+            syncWatchDirTimer += Time.deltaTime;
+
+            if(syncWatchDirTimer >= syncWatchDirRate) {
+                syncWatchDirTimer = 0;
+                unitMovement.SetWatchDir((attackTarget as MonoBehaviour).transform);
+            }
         }
 
         if (attacking && !dazed) {
@@ -431,7 +438,7 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
     public void InitializeProjectilePoolServerRpc() {
 
         if (unit.GetUnitSO().mainAttackSO.projectilePrefab != null) {
-            int projectileNumber = 2;
+            int projectileNumber = unit.GetUnitSO().projectileNumberToPool;
 
             for (int i = 0; i < projectileNumber; i++) {
                 SpawnProjectileServerRpc();
@@ -572,7 +579,10 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
     #region SET PARAMETERS
 
     public void SetAttackTarget(ITargetable attackTarget) {
-        if(attackTarget as MonoBehaviour != null) {
+
+        if (attackTarget as MonoBehaviour != null) {
+            if (attackTarget == this.attackTarget) return;
+
             NetworkObject targetNetworkObject = (attackTarget as MonoBehaviour).GetComponent<NetworkObject>();
             SetAttackTargetServerRpc(targetNetworkObject);
         }
@@ -587,13 +597,14 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
     }
 
     [ServerRpc(RequireOwnership = false)]
-    public void SetAttackTargetServerRpc(NetworkObjectReference unitNetworkObjectReference) {
-        SetAttackTargetClientRpc(unitNetworkObjectReference);
+    public void SetAttackTargetServerRpc(NetworkObjectReference networkObectReference) {
+        SetAttackTargetClientRpc(networkObectReference);
     }
 
     [ClientRpc]
-    public void SetAttackTargetClientRpc(NetworkObjectReference targetNetworkObjectReference) {
-        targetNetworkObjectReference.TryGet(out NetworkObject targetNetworkObject);
+    public void SetAttackTargetClientRpc(NetworkObjectReference networkObectReference) {
+        networkObectReference.TryGet(out NetworkObject targetNetworkObject);
+
         attackTarget = targetNetworkObject.GetComponent<ITargetable>();
     }
 

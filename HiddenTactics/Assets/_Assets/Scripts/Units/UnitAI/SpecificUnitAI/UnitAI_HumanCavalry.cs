@@ -81,9 +81,9 @@ public class UnitAI_HumanCavalry : UnitAI
         }
     }
 
-    [ClientRpc]
-    protected override void ChangeStateClientRpc() {
-        base.ChangeStateClientRpc();
+    //[ClientRpc]
+    protected override void ChangeState() {
+        base.ChangeState();
         if (state.Value == State.idle) {
             if(galloping.Value == true) {
                 galloping.Value = false;

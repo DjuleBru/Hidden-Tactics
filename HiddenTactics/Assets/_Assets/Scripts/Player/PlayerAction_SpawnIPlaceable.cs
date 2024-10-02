@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.Netcode;
-using UnityEditor.PackageManager;
 using UnityEngine;
 
 public class PlayerAction_SpawnIPlaceable : NetworkBehaviour {
@@ -15,7 +14,8 @@ public class PlayerAction_SpawnIPlaceable : NetworkBehaviour {
     private Dictionary<int, IPlaceable> spawnedOpponentIPlaceablesDictionary;
     private Dictionary<int, GridPosition> spawnedOpponentIPlaceableGridPositions;
     private int troopDictionaryInt;
-    private int objectsToSpawnNumber;
+
+    private Dictionary<ulong, NetworkObject> spawnedNetworkObjectsDictionary = new Dictionary<ulong, NetworkObject>();
 
     private void Awake() {
         spawnedOpponentIPlaceablesDictionary = new Dictionary<int, IPlaceable>();
@@ -61,6 +61,10 @@ public class PlayerAction_SpawnIPlaceable : NetworkBehaviour {
             spawnedOpponentIPlaceableGridPositions.Clear();
         }
 
+    }
+
+    public NetworkObject GetNetworkObjectFromNetworkObjectId(ulong networkObjectID) {
+        return spawnedNetworkObjectsDictionary[networkObjectID];
     }
 
     #region CONTROLS
@@ -141,16 +145,11 @@ public class PlayerAction_SpawnIPlaceable : NetworkBehaviour {
     #endregion
 
     #region OBJECT POOLING
-
+  
     public void SpawnPlayerIPlaceablePoolList(ulong clientID, Deck deck) {
-        objectsToSpawnNumber += CountIPlaceablesToSpawsInPlayerDeck(deck);
-        objectsToSpawnNumber += CountIPlaceablesToSpawsInFactionPool(deck);
-        objectsToSpawnNumber += 11; // MercenaryAmount
-
-        Debug.Log("there are " + objectsToSpawnNumber + " iPlaceables to spawn for player " + clientID);
 
         SpawnPlayerDeckPool(clientID, deck);
-        SpawnFactionPool(clientID, deck);
+        //SpawnFactionPool(clientID, deck);
 
         foreach (IPlaceable iPlaceable in iPlaceablePoolList) {
             iPlaceable.DeActivateIPlaceable();
@@ -164,8 +163,9 @@ public class PlayerAction_SpawnIPlaceable : NetworkBehaviour {
             if (troopSO == null) continue;
             int troopSOIndex = BattleDataManager.Instance.GetTroopSOIndex(troopSO);
 
-            int troopAmountToSpawn = (int)Mathf.Round(PlayerGoldManager.Instance.GetPlayerInitialGold() / troopSO.spawnTroopCost);
-            //int troopAmountToSpawn = 5;
+            // DONT FORGET TO CHANGE IN CountIPlaceablesToSpawsInPlayerDeck()
+            //int troopAmountToSpawn = (int)Mathf.Round(PlayerGoldManager.Instance.GetPlayerInitialGold() / troopSO.spawnTroopCost);
+            int troopAmountToSpawn = 1;
 
             Debug.Log("spawned " + troopAmountToSpawn + " " + troopSO);
             for (int i = 0; i < troopAmountToSpawn; i++) {
@@ -271,15 +271,30 @@ public class PlayerAction_SpawnIPlaceable : NetworkBehaviour {
 
         Debug.Log("activating " + identifiedIPlaceableInPoolList.Count + " iPlaceables");
         foreach(IPlaceable iPlaceableToActivate in identifiedIPlaceableInPoolList) {
-
             iPlaceableToActivate.SetPlacingIPlaceable();
             iPlaceablePoolList.Remove(iPlaceableToActivate);
             iPlaceableToPlaceList.Add(iPlaceableToActivate);
-
         }
 
+        // If there are not enough IPlaceables left in pool : spawn new IPlaceable
+        if(iPlaceableOfTypeNumber <= 2) {
+            if(isTroop) {
+                SpawnPlayerTroopInPool(troopToSpawnSO, NetworkManager.Singleton.LocalClientId);
+            }
+            if(isBuilding) {
+                SpawnPlayerBuildingInPool(buildingToSpawnSO, NetworkManager.Singleton.LocalClientId);
+            }
+        }
     }
-    
+    public void SpawnPlayerTroopInPool(TroopSO troopSO, ulong clientID) {
+        int troopSOIndex = BattleDataManager.Instance.GetTroopSOIndex(troopSO);
+        SpawnTroopServerRpc(troopSOIndex, clientID);
+    }
+    public void SpawnPlayerBuildingInPool(BuildingSO buildingSO, ulong clientID) {
+        int buildingSOIndex = BattleDataManager.Instance.GetBuildingSOIndex(buildingSO);
+        SpawnBuildingServerRpc(buildingSOIndex, clientID);
+    }
+
     private int CountIPlaceablesOfTypeInObjectPool(TroopSO troopSO) {
         int iPlaceableOfTypeNumber = 0;
 
@@ -378,6 +393,17 @@ public class PlayerAction_SpawnIPlaceable : NetworkBehaviour {
         }
     }
 
+    public void CountPlayerIPlaceablesNumberToSpawn(ulong clientID, Deck deck) {
+        int objectsToSpawnNumber = 0;
+        objectsToSpawnNumber += CountIPlaceablesToSpawsInPlayerDeck(deck);
+        //objectsToSpawnNumber += CountIPlaceablesToSpawsInFactionPool(deck);
+        objectsToSpawnNumber += 11; // Mercenary Amount
+        objectsToSpawnNumber += 20; // Village Amount
+
+        Debug.Log("there are " + objectsToSpawnNumber + " iPlaceables to spawn for player " + clientID);
+        BattleManager.Instance.AddPlayerIPlaceablesNumberToSpawnServerRpc(objectsToSpawnNumber);
+    }
+
     private int CountIPlaceablesToSpawsInPlayerDeck(Deck deck) {
         int iPlaceablesToSpawnInPlayerDeck = 0;
 
@@ -385,7 +411,8 @@ public class PlayerAction_SpawnIPlaceable : NetworkBehaviour {
             if (troopSO == null) continue;
             int troopSOIndex = BattleDataManager.Instance.GetTroopSOIndex(troopSO);
 
-            int troopAmountToSpawn = (int)Mathf.Round(PlayerGoldManager.Instance.GetPlayerInitialGold() / troopSO.spawnTroopCost);
+            //int troopAmountToSpawn = (int)Mathf.Round(PlayerGoldManager.Instance.GetPlayerInitialGold() / troopSO.spawnTroopCost);
+            int troopAmountToSpawn = 1;
             iPlaceablesToSpawnInPlayerDeck += troopAmountToSpawn;
         }
 
@@ -502,6 +529,8 @@ public class PlayerAction_SpawnIPlaceable : NetworkBehaviour {
         iPlaceableToSpawnNetworkObjectReference.TryGet(out NetworkObject iPlaceableToSpawnNetworkObject);
         IPlaceable iPlaceableToSpawn = iPlaceableToSpawnNetworkObject.GetComponent<IPlaceable>();
 
+        spawnedNetworkObjectsDictionary.Add(iPlaceableToSpawnNetworkObject.NetworkObjectId, iPlaceableToSpawnNetworkObject);
+
         if (ownerClientId == NetworkManager.Singleton.LocalClientId) {
             iPlaceablePoolList.Add(iPlaceableToSpawn);
         }
@@ -566,6 +595,8 @@ public class PlayerAction_SpawnIPlaceable : NetworkBehaviour {
     private void SetUnitInitialConditionsClientRpc(NetworkObjectReference unitToSpawnNetworkObjectReference, NetworkObjectReference troopSpawnedNetworkObjectReference, Vector3 unitPosition, bool isAdditionalUnit, bool isSpawnedUnit) {
         unitToSpawnNetworkObjectReference.TryGet(out NetworkObject unitSpawnedNetworkObject);
         Unit unitSpawned = unitSpawnedNetworkObject.GetComponent<Unit>();
+
+        spawnedNetworkObjectsDictionary.Add(unitSpawnedNetworkObject.NetworkObjectId, unitSpawnedNetworkObject);
 
         troopSpawnedNetworkObjectReference.TryGet(out NetworkObject troopToSpawnNetworkObject);
         Troop troopToSpawnTroop = troopToSpawnNetworkObject.GetComponent<Troop>();

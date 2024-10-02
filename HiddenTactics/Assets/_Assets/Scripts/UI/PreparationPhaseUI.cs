@@ -41,7 +41,7 @@ public class PreparationPhaseUI : MonoBehaviour
 
     private void Start() {
         BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
-        BattleManager.Instance.OnAllPlayersLoaded += BattleManager_OnAllPlayersLoaded;
+        BattleManager.Instance.OnAllIPlaceablesSpawned += BattleManager_OnAllIPlaceablesSpawned;
         PlayerReadyManager.Instance.OnReadyChanged += PlayerReadyManager_OnReadyChanged;
         turnText.text = "I/" + ConvertIntToRomanNumber(BattleManager.Instance.GetMaxTurns());
         allPreparationPhasePanelsUI.SetActive(false);
@@ -52,7 +52,7 @@ public class PreparationPhaseUI : MonoBehaviour
         preparationPhaseTimerImage.fillAmount = BattleManager.Instance.GetPreparationPhaseTimerNormalized();
     }
 
-    private void BattleManager_OnAllPlayersLoaded(object sender, System.EventArgs e) {
+    private void BattleManager_OnAllIPlaceablesSpawned(object sender, System.EventArgs e) {
         StartCoroutine(ShowPreparationPhaseUIAfterDelay(2f));
     }
 

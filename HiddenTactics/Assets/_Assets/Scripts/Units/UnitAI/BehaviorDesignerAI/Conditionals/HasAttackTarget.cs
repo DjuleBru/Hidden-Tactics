@@ -14,20 +14,26 @@ public class HasAttackTarget : Conditional {
         unitAttack = GetComponent<UnitAttack>();
         unitTargetingSystem = GetComponent<UnitTargetingSystem>();
     }
+
     public override TaskStatus OnUpdate() {
         // Has attack target if : target is set, not dead, and in range
-        bool hasAttackTarget = (unitAttack.GetAttackTarget() != null && !unitAttack.GetAttackTarget().GetIsDead() && unitTargetingSystem.GetTargetUnitIsInRange(unitAttack.GetActiveAttackSO()));
-
+        bool hasAttackTarget = (unitAttack.GetAttackTarget() != null && !unitAttack.GetAttackTarget().GetIsDead());
 
         if (hasAttackTarget) {
 
             // Check if attack target has changeds
             if(target != null) {
 
-                if(attackMode == UnitTargetingSystem.AttackMode.mainAttack) {
+                //Debug.Log("target " + (target as MonoBehaviour).gameObject.GetInstanceID());
+                //Debug.Log("GetMainAttackTarget " + (unitTargetingSystem.GetMainAttackTarget() as MonoBehaviour).gameObject.GetInstanceID());
+
+                if (attackMode == UnitTargetingSystem.AttackMode.mainAttack) {
+
                     if (target != unitTargetingSystem.GetMainAttackTarget()) {
                         // Attack target changed
                         return TaskStatus.Failure;
+                    } else {
+                        return TaskStatus.Success;
                     }
                 }
 
@@ -36,8 +42,10 @@ public class HasAttackTarget : Conditional {
                         // Attack target changed
                         return TaskStatus.Failure;
                     }
+                    else {
+                        return TaskStatus.Success;
+                    }
                 }
-
             }
 
             target = unitAttack.GetAttackTarget();

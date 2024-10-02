@@ -16,10 +16,10 @@ public class UnitAI_DwarfAxe : UnitAI
         }
     }
 
-    [ClientRpc]
-    protected override void ChangeStateClientRpc() {
+    //[ClientRpc]
+    protected override void ChangeState() {
 
-        base.ChangeStateClientRpc();
+        base.ChangeState();
 
         if (state.Value == State.idle) {
 

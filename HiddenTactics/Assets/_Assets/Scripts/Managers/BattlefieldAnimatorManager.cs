@@ -29,7 +29,7 @@ public class BattlefieldAnimatorManager : NetworkBehaviour {
             battlefieldAnimator.enabled = false;
         }
 
-        BattleManager.Instance.OnAllPlayersLoaded += BattleManager_OnAllPlayersLoaded;
+        BattleManager.Instance.OnAllIPlaceablesSpawned += BattleManager_OnAllIPlaceablesSpawned;
     }
 
     private void Update() {
@@ -62,9 +62,10 @@ public class BattlefieldAnimatorManager : NetworkBehaviour {
         }
     }
 
-    private void BattleManager_OnAllPlayersLoaded(object sender, System.EventArgs e) {
+    private void BattleManager_OnAllIPlaceablesSpawned(object sender, EventArgs e) {
         battlefieldAnimator.enabled = true;
     }
+
 
     public void SlamBattlefields() {
         battlefieldAnimator.SetTrigger("Slam");

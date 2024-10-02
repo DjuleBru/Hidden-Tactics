@@ -40,15 +40,16 @@ public class CameraManager : MonoBehaviour
         zoom = mainVirtualCamera.m_Lens.OrthographicSize;
         SettingsManager.Instance.OnTacticalViewDisabled += SettingsManager_OnTacticalViewDisabled;
         SettingsManager.Instance.OnTacticalViewEnabled += SettingsManager_OnTacticalViewEnabled;
-        BattleManager.Instance.OnAllPlayersLoaded += BattleManager_OnAllPlayersLoaded;
+        BattleManager.Instance.OnAllIPlaceablesSpawned += BattleManager_OnAllIPlaceablesSpawned;
     }
+
 
     private void Update() {
         HandleMovement();
         HandleZoom();
     }
 
-    private void BattleManager_OnAllPlayersLoaded(object sender, EventArgs e) {
+    private void BattleManager_OnAllIPlaceablesSpawned(object sender, EventArgs e) {
         StartCoroutine(SetBattleCameraOnAllPlayersLoaded(.5f));
     }
 

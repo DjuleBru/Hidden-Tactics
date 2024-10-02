@@ -28,9 +28,9 @@ public class UnitAI_RangedWithAmmo : UnitAI
         return ammoMax;
     }
 
-    [ClientRpc]
-    protected override void ChangeStateClientRpc() {
-        base.ChangeStateClientRpc();
+    //[ClientRpc]
+    protected override void ChangeState() {
+        base.ChangeState();
         if (state.Value == State.idle) {
             ammoCount = ammoMax;
         }

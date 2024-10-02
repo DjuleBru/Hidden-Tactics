@@ -113,18 +113,18 @@ public class UnitUI : NetworkBehaviour
         unit.OnUnitWebbedEnded += Unit_OnUnitWebbedEnded;
         unit.OnUnitSold += Unit_OnUnitSold;
         unit.OnUnitActivated += Unit_OnUnitActivated;
+        unit.OnUnitHovered += Unit_OnUnitHovered;
+        unit.OnUnitUnhovered += Unit_OnUnitUnhovered;
 
         SetUnitHPBar();
     }
 
 
     private void Update() {
-
         debug = unitHPBarIsActive.ToString();
         CountDownHPBarShaderTimer();
         HandleStatusEffects();
         HandleHPBar();
-        
     }
 
     private void CountDownHPBarShaderTimer() {
@@ -253,6 +253,16 @@ public class UnitUI : NetworkBehaviour
         unitHPBarHealImage.sprite = hpBarBackgroundSprite;
         unitHPBarBackgroundImage.sprite = hpBarBackgroundSprite;
         unitHPBarOutline.sprite = hpBarOutlineSprite;
+    }
+
+    private void Unit_OnUnitUnhovered(object sender, System.EventArgs e) {
+        unitHPBarGameObject.SetActive(false);
+        unitHPBarIsActive = false;
+    }
+
+    private void Unit_OnUnitHovered(object sender, System.EventArgs e) {
+        unitHPBarGameObject.SetActive(true);
+        unitHPBarIsActive = true;
     }
 
     private void Unit_OnUnitSold(object sender, System.EventArgs e) {

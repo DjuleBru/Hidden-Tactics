@@ -89,12 +89,12 @@ public class IPlaceableSlotTemplate_SingleUnitIcon : MonoBehaviour, IPointerEnte
             fireTemplate.SetStatusEffectFill(unit.GetBurningDurationNormalized());
         }
         if (scared) {
-            fireTemplate.SetStatusEffectText(((int)unit.GetScaredRemainingTime()).ToString());
-            fireTemplate.SetStatusEffectFill(unit.GetScaredDurationNormalized());
+            fearTemplate.SetStatusEffectText(((int)unit.GetScaredRemainingTime()).ToString());
+            fearTemplate.SetStatusEffectFill(unit.GetScaredDurationNormalized());
         }
         if (poisoned) {
-            fireTemplate.SetStatusEffectText(((int)unit.GetPoisonedRemainingTime()).ToString());
-            fireTemplate.SetStatusEffectFill(unit.GetPoisonedDurationNormalized());
+            poisonTemplate.SetStatusEffectText(((int)unit.GetPoisonedRemainingTime()).ToString());
+            poisonTemplate.SetStatusEffectFill(unit.GetPoisonedDurationNormalized());
         }
     }
 

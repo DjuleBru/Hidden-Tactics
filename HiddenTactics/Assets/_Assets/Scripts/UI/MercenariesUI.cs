@@ -36,14 +36,15 @@ public class MercenariesUI : MonoBehaviour
     }
 
     private void Start() {
-        BattleManager.Instance.OnAllPlayersLoaded += BattleManager_OnAllPlayersLoaded;
+        BattleManager.Instance.OnAllIPlaceablesSpawned += BattleManager_OnAllIPlaceablesSpawned;
     }
 
-    private void BattleManager_OnAllPlayersLoaded(object sender, System.EventArgs e) {
+    private void BattleManager_OnAllIPlaceablesSpawned(object sender, System.EventArgs e) {
         allPlayersLoaded = true;
         Debug.Log("Mercenaries UI allPlayersLoaded");
         TryStartShowingRandomizingMercenary();
     }
+
 
     private void Update() {
 

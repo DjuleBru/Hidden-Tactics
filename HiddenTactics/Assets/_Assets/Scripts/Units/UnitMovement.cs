@@ -52,6 +52,9 @@ public class UnitMovement : NetworkBehaviour {
     public event EventHandler OnMoveSpeedBuffed;
     public event EventHandler OnMoveSpeedDebuffed;
 
+    protected float syncMoveDirTimer;
+    protected float syncMoveDirRate = .3f;
+
     private void Awake() {
         rb = GetComponent<Rigidbody2D>();
         unit = GetComponent<Unit>();
@@ -100,7 +103,14 @@ public class UnitMovement : NetworkBehaviour {
 
         if (IsServer) {
             if (!dazed) {
-                MoveServerRpc(moveDir);
+                rb.velocity = moveDir * moveSpeed * moveSpeedMultiplier * Time.fixedDeltaTime;
+                syncMoveDirTimer += Time.deltaTime;
+
+                if(syncMoveDirTimer >= syncMoveDirRate) {
+                    SetMoveDirServerRpc(moveDir);
+                    syncMoveDirTimer = 0;
+                }
+
             }
         }
     }
@@ -210,19 +220,27 @@ public class UnitMovement : NetworkBehaviour {
     }
 
     [ServerRpc(RequireOwnership = false)]
-    private void MoveServerRpc(Vector3 moveDir3DNormalized) {
-        rb.velocity = moveDir3DNormalized * moveSpeed * moveSpeedMultiplier * Time.fixedDeltaTime;
-        MoveClientRpc(moveDir3DNormalized);
+    private void SetMoveDirServerRpc(Vector2 moveDirNormalized) {
+
+        short moveDirShortX = (short)(moveDirNormalized.x * 100);  // Multiplier par 100 pour convertir en entier
+        short moveDirShortY = (short)(moveDirNormalized.y * 100);
+
+        SetMoveDirClientRpc(moveDirShortX, moveDirShortY);
     }
 
     [ClientRpc]
-    private void MoveClientRpc(Vector3 moveDir3DNormalized) {
+    private void SetMoveDirClientRpc(short moveDirShortX, short moveDirShortY) {
+        float moveDirX = moveDirShortX / 100.0f;
+        float moveDirY = moveDirShortY / 100.0f;
+
+        Vector2 moveDirShort = new Vector2(moveDirX, moveDirY);
+
         if (!IsServer) {
             // Mirror movedir 
-            moveDir3DNormalized.x = -moveDir3DNormalized.x;
+            moveDirShort.x = -moveDirShort.x;
         }
 
-        moveDir2D = new Vector2(moveDir3DNormalized.x, moveDir3DNormalized.y);
+        moveDir2D = new Vector2(moveDirShort.x, moveDirShort.y);
     }
 
     public void StopMoving() {
@@ -291,25 +309,32 @@ public class UnitMovement : NetworkBehaviour {
     #endregion
 
     public void SetWatchDir(Transform targetTransform) {
-        Vector3 watchDir = (targetTransform.position - transform.position).normalized;
+        Vector2 watchDir = (targetTransform.position - transform.position).normalized;
 
-        SetWatchDirServerRpc(watchDir);
+        short watchDirShortX = (short)(watchDir.x * 100);  // Multiplier par 100 pour convertir en entier
+        short watchDirShortY = (short)(watchDir.y * 100);
+
+        SetWatchDirServerRpc(watchDirShortX, watchDirShortY);
     }
 
     [ServerRpc(RequireOwnership = false)]
-    private void SetWatchDirServerRpc(Vector3 watchDir3DNormalized) {
-        SetWatchDirClientRpc(watchDir3DNormalized);
+    private void SetWatchDirServerRpc(short watchDirShortX, short watchDirShortY) {
+        SetWatchDirClientRpc(watchDirShortX, watchDirShortY);
     }
 
     [ClientRpc]
-    private void SetWatchDirClientRpc(Vector3 watchDir3DNormalized) {
+    private void SetWatchDirClientRpc(short watchDirShortX, short watchDirShortY) {
+
+        float watchDirX = watchDirShortX / 100.0f;
+        float watchDirY = watchDirShortY / 100.0f;
+
+        Vector2 watchDirNormalized = new Vector2(watchDirX, watchDirY);
+
         if (!IsServer) {
             // Mirror watchdir 
-            watchDir3DNormalized.x = -watchDir3DNormalized.x;
+            watchDirNormalized.x = -watchDirNormalized.x;
         }
-
-        //Debug.Log("SetWatchDirClientRpc " + watchDir3DNormalized);
-        watchDir = new Vector2(watchDir3DNormalized.x, watchDir3DNormalized.y);
+        watchDir = new Vector2(watchDirNormalized.x, watchDirNormalized.y);
     }
 
     public Vector2 GetWatchDir2D() {
