@@ -31,13 +31,14 @@ public class UnitMovement : NetworkBehaviour {
     #endregion
 
     private Unit unit;
+    private UnitAI unitAI;
     private Rigidbody2D rb;
     private CircleCollider2D unitCollider;
     private Vector3 moveDir2D;
     private int moveDirMultiplier;
 
     private bool dazed;
-    private bool canMove;
+    private NetworkVariable<bool> canMove = new NetworkVariable<bool>();
     private bool inFormation;
     private bool parentTroopSet;
 
@@ -62,6 +63,7 @@ public class UnitMovement : NetworkBehaviour {
         unit = GetComponent<Unit>();
         seeker = GetComponent<Seeker>();
         unitCollider = GetComponent<CircleCollider2D>();
+        unitAI = GetComponent<UnitAI>();
 
         moveSpeed = unit.GetUnitSO().unitMoveSpeed;
     }
@@ -82,7 +84,7 @@ public class UnitMovement : NetworkBehaviour {
             CheckUnitsInFormation();
         }
 
-        if (!canMove) return;
+        if (!canMove.Value) return;
 
         if (pathCalculationTimer < 0) {
             Vector3 direction = (destinationPoint - unit.transform.position).normalized;
@@ -101,7 +103,7 @@ public class UnitMovement : NetworkBehaviour {
     }
 
     private void FixedUpdate() {
-        if (!canMove) return;
+        if (!canMove.Value) return;
 
         if (IsServer) {
             if (!dazed) {
@@ -114,6 +116,12 @@ public class UnitMovement : NetworkBehaviour {
                     syncMoveDirTimer = 0;
                 }
 
+            }
+        } else {
+            // Clients try to move units locally
+            if(unitAI.IsMovingForwards()) {
+                rb.velocity = -GetMoveDir2D() * moveSpeed * moveSpeedMultiplier * Time.fixedDeltaTime;
+                Debug.Log(rb.velocity);
             }
         }
     }
@@ -191,22 +199,22 @@ public class UnitMovement : NetworkBehaviour {
     }
 
     public void MoveForwards() {
-        canMove = true;
+        canMove.Value = true;
         destinationPoint = moveForwardsPoint;
     }
 
     public void MoveToInitialPosition() {
-        canMove = true;
+        canMove.Value = true;
         destinationPoint = unit.GetInitialUnitPosition();
     }
 
     public void MoveToTarget(Vector3 targetPosition) {
-        canMove = true;
+        canMove.Value = true;
         destinationPoint = targetPosition;
     }
 
     public void MoveBehindTarget(Vector3 targetPosition, float distanceBehind) {
-        canMove = true;
+        canMove.Value = true;
         Vector3 destinationPointBehindTarget = targetPosition;
 
         if(unit.IsOwnedByPlayer()) {
@@ -235,7 +243,7 @@ public class UnitMovement : NetworkBehaviour {
     }
 
     public void StopMoving() {
-        canMove = false;
+        canMove.Value = false;
         moveDir = Vector3.zero;
     }
 

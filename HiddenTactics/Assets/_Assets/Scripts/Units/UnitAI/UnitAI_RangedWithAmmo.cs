@@ -28,22 +28,21 @@ public class UnitAI_RangedWithAmmo : UnitAI
         return ammoMax;
     }
 
-    //[ClientRpc]
     protected override void ChangeStateResponse() {
         base.ChangeStateResponse();
-        if (state.Value == State.idle) {
+        if (localState == State.idle) {
             ammoCount = ammoMax;
         }
-        if (state.Value == State.attackingMelee) {
+        if (localState == State.attackingMelee) {
             unitMovement.StopMoving();
         }
-        if (state.Value == State.moveToMeleeTarget) {
+        if (localState == State.moveToMeleeTarget) {
             ammoCount = ammoMax;
         }
-        if (state.Value == State.moveForwards) {
+        if (localState == State.moveForwards) {
             ActivateMainAttack();
         }
-        if (state.Value == State.dead) {
+        if (localState == State.dead) {
         }
     }
 }

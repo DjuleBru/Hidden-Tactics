@@ -84,7 +84,7 @@ public class UnitAI_HumanCavalry : UnitAI
     //[ClientRpc]
     protected override void ChangeStateResponse() {
         base.ChangeStateResponse();
-        if (state.Value == State.idle) {
+        if (localState == State.idle) {
             if(galloping.Value == true) {
                 galloping.Value = false;
                 RemoveGallopBuffs();

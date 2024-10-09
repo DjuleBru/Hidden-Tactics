@@ -7,28 +7,28 @@ public class UnitAI_MeleeAttackWhileMoving : UnitAI
 {
     //[ClientRpc]
     protected override void ChangeStateResponse() {
-        if (state.Value == State.idle) {
+        if (localState == State.idle) {
             unitAttack.ResetAttackTarget();
             ActivateMainAttack();
             unitMovement.StopMoving();
         }
 
-        if (state.Value == State.blockedByBuilding) {
+        if (localState == State.blockedByBuilding) {
             unitMovement.StopMoving();
         }
 
-        if (state.Value == State.attackingMelee) {
+        if (localState == State.attackingMelee) {
         }
 
-        if (state.Value == State.moveToMeleeTarget) {
+        if (localState == State.moveToMeleeTarget) {
 
         }
 
-        if (state.Value == State.moveForwards) {
+        if (localState == State.moveForwards) {
             unitAttack.ResetAttackTarget();
         }
 
-        if (state.Value == State.dead) {
+        if (localState == State.dead) {
             unitMovement.StopMoving();
         }
 

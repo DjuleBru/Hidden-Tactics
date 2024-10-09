@@ -141,23 +141,22 @@ public class UnitAI_Ranged : UnitAI
         }
     }
 
-    //[ClientRpc]
     protected override void ChangeStateResponse() {
         base.ChangeStateResponse();
 
-        if (state.Value == State.idle) {
+        if (localState == State.idle) {
             foundMeleeTarget = false;
         }
-        if (state.Value == State.attackingRanged) {
+        if (localState == State.attackingRanged) {
             unitMovement.StopMoving();
         }
-        if (state.Value == State.moveToMeleeTarget) {
+        if (localState == State.moveToMeleeTarget) {
 
         }
-        if (state.Value == State.moveForwards) {
+        if (localState == State.moveForwards) {
             foundMeleeTarget = false;
         }
-        if (state.Value == State.dead) {
+        if (localState == State.dead) {
             foundMeleeTarget = false;
         }
     }

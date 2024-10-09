@@ -21,24 +21,24 @@ public class UnitAI_DwarfAxe : UnitAI
 
         base.ChangeStateResponse();
 
-        if (state.Value == State.idle) {
+        if (localState == State.idle) {
 
         }
-        if (state.Value == State.attackingMelee) {
+        if (localState == State.attackingMelee) {
             wearingShield = false;
         }
 
-        if (state.Value == State.moveToMeleeTarget) {
+        if (localState == State.moveToMeleeTarget) {
             wearingShield = false;
             ActivateMainAttack();
         }
 
-        if (state.Value == State.moveForwards) {
+        if (localState == State.moveForwards) {
             // Move Forwards is called when unit is dazed to reset it. So we need to check if it is dazed
             ActivateShield();
         }
 
-        if (state.Value == State.dead) {
+        if (localState == State.dead) {
 
         }
 

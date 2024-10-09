@@ -38,28 +38,28 @@ public class UnitAI_Jump : UnitAI
     //[ClientRpc]
     protected override void ChangeStateResponse() {
 
-        if (state.Value == State.idle) {
+        if (localState == State.idle) {
             specialActive = true;
             unitAttack.SetActiveAttackSO(unit.GetUnitSO().jumpAttackSO);
         }
 
-        if (state.Value == State.attackingMelee) {
+        if (localState == State.attackingMelee) {
             specialActive = false;
             unitAttack.SetActiveAttackSO(unit.GetUnitSO().mainAttackSO);
         }
 
-        if (state.Value == State.moveToMeleeTarget) {
+        if (localState == State.moveToMeleeTarget) {
             specialActive = false;
             unitAttack.SetActiveAttackSO(unit.GetUnitSO().mainAttackSO);
         }
 
-        if (state.Value == State.moveForwards) {
+        if (localState == State.moveForwards) {
         }
 
-        if (state.Value == State.jumping) {
+        if (localState == State.jumping) {
         }
 
-        if (state.Value == State.dead) {
+        if (localState == State.dead) {
 
         }
 

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
+using Unity.Netcode.Components;
 using UnityEngine;
 
 public class UnitAI : NetworkBehaviour
@@ -38,7 +39,7 @@ public class UnitAI : NetworkBehaviour
     }
 
     protected NetworkVariable<State> state = new NetworkVariable<State>();
-    private State localState;
+    protected State localState;
     public event EventHandler OnStateChanged;
 
     protected virtual void Awake() {
@@ -49,12 +50,12 @@ public class UnitAI : NetworkBehaviour
 
         mainAttackSO = unit.GetUnitSO().mainAttackSO;
         sideAttackSO = unit.GetUnitSO().sideAttackSO;
+
+        localState = State.idle;
     }
 
     public override void OnNetworkSpawn() {
         if (unit.GetUnitIsOnlyVisual()) return;
-
-        localState = State.idle;
 
         state.OnValueChanged += State_OnValueChanged;
 
@@ -147,39 +148,40 @@ public class UnitAI : NetworkBehaviour
     }
 
     protected void State_OnValueChanged(State previousValue, State newValue) {
-        Debug.Log(unit + " State_OnValueChanged " + newValue);
+        //Debug.Log(unit + " State_OnValueChanged " + newValue);
 
         if (!unit.GetUnitIsBought()) return;
 
         state.Value = newValue;
+        localState = newValue;
 
         ChangeStateResponse();
     }
 
     protected virtual void ChangeStateResponse() {
-        if (state.Value == State.idle) {
+        if (localState == State.idle) {
             unitAttack.ResetAttackTarget();
             ActivateMainAttack();
             unitMovement.StopMoving();
         }
 
-        if(state.Value == State.blockedByBuilding) {
+        if(localState == State.blockedByBuilding) {
             unitMovement.StopMoving();
         }
 
-        if (state.Value == State.attackingMelee) {
+        if (localState == State.attackingMelee) {
             unitMovement.StopMoving();
         }
 
-        if (state.Value == State.moveToMeleeTarget) {
+        if (localState == State.moveToMeleeTarget) {
 
         }
 
-        if (state.Value == State.moveForwards) {
+        if (localState == State.moveForwards) {
             unitAttack.ResetAttackTarget();
-        }
+        } 
 
-        if (state.Value == State.dead) {
+        if (localState == State.dead) {
             unitMovement.StopMoving();
         }
 
@@ -194,7 +196,6 @@ public class UnitAI : NetworkBehaviour
             localState = State.moveForwards;
             ChangeStateResponse();
         }
-
         else {
             localState = State.idle;
             unitMovement.StopMoving();
@@ -204,7 +205,6 @@ public class UnitAI : NetworkBehaviour
         if (!IsServer) return;
         unitActive = BattleManager.Instance.IsBattlePhase();
     }
-
 
     protected void Unit_OnUnitDazed(object sender, Unit.OnUnitSpecialEventArgs e) {
         if (!IsServer) return;
@@ -217,13 +217,12 @@ public class UnitAI : NetworkBehaviour
 
     private void Unit_OnUnitActivated(object sender, EventArgs e) {
     }
+
     protected void Unit_OnUnitDied(object sender, EventArgs e) {
-        if (!IsServer) return;
         ChangeState(State.dead);
     }
 
     protected void Unit_OnUnitFell(object sender, EventArgs e) {
-        if (!IsServer) return;
         ChangeState(State.fallen);
     }
 
@@ -244,6 +243,23 @@ public class UnitAI : NetworkBehaviour
     #endregion
 
     #region SET PARAMETERS
+
+    public void ChangeState(State newState) {
+        // Check if both states are the same : useless call
+        if (state.Value == newState && localState == newState) return;
+
+        localState = newState;
+
+        // If only state.Value is the same : call ChangeState
+        if (state.Value == newState) {
+            ChangeStateResponse();
+        } else {
+            if (!IsServer) return;
+            state.Value = newState;
+        }
+
+    }
+
     protected IEnumerator TakeDazed(float dazedTime) {
         unitActive = false;
         unitMovement.SetDazed(true);
@@ -258,12 +274,6 @@ public class UnitAI : NetworkBehaviour
 
         unitMovement.SetDazed(false);
         unitAttack.SetDazed(false);
-    }
-
-    public void ChangeState(State newState) {
-        if (state.Value == newState) return;
-
-        state.Value = newState;
     }
 
     protected void InvokeOnStateChanged() {
@@ -282,7 +292,7 @@ public class UnitAI : NetworkBehaviour
     #region GET PARAMETERS
 
     public State GetState() {
-        return state.Value;
+        return localState;
     }
     public bool GetAttackStarted() {
         return attackStarted;
@@ -292,31 +302,31 @@ public class UnitAI : NetworkBehaviour
     }
 
     public bool IsIdle() {
-        return state.Value == State.idle;
+        return localState == State.idle;
     }
 
     public bool IsBlockedByBuilding() {
-        return state.Value == State.blockedByBuilding;
+        return localState == State.blockedByBuilding;
     }
 
     public bool IsDead() {
-        return state.Value == State.dead;
+        return localState == State.dead;
     }
 
     public bool IsAttacking() {
-        return state.Value == State.attackingMelee || state.Value == State.attackingRanged;
+        return localState == State.attackingMelee || localState == State.attackingRanged;
     }
     public virtual bool IsMovingForwards() {
-        return state.Value == State.moveForwards;
+        return localState == State.moveForwards;
     }
     public bool IsMovingToTarget() {
-        return state.Value == State.moveToMeleeTarget;
+        return localState == State.moveToMeleeTarget;
     }
     public bool IsWaiting() {
-        return state.Value == State.waiting;
+        return localState == State.waiting;
     }
     public bool IsFallen() {
-        return state.Value == State.fallen;
+        return localState == State.fallen;
     }
 
     public bool UnitIsActive() {
@@ -324,10 +334,10 @@ public class UnitAI : NetworkBehaviour
     }
 
     public bool IsState(State askedState) {
-        return state.Value == askedState;
+        return localState == askedState;
     }
     public bool IsNotState(State askedState) {
-        return state.Value != askedState;
+        return localState != askedState;
     }
 
     public bool GetMainAttackActive() {

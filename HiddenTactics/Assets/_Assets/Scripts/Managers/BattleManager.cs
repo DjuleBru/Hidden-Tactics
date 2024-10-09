@@ -146,6 +146,7 @@ public class BattleManager : NetworkBehaviour
                     battlePhaseTimerLocal = battlePhaseMaxTime;
 
                     state.Value = State.BattlePhaseStarting;
+                    return;
                 }
 
                 preparationPhaseTimerLocal -= Time.deltaTime;
@@ -169,6 +170,7 @@ public class BattleManager : NetworkBehaviour
                     preparationPhaseTimerLocal = preparationPhaseMaxTime;
 
                     state.Value = State.BattlePhaseEnding;
+                    return;
                 }
 
                 battlePhaseTimerLocal -= Time.deltaTime;
