@@ -142,8 +142,8 @@ public class UnitAI_Ranged : UnitAI
     }
 
     //[ClientRpc]
-    protected override void ChangeState() {
-        base.ChangeState();
+    protected override void ChangeStateResponse() {
+        base.ChangeStateResponse();
 
         if (state.Value == State.idle) {
             foundMeleeTarget = false;

@@ -38,6 +38,7 @@ public class UnitAI : NetworkBehaviour
     }
 
     protected NetworkVariable<State> state = new NetworkVariable<State>();
+    private State localState;
     public event EventHandler OnStateChanged;
 
     protected virtual void Awake() {
@@ -52,18 +53,20 @@ public class UnitAI : NetworkBehaviour
 
     public override void OnNetworkSpawn() {
         if (unit.GetUnitIsOnlyVisual()) return;
-        state.OnValueChanged += State_OnValueChanged;
-        state.Value = State.idle;
 
+        localState = State.idle;
+
+        state.OnValueChanged += State_OnValueChanged;
+
+        unit.OnUnitPlaced += Unit_OnUnitPlaced;
         unit.OnUnitDied += Unit_OnUnitDied;
         unit.OnUnitFell += Unit_OnUnitFell;
         unit.OnUnitDazed += Unit_OnUnitDazed;
         unitAttack.OnUnitAttack += UnitAttack_OnUnitAttack;
         unitAttack.OnUnitAttackEnded += UnitAttack_OnUnitAttackEnded;
         unitAttack.OnUnitAttackStarted += UnitAttack_OnUnitAttackStarted;
-
-        BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
     }
+
 
     protected virtual void CheckConditionsBeforeSwitch() {
         CheckIfBuildingBlocksMovement();
@@ -144,11 +147,16 @@ public class UnitAI : NetworkBehaviour
     }
 
     protected void State_OnValueChanged(State previousValue, State newValue) {
+        Debug.Log(unit + " State_OnValueChanged " + newValue);
+
         if (!unit.GetUnitIsBought()) return;
-        ChangeState();
+
+        state.Value = newValue;
+
+        ChangeStateResponse();
     }
 
-    protected virtual void ChangeState() {
+    protected virtual void ChangeStateResponse() {
         if (state.Value == State.idle) {
             unitAttack.ResetAttackTarget();
             ActivateMainAttack();
@@ -180,17 +188,21 @@ public class UnitAI : NetworkBehaviour
 
     #region EVENT RESPONSES
     protected virtual void BattleManager_OnStateChanged(object sender, System.EventArgs e) {
-        if (!IsServer) return;
 
-        unitActive = BattleManager.Instance.IsBattlePhase();
-
-        if(BattleManager.Instance.IsBattlePhase()) {
+        if (BattleManager.Instance.IsBattlePhase()) {
             specialTimer = 0f;
-            ChangeState(State.moveForwards);
-        } else {
-            ChangeState(State.idle);
-            unitMovement.StopMoving();
+            localState = State.moveForwards;
+            ChangeStateResponse();
         }
+
+        else {
+            localState = State.idle;
+            unitMovement.StopMoving();
+            ChangeStateResponse();
+        }
+
+        if (!IsServer) return;
+        unitActive = BattleManager.Instance.IsBattlePhase();
     }
 
 
@@ -199,6 +211,12 @@ public class UnitAI : NetworkBehaviour
         StartCoroutine(TakeDazed(e.effectDuration));
     }
 
+    private void Unit_OnUnitPlaced(object sender, EventArgs e) {
+        BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
+    }
+
+    private void Unit_OnUnitActivated(object sender, EventArgs e) {
+    }
     protected void Unit_OnUnitDied(object sender, EventArgs e) {
         if (!IsServer) return;
         ChangeState(State.dead);
@@ -243,12 +261,9 @@ public class UnitAI : NetworkBehaviour
     }
 
     public void ChangeState(State newState) {
-        if(state.Value == newState) return;
-        state.Value = newState;
-    }
+        if (state.Value == newState) return;
 
-    public void SetIdleState() {
-        state.Value = State.idle;
+        state.Value = newState;
     }
 
     protected void InvokeOnStateChanged() {
@@ -339,38 +354,16 @@ public class UnitAI : NetworkBehaviour
 
     public void ActivateMainAttack() {
         if (unitAttack.GetActiveAttackSO() == mainAttackSO) return;
-        InvokeOnMainAttackActivatedServerRpc();
         unitAttack.SetAttackTarget(unitTargetingSystem.GetMainAttackTarget());
         unitAttack.SetActiveAttackSO(mainAttackSO);
     }
 
     public void ActivateSideAttack() {
         if (unitAttack.GetActiveAttackSO() == sideAttackSO) return;
-        InvokeOnSideAttackActivatedServerRpc();
         unitAttack.SetAttackTarget(unitTargetingSystem.GetSideAttackTarget());
         unitAttack.SetActiveAttackSO(sideAttackSO);
     }
 
-    [ServerRpc(RequireOwnership = false)]
-    private void InvokeOnMainAttackActivatedServerRpc() {
-        InvokeOnMainAttackActivatedClientRpc();
-    }
-
-    [ClientRpc]
-    private void InvokeOnMainAttackActivatedClientRpc() {
-        Debug.Log("InvokeOnMainAttackActivatedClientRpc");
-        OnMainAttackActivated?.Invoke(this, EventArgs.Empty);
-    }
-
-    [ServerRpc(RequireOwnership = false)]
-    private void InvokeOnSideAttackActivatedServerRpc() {
-        InvokeOnSideAttackActivatedClientRpc();
-    }
-    [ClientRpc]
-    private void InvokeOnSideAttackActivatedClientRpc() {
-        Debug.Log("InvokeOnSideAttackActivatedClientRpc");
-        OnSideAttackActivated?.Invoke(this, EventArgs.Empty);
-    }
     #endregion
 
     public override void OnDestroy() {

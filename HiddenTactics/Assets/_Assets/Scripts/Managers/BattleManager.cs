@@ -18,6 +18,7 @@ public class BattleManager : NetworkBehaviour
     public event EventHandler OnIPlaceableSpawned;
 
     public bool allPlayersLoaded;
+    public bool allIPlaceablesSpawned;
     public bool isFirstPreparationPhase = true;
 
     public event EventHandler OnSpeedUpButtonActivation;
@@ -32,6 +33,12 @@ public class BattleManager : NetworkBehaviour
 
     private NetworkVariable<float> battlePhaseTimer = new NetworkVariable<float>(0f);
     private NetworkVariable<float> preparationPhaseTimer = new NetworkVariable<float>(0f);
+
+    private float battlePhaseTimerLocal;
+    private float preparationPhaseTimerLocal;
+
+    private float phaseTimerSyncTimer;
+    private float phaseTimerSyncRate = .5f;
 
     private List<Unit> unitsOnBattlefieldList = new List<Unit>();
     private List<Unit> unitsStillInBattle = new List<Unit>();
@@ -55,7 +62,7 @@ public class BattleManager : NetworkBehaviour
 
     private NetworkVariable<State> state = new NetworkVariable<State>();
 
-    private int objectsSpawnedNumberServer;
+    private NetworkVariable<int> objectsSpawnedNumberServer = new NetworkVariable<int>();
     private int objectsSpawnedNumberClient;
     private int totalIPlaceablesToSpawn;
     private int totalIPlaceablesToSpawnClient;
@@ -97,14 +104,21 @@ public class BattleManager : NetworkBehaviour
         }
 
         battlePhaseTimer.Value = battlePhaseMaxTime;
+        battlePhaseTimerLocal = battlePhaseMaxTime;
         preparationPhaseTimer.Value = preparationPhaseMaxTime;
+        preparationPhaseTimerLocal = preparationPhaseMaxTime;
+
+        objectsSpawnedNumberServer.OnValueChanged += ObjectsSpawnedNumberServer_OnValueChanged;
     }
+
 
     private void Update() {
 
         if (!IsServer) {
             return;
         }
+
+        phaseTimerSyncTimer -= Time.deltaTime;
 
         switch (state.Value) {
 
@@ -119,29 +133,48 @@ public class BattleManager : NetworkBehaviour
 
             case State.PreparationPhase:
                 isFirstPreparationPhase = false;
-                battlePhaseTimer.Value = battlePhaseMaxTime;
+
                 if (!HiddenTacticsMultiplayer.Instance.IsMultiplayer()) {
                     return;
                 }
 
-                preparationPhaseTimer.Value -= Time.deltaTime;
-                if(preparationPhaseTimer.Value < 0 ) {
+
+                if(preparationPhaseTimerLocal < 0 ) {
+                    preparationPhaseTimer.Value = preparationPhaseMaxTime;
+                    preparationPhaseTimerLocal = preparationPhaseMaxTime;
+                    battlePhaseTimer.Value = battlePhaseMaxTime;
+                    battlePhaseTimerLocal = battlePhaseMaxTime;
+
                     state.Value = State.BattlePhaseStarting;
                 }
-            break;
+
+                preparationPhaseTimerLocal -= Time.deltaTime;
+                if (phaseTimerSyncTimer < 0) {
+                    phaseTimerSyncTimer = phaseTimerSyncRate;
+                    preparationPhaseTimer.Value = preparationPhaseTimerLocal;
+                }
+
+                break;
 
             case State.BattlePhase:
                 // Timer
-                battlePhaseTimer.Value -= Time.deltaTime;
-
-                // Battle phase timer 
-                if(!speedUpButtonActive && battlePhaseTimer.Value < (battlePhaseMaxTime - battlePhaseSpeedUpButtonActivationDelay)) {
+                if (!speedUpButtonActive && battlePhaseTimer.Value < (battlePhaseMaxTime - battlePhaseSpeedUpButtonActivationDelay)) {
                     SetSpeedUpButtonActiveServerRpc();
                 }
 
-                if (battlePhaseTimer.Value < 0) {
+                if (battlePhaseTimerLocal < 0) {
+                    battlePhaseTimer.Value = battlePhaseMaxTime;
+                    battlePhaseTimerLocal = battlePhaseMaxTime;
                     preparationPhaseTimer.Value = preparationPhaseMaxTime;
+                    preparationPhaseTimerLocal = preparationPhaseMaxTime;
+
                     state.Value = State.BattlePhaseEnding;
+                }
+
+                battlePhaseTimerLocal -= Time.deltaTime;
+                if (phaseTimerSyncTimer < 0) {
+                    phaseTimerSyncTimer = phaseTimerSyncRate;
+                    battlePhaseTimer.Value = battlePhaseTimerLocal;
                 }
 
                 break;
@@ -195,6 +228,16 @@ public class BattleManager : NetworkBehaviour
         AddIPlaceableSpawnedServerRpc(networkObjectID);
     }
 
+    private void ObjectsSpawnedNumberServer_OnValueChanged(int previousValue, int newValue) {
+        Debug.Log("ObjectsSpawnedNumberServer_OnValueChanged " + objectsSpawnedNumberServer.Value);
+        OnIPlaceableSpawned?.Invoke(this, EventArgs.Empty);
+
+        if (objectsSpawnedNumberServer.Value >= totalIPlaceablesToSpawnClient && !allIPlaceablesSpawned) {
+            OnAllIPlaceablesSpawned?.Invoke(this, EventArgs.Empty);
+            allIPlaceablesSpawned = true;
+        }
+    }
+
     [ServerRpc(RequireOwnership =false)]
     private void AddIPlaceableSpawnedServerRpc(ulong networkObjectID) {
 
@@ -202,8 +245,8 @@ public class BattleManager : NetworkBehaviour
 
         if (spawnedObjectsIDs.Contains(networkObjectID)) {
             // Second time the ID is being added to the list : object has been loaded on both clients
-            objectsSpawnedNumberServer++;
-            ConfirmIPlaceableSpawnedClientRpc(objectsSpawnedNumberServer, networkObjectID);
+            objectsSpawnedNumberServer.Value++;
+            //ConfirmIPlaceableSpawnedClientRpc(objectsSpawnedNumberServer, networkObjectID);
         }
         else {
             spawnedObjectsIDs.Add(networkObjectID);
@@ -223,10 +266,12 @@ public class BattleManager : NetworkBehaviour
     }
 
     public float GetIPlaceableSpawnProgress() {
-        return (float)objectsSpawnedNumberClient / (float)totalIPlaceablesToSpawnClient;
+        return (float)objectsSpawnedNumberServer.Value / (float)totalIPlaceablesToSpawnClient;
     }
 
     #endregion
+
+
 
     [ServerRpc(RequireOwnership = false)]
     private void SetMercenariesForBattleServerRpc() {
@@ -313,6 +358,7 @@ public class BattleManager : NetworkBehaviour
         if (IsServer) {
             if(state.Value == State.PreparationPhase) {
                 AStarRecalculation.Instance.RecalculateGraph();
+                StartCoroutine(ResetAllUnits());
             }
 
             if (state.Value == State.BattlePhase) {
@@ -322,9 +368,16 @@ public class BattleManager : NetworkBehaviour
                     AddUnitToUnitsStillInBattleList(unit);
                 }
             }
+
         }
 
         speedUpButtonActive = false;
+    }
+
+    private IEnumerator ResetAllUnits() {
+
+        yield return new WaitForSeconds(.1f);
+
     }
 
     private void HandleTurnPass() {

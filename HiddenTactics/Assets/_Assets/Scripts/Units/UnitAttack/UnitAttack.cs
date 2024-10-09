@@ -25,10 +25,15 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
     protected AttackSO activeAttackSO;
     protected ITargetable attackTarget;
     protected float attackDamage;
-    protected float attackTimer;
 
+    protected NetworkVariable<float> attackTimerServer = new NetworkVariable<float>();
+    protected NetworkVariable<float> attackStartTimerServer = new NetworkVariable<float>();
+    protected NetworkVariable<float> attackEndTimerServer = new NetworkVariable<float>();
+
+    protected float attackTimer;
     protected float attackStartTimer;
     protected float attackEndTimer;
+
     protected bool attackStarted;
 
     protected float attackRate;
@@ -37,10 +42,15 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
     protected float attackDazedTime;
     protected float attackAnimationHitDelay;
     protected float meleeAttackAnimationDuration;
-    protected bool attackDecomposition;
+    protected NetworkVariable<bool> attackDecomposition = new NetworkVariable<bool>();
     protected bool attackHasAOECollider;
     protected bool attackHasAOE;
     protected List<AttackSO.UnitAttackSpecial> attackSpecialList;
+
+    protected NetworkVariable<bool> mainAttackActive = new NetworkVariable<bool>();
+    protected NetworkVariable<bool> sideAttackActive = new NetworkVariable<bool>();
+    public event EventHandler OnMainAttackActivated;
+    public event EventHandler OnSideAttackActivated;
 
     protected float attackRateMultiplier = 1;
     protected float attackDamageMultiplier = 1;
@@ -59,14 +69,10 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
         unit = GetComponent<Unit>();
         unitMovement = GetComponent<UnitMovement>();
         activeAttackSO = unit.GetUnitSO().mainAttackSO;
-        UpdateActiveAttackParameters(activeAttackSO);
-
     }
 
     protected void Start() {
-        if (IsServer) {;
-            RandomizeAttackTimersServerRpc();
-        }
+        RandomizeAttackTimers();
     }
 
     public override void OnNetworkSpawn() {
@@ -78,7 +84,14 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
         if(IsServer) {
             InitializeProjectilePoolServerRpc();
         }
+
+        attackTimerServer.OnValueChanged += AttackTimerServer_OnValueChanged;
+        attackStartTimerServer.OnValueChanged += AttackStartTimerServer_OnValueChanged;
+        attackEndTimerServer.OnValueChanged += AttackEndTimerServer_OnValueChanged;
+
+        UpdateActiveAttackParameters(activeAttackSO);
     }
+
 
     protected virtual void Update() {
 
@@ -101,7 +114,7 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
         }
 
         if (attacking && !dazed) {
-            if (!attackDecomposition) {
+            if (!attackDecomposition.Value) {
                 HandleStandardAttack();
             } else {
                 HandleDecomposedRangedAttack();
@@ -426,7 +439,7 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
         attackAnimationHitDelay = attackSO.meleeAttackAnimationHitDelay;
         meleeAttackAnimationDuration = attackSO.meleeAttackAnimationDuration;
         attackAOE = attackSO.attackAOE;
-        attackDecomposition = attackSO.attackDecomposition;
+        attackDecomposition.Value = attackSO.attackDecomposition;
         attackHasAOECollider = attackSO.attackHasAOECollider;
         attackHasAOE = attackSO.attackHasAOE;
         attackSpecialList = attackSO.attackSpecialList;
@@ -483,19 +496,30 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
 
     #endregion
 
-    [ServerRpc(RequireOwnership = false)]
-    protected void RandomizeAttackTimersServerRpc() {
+    protected void RandomizeAttackTimers() {
+        if (IsServer) {
+            attackTimerServer.Value = UnityEngine.Random.Range(0, attackRate / 4);
+            attackStartTimerServer.Value = UnityEngine.Random.Range(attackRate / 6, attackRate / 3);
+            attackEndTimerServer.Value = attackRate;
+        }
+        //SetAttackTimersClientRpc(attackTimer, attackStartTimer, attackEndTimer);
+    }
 
-        attackTimer = UnityEngine.Random.Range(0, attackRate / 4);
-        attackStartTimer = UnityEngine.Random.Range(attackRate / 6, attackRate / 3);
-        attackEndTimer = attackRate;
+    private void AttackTimerServer_OnValueChanged(float previousValue, float newValue) {
+        attackTimer = attackTimerServer.Value;
 
-        SetAttackTimersClientRpc(attackTimer, attackStartTimer, attackEndTimer);
+    }
+    private void AttackStartTimerServer_OnValueChanged(float previousValue, float newValue) {
+        attackStartTimer = attackStartTimerServer.Value;
+
+    }
+    private void AttackEndTimerServer_OnValueChanged(float previousValue, float newValue) {
+        attackEndTimer = attackEndTimerServer.Value;
     }
 
     [ClientRpc]
     protected void SetAttackTimersClientRpc(float attackTimer, float attackStartTimer, float attackEndTimer) {
-
+        Debug.Log("SetAttackTimersClientRpc");
         this.attackTimer = attackTimer;
         this.attackStartTimer = attackStartTimer;
         this.attackEndTimer = attackEndTimer;
@@ -523,7 +547,7 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
 
     protected void BattleManager_OnStateChanged(object sender, EventArgs e) {
         if (BattleManager.Instance.IsBattlePhaseEnding()) {
-            RandomizeAttackTimersServerRpc();
+            RandomizeAttackTimers();
         }
     }
 
@@ -563,7 +587,7 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
     public void SetAttackRateMultiplier(float attackRateMultiplier) {
         this.attackRateMultiplier = attackRateMultiplier;
         UpdateActiveAttackParameters(activeAttackSO);
-        RandomizeAttackTimersServerRpc();
+        RandomizeAttackTimers();
     }
     public void SetAttackDamageMultiplier(float attackDamageMultiplier) {
         this.attackDamageMultiplier = attackDamageMultiplier;
@@ -579,7 +603,6 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
     #region SET PARAMETERS
 
     public void SetAttackTarget(ITargetable attackTarget) {
-
         if (attackTarget as MonoBehaviour != null) {
             if (attackTarget == this.attackTarget) return;
 
@@ -603,28 +626,26 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
 
     [ClientRpc]
     public void SetAttackTargetClientRpc(NetworkObjectReference networkObectReference) {
+        Debug.Log("SetAttackTargetClientRpc");
         networkObectReference.TryGet(out NetworkObject targetNetworkObject);
 
         attackTarget = targetNetworkObject.GetComponent<ITargetable>();
     }
 
     public void SetActiveAttackSO(AttackSO attackSO) {
+        if(attackSO == activeAttackSO) return;
+
         activeAttackSO = attackSO;
+
+        if(attackSO == unit.GetUnitSO().mainAttackSO) {
+            OnMainAttackActivated?.Invoke(this, EventArgs.Empty);
+        }
+        if(attackSO == unit.GetUnitSO().sideAttackSO) {
+            OnSideAttackActivated?.Invoke(this, EventArgs.Empty);
+        }
+
         UpdateActiveAttackParameters(attackSO);
-
-        SetActiveAttackSODecompositionParameterServerRpc(attackSO.attackDecomposition);
     }
-
-    [ServerRpc(RequireOwnership = false)]
-    private void SetActiveAttackSODecompositionParameterServerRpc(bool attackSODecomposition) {
-        SetActiveAttackSODecompositionParameterClientRpc(attackSODecomposition);
-    }
-
-    [ClientRpc]
-    private void SetActiveAttackSODecompositionParameterClientRpc(bool attackSODecomposition) {
-        attackDecomposition = attackSODecomposition;
-    }
-
 
     #endregion
 

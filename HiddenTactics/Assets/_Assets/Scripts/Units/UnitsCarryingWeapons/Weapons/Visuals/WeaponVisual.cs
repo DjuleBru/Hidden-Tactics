@@ -74,8 +74,8 @@ public class WeaponVisual : NetworkBehaviour
     public override void OnNetworkSpawn() {
         ucw.OnLegendaryStateChanged += Ucw_OnLegendaryStateChanged;
         ucw.OnMagicStateChanged += Ucw_OnMagicStateChanged;
-        ucw.GetComponent<UnitAI>().OnSideAttackActivated += WeaponVisual_OnSideAttackActivated;
-        ucw.GetComponent<UnitAI>().OnMainAttackActivated += WeaponVisual_OnMainAttackActivated;
+        ucw.GetComponent<UnitAttack>().OnSideAttackActivated += WeaponVisual_OnSideAttackActivated;
+        ucw.GetComponent<UnitAttack>().OnMainAttackActivated += WeaponVisual_OnMainAttackActivated;
 
         ucw.OnUnitPlaced += Ucw_OnUnitPlaced;
         ucw.OnUnitSetAsAdditionalUnit += Ucw_OnUnitSetAsAdditionalUnit;

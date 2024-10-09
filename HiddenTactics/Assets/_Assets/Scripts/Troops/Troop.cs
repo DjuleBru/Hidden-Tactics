@@ -191,7 +191,6 @@ public class Troop : NetworkBehaviour, IPlaceable {
 
         // Troop changed grid position
         if (newGridPosition != currentGridPosition) {
-            // Unit changed grid position
             BattleGrid.Instance.IPlaceableMovedGridPosition(this, currentGridPosition, newGridPosition);
             currentGridPosition = newGridPosition;
         }
@@ -563,8 +562,8 @@ public class Troop : NetworkBehaviour, IPlaceable {
         return currentGridPosition;
     }
 
-    public Vector3 GetTroopCenterPoint() {
-        return troopCenterPoint.position;
+    public Transform GetTroopCenterPoint() {
+        return troopCenterPoint;
     }
 
     public TroopUI GetTroopUI() {

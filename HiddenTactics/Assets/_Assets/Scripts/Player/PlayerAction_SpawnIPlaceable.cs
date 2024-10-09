@@ -618,7 +618,7 @@ public class PlayerAction_SpawnIPlaceable : NetworkBehaviour {
         }
 
         // Set Unit AI to Idle
-        unitSpawned.GetComponent<UnitAI>().SetIdleState();
+        unitSpawned.GetComponent<UnitAI>().ChangeState(UnitAI.State.idle);
     }
 
     [ServerRpc(RequireOwnership = false)]

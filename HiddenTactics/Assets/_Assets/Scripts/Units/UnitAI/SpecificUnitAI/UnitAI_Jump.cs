@@ -36,7 +36,7 @@ public class UnitAI_Jump : UnitAI
     }
 
     //[ClientRpc]
-    protected override void ChangeState() {
+    protected override void ChangeStateResponse() {
 
         if (state.Value == State.idle) {
             specialActive = true;
@@ -63,7 +63,7 @@ public class UnitAI_Jump : UnitAI
 
         }
 
-        base.ChangeState();
+        base.ChangeStateResponse();
     }
 
     public void Jump(Vector3 jumpDir) {

@@ -136,7 +136,7 @@ public class UnitHP : NetworkBehaviour, IDamageable
     [ClientRpc]
     protected virtual void TakeDamageClientRpc(float damage, bool isRangedAttack, bool attackIgnoresArmor) {
 
-        if(attackIgnoresArmor) {
+        if (attackIgnoresArmor) {
             unitHP -= damage;
         } else {
             unitHP -= (damage - unitArmor);

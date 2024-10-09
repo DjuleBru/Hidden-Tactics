@@ -93,6 +93,7 @@ public class Unit : NetworkBehaviour, ITargetable {
     protected bool unitIsBought;
     protected bool unitIsOnlyVisual;
     protected bool isSelected;
+    protected bool synchronizingTransform;
 
     protected virtual void Awake() {
         collider2d = GetComponent<Collider2D>();
@@ -101,10 +102,6 @@ public class Unit : NetworkBehaviour, ITargetable {
         collider2d.enabled = false;
 
         rb.mass = unitSO.mass;
-
-        if (IsServer) {
-            networkTransform.enabled = false;
-        }
     }
 
     protected virtual void Start() {
@@ -121,18 +118,14 @@ public class Unit : NetworkBehaviour, ITargetable {
 
         HandlePositionOnGrid();
 
-        if (!unitIsBought) return;
 
         if(!IsServer) {
-            // Mirror x position 
-            visualTransform.transform.position = new Vector3(transform.position.x + (BattleGrid.Instance.GetBattlefieldMiddlePoint() - transform.position.x) * 2, transform.position.y, 0);
+            HandlePositionSync();
         }
 
-        if(IsServer && BattleManager.Instance.IsBattlePhase()) {
-            //HandlePositionSync();
-        }
+        if (!unitIsBought) return;
 
-        if(IsServer) {
+        if (IsServer) {
             HandleStatusEffects();
         }
 
@@ -186,30 +179,9 @@ public class Unit : NetworkBehaviour, ITargetable {
     }
 
     protected void HandlePositionSync() {
-        if (Vector2.Distance(lastPosition, transform.position) > positionSyncDistanceTreshold) {
-            lastPosition = transform.position;
-
-            short positionShortX = (short)(lastPosition.x * 100);  // Multiplier par 100 pour convertir en entier
-            short positionShortY = (short)(lastPosition.y * 100);
-            HandlePositionSyncServerRpc(positionShortX, positionShortY);
-        }
-    }
-
-    [ServerRpc(RequireOwnership = false)]
-    protected void HandlePositionSyncServerRpc(short positionShortX, short positionShortY) {
-        HandlePositionSyncClientRpc(positionShortX, positionShortY);
-    }
-
-    [ClientRpc]
-    protected void HandlePositionSyncClientRpc(short positionShortX, short positionShortY) {
-        Vector2 positionShort = new Vector2(positionShortX, positionShortY);
-
-        if (!IsServer) {
-            // Mirror x position 
-            float posXx = positionShort.x / 100.0f;
-            float posYy = positionShort.y / 100.0f;
-            transform.position = new Vector3(posXx + (BattleGrid.Instance.GetBattlefieldMiddlePoint() - posXx) * 2, posYy, 0);
-        }
+        // Mirror x position 
+        //Debug.Log("syncing");
+        visualTransform.localPosition = new Vector3((parentTroop.GetTroopCenterPoint().localPosition.x - transform.localPosition.x) * 2, 0, 0);
     }
 
     public void HandlePositionOnGrid() {
@@ -235,11 +207,19 @@ public class Unit : NetworkBehaviour, ITargetable {
     }
 
     protected void BattleManager_OnStateChanged(object sender, EventArgs e) {
+        if(isPooled || !unitIsBought) return;
 
         if(BattleManager.Instance.IsBattlePhaseEnding()) {
+            networkTransform.Interpolate = false;
             ResetUnit();
         }
+
+        if (BattleManager.Instance.IsBattlePhase()) {
+            networkTransform.Interpolate = true;
+        }
+
     }
+
 
     protected virtual void ParentTroop_OnTroopPlaced(object sender, System.EventArgs e) {
         if (unitSO.doesNotMoveGarrisonedUnit) {
@@ -253,8 +233,11 @@ public class Unit : NetworkBehaviour, ITargetable {
 
         if (!isAdditionalUnit && !isSpawnedUnit) {
             unitIsPlaced = true;
-            collider2d.enabled = true;
             OnUnitPlaced?.Invoke(this, EventArgs.Empty);
+        }
+
+        if(IsServer && unitIsBought) {
+            collider2d.enabled = true;
         }
 
     }
@@ -265,9 +248,10 @@ public class Unit : NetworkBehaviour, ITargetable {
 
     public virtual void ResetUnit() {
         transform.localPosition = unitPositionInTroop;
+        visualTransform.transform.localPosition = Vector3.zero;
         unitIsDead = false;
 
-        if (!unitSO.doesNotMoveGarrisonedUnit & unitIsBought) {
+        if (!unitSO.doesNotMoveGarrisonedUnit & unitIsBought && IsServer) {
             collider2d.enabled = true;
         }
 
@@ -283,10 +267,6 @@ public class Unit : NetworkBehaviour, ITargetable {
         isPooled = false;
         OnUnitActivated?.Invoke(this, EventArgs.Empty);
         gameObject.SetActive(true);
-
-        if(IsServer) {
-            networkTransform.enabled = true;
-        }
     }
 
     public void DeactivateUnit() {
@@ -589,7 +569,7 @@ public class Unit : NetworkBehaviour, ITargetable {
             unitPositionInTroop = positionInTroop;
         } else {
             //Mirror x position in troop
-            float mirroredPositionX = positionInTroop.x + (parentTroop.GetTroopCenterPoint().x - positionInTroop.x) * 2;
+            float mirroredPositionX = positionInTroop.x + (parentTroop.GetTroopCenterPoint().transform.position.x - positionInTroop.x) * 2;
             unitPositionInTroop = new Vector3(mirroredPositionX, positionInTroop.y, 0);
         }
 
@@ -666,7 +646,10 @@ public class Unit : NetworkBehaviour, ITargetable {
         unitVisual.gameObject.SetActive(true);
         OnAdditionalUnitActivated?.Invoke(this, EventArgs.Empty);
 
-        GetComponent<Collider2D>().enabled = true;
+        if(IsServer) {
+            GetComponent<Collider2D>().enabled = true;
+        }
+
         GetComponent<UnitMovement>().enabled = true;
         GetComponent<UnitAI>().enabled = true;
         GetComponent<UnitAttack>().enabled = true;
@@ -694,7 +677,11 @@ public class Unit : NetworkBehaviour, ITargetable {
         unitIsBought = true;
 
         unitVisual.gameObject.SetActive(true);
-        GetComponent<Collider2D>().enabled = true;
+
+        if(IsServer) {
+            GetComponent<Collider2D>().enabled = true;
+        }
+
         GetComponent<UnitMovement>().enabled = true;
         GetComponent<UnitAI>().enabled = true;
         GetComponent<UnitAttack>().enabled = true;
@@ -742,7 +729,9 @@ public class Unit : NetworkBehaviour, ITargetable {
     }
 
     public void EnableCollider() {
-        collider2d.enabled = true;
+        if(IsServer) {
+            collider2d.enabled = true;
+        }
     }
 
     public void SetUnitAsVisual()

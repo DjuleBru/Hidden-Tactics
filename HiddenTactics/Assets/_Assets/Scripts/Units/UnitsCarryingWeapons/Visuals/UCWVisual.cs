@@ -56,8 +56,8 @@ public class UCWVisual : UnitVisual
         base.OnNetworkSpawn();
         ucw.OnUnitUpgraded += Ucw_OnUnitUpgraded;
 
-        ucw.GetComponent<UnitAI>().OnMainAttackActivated += UCWVisual_OnMainAttackActivated;
-        ucw.GetComponent<UnitAI>().OnSideAttackActivated += UCWVisual_OnSideAttackActivated;
+        ucw.GetComponent<UnitAttack>().OnMainAttackActivated += UCWVisual_OnMainAttackActivated;
+        ucw.GetComponent<UnitAttack>().OnSideAttackActivated += UCWVisual_OnSideAttackActivated;
     }
     private void UCWVisual_OnSideAttackActivated(object sender, EventArgs e) {
         bodyAnimator.runtimeAnimatorController = bodySideWeaponAnimator;

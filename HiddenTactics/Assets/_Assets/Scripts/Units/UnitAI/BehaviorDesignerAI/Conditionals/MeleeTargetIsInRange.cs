@@ -46,6 +46,9 @@ public class MeleeTargetIsInRange : Conditional
         if (attackMode == UnitTargetingSystem.AttackMode.sideAttack) {
             ColliderDistance2D distanceBetweenUnitColliders = Physics2D.Distance(gameObject.GetComponent<Collider2D>(), (unitTargetingSystem.GetSideAttackTarget() as MonoBehaviour).gameObject.GetComponent<Collider2D>());
             float distanceToTarget = distanceBetweenUnitColliders.distance;
+
+            //Debug.Log("distanceToTarget " + (unitTargetingSystem.GetSideAttackTarget() as MonoBehaviour).GetInstanceID() + ": " + distanceToTarget + " " + (distanceToTarget < meleeAttackSO.meleeAttackRange / rangeDivider));
+
             if (distanceToTarget < meleeAttackSO.meleeAttackRange / rangeDivider) {
                 // There is a unit in melee range (use half of the range to give the unit time to attack)
                 return TaskStatus.Success;

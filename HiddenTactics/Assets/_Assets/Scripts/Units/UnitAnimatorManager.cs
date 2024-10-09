@@ -101,14 +101,7 @@ public class UnitAnimatorManager : NetworkBehaviour
         }
 
         if (movingForwards) {
-            if(!unit.GetUnitSO().doesNotMoveGarrisonedUnit) {
-                Vector2 moveDir = unitMovement.GetMoveDir2D();
-                SetXY(moveDir.x, -1);
-                return;
-            } else {
-                SetUnitWatchDirectionBasedOnPlayerOwnance();
-                return;
-            }
+            SetUnitWatchDirectionBasedOnPlayerOwnance();
         }
 
         if (walking) {

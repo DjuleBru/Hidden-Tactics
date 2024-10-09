@@ -99,8 +99,8 @@ public class UnitAI_MeleeMain_SideRanged : UnitAI
     }
 
     //[ClientRpc]
-    protected override void ChangeState() {
-        base.ChangeState();
+    protected override void ChangeStateResponse() {
+        base.ChangeStateResponse();
         if (state.Value == State.idle) {
             foundRangedTarget = false;
             ammoCount = ammoMax;
