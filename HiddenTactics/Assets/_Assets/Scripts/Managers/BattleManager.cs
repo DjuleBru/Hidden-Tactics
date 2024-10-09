@@ -40,6 +40,7 @@ public class BattleManager : NetworkBehaviour
     private float phaseTimerSyncTimer;
     private float phaseTimerSyncRate = .5f;
 
+    private List<ITargetable> iTargetablesOnBattlefieldList = new List<ITargetable>();
     private List<Unit> unitsOnBattlefieldList = new List<Unit>();
     private List<Unit> unitsStillInBattle = new List<Unit>();
 
@@ -352,6 +353,7 @@ public class BattleManager : NetworkBehaviour
     }
 
     private void State_OnValueChanged(State previousValue, State newValue) {
+        Debug.Log("BATTLE MANAGER STATE CHANGED");
         OnStateChanged?.Invoke(this, EventArgs.Empty);
         Time.timeScale = 1f;
 
@@ -418,9 +420,13 @@ public class BattleManager : NetworkBehaviour
     }
 
     #region SET PARAMETERS
+    public void AddToITargetableListInBattlefield(ITargetable iTargetable) {
+        iTargetablesOnBattlefieldList.Add(iTargetable);
+    }
 
     public void AddUnitToUnitListInBattlefield(Unit unit) {
         unitsOnBattlefieldList.Add(unit);
+        AddToITargetableListInBattlefield(unit);
     }
 
     public void RemoveUnitFromUnitListInBattlefield(Unit unit) {
@@ -443,6 +449,14 @@ public class BattleManager : NetworkBehaviour
 
 
     #region GET PARAMETERS
+
+    public int GetITargetableIndex(ITargetable iTargetable) {
+        return iTargetablesOnBattlefieldList.IndexOf(iTargetable);
+    }
+
+    public ITargetable GetITargetableFromIndex(int iTargetable) {
+        return iTargetablesOnBattlefieldList[iTargetable];
+    }
 
     public List<Unit> GetUnitsInBattlefieldList() {
         return unitsOnBattlefieldList;

@@ -44,7 +44,6 @@ public class Unit : NetworkBehaviour, ITargetable {
     [SerializeField] private Transform projectileTarget;
     [SerializeField] private UnitVisual unitVisual;
     [SerializeField] private UnitUI unitUI;
-    private NetworkTransform networkTransform;
 
     public class OnUnitSpecialEventArgs : EventArgs {
         public float effectDuration;
@@ -95,10 +94,14 @@ public class Unit : NetworkBehaviour, ITargetable {
     protected bool isSelected;
     protected bool synchronizingTransform;
 
+    protected NetworkVariable<Vector2> positionServer = new NetworkVariable<Vector2>();
+
+    protected float positionSyncTreshold = .2f;
+    protected Vector2 previousPosition;
+
     protected virtual void Awake() {
         collider2d = GetComponent<Collider2D>();
         rb = GetComponent<Rigidbody2D>();
-        networkTransform = GetComponent<NetworkTransform>();
         collider2d.enabled = false;
 
         rb.mass = unitSO.mass;
@@ -109,6 +112,10 @@ public class Unit : NetworkBehaviour, ITargetable {
         {
             BattleManager.Instance.OnStateChanged += BattleManager_OnStateChanged;
         }
+
+        if(!IsServer) {
+            positionServer.OnValueChanged += PositionServer_OnValueChanged;
+        }
     }
 
     protected void Update() {
@@ -118,8 +125,9 @@ public class Unit : NetworkBehaviour, ITargetable {
 
         HandlePositionOnGrid();
 
-
         if(!IsServer) {
+            HandlePositionMirror();
+        } else {
             HandlePositionSync();
         }
 
@@ -178,10 +186,25 @@ public class Unit : NetworkBehaviour, ITargetable {
         }
     }
 
-    protected void HandlePositionSync() {
+    protected void HandlePositionMirror() {
         // Mirror x position 
-        //Debug.Log("syncing");
-        visualTransform.localPosition = new Vector3((parentTroop.GetTroopCenterPoint().localPosition.x - transform.localPosition.x) * 2, 0, 0);
+        //visualTransform.localPosition = new Vector3((parentTroop.GetTroopCenterPoint().localPosition.x - transform.localPosition.x) * 2, 0, 0);
+    }
+
+    protected void HandlePositionSync() {
+        if (!synchronizingTransform) return;
+        if (!IsServer) return;
+
+        if (Vector2.Distance(transform.position, previousPosition) > positionSyncDistanceTreshold) {
+            previousPosition = transform.position;
+            positionServer.Value = transform.position;
+        }
+    }
+
+    private void SyncPosition() {
+        if (!IsServer) return;
+        previousPosition = transform.position;
+        positionServer.Value = transform.position;
     }
 
     public void HandlePositionOnGrid() {
@@ -210,16 +233,19 @@ public class Unit : NetworkBehaviour, ITargetable {
         if(isPooled || !unitIsBought) return;
 
         if(BattleManager.Instance.IsBattlePhaseEnding()) {
-            networkTransform.Interpolate = false;
             ResetUnit();
         }
 
         if (BattleManager.Instance.IsBattlePhase()) {
-            networkTransform.Interpolate = true;
         }
 
     }
 
+    protected void PositionServer_OnValueChanged(Vector2 previousValue, Vector2 newValue) {
+        //Debug.Log("new position received");
+        transform.position = new Vector3(newValue.x + (BattleGrid.Instance.GetBattlefieldMiddlePoint() - newValue.x) * 2, newValue.y, 0);
+        //transform.position = newValue;
+    }
 
     protected virtual void ParentTroop_OnTroopPlaced(object sender, System.EventArgs e) {
         if (unitSO.doesNotMoveGarrisonedUnit) {
@@ -421,6 +447,12 @@ public class Unit : NetworkBehaviour, ITargetable {
         }
     }
 
+    public void SetSynchronizingTransform(bool synchronising) {
+        if(synchronising) {
+            SyncPosition();
+        }
+        synchronizingTransform = synchronising;
+    }
 
     public void SetUnitSelected(bool selected) {
 

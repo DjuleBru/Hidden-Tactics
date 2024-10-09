@@ -120,8 +120,8 @@ public class UnitMovement : NetworkBehaviour {
         } else {
             // Clients try to move units locally
             if(unitAI.IsMovingForwards()) {
-                rb.velocity = -GetMoveDir2D() * moveSpeed * moveSpeedMultiplier * Time.fixedDeltaTime;
-                Debug.Log(rb.velocity);
+                rb.velocity = GetMoveDir2D() * moveSpeed * moveSpeedMultiplier * Time.fixedDeltaTime;
+                //Debug.Log(rb.velocity);
             }
         }
     }
@@ -243,7 +243,9 @@ public class UnitMovement : NetworkBehaviour {
     }
 
     public void StopMoving() {
-        canMove.Value = false;
+        if(IsServer) {
+            canMove.Value = false;
+        }
         moveDir = Vector3.zero;
     }
 

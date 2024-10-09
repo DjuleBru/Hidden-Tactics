@@ -163,6 +163,7 @@ public class UnitAI : NetworkBehaviour
             unitAttack.ResetAttackTarget();
             ActivateMainAttack();
             unitMovement.StopMoving();
+            unit.SetSynchronizingTransform(false);
         }
 
         if(localState == State.blockedByBuilding) {
@@ -171,14 +172,16 @@ public class UnitAI : NetworkBehaviour
 
         if (localState == State.attackingMelee) {
             unitMovement.StopMoving();
+            unit.SetSynchronizingTransform(true);
         }
 
         if (localState == State.moveToMeleeTarget) {
-
+            unit.SetSynchronizingTransform(true);
         }
 
         if (localState == State.moveForwards) {
             unitAttack.ResetAttackTarget();
+            unit.SetSynchronizingTransform(false);
         } 
 
         if (localState == State.dead) {
