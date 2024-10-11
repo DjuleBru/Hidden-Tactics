@@ -123,6 +123,7 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
             }
 
             if (activeAttackSO.attackType == AttackSO.AttackType.ranged) {
+                Debug.Log((attackTarget as MonoBehaviour).gameObject.GetInstanceID());
                 int attackTargetIndex = BattleManager.Instance.GetITargetableKey(attackTarget);
                 RangedAttackServerRpc(attackTargetIndex);
             }
@@ -176,6 +177,7 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
     [ClientRpc]
     protected void RangedAttackClientRpc(int attackTargetIndex) {
         ITargetable attackTarget = BattleManager.Instance.GetITargetableFromKey(attackTargetIndex);
+        Debug.Log((attackTarget as MonoBehaviour).gameObject.GetInstanceID());
         StartCoroutine(RangedAttack(attackTarget));
     }
 
@@ -234,7 +236,6 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
 
     [ClientRpc]
     protected void ShootClientRpc(int targetIndex) {
-        Debug.Log("ShootClientRpc");
         ITargetable attackTarget = BattleManager.Instance.GetITargetableFromKey(targetIndex);
         Shoot(attackTarget);
     }
@@ -374,17 +375,17 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
         bool attackIgnoresArmor = activeAttackSO.attackSpecialList.Contains(AttackSO.UnitAttackSpecial.pierce);
         targetIDamageable.TakeDamage(attackDamageModified, this, attackIgnoresArmor);
 
-        //Daze
-        if (attackDazedTime != 0) {
-            (target as Unit).TakeDazed(attackDazedTime);
-        }
+        ////Daze
+        //if (attackDazedTime != 0) {
+        //    (target as Unit).TakeDazed(attackDazedTime);
+        //}
 
-        //Knockback
+        //Knockback & Daze
         if (attackKnockback != 0) {
             Vector2 incomingDamageDirection = new Vector2((target as Unit).transform.position.x - damageHitPosition.x, (target as Unit).transform.position.y - damageHitPosition.y);
             Vector2 force = incomingDamageDirection * attackKnockback;
 
-            (target as Unit).TakeKnockBack(force);
+            (target as Unit).TakeKnockBack(force, attackDazedTime);
         }
 
         //Fire
@@ -520,7 +521,10 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
     }
 
     protected void InitializeProjectile(int projectileIndex, int iTargetableIndex) {
+        Projectile projectile = projectilePool[projectileIndex];
+        ITargetable attackTarget = BattleManager.Instance.GetITargetableFromKey(iTargetableIndex);
 
+        projectile.ActivateAndInitialize(this, attackTarget);
     }
 
     #endregion

@@ -38,7 +38,7 @@ public class UnitAI : NetworkBehaviour
         fallen,
     }
 
-    //protected NetworkVariable<State> state = new NetworkVariable<State>();
+    protected NetworkVariable<State> state = new NetworkVariable<State>();
     protected State localState;
     public event EventHandler OnStateChanged;
 
@@ -57,7 +57,7 @@ public class UnitAI : NetworkBehaviour
     public override void OnNetworkSpawn() {
         if (unit.GetUnitIsOnlyVisual()) return;
 
-        //state.OnValueChanged += State_OnValueChanged;
+        state.OnValueChanged += State_OnValueChanged;
 
         unit.OnUnitPlaced += Unit_OnUnitPlaced;
         unit.OnUnitDied += Unit_OnUnitDied;
@@ -162,7 +162,6 @@ public class UnitAI : NetworkBehaviour
             unitAttack.ResetAttackTarget();
             ActivateMainAttack();
             unitMovement.StopMoving();
-            unit.SetSynchronizingTransform(false);
         }
 
         if(localState == State.blockedByBuilding) {
@@ -171,7 +170,6 @@ public class UnitAI : NetworkBehaviour
 
         if (localState == State.attackingMelee) {
             unitMovement.StopMoving();
-            unit.SetSynchronizingTransform(true);
         }
 
         if(localState == State.attackingRanged) {
@@ -179,16 +177,11 @@ public class UnitAI : NetworkBehaviour
         }
 
         if (localState == State.moveToMeleeTarget) {
-            unit.SetSynchronizingTransform(true);
         }
 
         if (localState == State.moveForwards) {
             unitAttack.ResetAttackTarget();
-            unit.SetSynchronizingTransform(false);
 
-            //if (!IsServer) {
-            //    GetComponent<UnitMovement>().SetMoveForwardsMoveDirClient();
-            //};
         } 
 
         if (localState == State.dead) {
@@ -255,16 +248,18 @@ public class UnitAI : NetworkBehaviour
 
     public void ChangeState(State newState) {
         // Check if both states are the same : useless call
+        if (!IsServer) return;
+        if (localState == newState && state.Value == newState) return;
 
-        if (localState == newState) return;
-
-        localState = newState;
+        //localState = newState;
+        state.Value = newState;
 
         ChangeStateResponse();
 
-        // If only state.Value is the same : call ChangeState
+        //// If only state.Value is the same : call ChangeState
         //if (state.Value == newState) {
-        //} else {
+        //}
+        //else {
         //    if (!IsServer) return;
         //    state.Value = newState;
         //}

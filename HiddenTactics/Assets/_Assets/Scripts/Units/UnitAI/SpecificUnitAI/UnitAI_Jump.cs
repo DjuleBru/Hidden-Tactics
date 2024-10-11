@@ -75,8 +75,8 @@ public class UnitAI_Jump : UnitAI
             jumpForceVector3 = new Vector3(jumpForce, 0, 0);
         }
 
-        unit.TakeDazed(jumpAnimationTime);
-        unit.TakeKnockBack(jumpForceVector3);
+        //unit.TakeDazed(jumpAnimationTime);
+        unit.TakeKnockBack(jumpForceVector3, jumpAnimationTime);
 
         unitAttack.SetActiveAttackSO(unit.GetUnitSO().jumpAttackSO);
         unitVisual.EnableTrailRenderer();

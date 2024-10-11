@@ -316,8 +316,30 @@ public class Unit : NetworkBehaviour, ITargetable {
         gameObject.SetActive(false);
     }
 
-    public void TakeKnockBack(Vector2 force) {
-        rb.AddForce(force);
+    public void TakeKnockBack(Vector2 force, float attackDazedTime) {
+        TakeKnockBackServerRpc(force, transform.position, attackDazedTime);
+    }
+
+    [ServerRpc(RequireOwnership =false)]
+    private void TakeKnockBackServerRpc(Vector2 force, Vector2 unitPosition, float attackDazedTime) {
+        TakeKnockBackClientRpc(force, unitPosition, attackDazedTime);
+    }
+
+    [ClientRpc]
+    private void TakeKnockBackClientRpc(Vector2 force, Vector2 unitPosition, float attackDazedTime) {
+
+        OnUnitDazed?.Invoke(this, new OnUnitSpecialEventArgs {
+            effectDuration = attackDazedTime
+        });
+
+        Vector2 forceClient = force;
+        if (!IsServer) {
+            //Vector2 newPosition = new Vector3(unitPosition.x + (BattleGrid.Instance.GetBattlefieldMiddlePoint() - unitPosition.x) * 2, unitPosition.y, 0);
+            //transform.position = newPosition;
+            //forceClient.x = -force.x;
+        }
+
+        rb.AddForce(forceClient);
     }
 
     public void TakeDazed(float dazedTime) {
