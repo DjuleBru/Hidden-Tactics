@@ -103,8 +103,9 @@ public class UnitHP : NetworkBehaviour, IDamageable
 
     }
 
-
     public void TakeDamage(float damage, IDamageSource damageSource, bool attackIgnoresArmor) {
+        if (!IsServer) return;
+
         UnitAttack unitAttack = damageSource as UnitAttack;
         bool isRangedAttack = false;
 

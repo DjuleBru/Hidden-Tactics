@@ -20,7 +20,7 @@ public class UnitAI_MeleeMain_SideRanged : UnitAI
     protected override void CheckConditionsBeforeSwitch() {
         base.CheckConditionsBeforeSwitch();
 
-        if(state.Value != State.blockedByBuilding) {
+        if(localState != State.blockedByBuilding) {
             CheckIfEnemyUnitsAreInRangedRange();
         }
     }

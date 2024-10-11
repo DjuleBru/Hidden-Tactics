@@ -30,10 +30,10 @@ public class UnitAI_Ranged : UnitAI
             // This GridPosition is a valid grid position
             Building building = BattleGrid.Instance.GetBuildingAtGridPosition(nextGridPosition);
 
-            if(state.Value != State.attackingMelee || state.Value != State.attackingRanged) {
+            if(localState != State.attackingMelee || localState != State.attackingRanged) {
 
                 // This ranged unit is not attacking
-                if (state.Value != State.blockedByBuilding) {
+                if (localState != State.blockedByBuilding) {
                     // This ranged unit is not blocked by building yet
 
                     if (building != null) {

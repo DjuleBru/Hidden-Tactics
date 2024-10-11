@@ -35,6 +35,9 @@ public class UnitTargetingSystem : NetworkBehaviour
     protected float targetingRate = .05f;
     protected float targetingTimer;
 
+    protected int[] randomSeeds = new int[5000];
+    protected int randomSeedsIndex;
+
     protected void Awake() {
         unit = GetComponent<Unit>();
 
@@ -50,6 +53,16 @@ public class UnitTargetingSystem : NetworkBehaviour
     public override void OnNetworkSpawn() {
         base.OnNetworkSpawn();
         unit.OnParentTroopSet += Unit_OnParentTroopSet;
+
+        InitializeRandomSeeds();
+    }
+
+    private void InitializeRandomSeeds() {
+        int j = 0;
+        for (int i = 0; i < randomSeeds.Length; i++) {
+            randomSeeds[i] = j;
+            j++;
+        }
     }
 
     private void Unit_OnParentTroopSet(object sender, System.EventArgs e) {
@@ -388,6 +401,9 @@ public class UnitTargetingSystem : NetworkBehaviour
     }
 
     protected ITargetable FindRandomAttackTarget(List<ITargetable> targetList) {
+        Random.InitState(randomSeeds[randomSeedsIndex]);
+        randomSeedsIndex++;
+
         return targetList[Random.Range(0, targetList.Count)];
     }
 

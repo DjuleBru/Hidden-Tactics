@@ -38,7 +38,7 @@ public class UnitAI_HumanCavalry : UnitAI
     protected override void CheckConditionsBeforeSwitch() {
         if (galloping.Value) return;
 
-        if(state.Value == State.moveToMeleeTarget || state.Value == State.moveForwards) {
+        if(localState == State.moveToMeleeTarget || localState == State.moveForwards) {
 
             gallopTimer -= Time.deltaTime;
 

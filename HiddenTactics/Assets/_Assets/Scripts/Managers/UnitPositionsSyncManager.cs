@@ -55,7 +55,7 @@ public class UnitPositionsSyncManager : NetworkBehaviour
             if (k > packetSize*j) {
                 j++;
                 i = 0;
-                SyncAllUnitsServerRpc(allUnitPositions, allUnitUlongs);
+                //SyncAllUnitsServerRpc(allUnitPositions, allUnitUlongs);
 
                 remainingUnitsToSync -= packetSize;
                 Debug.Log("remainingUnitsToSync " + remainingUnitsToSync);
@@ -73,9 +73,8 @@ public class UnitPositionsSyncManager : NetworkBehaviour
 
         }
 
-        SyncAllUnitsServerRpc(allUnitPositions, allUnitUlongs);
+        //SyncAllUnitsServerRpc(allUnitPositions, allUnitUlongs);
     }
-
 
     [ServerRpc]
     private void SyncAllUnitsServerRpc(Vector2[] allUnitPositions, ulong[] allUnitsUlongs) {

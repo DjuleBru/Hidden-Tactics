@@ -26,9 +26,6 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
     protected ITargetable attackTarget;
     protected float attackDamage;
 
-    protected NetworkVariable<float> attackTimerServer = new NetworkVariable<float>();
-    protected NetworkVariable<float> attackStartTimerServer = new NetworkVariable<float>();
-
     protected float attackTimer;
     protected float attackStartTimer;
     protected float attackEndTimer;
@@ -41,13 +38,13 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
     protected float attackDazedTime;
     protected float attackAnimationHitDelay;
     protected float meleeAttackAnimationDuration;
-    protected NetworkVariable<bool> attackDecomposition = new NetworkVariable<bool>();
+    protected bool attackDecomposition;
     protected bool attackHasAOECollider;
     protected bool attackHasAOE;
     protected List<AttackSO.UnitAttackSpecial> attackSpecialList;
 
-    protected NetworkVariable<bool> mainAttackActive = new NetworkVariable<bool>();
-    protected NetworkVariable<bool> sideAttackActive = new NetworkVariable<bool>();
+    protected bool mainAttackActive;
+    protected bool sideAttackActive;
     public event EventHandler OnMainAttackActivated;
     public event EventHandler OnSideAttackActivated;
 
@@ -84,9 +81,6 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
             InitializeProjectilePoolServerRpc();
         }
 
-        attackTimerServer.OnValueChanged += AttackTimerServer_OnValueChanged;
-        attackStartTimerServer.OnValueChanged += AttackStartTimerServer_OnValueChanged;
-
         UpdateActiveAttackParameters(activeAttackSO);
     }
 
@@ -104,21 +98,17 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
 
         unitMovement.SetWatchDir((attackTarget as MonoBehaviour).transform);
 
-        //if (IsServer) {
-        //    syncWatchDirTimer += Time.deltaTime;
-
-        //    if(syncWatchDirTimer >= syncWatchDirRate) {
-        //        syncWatchDirTimer = 0;
-        //    }
-        //}
-
-        if (attacking && !dazed) {
-            if (!attackDecomposition.Value) {
-                HandleStandardAttack();
-            } else {
-                HandleDecomposedRangedAttack();
+        if (IsServer) {
+            if (attacking && !dazed) {
+                if (!attackDecomposition) {
+                    HandleStandardAttack();
+                }
+                else {
+                    HandleDecomposedRangedAttack();
+                }
             }
         }
+
     }
 
     protected virtual void HandleStandardAttack() {
@@ -128,11 +118,13 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
             attackTimer = attackRate;
 
             if (activeAttackSO.attackType == AttackSO.AttackType.melee || activeAttackSO.attackType == AttackSO.AttackType.jump) {
-                StartCoroutine(MeleeAttack(attackTarget));
+                int attackTargetIndex = BattleManager.Instance.GetITargetableKey(attackTarget);
+                MeleeAttackServerRpc(attackTargetIndex);
             }
 
             if (activeAttackSO.attackType == AttackSO.AttackType.ranged) {
-                StartCoroutine(RangedAttack(attackTarget));
+                int attackTargetIndex = BattleManager.Instance.GetITargetableKey(attackTarget);
+                RangedAttackServerRpc(attackTargetIndex);
             }
 
             if (activeAttackSO.attackType == AttackSO.AttackType.healAllyMeleeTargeting || activeAttackSO.attackType == AttackSO.AttackType.healAllyRangedTargeting) {
@@ -147,7 +139,7 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
 
             if (attackStartTimer < 0) {
                 attackStarted = true;
-                OnUnitAttackStarted?.Invoke(this, EventArgs.Empty);
+                InvokeOnUnitAttackStarted();
             }
         } else {
             attackEndTimer -= Time.deltaTime;
@@ -157,15 +149,39 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
                 attackStartTimer = attackRate/3;
                 attackEndTimer = attackRate;
 
-                Shoot(attackTarget);
-
-                OnUnitDecomposedAttackEnded?.Invoke(this, EventArgs.Empty);
+                int attackTargetIndew = BattleManager.Instance.GetITargetableKey(attackTarget);
+                ShootServerRpc(attackTargetIndew);
+                InvokeOnUnitAttackEnded();
             }
         }
     }
 
+
+    [ServerRpc(RequireOwnership =false)]
+    protected void MeleeAttackServerRpc(int attackTargetIndex) {
+        MeleeAttackClientRpc(attackTargetIndex);
+    }
+
+    [ClientRpc]
+    protected void MeleeAttackClientRpc(int attackTargetIndex) {
+        ITargetable attackTarget = BattleManager.Instance.GetITargetableFromKey(attackTargetIndex);
+        StartCoroutine(MeleeAttack(attackTarget));
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    protected void RangedAttackServerRpc(int attackTargetIndex) {
+        RangedAttackClientRpc(attackTargetIndex);
+    }
+
+    [ClientRpc]
+    protected void RangedAttackClientRpc(int attackTargetIndex) {
+        ITargetable attackTarget = BattleManager.Instance.GetITargetableFromKey(attackTargetIndex);
+        StartCoroutine(RangedAttack(attackTarget));
+    }
+
+
     protected IEnumerator MeleeAttack(ITargetable target) {
-        OnUnitAttack?.Invoke(this, EventArgs.Empty);
+        InvokeOnUnitAttack();
         unitAI.SetAttackStarted(true);
 
         yield return new WaitForSeconds(attackAnimationHitDelay);
@@ -180,7 +196,7 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
     }
 
     protected IEnumerator RangedAttack(ITargetable target) {
-        OnUnitAttack?.Invoke(this, EventArgs.Empty);
+        InvokeOnUnitAttack();
         unitAI.SetAttackStarted(true);
 
         yield return new WaitForSeconds(attackAnimationHitDelay);
@@ -195,7 +211,7 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
     }
 
     protected IEnumerator HealAlly(ITargetable target) {
-        OnUnitAttack?.Invoke(this, EventArgs.Empty);
+        InvokeOnUnitAttack();
         unitAI.SetAttackStarted(true);
 
         yield return new WaitForSeconds(attackAnimationHitDelay);
@@ -211,7 +227,20 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
         unitAI.SetAttackStarted(false);
     }
 
+    [ServerRpc(RequireOwnership =false)]
+    protected void ShootServerRpc(int targetIndex) {
+        ShootClientRpc(targetIndex);
+    }
+
+    [ClientRpc]
+    protected void ShootClientRpc(int targetIndex) {
+        Debug.Log("ShootClientRpc");
+        ITargetable attackTarget = BattleManager.Instance.GetITargetableFromKey(targetIndex);
+        Shoot(attackTarget);
+    }
+
     protected void Shoot(ITargetable target) {
+        Debug.Log("Shoot " + (target as MonoBehaviour));
         if (target as MonoBehaviour == null) return;
 
         int projectileIndex = 0;
@@ -223,25 +252,23 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
             }
         }
 
-        if(IsServer) {
-            int attackTargetIndex = BattleManager.Instance.GetITargetableKey(target);
-            InitializeProjectileServerRpc(projectileIndex, attackTargetIndex);
-        }
+        int attackTargetIndex = BattleManager.Instance.GetITargetableKey(target);
+        InitializeProjectile(projectileIndex, attackTargetIndex);
     }
 
     public void ProjectileHasHit(ITargetable target, Vector3 projectileHitPosition) {
-        if (!IsServer) return;
+        //if (!IsServer) return;
         InflictDamage(target, projectileHitPosition);
     }
 
     public void UnitHasLanded(Vector3 landPosition, ITargetable target) {
-        if (!IsServer) return;
+        //if (!IsServer) return;
         InflictAOEDamage(landPosition);
         InflictDamage(target, transform.position);
     }
 
     protected void InflictDamage(ITargetable target, Vector3 damageHitPosition) {
-        if (!IsServer) return;
+        //if (!IsServer) return;
         PerformAllDamageActions(target, damageHitPosition);
 
         if (attackHasAOE) {
@@ -272,11 +299,11 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
             }
         }
 
-        OnUnitAttackEnded?.Invoke(this, EventArgs.Empty);
+        InvokeOnUnitAttackEnded();
     }
 
     protected void InflictAOEDamage(Vector3 damageHitPosition) {
-        if (!IsServer) return;
+        //if (!IsServer) return;
 
         if (attackHasAOE) {
             // Attack has one form of AOE
@@ -380,6 +407,7 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
             (target as Unit).TakeSpecial(AttackSO.UnitAttackSpecial.webbed, activeAttackSO.specialEffectDuration);
         }
     }
+
     protected virtual void PerformDamageActionOnBuilding(ITargetable target) {
 
         IDamageable targetIDamageable = target.GetIDamageable();
@@ -393,6 +421,7 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
         targetIDamageable.TakeDamage(attackDamageModified, this, false);
 
     }
+
     protected virtual void PerformDamageActionOnVillage(IDamageable targetIDamageable) {
         GetComponent<UnitHP>().TakeDamage(unit.GetUnitSO().HP, this, true);
         targetIDamageable.TakeDamage(unit.GetUnitSO().damageToVillages, this, true);
@@ -438,7 +467,7 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
         attackAnimationHitDelay = attackSO.meleeAttackAnimationHitDelay;
         meleeAttackAnimationDuration = attackSO.meleeAttackAnimationDuration;
         attackAOE = attackSO.attackAOE;
-        attackDecomposition.Value = attackSO.attackDecomposition;
+        attackDecomposition = attackSO.attackDecomposition;
         attackHasAOECollider = attackSO.attackHasAOECollider;
         attackHasAOE = attackSO.attackHasAOE;
         attackSpecialList = attackSO.attackSpecialList;
@@ -490,35 +519,41 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
         projectile.ActivateAndInitialize(this, attackTarget);
     }
 
+    protected void InitializeProjectile(int projectileIndex, int iTargetableIndex) {
+
+    }
+
     #endregion
 
     protected void RandomizeAttackTimers() {
-        if (IsServer) {
-            attackTimerServer.Value = UnityEngine.Random.Range(0, attackRate / 4);
-            attackStartTimerServer.Value = UnityEngine.Random.Range(attackRate / 6, attackRate / 3);
-        }
+        attackTimer = UnityEngine.Random.Range(0, attackRate / 4);
+        attackStartTimer = UnityEngine.Random.Range(attackRate / 6, attackRate / 3);
     }
 
     protected void ResetAttackTimers() {
-        attackTimer = attackTimerServer.Value;
-        attackStartTimer = attackStartTimerServer.Value;
+        attackTimer = attackTimer;
+        attackStartTimer = attackStartTimer;
         attackEndTimer = attackRate;
     }
 
-    private void AttackTimerServer_OnValueChanged(float previousValue, float newValue) {
-        attackTimer = attackTimerServer.Value;
-    }
-    private void AttackStartTimerServer_OnValueChanged(float previousValue, float newValue) {
-        attackStartTimer = attackStartTimerServer.Value;
-
-    }
 
     #region INVOKE EVENTS
 
     public void InvokeOnUnitAttack() {
         OnUnitAttack?.Invoke(this, EventArgs.Empty);
     }
+
     public void InvokeOnUnitAttackStarted() {
+        InvokeOnUnitAttackStartedServerRpc();
+    }
+
+    [ServerRpc(RequireOwnership =false)]
+    private void InvokeOnUnitAttackStartedServerRpc() {
+        InvokeOnUnitAttackStartedClientRpc();
+    }
+
+    [ClientRpc]
+    private void InvokeOnUnitAttackStartedClientRpc() {
         OnUnitAttackStarted?.Invoke(this, EventArgs.Empty);
     }
 
@@ -526,7 +561,6 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
         OnUnitAttackEnded?.Invoke(this, EventArgs.Empty);
         OnUnitDecomposedAttackEnded?.Invoke(this, EventArgs.Empty);
     }
-
 
     #endregion
 
@@ -597,7 +631,7 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
             //NetworkObject targetNetworkObject = (attackTarget as MonoBehaviour).GetComponent<NetworkObject>();
             int attackTargetIndex = BattleManager.Instance.GetITargetableKey(attackTarget);
 
-            SetAttackTargetServerRpc(attackTargetIndex);
+            SetAttackTarget(attackTargetIndex);
         }
     }
 
@@ -607,6 +641,10 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
 
     public void ResetAttackTarget() {
         attackTarget = null;
+    }
+
+    private void SetAttackTarget(int iTargetableIndex) {
+        attackTarget = BattleManager.Instance.GetITargetableFromKey(iTargetableIndex);
     }
 
     [ServerRpc(RequireOwnership = false)]

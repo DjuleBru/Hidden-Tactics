@@ -280,7 +280,7 @@ public class Unit : NetworkBehaviour, ITargetable {
             OnAnyUnitPlaced?.Invoke(this, EventArgs.Empty);
         }
 
-        if(IsServer && unitIsBought) {
+        if(unitIsBought) {
             collider2d.enabled = true;
         }
 
@@ -293,7 +293,7 @@ public class Unit : NetworkBehaviour, ITargetable {
     public virtual void ResetUnit() {
         transform.localPosition = unitPositionInTroop;
         unitIsDead = false;
-        if (!unitSO.doesNotMoveGarrisonedUnit & unitIsBought && IsServer) {
+        if (!unitSO.doesNotMoveGarrisonedUnit & unitIsBought) {
             collider2d.enabled = true;
         }
 
@@ -719,9 +719,7 @@ public class Unit : NetworkBehaviour, ITargetable {
         unitVisual.gameObject.SetActive(true);
         OnAdditionalUnitActivated?.Invoke(this, EventArgs.Empty);
 
-        if(IsServer) {
-            GetComponent<Collider2D>().enabled = true;
-        }
+        GetComponent<Collider2D>().enabled = true;
 
         GetComponent<UnitMovement>().enabled = true;
         GetComponent<UnitAI>().enabled = true;
@@ -751,9 +749,7 @@ public class Unit : NetworkBehaviour, ITargetable {
 
         unitVisual.gameObject.SetActive(true);
 
-        if(IsServer) {
-            GetComponent<Collider2D>().enabled = true;
-        }
+        GetComponent<Collider2D>().enabled = true;
 
         GetComponent<UnitMovement>().enabled = true;
         GetComponent<UnitAI>().enabled = true;
@@ -768,10 +764,8 @@ public class Unit : NetworkBehaviour, ITargetable {
     }
 
     public void DeactivateDynamicallySpawnedUnit() {
-        if (IsServer) {
-            if (!BattleManager.Instance.GetUnitsInBattlefieldList().Contains(this)) {
-                BattleManager.Instance.RemoveUnitFromUnitListInBattlefield(this);
-            }
+        if (!BattleManager.Instance.GetUnitsInBattlefieldList().Contains(this)) {
+            BattleManager.Instance.RemoveUnitFromUnitListInBattlefield(this);
         }
 
         DeactivateDynamicallySpawnedUnitServerRpc();
@@ -802,9 +796,7 @@ public class Unit : NetworkBehaviour, ITargetable {
     }
 
     public void EnableCollider() {
-        if(IsServer) {
-            collider2d.enabled = true;
-        }
+        collider2d.enabled = true;
     }
 
     public void SetUnitAsVisual()

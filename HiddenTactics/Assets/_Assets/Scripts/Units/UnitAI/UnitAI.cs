@@ -38,7 +38,7 @@ public class UnitAI : NetworkBehaviour
         fallen,
     }
 
-    protected NetworkVariable<State> state = new NetworkVariable<State>();
+    //protected NetworkVariable<State> state = new NetworkVariable<State>();
     protected State localState;
     public event EventHandler OnStateChanged;
 
@@ -57,7 +57,7 @@ public class UnitAI : NetworkBehaviour
     public override void OnNetworkSpawn() {
         if (unit.GetUnitIsOnlyVisual()) return;
 
-        state.OnValueChanged += State_OnValueChanged;
+        //state.OnValueChanged += State_OnValueChanged;
 
         unit.OnUnitPlaced += Unit_OnUnitPlaced;
         unit.OnUnitDied += Unit_OnUnitDied;
@@ -88,7 +88,7 @@ public class UnitAI : NetworkBehaviour
             Building building = BattleGrid.Instance.GetBuildingAtGridPosition(nextGridPosition);
 
             if(building != null) {
-                if (state.Value != State.blockedByBuilding) {
+                if (localState != State.blockedByBuilding) {
                     // There is a building that blocks the unit
 
                     if (building != null) {
@@ -100,7 +100,7 @@ public class UnitAI : NetworkBehaviour
                     };
                 }
             } else {
-                if(state.Value == State.blockedByBuilding) {
+                if(localState == State.blockedByBuilding) {
                     ChangeState(State.moveForwards);
                 }
             }
@@ -150,7 +150,7 @@ public class UnitAI : NetworkBehaviour
 
         if (!unit.GetUnitIsBought()) return;
 
-        state.Value = newValue;
+        //state.Value = newValue;
         localState = newValue;
 
         ChangeStateResponse();
@@ -186,9 +186,9 @@ public class UnitAI : NetworkBehaviour
             unitAttack.ResetAttackTarget();
             unit.SetSynchronizingTransform(false);
 
-            if (!IsServer) {
-                GetComponent<UnitMovement>().SetMoveForwardsMoveDirClient();
-            };
+            //if (!IsServer) {
+            //    GetComponent<UnitMovement>().SetMoveForwardsMoveDirClient();
+            //};
         } 
 
         if (localState == State.dead) {
@@ -211,12 +211,12 @@ public class UnitAI : NetworkBehaviour
             ChangeStateResponse();
         }
 
-        if (!IsServer) return;
+        //if (!IsServer) return;
         unitActive = BattleManager.Instance.IsBattlePhase();
     }
 
     protected void Unit_OnUnitDazed(object sender, Unit.OnUnitSpecialEventArgs e) {
-        if (!IsServer) return;
+        //if (!IsServer) return;
         StartCoroutine(TakeDazed(e.effectDuration));
     }
 
@@ -256,17 +256,18 @@ public class UnitAI : NetworkBehaviour
     public void ChangeState(State newState) {
         // Check if both states are the same : useless call
 
-        if (state.Value == newState && localState == newState) return;
+        if (localState == newState) return;
 
         localState = newState;
 
+        ChangeStateResponse();
+
         // If only state.Value is the same : call ChangeState
-        if (state.Value == newState) {
-            ChangeStateResponse();
-        } else {
-            if (!IsServer) return;
-            state.Value = newState;
-        }
+        //if (state.Value == newState) {
+        //} else {
+        //    if (!IsServer) return;
+        //    state.Value = newState;
+        //}
 
     }
 

@@ -15,7 +15,9 @@ public class IsServerConditional : Conditional
     public override TaskStatus OnUpdate() {
         bool isServer = unit.GetIsServer();
 
-        if(isServer) {
+        return TaskStatus.Success;
+
+        if (isServer) {
             return TaskStatus.Success;
         } else {
             return TaskStatus.Failure;
