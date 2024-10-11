@@ -5,6 +5,8 @@ using Unity.Netcode;
 using System;
 using QFSW;
 using QFSW.QC;
+using UnityEngine.UIElements;
+using System.Linq;
 
 public class BattleManager : NetworkBehaviour
 {
@@ -40,7 +42,7 @@ public class BattleManager : NetworkBehaviour
     private float phaseTimerSyncTimer;
     private float phaseTimerSyncRate = .5f;
 
-    private List<ITargetable> iTargetablesOnBattlefieldList = new List<ITargetable>();
+    private Dictionary<int, ITargetable> iTargetablesOnBattlefieldDictionary = new Dictionary<int, ITargetable>();
     private List<Unit> unitsOnBattlefieldList = new List<Unit>();
     private List<Unit> unitsStillInBattle = new List<Unit>();
 
@@ -112,7 +114,6 @@ public class BattleManager : NetworkBehaviour
         objectsSpawnedNumberServer.OnValueChanged += ObjectsSpawnedNumberServer_OnValueChanged;
     }
 
-
     private void Update() {
 
         if (!IsServer) {
@@ -141,11 +142,9 @@ public class BattleManager : NetworkBehaviour
 
 
                 if(preparationPhaseTimerLocal < 0 ) {
-                    preparationPhaseTimer.Value = preparationPhaseMaxTime;
-                    preparationPhaseTimerLocal = preparationPhaseMaxTime;
-                    battlePhaseTimer.Value = battlePhaseMaxTime;
-                    battlePhaseTimerLocal = battlePhaseMaxTime;
+                    ResetBattlePhaseTimers();
 
+                    Debug.Log("BattlePhaseStarting battlePhaseTimer.Value " + battlePhaseTimer.Value);
                     state.Value = State.BattlePhaseStarting;
                     return;
                 }
@@ -165,11 +164,7 @@ public class BattleManager : NetworkBehaviour
                 }
 
                 if (battlePhaseTimerLocal < 0) {
-                    battlePhaseTimer.Value = battlePhaseMaxTime;
-                    battlePhaseTimerLocal = battlePhaseMaxTime;
-                    preparationPhaseTimer.Value = preparationPhaseMaxTime;
-                    preparationPhaseTimerLocal = preparationPhaseMaxTime;
-
+                    ResetBattlePhaseTimers();
                     state.Value = State.BattlePhaseEnding;
                     return;
                 }
@@ -187,6 +182,13 @@ public class BattleManager : NetworkBehaviour
             case State.GameEnded:
             break;
         }
+    }
+
+    private void ResetBattlePhaseTimers() {
+        battlePhaseTimer.Value = battlePhaseMaxTime;
+        battlePhaseTimerLocal = battlePhaseMaxTime;
+        preparationPhaseTimer.Value = preparationPhaseMaxTime;
+        preparationPhaseTimerLocal = preparationPhaseMaxTime;
     }
 
     #region LOAD PLAYER IPLACEABLES SPAWNING
@@ -275,7 +277,6 @@ public class BattleManager : NetworkBehaviour
     #endregion
 
 
-
     [ServerRpc(RequireOwnership = false)]
     private void SetMercenariesForBattleServerRpc() {
         int level1Mercenary = UnityEngine.Random.Range(0, BattleDataManager.Instance.GetLevel1MercenaryTroopSOList().Count);
@@ -295,6 +296,7 @@ public class BattleManager : NetworkBehaviour
     }
 
     private void PlayersReadyManager_OnAllPlayersReady(object sender, EventArgs e) {
+        ResetBattlePhaseTimers();
         state.Value = State.BattlePhaseStarting;
     }
 
@@ -337,6 +339,7 @@ public class BattleManager : NetworkBehaviour
     }
 
     public void SetBattlePhase() {
+        ResetBattlePhaseTimers();
         state.Value = State.BattlePhase;
     }
 
@@ -349,11 +352,12 @@ public class BattleManager : NetworkBehaviour
         if (!IsServer) {
             return;
         }
+
+        ResetBattlePhaseTimers();
         state.Value = State.PreparationPhase;
     }
 
     private void State_OnValueChanged(State previousValue, State newValue) {
-        Debug.Log("BATTLE MANAGER STATE CHANGED");
         OnStateChanged?.Invoke(this, EventArgs.Empty);
         Time.timeScale = 1f;
 
@@ -421,7 +425,14 @@ public class BattleManager : NetworkBehaviour
 
     #region SET PARAMETERS
     public void AddToITargetableListInBattlefield(ITargetable iTargetable) {
-        iTargetablesOnBattlefieldList.Add(iTargetable);
+        int iTargetableIndex = (int)(iTargetable as MonoBehaviour).GetComponent<NetworkObject>().NetworkObjectId;
+
+        iTargetablesOnBattlefieldDictionary.Add(iTargetableIndex, iTargetable);
+    }
+
+    public void RemoveFromITargetableListInBattlefield(ITargetable iTargetable) {
+        int iTargetableIndex = (int)(iTargetable as MonoBehaviour).GetComponent<NetworkObject>().NetworkObjectId;
+        iTargetablesOnBattlefieldDictionary.Remove(iTargetableIndex);
     }
 
     public void AddUnitToUnitListInBattlefield(Unit unit) {
@@ -431,6 +442,7 @@ public class BattleManager : NetworkBehaviour
 
     public void RemoveUnitFromUnitListInBattlefield(Unit unit) {
         unitsOnBattlefieldList.Remove(unit);
+        RemoveFromITargetableListInBattlefield(unit);
     }
 
     public void AddUnitToUnitsStillInBattleList(Unit unit) {
@@ -450,12 +462,20 @@ public class BattleManager : NetworkBehaviour
 
     #region GET PARAMETERS
 
-    public int GetITargetableIndex(ITargetable iTargetable) {
-        return iTargetablesOnBattlefieldList.IndexOf(iTargetable);
+    public int GetITargetableKey(ITargetable iTargetable) {
+
+        foreach (int keyVar in iTargetablesOnBattlefieldDictionary.Keys) {
+            if (iTargetablesOnBattlefieldDictionary[keyVar] == iTargetable) {
+                return keyVar;
+            }
+        }
+        return 0;
     }
 
-    public ITargetable GetITargetableFromIndex(int iTargetable) {
-        return iTargetablesOnBattlefieldList[iTargetable];
+    public ITargetable GetITargetableFromKey(int iTargetableIndew) {
+        iTargetablesOnBattlefieldDictionary.TryGetValue(iTargetableIndew, out ITargetable itargetable);
+
+        return itargetable;
     }
 
     public List<Unit> GetUnitsInBattlefieldList() {

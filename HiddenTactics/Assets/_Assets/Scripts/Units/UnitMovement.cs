@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -34,8 +35,6 @@ public class UnitMovement : NetworkBehaviour {
     private UnitAI unitAI;
     private Rigidbody2D rb;
     private CircleCollider2D unitCollider;
-    private Vector3 moveDir2D;
-    private int moveDirMultiplier;
 
     private bool dazed;
     private NetworkVariable<bool> canMove = new NetworkVariable<bool>();
@@ -46,17 +45,18 @@ public class UnitMovement : NetworkBehaviour {
     private float moveSpeedMultiplier = 1f;
 
     private Vector3 destinationPoint;
-    private Vector2 moveDir;
+
     private NetworkVariable<Vector2> moveDirSynced = new NetworkVariable<Vector2>();
+    private Vector2 moveDir;
+    private float moveDirSyncTimer;
+    private float moveDirSyncRate = .2f;
+    private Vector2 previousMoveDir;
+
     private Vector3 watchDir;
-    private NetworkVariable<Vector2> watchDirSynced = new NetworkVariable<Vector2>();
     private Vector3 moveForwardsPoint;
 
     public event EventHandler OnMoveSpeedBuffed;
     public event EventHandler OnMoveSpeedDebuffed;
-
-    protected float syncMoveDirTimer;
-    protected float syncMoveDirRate = .3f;
 
     private void Awake() {
         rb = GetComponent<Rigidbody2D>();
@@ -74,10 +74,15 @@ public class UnitMovement : NetworkBehaviour {
         unit.OnUnitDynamicallySpawned += Unit_OnUnitDynamicallySpawned;
         unit.OnAdditionalUnitActivated += Unit_OnAdditionalUnitActivated;
         unit.OnParentTroopSet += Unit_OnParentTroopSet;
+
+        //canMove.OnValueChanged += canMove_OnValueChanged;
+        moveDirSynced.OnValueChanged += moveDirSynced_OnValueChanged;
     }
+
 
     private void Update() {
         if (!parentTroopSet) return;
+        if (!IsServer) return;
 
         pathCalculationTimer -= Time.deltaTime;
         if (pathCalculationTimer < 0) {
@@ -85,6 +90,8 @@ public class UnitMovement : NetworkBehaviour {
         }
 
         if (!canMove.Value) return;
+
+        //HandleSyncMoveDir();
 
         if (pathCalculationTimer < 0) {
             Vector3 direction = (destinationPoint - unit.transform.position).normalized;
@@ -108,20 +115,28 @@ public class UnitMovement : NetworkBehaviour {
         if (IsServer) {
             if (!dazed) {
                 rb.velocity = moveDir * moveSpeed * moveSpeedMultiplier * Time.fixedDeltaTime;
-                syncMoveDirTimer += Time.deltaTime;
-
-                if(syncMoveDirTimer >= syncMoveDirRate) {
-                    //SetMoveDirServerRpc(moveDir);
-                    SyncMoveDir();
-                    syncMoveDirTimer = 0;
-                }
-
             }
-        } else {
-            // Clients try to move units locally
-            if(unitAI.IsMovingForwards()) {
-                rb.velocity = GetMoveDir2D() * moveSpeed * moveSpeedMultiplier * Time.fixedDeltaTime;
-                //Debug.Log(rb.velocity);
+        }
+        else {
+            rb.velocity = GetMoveDir2D() * moveSpeed * moveSpeedMultiplier * Time.fixedDeltaTime;
+        }
+    }
+
+    private void HandleSyncMoveDir() {
+        moveDirSyncTimer -= Time.deltaTime;
+
+        if(previousMoveDir == Vector2.zero) {
+            previousMoveDir = moveDir;
+        }
+
+        if (moveDirSyncTimer < 0) {
+            moveDirSyncTimer = moveDirSyncRate;
+
+
+            if (moveDir.x * previousMoveDir.x < 0 || moveDir.y * previousMoveDir.y < 0) {
+                Debug.Log("synching move dir");
+                previousMoveDir = moveDir;
+                moveDirSynced.Value = moveDir;
             }
         }
     }
@@ -209,6 +224,7 @@ public class UnitMovement : NetworkBehaviour {
     }
 
     public void MoveToTarget(Vector3 targetPosition) {
+        //Debug.Log("MoveToTarget");
         canMove.Value = true;
         destinationPoint = targetPosition;
     }
@@ -230,22 +246,22 @@ public class UnitMovement : NetworkBehaviour {
         moveForwardsPoint = BattleGrid.Instance.GetMoveForwardsNextGridPosition(unit);
     }
 
-    private void SyncMoveDir() {
-        if(IsServer) {
-            moveDirSynced.Value = moveDir;
-        }
-    }
+    private void canMove_OnValueChanged(bool previousValue, bool newValue) {
+        //Debug.Log(previousValue + " canMove_OnValueChanged " + newValue);
+    } 
 
-    private void SyncWatchDir() {
-        if (IsServer) {
-            watchDirSynced.Value = watchDir;
-        }
+    private void moveDirSynced_OnValueChanged(Vector2 previousValue, Vector2 newValue) {
+        moveDir = newValue;
     }
 
     public void StopMoving() {
         if(IsServer) {
-            canMove.Value = false;
+            if (canMove.Value == true) {
+                //Debug.Log(unit + " StopMoving");
+                canMove.Value = false;
+            }
         }
+
         moveDir = Vector3.zero;
     }
 
@@ -311,27 +327,28 @@ public class UnitMovement : NetworkBehaviour {
 
     public void SetWatchDir(Transform targetTransform) {
         watchDir = (targetTransform.position - transform.position).normalized;
+    }
 
-        SyncWatchDir();
+    public void SetMoveForwardsMoveDirClient() {
+
+        if(unit.IsOwnedByPlayer()) {
+            moveDir = new Vector2(-1, 0);
+        } else {
+            moveDir = new Vector2(1, 0);
+        }
+        
     }
 
     public Vector2 GetWatchDir2D() {
-        Vector2 watchDirClient = watchDirSynced.Value;
-
-        if(!IsServer) {
-            watchDirClient.x = -watchDirClient.x;
-        }
-
-        return watchDirClient;
+        return watchDir;
     }
 
     public Vector2 GetMoveDir2D() {
-        Vector2 moveDirClient = moveDirSynced.Value;
+        Vector2 moveDirClient = moveDir;
 
         if (!IsServer) {
             moveDirClient.x = -moveDirClient.x;
         }
-
         return moveDirClient;
     }
 
@@ -344,13 +361,6 @@ public class UnitMovement : NetworkBehaviour {
     }
 
     private void Unit_OnUnitPlaced(object sender, EventArgs e) {
-
-        if (unit.GetParentTroop().IsOwnedByPlayer()) {
-            moveDirMultiplier = 1;
-        }
-        else {
-            moveDirMultiplier = -1;
-        }
         SetMoveForwardsPoint();
     }
 

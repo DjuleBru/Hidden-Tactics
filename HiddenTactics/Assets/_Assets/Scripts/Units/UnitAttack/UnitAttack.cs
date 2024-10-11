@@ -28,7 +28,6 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
 
     protected NetworkVariable<float> attackTimerServer = new NetworkVariable<float>();
     protected NetworkVariable<float> attackStartTimerServer = new NetworkVariable<float>();
-    protected NetworkVariable<float> attackEndTimerServer = new NetworkVariable<float>();
 
     protected float attackTimer;
     protected float attackStartTimer;
@@ -87,7 +86,6 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
 
         attackTimerServer.OnValueChanged += AttackTimerServer_OnValueChanged;
         attackStartTimerServer.OnValueChanged += AttackStartTimerServer_OnValueChanged;
-        attackEndTimerServer.OnValueChanged += AttackEndTimerServer_OnValueChanged;
 
         UpdateActiveAttackParameters(activeAttackSO);
     }
@@ -104,14 +102,15 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
 
         if (attackTarget as MonoBehaviour == null) return;
 
-        if(IsServer) {
-            syncWatchDirTimer += Time.deltaTime;
+        unitMovement.SetWatchDir((attackTarget as MonoBehaviour).transform);
 
-            if(syncWatchDirTimer >= syncWatchDirRate) {
-                syncWatchDirTimer = 0;
-                unitMovement.SetWatchDir((attackTarget as MonoBehaviour).transform);
-            }
-        }
+        //if (IsServer) {
+        //    syncWatchDirTimer += Time.deltaTime;
+
+        //    if(syncWatchDirTimer >= syncWatchDirRate) {
+        //        syncWatchDirTimer = 0;
+        //    }
+        //}
 
         if (attacking && !dazed) {
             if (!attackDecomposition.Value) {
@@ -214,19 +213,19 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
 
     protected void Shoot(ITargetable target) {
         if (target as MonoBehaviour == null) return;
-        NetworkObject targetUnitNetworkObject = (target as MonoBehaviour).GetComponent<NetworkObject>();
 
-        NetworkObject projectileNetworkObject = null;
+        int projectileIndex = 0;
 
-        foreach (Projectile projectile in projectilePool) {
-            if (projectile.GetIsPooledProjectile()) {
-                projectileNetworkObject = projectile.GetComponent<NetworkObject>();
+        foreach (Projectile proj in projectilePool) {
+            if (proj.GetIsPooledProjectile()) {
+                projectileIndex = projectilePool.IndexOf(proj);
                 break;
             }
         }
 
         if(IsServer) {
-            InitializeProjectileServerRpc(projectileNetworkObject, targetUnitNetworkObject);
+            int attackTargetIndex = BattleManager.Instance.GetITargetableKey(target);
+            InitializeProjectileServerRpc(projectileIndex, attackTargetIndex);
         }
     }
 
@@ -348,17 +347,17 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
         bool attackIgnoresArmor = activeAttackSO.attackSpecialList.Contains(AttackSO.UnitAttackSpecial.pierce);
         targetIDamageable.TakeDamage(attackDamageModified, this, attackIgnoresArmor);
 
+        //Daze
+        if (attackDazedTime != 0) {
+            (target as Unit).TakeDazed(attackDazedTime);
+        }
+
         //Knockback
         if (attackKnockback != 0) {
             Vector2 incomingDamageDirection = new Vector2((target as Unit).transform.position.x - damageHitPosition.x, (target as Unit).transform.position.y - damageHitPosition.y);
             Vector2 force = incomingDamageDirection * attackKnockback;
 
             (target as Unit).TakeKnockBack(force);
-        }
-
-        //Daze
-        if (attackDazedTime != 0) {
-            (target as Unit).TakeDazed(attackDazedTime);
         }
 
         //Fire
@@ -479,19 +478,16 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
     }
 
     [ServerRpc(RequireOwnership = false)]
-    protected void InitializeProjectileServerRpc(NetworkObjectReference projectileNetworkObjectReference, NetworkObjectReference targetUnitNetworkObjectReference) {
-        InitializeProjectileClientRpc(projectileNetworkObjectReference, targetUnitNetworkObjectReference);
+    protected void InitializeProjectileServerRpc(int projectileIndex, int iTargetableIndex) {
+        InitializeProjectileClientRpc(projectileIndex, iTargetableIndex);
     }
 
     [ClientRpc]
-    protected void InitializeProjectileClientRpc(NetworkObjectReference projectileNetworkObjectReference, NetworkObjectReference targetNetworkReference) {
-        targetNetworkReference.TryGet(out NetworkObject targetNetworkObject);
-        ITargetable target = targetNetworkObject.GetComponent<ITargetable>();
+    protected void InitializeProjectileClientRpc(int projectileIndex, int iTargetableIndex) {
+        Projectile projectile = projectilePool[projectileIndex];
+        ITargetable attackTarget = BattleManager.Instance.GetITargetableFromKey(iTargetableIndex);
 
-        projectileNetworkObjectReference.TryGet(out NetworkObject projectileNetworkObject);
-        Projectile projectile = projectileNetworkObject.GetComponent<Projectile>();
-
-        projectile.GetComponent<Projectile>().ActivateAndInitialize(this, target);
+        projectile.ActivateAndInitialize(this, attackTarget);
     }
 
     #endregion
@@ -500,29 +496,20 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
         if (IsServer) {
             attackTimerServer.Value = UnityEngine.Random.Range(0, attackRate / 4);
             attackStartTimerServer.Value = UnityEngine.Random.Range(attackRate / 6, attackRate / 3);
-            attackEndTimerServer.Value = attackRate;
         }
-        //SetAttackTimersClientRpc(attackTimer, attackStartTimer, attackEndTimer);
+    }
+
+    protected void ResetAttackTimers() {
+        attackTimer = attackTimerServer.Value;
+        attackStartTimer = attackStartTimerServer.Value;
+        attackEndTimer = attackRate;
     }
 
     private void AttackTimerServer_OnValueChanged(float previousValue, float newValue) {
         attackTimer = attackTimerServer.Value;
-
     }
     private void AttackStartTimerServer_OnValueChanged(float previousValue, float newValue) {
         attackStartTimer = attackStartTimerServer.Value;
-
-    }
-    private void AttackEndTimerServer_OnValueChanged(float previousValue, float newValue) {
-        attackEndTimer = attackEndTimerServer.Value;
-    }
-
-    [ClientRpc]
-    protected void SetAttackTimersClientRpc(float attackTimer, float attackStartTimer, float attackEndTimer) {
-        Debug.Log("SetAttackTimersClientRpc");
-        this.attackTimer = attackTimer;
-        this.attackStartTimer = attackStartTimer;
-        this.attackEndTimer = attackEndTimer;
 
     }
 
@@ -547,7 +534,9 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
 
     protected void BattleManager_OnStateChanged(object sender, EventArgs e) {
         if (BattleManager.Instance.IsBattlePhaseEnding()) {
-            RandomizeAttackTimers();
+            if (!unit.gameObject.activeInHierarchy) return;
+
+            ResetAttackTimers();
         }
     }
 
@@ -587,7 +576,6 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
     public void SetAttackRateMultiplier(float attackRateMultiplier) {
         this.attackRateMultiplier = attackRateMultiplier;
         UpdateActiveAttackParameters(activeAttackSO);
-        RandomizeAttackTimers();
     }
     public void SetAttackDamageMultiplier(float attackDamageMultiplier) {
         this.attackDamageMultiplier = attackDamageMultiplier;
@@ -606,8 +594,10 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
         if (attackTarget as MonoBehaviour != null) {
             if (attackTarget == this.attackTarget) return;
 
-            NetworkObject targetNetworkObject = (attackTarget as MonoBehaviour).GetComponent<NetworkObject>();
-            SetAttackTargetServerRpc(targetNetworkObject);
+            //NetworkObject targetNetworkObject = (attackTarget as MonoBehaviour).GetComponent<NetworkObject>();
+            int attackTargetIndex = BattleManager.Instance.GetITargetableKey(attackTarget);
+
+            SetAttackTargetServerRpc(attackTargetIndex);
         }
     }
 
@@ -620,16 +610,18 @@ public class UnitAttack : NetworkBehaviour, IDamageSource
     }
 
     [ServerRpc(RequireOwnership = false)]
-    public void SetAttackTargetServerRpc(NetworkObjectReference networkObectReference) {
-        SetAttackTargetClientRpc(networkObectReference);
+    public void SetAttackTargetServerRpc(int iTargetableIndex) {
+        SetAttackTargetClientRpc(iTargetableIndex);
     }
 
     [ClientRpc]
-    public void SetAttackTargetClientRpc(NetworkObjectReference networkObectReference) {
-        Debug.Log("SetAttackTargetClientRpc");
-        networkObectReference.TryGet(out NetworkObject targetNetworkObject);
+    public void SetAttackTargetClientRpc(int iTargetableIndex) {
+        attackTarget = BattleManager.Instance.GetITargetableFromKey(iTargetableIndex);
 
-        attackTarget = targetNetworkObject.GetComponent<ITargetable>();
+        if (IsServer) return;
+        Vector3 moveDir = (attackTarget as MonoBehaviour).transform.position - transform.position;
+        //unitMovement.SetMoveDir(moveDir);
+        //Debug.Log(unit + " SetAttackTargetClientRpc " + iTargetableIndex + " "  + (attackTarget as MonoBehaviour));
     }
 
     public void SetActiveAttackSO(AttackSO attackSO) {

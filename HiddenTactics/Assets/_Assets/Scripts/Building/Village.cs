@@ -25,6 +25,7 @@ public class Village : Building {
     public override void PlaceIPlaceable() {
         isPlaced = true;
         BattleGrid.Instance.AddIPlaceableAtGridPosition(currentGridPosition, this);
+        BattleManager.Instance.AddToITargetableListInBattlefield(this);
 
         // Set placed troop on grid object
         BattleGrid.Instance.SetIPlaceableSpawnedAtGridPosition(this, currentGridPosition);

@@ -179,6 +179,8 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
     public virtual void PlaceIPlaceable() {
         if (buildingSelled) return;
 
+        BattleManager.Instance.AddToITargetableListInBattlefield(this);
+
         if (!isOwnedByPlayer) {
             gameObject.SetActive(true);
         }
@@ -252,6 +254,7 @@ public class Building : NetworkBehaviour, IPlaceable, ITargetable {
         BattleGrid.Instance.ResetIPlaceableSpawnedAtGridPosition(currentGridPosition);
         gameObject.SetActive(false);
         PlayerAction_SpawnIPlaceable.LocalInstance.AddIPlaceabledToPoolList(this);
+        BattleManager.Instance.RemoveFromITargetableListInBattlefield(this);
     }
 
     private void SetInitialGridPosition() {

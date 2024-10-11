@@ -14,6 +14,7 @@ public class Unit : NetworkBehaviour, ITargetable {
     public event EventHandler OnUnitUpgraded;
     public event EventHandler OnUnitActivated;
     public event EventHandler OnUnitPlaced;
+    public static event EventHandler OnAnyUnitPlaced;
     public event EventHandler OnUnitDied;
     public static event EventHandler OnAnyUnitDied;
     public event EventHandler OnUnitReset;
@@ -40,7 +41,6 @@ public class Unit : NetworkBehaviour, ITargetable {
     public event EventHandler OnUnitScaredEnded;
     public event EventHandler OnUnitWebbedEnded;
 
-    [SerializeField] private Transform visualTransform;
     [SerializeField] private Transform projectileTarget;
     [SerializeField] private UnitVisual unitVisual;
     [SerializeField] private UnitUI unitUI;
@@ -49,15 +49,20 @@ public class Unit : NetworkBehaviour, ITargetable {
         public float effectDuration;
     }
 
-    protected float positionSyncDistanceTreshold = .05f;
     protected Vector2 lastPosition;
 
-    protected bool isPooled = true;
     private bool burning;
+    private bool poisoned;
+    private bool scared;
+    private bool webbed;
+    private bool frozen;
+    private bool shocked;
+    private bool bleeding;
+
+    protected bool isPooled = true;
     private float burningTimer;
     private float burningDuration;
 
-    private bool poisoned;
     private float poisonedTimer;
     private float poisonedDuration;
     private NetworkVariable<float> poisonedDurationNormalized = new NetworkVariable<float>();
@@ -65,11 +70,9 @@ public class Unit : NetworkBehaviour, ITargetable {
     private NetworkVariable<float> burningDurationNormalized = new NetworkVariable<float>();
     private float poisonedMaxDuration = 10f;
 
-    private bool scared;
     private float scaredTimer;
     private float scaredDuration;
 
-    private bool webbed;
     private float webbedTimer;
     private float webbedDuration;
 
@@ -96,8 +99,12 @@ public class Unit : NetworkBehaviour, ITargetable {
 
     protected NetworkVariable<Vector2> positionServer = new NetworkVariable<Vector2>();
 
-    protected float positionSyncTreshold = .2f;
+    protected float positionSyncDistanceInitialTreshold = .15f;
+    protected float positionSyncDistanceTreshold;
     protected Vector2 previousPosition;
+
+    protected int positionSyncPerSecond;
+    protected float positionSyncPerSecondTimer;
 
     protected virtual void Awake() {
         collider2d = GetComponent<Collider2D>();
@@ -105,6 +112,8 @@ public class Unit : NetworkBehaviour, ITargetable {
         collider2d.enabled = false;
 
         rb.mass = unitSO.mass;
+
+        positionSyncDistanceTreshold = positionSyncDistanceInitialTreshold;
     }
 
     protected virtual void Start() {
@@ -125,10 +134,8 @@ public class Unit : NetworkBehaviour, ITargetable {
 
         HandlePositionOnGrid();
 
-        if(!IsServer) {
-            HandlePositionMirror();
-        } else {
-            HandlePositionSync();
+        if(IsServer && BattleManager.Instance.IsBattlePhase()) {
+            //HandlePositionSync();
         }
 
         if (!unitIsBought) return;
@@ -192,20 +199,23 @@ public class Unit : NetworkBehaviour, ITargetable {
     }
 
     protected void HandlePositionSync() {
-        if (!synchronizingTransform) return;
         if (!IsServer) return;
 
+        positionSyncPerSecondTimer += Time.deltaTime;
+
+        if (positionSyncPerSecondTimer > 1f) {
+            //Debug.Log("positionSyncPerSecond " + positionSyncPerSecond);
+            positionSyncPerSecondTimer = 0;
+            positionSyncPerSecond = 0;
+        }
+
         if (Vector2.Distance(transform.position, previousPosition) > positionSyncDistanceTreshold) {
+            positionSyncPerSecond++;
             previousPosition = transform.position;
             positionServer.Value = transform.position;
         }
     }
 
-    private void SyncPosition() {
-        if (!IsServer) return;
-        previousPosition = transform.position;
-        positionServer.Value = transform.position;
-    }
 
     public void HandlePositionOnGrid() {
         GridPosition newGridPosition = BattleGrid.Instance.GetGridPosition(transform.position);
@@ -237,14 +247,21 @@ public class Unit : NetworkBehaviour, ITargetable {
         }
 
         if (BattleManager.Instance.IsBattlePhase()) {
+            previousPosition = transform.position;
         }
 
     }
 
     protected void PositionServer_OnValueChanged(Vector2 previousValue, Vector2 newValue) {
-        //Debug.Log("new position received");
-        transform.position = new Vector3(newValue.x + (BattleGrid.Instance.GetBattlefieldMiddlePoint() - newValue.x) * 2, newValue.y, 0);
-        //transform.position = newValue;
+        Vector2 newPosition = new Vector3(newValue.x + (BattleGrid.Instance.GetBattlefieldMiddlePoint() - newValue.x) * 2, newValue.y, 0);
+        transform.position = newPosition;
+        previousPosition = transform.position;
+    }
+
+    public void SetPosition(Vector2 newValue) {
+        Vector2 newPosition = new Vector3(newValue.x + (BattleGrid.Instance.GetBattlefieldMiddlePoint() - newValue.x) * 2, newValue.y, 0);
+        transform.position = newPosition;
+        previousPosition = transform.position;
     }
 
     protected virtual void ParentTroop_OnTroopPlaced(object sender, System.EventArgs e) {
@@ -260,6 +277,7 @@ public class Unit : NetworkBehaviour, ITargetable {
         if (!isAdditionalUnit && !isSpawnedUnit) {
             unitIsPlaced = true;
             OnUnitPlaced?.Invoke(this, EventArgs.Empty);
+            OnAnyUnitPlaced?.Invoke(this, EventArgs.Empty);
         }
 
         if(IsServer && unitIsBought) {
@@ -274,9 +292,7 @@ public class Unit : NetworkBehaviour, ITargetable {
 
     public virtual void ResetUnit() {
         transform.localPosition = unitPositionInTroop;
-        visualTransform.transform.localPosition = Vector3.zero;
         unitIsDead = false;
-
         if (!unitSO.doesNotMoveGarrisonedUnit & unitIsBought && IsServer) {
             collider2d.enabled = true;
         }
@@ -305,9 +321,19 @@ public class Unit : NetworkBehaviour, ITargetable {
     }
 
     public void TakeDazed(float dazedTime) {
+        //StartCoroutine(ChangePositionSyncTreshold(.2f, dazedTime));
         OnUnitDazed?.Invoke(this, new OnUnitSpecialEventArgs {
             effectDuration = dazedTime
         });
+    }
+
+    private IEnumerator ChangePositionSyncTreshold(float newTreshold, float time) {
+        positionSyncDistanceTreshold = newTreshold;
+        yield return new WaitForSeconds(time);
+
+        previousPosition = transform.position;
+        positionSyncDistanceTreshold = positionSyncDistanceInitialTreshold;
+        positionServer.Value = transform.position;
     }
 
     public void TakeSpecial(AttackSO.UnitAttackSpecial specialEffect, float duration) {
@@ -367,13 +393,27 @@ public class Unit : NetworkBehaviour, ITargetable {
     }
 
     public void RemoveAllSpecialEffects() {
-        RemoveSpecial(AttackSO.UnitAttackSpecial.fire);
-        RemoveSpecial(AttackSO.UnitAttackSpecial.fear);
-        RemoveSpecial(AttackSO.UnitAttackSpecial.ice);
-        RemoveSpecial(AttackSO.UnitAttackSpecial.shock);
-        RemoveSpecial(AttackSO.UnitAttackSpecial.bleed);
-        RemoveSpecial(AttackSO.UnitAttackSpecial.poison);
-        RemoveSpecial(AttackSO.UnitAttackSpecial.webbed);
+        if(burning) {
+            RemoveSpecial(AttackSO.UnitAttackSpecial.fire);
+        }
+        if(scared) {
+            RemoveSpecial(AttackSO.UnitAttackSpecial.fear);
+        }
+        if(frozen) {
+            RemoveSpecial(AttackSO.UnitAttackSpecial.ice);
+        }
+        if(shocked) {
+            RemoveSpecial(AttackSO.UnitAttackSpecial.shock);
+        }
+        if(bleeding) {
+            RemoveSpecial(AttackSO.UnitAttackSpecial.bleed);
+        }
+        if(poisoned) {
+            RemoveSpecial(AttackSO.UnitAttackSpecial.poison);
+        }
+        if(webbed) {
+            RemoveSpecial(AttackSO.UnitAttackSpecial.webbed);
+        }
     }
 
     public void RemoveSpecial(AttackSO.UnitAttackSpecial specialEffect) {
@@ -426,6 +466,7 @@ public class Unit : NetworkBehaviour, ITargetable {
         OnUnitSold?.Invoke(this, EventArgs.Empty);
         collider2d.enabled = false;
         unitIsBought = false;
+        BattleManager.Instance.RemoveUnitFromUnitListInBattlefield(this);
     }
 
     public void RemoveUnitFromBattlePhaseUnitList() {
@@ -449,7 +490,7 @@ public class Unit : NetworkBehaviour, ITargetable {
 
     public void SetSynchronizingTransform(bool synchronising) {
         if(synchronising) {
-            SyncPosition();
+            //SyncPosition();
         }
         synchronizingTransform = synchronising;
     }
@@ -482,6 +523,10 @@ public class Unit : NetworkBehaviour, ITargetable {
 
     public Vector3 GetUnitPositionInTroop() {
         return unitPositionInTroop;
+    }
+
+    public bool GetIsPooled() {
+        return isPooled;
     }
 
     public bool GetIsDead() {
@@ -578,10 +623,6 @@ public class Unit : NetworkBehaviour, ITargetable {
 
     public bool GetScared() {
         return scared;
-    }
-
-    public Transform GetAllVisualTransform() {
-        return visualTransform;
     }
 
     #endregion

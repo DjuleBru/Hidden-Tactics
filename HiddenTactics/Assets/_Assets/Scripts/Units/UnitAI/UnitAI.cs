@@ -68,7 +68,6 @@ public class UnitAI : NetworkBehaviour
         unitAttack.OnUnitAttackStarted += UnitAttack_OnUnitAttackStarted;
     }
 
-
     protected virtual void CheckConditionsBeforeSwitch() {
         CheckIfBuildingBlocksMovement();
     }
@@ -148,7 +147,6 @@ public class UnitAI : NetworkBehaviour
     }
 
     protected void State_OnValueChanged(State previousValue, State newValue) {
-        //Debug.Log(unit + " State_OnValueChanged " + newValue);
 
         if (!unit.GetUnitIsBought()) return;
 
@@ -159,6 +157,7 @@ public class UnitAI : NetworkBehaviour
     }
 
     protected virtual void ChangeStateResponse() {
+        //Debug.Log("localstate " + localState);
         if (localState == State.idle) {
             unitAttack.ResetAttackTarget();
             ActivateMainAttack();
@@ -175,6 +174,10 @@ public class UnitAI : NetworkBehaviour
             unit.SetSynchronizingTransform(true);
         }
 
+        if(localState == State.attackingRanged) {
+
+        }
+
         if (localState == State.moveToMeleeTarget) {
             unit.SetSynchronizingTransform(true);
         }
@@ -182,6 +185,10 @@ public class UnitAI : NetworkBehaviour
         if (localState == State.moveForwards) {
             unitAttack.ResetAttackTarget();
             unit.SetSynchronizingTransform(false);
+
+            if (!IsServer) {
+                GetComponent<UnitMovement>().SetMoveForwardsMoveDirClient();
+            };
         } 
 
         if (localState == State.dead) {
@@ -193,7 +200,6 @@ public class UnitAI : NetworkBehaviour
 
     #region EVENT RESPONSES
     protected virtual void BattleManager_OnStateChanged(object sender, System.EventArgs e) {
-
         if (BattleManager.Instance.IsBattlePhase()) {
             specialTimer = 0f;
             localState = State.moveForwards;
@@ -249,6 +255,7 @@ public class UnitAI : NetworkBehaviour
 
     public void ChangeState(State newState) {
         // Check if both states are the same : useless call
+
         if (state.Value == newState && localState == newState) return;
 
         localState = newState;

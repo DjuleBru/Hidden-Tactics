@@ -6,12 +6,16 @@ using UnityEngine;
 public class MoveForwards : Action
 {
     private UnitMovement unitMovement;
+    private UnitAI unitAI;
 
     public override void OnAwake() {
         unitMovement = GetComponent<UnitMovement>();
+        unitAI = GetComponent<UnitAI>();
     }
     public override TaskStatus OnUpdate() {
-        unitMovement.MoveForwards();
+        if(unitAI.IsMovingForwards()) {
+            unitMovement.MoveForwards();
+        }
 
         return TaskStatus.Success;
     }

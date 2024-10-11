@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Playables;
@@ -59,6 +60,9 @@ public class Troop : NetworkBehaviour, IPlaceable {
     protected bool troopHovered;
     protected bool troopSelected;
     protected bool troopSelled;
+
+    protected float syncUnitPositionsTimer;
+    protected float syncUnitPositionsRate = .2f;
 
     protected void Awake() {
         allUnitsInTroop = new List<Unit>();
@@ -122,10 +126,17 @@ public class Troop : NetworkBehaviour, IPlaceable {
     }
 
     protected void Update() {
-
         if (isPooled) return;
 
         HandleAllUnitsMiddlePoint();
+
+        if(IsServer && BattleManager.Instance.IsBattlePhase()) {
+            syncUnitPositionsTimer -= Time.deltaTime;
+            if(syncUnitPositionsTimer < 0) {
+                syncUnitPositionsTimer = syncUnitPositionsRate;
+                //HandleAllUnitsPositionSync();
+            }
+        }
 
         if (!isPlaced) {
             HandlePositioningOnGrid();
@@ -161,6 +172,40 @@ public class Troop : NetworkBehaviour, IPlaceable {
             troopHP = maxTroopHP;
             troopIsDead = false;
             OnTroopHPChanged?.Invoke(this, EventArgs.Empty);
+        }
+    }
+
+    private void HandleAllUnitsPositionSync() {
+        List<Unit> boughtUnits = new List<Unit>();
+
+        foreach (Unit unit in allUnitsInTroop) {
+            if (additionalUnitsInTroop.Contains(unit)) continue;
+            boughtUnits.Add(unit);
+        }
+
+        Vector2[] allUnitPositions = new Vector2[boughtUnits.Count];
+
+        for (int i = 0; i < boughtUnits.Count; i++) {
+            allUnitPositions[i] = boughtUnits[i].transform.position;
+        }
+
+        HandleAllPositionsSyncServerRpc(allUnitPositions);
+
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void HandleAllPositionsSyncServerRpc(Vector2[] allUnitPositions) {
+        //Debug.Log("HandleAllPositionsSyncServerRpc");
+        HandleAllUnitsPositionSyncClientRpc(allUnitPositions);
+    }
+
+    [ClientRpc]
+    private void HandleAllUnitsPositionSyncClientRpc(Vector2[] allUnitPositions) {
+        if (IsServer) return;
+
+        for (int i = 0; i < allUnitPositions.Length; i++) {
+            if (additionalUnitsInTroop.Contains(allUnitsInTroop[i])) continue;
+            allUnitsInTroop[i].SetPosition(allUnitPositions[i]);
         }
     }
 
@@ -217,7 +262,7 @@ public class Troop : NetworkBehaviour, IPlaceable {
 
             foreach (Unit unit in allUnitsInTroop) {
                 if (unit.GetUnitIsBought() && !unit.GetIsDead() && !unit.GetUnitIsDynamicallySpawnedUnit()) {
-                    allUnitsSum += unit.GetAllVisualTransform().position;
+                    allUnitsSum += unit.transform.position;
                     allUnitsCount++;
                 }
             }
